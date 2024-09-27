@@ -25,7 +25,7 @@ class Slider extends Component
         $this->slides = $slides;
         $this->pagination = $pagination;
         $this->navigation = $navigation;
-        $this->gap = $gap / 16 . 'rem';
+        $this->gap = $gap / 16 .'rem';
         $this->autoplay = $autoplay;
         $this->title = $title;
     }

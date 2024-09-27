@@ -1,6 +1,6 @@
 <?php
 
-namespace  SmartCms\Core\Components\Layout;
+namespace SmartCms\Core\Components\Layout;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -11,14 +11,15 @@ class Footer extends Component
 {
     public array $links;
 
-	public function __construct()
-	{
-		$this->links = GetLinks::run();
-	}
+    public function __construct()
+    {
+        $this->links = GetLinks::run();
+    }
 
     public function render(): View|Closure|string
     {
         $view = setting(config('settings.design.footer'), 'default-footer');
-        return view('templates::layout.' . strtolower($view));
+
+        return view('templates::layout.'.strtolower($view));
     }
 }

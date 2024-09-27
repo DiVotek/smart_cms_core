@@ -17,6 +17,7 @@ class GetSitemap
         foreach (Page::query()->get() as $page) {
             $links[] = $page->route();
         }
+
         return response()->view('sitemap', [
             'links' => $links,
             'is_sitemap' => false,

@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(config('smart_cms.database_table_prefix') . Template::getDb(), function (Blueprint $table) {
+        Schema::create(config('smart_cms.database_table_prefix').Template::getDb(), function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(TemplateSection::class);
             $table->morphs('entity');

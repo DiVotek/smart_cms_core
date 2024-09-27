@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core;
 
-use SmartCms\Core\Commands\CoreCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -34,6 +33,6 @@ class CoreServiceProvider extends PackageServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
     }
 }

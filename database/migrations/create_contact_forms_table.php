@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(config('smart_cms.database_table_prefix') . ContactForm::getDb(), function (Blueprint $table) {
+        Schema::create(config('smart_cms.database_table_prefix').ContactForm::getDb(), function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Form::class)->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(ContactForm::STATUS_NEW);

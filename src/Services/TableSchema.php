@@ -18,6 +18,7 @@ class TableSchema
             ->toggleable()
             ->sortable();
     }
+
     public static function getUpdatedAt(): TextColumn
     {
         return TextColumn::make('updated_at')
@@ -66,7 +67,7 @@ class TableSchema
         return TextColumn::make('firstname')
             ->label(__('Name'))
             ->formatStateUsing(function (Model $record) {
-                return $record->firstname . ' ' . $record->lastname;
+                return $record->firstname.' '.$record->lastname;
             });
     }
 

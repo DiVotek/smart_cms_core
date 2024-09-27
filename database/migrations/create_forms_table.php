@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(config('smart_cms.database_table_prefix') . Form::getDb(), function (Blueprint $table) {
+        Schema::create(config('smart_cms.database_table_prefix').Form::getDb(), function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(true);
             $table->string('code')->unique();

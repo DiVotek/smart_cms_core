@@ -17,7 +17,6 @@ use SmartCms\Core\BaseModel;
  */
 class Translation extends BaseModel
 {
-
     protected $fillable = [
         'key',
         'language_id',

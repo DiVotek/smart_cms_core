@@ -19,7 +19,6 @@ use SmartCms\Core\BaseModel;
  */
 class Translate extends BaseModel
 {
-
     protected $guarded = [];
 
     public function language()

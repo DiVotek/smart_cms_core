@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create(config('smart_cms.database_table_prefix') . Page::getDb(), function (Blueprint $table) {
+        Schema::create(config('smart_cms.database_table_prefix').Page::getDb(), function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('name');

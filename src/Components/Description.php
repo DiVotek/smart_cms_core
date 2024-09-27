@@ -9,11 +9,13 @@ use Illuminate\View\Component;
 class Description extends Component
 {
     public string $description;
+
     public string $tag;
+
     public function __construct(array $options = [], $tag = 'div')
     {
         $description = $options[current_lang()]['description'] ?? '';
-        if (isset($options['use_page_description']) &&  $options['use_page_description']) {
+        if (isset($options['use_page_description']) && $options['use_page_description']) {
             $description = $options['entity']->seo->content ?? '';
         }
         if (isset($options['use_page_summary']) && $options['use_page_summary']) {
@@ -31,7 +33,7 @@ class Description extends Component
                     {!! $description !!}
                 </p>
             blade;
-        } else if ($this->tag == 'span') {
+        } elseif ($this->tag == 'span') {
             return <<<'blade'
                 <span {{ $attributes}} >
                     {!! $description !!}

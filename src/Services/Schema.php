@@ -4,11 +4,9 @@ namespace SmartCms\Core\Services;
 
 use App\Filament\Resources\StaticPageResource\RelationManagers\TemplateRelationManager;
 use App\Filament\Resources\TranslateResource\RelationManagers\TranslatableRelationManager;
-use App\Models\Section as ModelsSection;
 use App\Models\Setting;
 use App\Models\StaticPage;
 use App\Models\TemplateSection;
-use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -30,13 +28,10 @@ use Illuminate\Support\Str;
 use libphonenumber\PhoneNumberType;
 use Modules\Category\Models\Category;
 use Modules\Contractor\Models\Contractor;
-use Modules\Order\Models\Order;
-use Modules\Order\Services\PaymentService;
 use Modules\Manufacturer\Models\Manufacturer;
 use Modules\Promotions\Models\Sticker;
 use Modules\Seo\Admin\SeoResource\Pages\SeoRelationManager;
 use Modules\Team\Models\Team;
-use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -60,7 +55,7 @@ class Schema
             ->readOnly()
             ->required($isRequired)
             ->helperText(__('Slug will be generated automatically from title of any language'))
-            ->disabled(!$isRequired)
+            ->disabled(! $isRequired)
             ->hintAction(Action::make(__('Clear slug'))
                 ->requiresConfirmation()
                 ->action(function (Set $set, $state) {
@@ -323,7 +318,6 @@ class Schema
             ->default([]);
     }
 
-
     public static function getStickerType(): Select
     {
         return self::getSelect('type', Sticker::getTypes())
@@ -370,7 +364,6 @@ class Schema
     //     ])];
     // }
 
-
     public static function getLinkBuilder(string $name): AdjacencyList
     {
         $links = StaticPage::query()->pluck('name', 'slug')->toArray();
@@ -385,6 +378,7 @@ class Schema
         $otherSection = [TextInput::make('other.url')
             ->label(__('URL'))
             ->required()];
+
         // foreach (get_active_languages() as $lang) {
         // $otherSection[] = TextInput::make('other.label')
         //     ->label('Label')
@@ -402,8 +396,8 @@ class Schema
                 //     ->required(),
                 // Schema::getSelect('type', Setting::getPageTypes())->live(),
                 Schema::getSelect('slug', $links)->live()->afterStateUpdated(function (Get $get, Set $set, $old, $state) {
-                    if($state == null){
-                        $state = "";
+                    if ($state == null) {
+                        $state = '';
                     }
                     if ($state !== null) {
                         $page = StaticPage::query()->where('slug', $state)->first();
@@ -515,18 +509,19 @@ class Schema
     public static function getModuleTemplateSelect(string $name): Select
     {
         $files = [];
-        foreach (File::files(base_path('template/views/' . $name)) as $file) {
+        foreach (File::files(base_path('template/views/'.$name)) as $file) {
             $fileName = $file->getFilename();
-            $fileName  = explode('.', $fileName)[0] ?? $file->getFilenameWithoutExtension();
-            $files[$name . '.' . $fileName] = $file->getFilenameWithoutExtension();
+            $fileName = explode('.', $fileName)[0] ?? $file->getFilenameWithoutExtension();
+            $files[$name.'.'.$fileName] = $file->getFilenameWithoutExtension();
         }
+
         return Select::make('design')
             ->label(__('Design'))
             ->options($files)
             ->native(false)
             ->searchable()
             ->helperText(__('Select the design for the page'))
-            ->default($name . '.default')
+            ->default($name.'.default')
             ->required();
     }
 
@@ -563,8 +558,8 @@ class Schema
             ->placeholder('email1@example.com,email2@example.com,email3@example.com...')
             ->string()
             ->helperText(__('Enter email addresses separated by commas.'))
-            ->visible(fn(Get $get) => $get('additional'))
-            ->required(fn(Get $get) => $get('additional'));
+            ->visible(fn (Get $get) => $get('additional'))
+            ->required(fn (Get $get) => $get('additional'));
     }
 
     public static function getMailsTemplate(): Select
@@ -575,7 +570,7 @@ class Schema
         foreach ($templates as $template) {
             $filePath = module_path('MailSender', 'Resources/views/mails');
             $fileName = ucfirst(str_replace('.blade', '', $template->getFilenameWithoutExtension()));
-            $templatesArray[$filePath] = $fileName;;
+            $templatesArray[$filePath] = $fileName;
         }
 
         return self::getSelect('template', $templatesArray)
@@ -611,7 +606,7 @@ class Schema
         return RelationGroup::make('Seo and template', [
             TranslatableRelationManager::class,
             SeoRelationManager::class,
-            TemplateRelationManager::class
+            TemplateRelationManager::class,
         ]);
     }
 
