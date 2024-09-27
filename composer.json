@@ -43,7 +43,10 @@
     "autoload": {
         "psr-4": {
             "SmartCms\\Core\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": "",
