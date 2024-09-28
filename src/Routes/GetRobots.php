@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace SmartCms\Core\Routes;
 
 use Lorisleiva\Actions\Concerns\AsAction;
 

@@ -2,7 +2,7 @@
 
 namespace SmartCms\Core\Traits;
 
-use App\Models\Translate;
+use SmartCms\Core\Models\Translate;
 
 trait HasTranslate
 {

@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core;
 
-use SmartCms\Core\Commands\CoreCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -11,22 +10,24 @@ class CoreServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('core')
+            ->name('smart_cms_core')
             ->hasConfigFile()
             ->hasViews()
             ->hasMigrations([
-                'create_smart_cms_settings_table',
-                'create_smart_cms_languages_table',
-                'create_smart_cms_translations_table',
-                'create_smart_cms_translates_table',
-                'create_smart_cms_admins_table',
-                'create_smart_cms_forms_table',
-                'create_smart_cms_contact_forms_table',
-                'create_smart_cms_template_sections_table',
-                'create_smart_cms_templates_table',
-                'create_smart_cms_seo_table',
-                'create_smart_cms_pages_table',
-            ]);
+                'create_settings_table',
+                'create_languages_table',
+                'create_translations_table',
+                'create_translates_table',
+                'create_admins_table',
+                'create_forms_table',
+                'create_contact_forms_table',
+                'create_template_sections_table',
+                'create_templates_table',
+                'create_seo_table',
+                'create_pages_table',
+            ])
+            ->hasRoute(__DIR__ . '/Routes/web.php')
+            ;
         // ->publishes([
         //     'config' => config_path('core.php'),
         // ])

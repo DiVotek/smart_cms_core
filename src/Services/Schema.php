@@ -2,12 +2,12 @@
 
 namespace SmartCms\Core\Services;
 
-use App\Filament\Resources\StaticPageResource\RelationManagers\TemplateRelationManager;
-use App\Filament\Resources\TranslateResource\RelationManagers\TranslatableRelationManager;
-use App\Models\Section as ModelsSection;
-use App\Models\Setting;
-use App\Models\StaticPage;
-use App\Models\TemplateSection;
+use SmartCms\Core\Admin\Resources\StaticPageResource\RelationManagers\TemplateRelationManager;
+use SmartCms\Core\Admin\Resources\TranslateResource\RelationManagers\TranslatableRelationManager;
+use SmartCms\Core\Models\Section as ModelsSection;
+use SmartCms\Core\Models\Setting;
+use SmartCms\Core\Models\StaticPage;
+use SmartCms\Core\Models\TemplateSection;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;

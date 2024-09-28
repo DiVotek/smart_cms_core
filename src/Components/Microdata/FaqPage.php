@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Components\Microdata;
 
-use App\Models\Faq;
-use App\Service\MultiLang;
 use Closure;
 use Illuminate\Contracts\View\View;
 

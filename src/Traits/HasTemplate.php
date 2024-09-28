@@ -2,8 +2,8 @@
 
 namespace SmartCms\Core\Traits;
 
-use App\Models\Template;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Models\Template;
 
 trait HasTemplate
 {

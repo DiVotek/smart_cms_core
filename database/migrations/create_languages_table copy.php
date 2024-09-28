@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create(config('smart_cms.database_table_prefix') . Language::getDb(), function (Blueprint $table) {
+        Schema::create(sconfig('database_table_prefix') . Language::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug');
