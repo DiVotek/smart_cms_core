@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Admin\Resources\AdminResource\Pages;
 
-use SmartCms\Core\Admin\Resources\AdminResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use SmartCms\Core\Admin\Resources\AdminResource;
 
 class EditAdmin extends EditRecord
 {

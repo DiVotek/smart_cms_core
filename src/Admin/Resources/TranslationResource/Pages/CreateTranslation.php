@@ -2,9 +2,8 @@
 
 namespace SmartCms\Core\Admin\Resources\TranslationResource\Pages;
 
-use SmartCms\Core\Admin\Resources\TranslationResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use SmartCms\Core\Admin\Resources\TranslationResource;
 
 class CreateTranslation extends CreateRecord
 {

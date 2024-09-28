@@ -2,13 +2,6 @@
 
 namespace SmartCms\Core\Services;
 
-use SmartCms\Core\Admin\Resources\StaticPageResource\RelationManagers\TemplateRelationManager;
-use SmartCms\Core\Admin\Resources\TranslateResource\RelationManagers\TranslatableRelationManager;
-use SmartCms\Core\Models\Section as ModelsSection;
-use SmartCms\Core\Models\Setting;
-use SmartCms\Core\Models\StaticPage;
-use SmartCms\Core\Models\TemplateSection;
-use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -35,6 +28,11 @@ use Modules\Promotions\Models\Sticker;
 use Modules\Seo\Admin\SeoResource\Pages\SeoRelationManager;
 use Modules\Team\Models\Team;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
+use SmartCms\Core\Admin\Resources\StaticPageResource\RelationManagers\TemplateRelationManager;
+use SmartCms\Core\Admin\Resources\TranslateResource\RelationManagers\TranslatableRelationManager;
+use SmartCms\Core\Models\Setting;
+use SmartCms\Core\Models\StaticPage;
+use SmartCms\Core\Models\TemplateSection;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class Schema

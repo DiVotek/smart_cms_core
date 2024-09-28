@@ -2,12 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use SmartCms\Core\Admin\Resources\TranslationResource\Pages;
-use SmartCms\Core\Admin\Resources\TranslationResource\RelationManagers;
-use SmartCms\Core\Models\Setting;
-use SmartCms\Core\Models\Translation;
-use SmartCms\Core\Services\Schema;
-use SmartCms\Core\Services\TableSchema;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -16,12 +10,15 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SmartCms\Core\Admin\Resources\TranslationResource\Pages;
+use SmartCms\Core\Models\Setting;
+use SmartCms\Core\Models\Translation;
+use SmartCms\Core\Services\Schema;
+use SmartCms\Core\Services\TableSchema;
 
 class TranslationResource extends Resource
 {
@@ -45,11 +42,13 @@ class TranslationResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         $query = static::getModel()::query();
-        if (!is_multi_lang()) {
+        if (! is_multi_lang()) {
             $query->where('language_id', main_lang_id());
         }
+
         return $query->count();
     }
+
     public static function form(Form $form): Form
     {
         $language = Hidden::make('language_id');
@@ -57,6 +56,7 @@ class TranslationResource extends Resource
             $language = Schema::getSelect('language_id')->relationship('language', 'name');
         }
         $language = $language->default(main_lang_id());
+
         return $form
             ->schema([
                 Section::make('')->schema([
@@ -65,7 +65,7 @@ class TranslationResource extends Resource
                     $language,
                     Forms\Components\TextInput::make('value')
                         ->required(),
-                ])
+                ]),
             ])->columns(1);
     }
 
@@ -73,7 +73,7 @@ class TranslationResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!is_multi_lang()) {
+                if (! is_multi_lang()) {
                     $query->where('language_id', main_lang_id());
                 }
             })
@@ -82,14 +82,14 @@ class TranslationResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('language.name')
                     ->numeric()
-                    ->sortable()->hidden(!is_multi_lang()),
+                    ->sortable()->hidden(! is_multi_lang()),
                 Tables\Columns\TextInputColumn::make('value')
                     ->searchable(),
                 TableSchema::getUpdatedAt(),
             ])
             ->filters([
                 SelectFilter::make('language_id')
-                    ->relationship('language', 'name')->hidden(!is_multi_lang())
+                    ->relationship('language', 'name')->hidden(! is_multi_lang()),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
@@ -104,28 +104,28 @@ class TranslationResource extends Resource
                         ->send();
                 }),
                 Tables\Actions\Action::make(__('Settings'))
-                ->slideOver()
-                ->icon('heroicon-o-cog')
-                ->fillForm(function (): array {
-                    return [
-                        'is_translates' => setting(config('settings.add_translations'), []),
-                    ];
-                })
-                ->action(function (array $data): void {
-                    setting([
-                        config('settings.add_translations') => $data['is_translates'],
-                    ]);
-                    Setting::updatedSettings();
-                })
-                ->form(function ($form) {
-                    return $form
-                        ->schema([
-                            Toggle::make('is_translates')
-                                ->label(__('Add translations'))
-                                ->helperText(__('Enable or disable adding translations from front. This action reduce performance'))
-                                ->default(setting(config('settings.add_translations'), [])),
+                    ->slideOver()
+                    ->icon('heroicon-o-cog')
+                    ->fillForm(function (): array {
+                        return [
+                            'is_translates' => setting(config('settings.add_translations'), []),
+                        ];
+                    })
+                    ->action(function (array $data): void {
+                        setting([
+                            config('settings.add_translations') => $data['is_translates'],
                         ]);
-                }),
+                        Setting::updatedSettings();
+                    })
+                    ->form(function ($form) {
+                        return $form
+                            ->schema([
+                                Toggle::make('is_translates')
+                                    ->label(__('Add translations'))
+                                    ->helperText(__('Enable or disable adding translations from front. This action reduce performance'))
+                                    ->default(setting(config('settings.add_translations'), [])),
+                            ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

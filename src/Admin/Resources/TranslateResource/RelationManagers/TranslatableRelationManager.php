@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\TranslateResource\RelationManagers;
 
-use SmartCms\Core\Models\Language;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -10,6 +9,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Models\Language;
 
 class TranslatableRelationManager extends RelationManager
 {
@@ -26,6 +26,7 @@ class TranslatableRelationManager extends RelationManager
     {
         $languages = $this->ownerRecord->translatable()->pluck('language_id')->toArray();
         $languages = array_diff(Language::query()->pluck('id')->toArray(), $languages);
+
         return $form
             ->schema([
                 Forms\Components\TextInput::make('value')
@@ -36,7 +37,7 @@ class TranslatableRelationManager extends RelationManager
                     ->hiddenOn('edit')
                     ->disabledOn('edit')
                     ->options(Language::query()->whereIn('id', $languages)->pluck('name', 'id')->toArray())->native(false)
-                    ->default($languages[(string)array_key_first($languages)] ?? ''),
+                    ->default($languages[(string) array_key_first($languages)] ?? ''),
             ])->columns(1);
     }
 

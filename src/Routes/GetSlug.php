@@ -34,6 +34,7 @@ class GetSlug
             return Blade::renderComponent(new StaticPage($page));
             // return response(Blade::renderComponent(new StaticPage($page)))->header('X-SMART-CMS', 'true');
         }
+
         return abort(404);
     }
 }

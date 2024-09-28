@@ -14,11 +14,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput;
+use SmartCms\Core\Admin\Resources\SeoResource\Pages;
 use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
-use SmartCms\Core\Admin\Resources\SeoResource\Pages;
-
 
 class SeoResource extends Resource
 {

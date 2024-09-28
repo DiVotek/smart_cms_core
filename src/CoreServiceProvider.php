@@ -26,8 +26,7 @@ class CoreServiceProvider extends PackageServiceProvider
                 'create_seo_table',
                 'create_pages_table',
             ])
-            ->hasRoute(__DIR__ . '/Routes/web.php')
-            ;
+            ->hasRoute(__DIR__.'/Routes/web.php');
         // ->publishes([
         //     'config' => config_path('core.php'),
         // ])

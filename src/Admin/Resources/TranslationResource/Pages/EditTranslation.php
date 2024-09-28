@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Admin\Resources\TranslationResource\Pages;
 
-use SmartCms\Core\Admin\Resources\TranslationResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use SmartCms\Core\Admin\Resources\TranslationResource;
 
 class EditTranslation extends EditRecord
 {

@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use SmartCms\Core\Admin\Resources\ContactFormResource\Pages;
-use SmartCms\Core\Services\TableSchema;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -13,12 +11,13 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use SmartCms\Core\Admin\Resources\ContactFormResource\Pages;
 use SmartCms\Core\Models\ContactForm;
+use SmartCms\Core\Services\TableSchema;
 
 class ContactFormResource extends Resource
 {
     protected static ?string $model = ContactForm::class;
-
 
     public static function getNavigationBadge(): ?string
     {
@@ -46,9 +45,9 @@ class ContactFormResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Select::make('status')
-                        ->options(fn() => ContactForm::getStatuses()),
+                        ->options(fn () => ContactForm::getStatuses()),
                     KeyValue::make('data')->addable(false)->deletable(false)->label(null)->editableKeys(false),
-                ])
+                ]),
             ]);
     }
 
@@ -58,7 +57,7 @@ class ContactFormResource extends Resource
             ->columns([
                 TextColumn::make('form.name'),
                 IconColumn::make('status')
-                    ->icon(fn(int $state): string => match ($state) {
+                    ->icon(fn (int $state): string => match ($state) {
                         ContactForm::STATUS_NEW => 'heroicon-o-bell-alert',
                         ContactForm::STATUS_VIEWED => 'heroicon-o-eye',
                         ContactForm::STATUS_CLOSED => 'heroicon-o-x',

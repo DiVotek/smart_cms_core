@@ -2,9 +2,8 @@
 
 namespace SmartCms\Core\Admin\Resources\FormResource\Pages;
 
-use SmartCms\Core\Admin\Resources\FormResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use SmartCms\Core\Admin\Resources\FormResource;
 
 class CreateForm extends CreateRecord
 {
@@ -13,6 +12,7 @@ class CreateForm extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['code'] = uniqid('form_');
+
         return $data;
     }
 }

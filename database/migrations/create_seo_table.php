@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(sconfig('database_table_prefix') . Seo::getDb(), function (Blueprint $table) {
+        Schema::create(sconfig('database_table_prefix').Seo::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('heading')->nullable();

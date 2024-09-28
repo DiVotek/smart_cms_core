@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Admin\Resources\AdminResource\Pages;
 
-use SmartCms\Core\Admin\Resources\AdminResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use SmartCms\Core\Admin\Resources\AdminResource;
 
 class ListAdmins extends ListRecords
 {

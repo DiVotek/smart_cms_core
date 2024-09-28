@@ -8,11 +8,10 @@ use SmartCms\Core\Routes\GetSlug;
 Route::get('/robots.txt', GetRobots::class)->name('robots');
 Route::get('sitemap.xml', GetSitemap::class)->name('sitemap');
 
-
 Route::get('/{slug?}', GetSlug::class)->name('slug');
 
 if (is_multi_lang()) {
-   foreach (get_active_languages() as $language) {
-      Route::get($language->slug . '/{slug?}', GetSlug::class)->name($language->slug . '.slug');
-   }
+    foreach (get_active_languages() as $language) {
+        Route::get($language->slug.'/{slug?}', GetSlug::class)->name($language->slug.'.slug');
+    }
 }

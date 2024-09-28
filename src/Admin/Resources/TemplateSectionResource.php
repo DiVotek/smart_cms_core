@@ -2,10 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
-use SmartCms\Core\Models\TemplateSection;
-use SmartCms\Core\Services\Schema;
-use SmartCms\Core\Services\TableSchema;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
@@ -16,7 +12,11 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
+use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Helper;
+use SmartCms\Core\Services\Schema;
+use SmartCms\Core\Services\TableSchema;
 
 class TemplateSectionResource extends Resource
 {
@@ -52,6 +52,7 @@ class TemplateSectionResource extends Resource
     public static function form(Form $form): Form
     {
         $components = Helper::getComponents();
+
         return $form
             ->schema([
                 Section::make('')->schema([
@@ -66,7 +67,7 @@ class TemplateSectionResource extends Resource
                     Radio::make('design')
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn(Radio $component) => $component
+                        ->afterStateUpdated(fn (Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
@@ -77,10 +78,11 @@ class TemplateSectionResource extends Resource
                             if (! $class) {
                                 return [];
                             }
+
                             return Helper::getComponentClass($class);
                         })->live()
                         ->columnSpanFull()->key('dynamicTypeFields'),
-                ])
+                ]),
             ])->columns(1);
     }
 

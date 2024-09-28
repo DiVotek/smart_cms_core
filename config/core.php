@@ -1,11 +1,11 @@
 <?php
 
 return [
-   'database_table_name' => 'settings',
+    'database_table_name' => 'settings',
 
-   'cache_key' => 'smart_cms_settings_',
+    'cache_key' => 'smart_cms_settings_',
 
-   'database_table_prefix' => 'smart_cms_',
+    'database_table_prefix' => 'smart_cms_',
 
     'mailer' => [
         'host' => 'mail_host',

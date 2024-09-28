@@ -2,8 +2,8 @@
 
 namespace SmartCms\Core\Admin\Resources\AdminResource\Pages;
 
-use SmartCms\Core\Admin\Resources\AdminResource;
 use Filament\Resources\Pages\CreateRecord;
+use SmartCms\Core\Admin\Resources\AdminResource;
 
 class CreateAdmin extends CreateRecord
 {
@@ -13,6 +13,7 @@ class CreateAdmin extends CreateRecord
     {
         $data['permissions'] = [];
         $data['notifications'] = [];
+
         return $data;
     }
 }

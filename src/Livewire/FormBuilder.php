@@ -9,7 +9,9 @@ use SmartCms\Core\Models\Form;
 class FormBuilder extends Component
 {
     public $formData = [];
+
     public $form;
+
     public function mount($form)
     {
         $this->form = Form::find($form[0] ?? 0);
@@ -18,6 +20,7 @@ class FormBuilder extends Component
             $this->formData[$field['name']] = '';
         }
     }
+
     public function render()
     {
         return view('livewire.form-builder', ['formFields' => $this->form->fields]);
@@ -41,10 +44,10 @@ class FormBuilder extends Component
                 $fieldValidation .= '|regex:/^([0-9\s\-\+\(\)]*)$/';
             }
             if (strlen($fieldValidation) > 0) {
-                $validation["formData." . $field['name']] = $fieldValidation;
+                $validation['formData.'.$field['name']] = $fieldValidation;
             }
         }
-        if (!empty($validation)) {
+        if (! empty($validation)) {
             $this->validate($validation);
         }
         ContactForm::query()->create(['data' => $this->formData, 'form_id' => $this->form->id]);

@@ -2,13 +2,13 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use SmartCms\Core\Admin\Resources\AdminResource\Pages;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use SmartCms\Core\Admin\Resources\AdminResource\Pages;
 use SmartCms\Core\Models\Admin;
 
 class AdminResource extends Resource
@@ -48,7 +48,7 @@ class AdminResource extends Resource
                     Forms\Components\TextInput::make('password')
                         ->password()
                         ->required(),
-                ])
+                ]),
             ]);
     }
 
