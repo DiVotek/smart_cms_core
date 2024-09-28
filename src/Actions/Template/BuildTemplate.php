@@ -17,12 +17,12 @@ class BuildTemplate
             'template_section_id',
             'value',
         ])->get()->toArray();
-        if(empty($entityTemplate)) {
+        if (empty($entityTemplate)) {
             $entityTemplate = $defaultTemplate;
         }
         foreach ($entityTemplate as $d) {
             $section = TemplateSection::query()->where('id', $d['template_section_id'])->first();
-            if(!$section) {
+            if (! $section) {
                 continue;
             }
             if ($section->name != 'Page content') {
@@ -31,12 +31,12 @@ class BuildTemplate
                 $design = explode('\\', $design);
                 $design = $design[count($design) - 1];
                 $design = preg_replace('/([a-z])([A-Z])/', '$1-$2', $design);
-                $sectionComponent .= '.' . strtolower($design);
+                $sectionComponent .= '.'.strtolower($design);
             } else {
                 $sectionComponent = $component;
             }
             $value = empty($d['value']) ? $section->value : $d['value'];
-            if(!is_array($value)) {
+            if (! is_array($value)) {
                 $value = [$value];
             }
             $template[] = [
@@ -49,6 +49,7 @@ class BuildTemplate
                 ]],
             ];
         }
+
         return $template;
     }
 }

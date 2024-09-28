@@ -13,7 +13,6 @@ use SmartCms\Core\BaseModel;
  */
 class ContactForm extends BaseModel
 {
-
     protected $guarded = [];
 
     protected $casts = ['data' => 'array'];

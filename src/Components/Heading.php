@@ -9,12 +9,15 @@ use Illuminate\View\Component;
 class Heading extends Component
 {
     public string $title;
+
     public string $size;
+
     public string $type;
+
     public function __construct(array $options = [])
     {
         $title = $options[main_lang()]['title'] ?? '';
-        if ( isset($options['use_page_heading']) && $options['use_page_heading']) {
+        if (isset($options['use_page_heading']) && $options['use_page_heading']) {
             $title = $options['entity']->seo->heading ?? $options['entity']->name();
         }
         if (isset($options['use_page_name']) && $options['use_page_name']) {
@@ -50,6 +53,7 @@ class Heading extends Component
                 </h3>
             blade;
         }
+
         return <<<'blade'
             <div {{ $attributes->merge(['class' => $size])}} >
                 {{ $title }}

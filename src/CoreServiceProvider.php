@@ -35,6 +35,6 @@ class CoreServiceProvider extends PackageServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
     }
 }

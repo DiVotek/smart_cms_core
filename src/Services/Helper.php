@@ -45,7 +45,7 @@ class Helper
     public static function getTemplateComponentTypes(string $template): array
     {
         $types = [];
-        $templatePath = base_path('templates/' . $template . '/Modules/');
+        $templatePath = base_path('templates/'.$template.'/Modules/');
         if (! File::exists($templatePath)) {
             return $types;
         }
@@ -60,10 +60,10 @@ class Helper
 
     public static function getComponentClass(string $component): array
     {
-        if (!File::exists(base_path('template/modules/' . $component . '.blade.php'))) {
+        if (! File::exists(base_path('template/modules/'.$component.'.blade.php'))) {
             return [];
         }
-        $file = File::get(base_path('template/modules/' . $component . '.blade.php'));
+        $file = File::get(base_path('template/modules/'.$component.'.blade.php'));
         if (! $file) {
             return [];
         }
@@ -71,7 +71,8 @@ class Helper
         $schema = [];
         foreach ($variables as $key => $variable) {
             if ($variable == 'form') {
-                $schema[] = Select::make('value.' . $variable)->options(Form::query()->pluck('name', 'id')->toArray());
+                $schema[] = Select::make('value.'.$variable)->options(Form::query()->pluck('name', 'id')->toArray());
+
                 continue;
             }
             if (is_array($variable)) {
@@ -79,53 +80,53 @@ class Helper
                 foreach ($variable as $field) {
                     if (str_contains($field, 'image')) {
                         $fields[] = Schema::getImage($field);
-                    } else if (str_contains($field, 'description')) {
-                        $fields[] = Textarea::make(main_lang() . '_' . $field)->required();
+                    } elseif (str_contains($field, 'description')) {
+                        $fields[] = Textarea::make(main_lang().'_'.$field)->required();
                         if (is_multi_lang()) {
                             foreach (get_active_languages() as $lang) {
                                 if ($lang->id == main_lang_id()) {
                                     continue;
                                 }
-                                $fields[] = Textarea::make($lang->slug . '_' . $field)->label(ucfirst($field) . ' ' . $lang->name);
+                                $fields[] = Textarea::make($lang->slug.'_'.$field)->label(ucfirst($field).' '.$lang->name);
                             }
                         }
                     } else {
-                        $fields[] = TextInput::make(main_lang() . '_' . $field)->required();
+                        $fields[] = TextInput::make(main_lang().'_'.$field)->required();
                         if (is_multi_lang()) {
                             foreach (get_active_languages() as $lang) {
                                 if ($lang->id == main_lang_id()) {
                                     continue;
                                 }
-                                $fields[] = TextInput::make($lang->slug . '_' . $field)->label(ucfirst($field) . ' ' . $lang->name);
+                                $fields[] = TextInput::make($lang->slug.'_'.$field)->label(ucfirst($field).' '.$lang->name);
                             }
                         }
                     }
                 }
-                $schema[] = Repeater::make('value.' . $key)->schema($fields);
-            } else if ($variable == 'heading') {
+                $schema[] = Repeater::make('value.'.$key)->schema($fields);
+            } elseif ($variable == 'heading') {
                 $schema = array_merge($schema, ModuleTitleSchema::run());
-            } else if ($variable == 'description') {
+            } elseif ($variable == 'description') {
                 $schema = array_merge($schema, ModuleDescriptionSchema::run());
-            } else if (str_contains($variable, 'description')) {
-                $schema[] = Textarea::make('value.' . main_lang() . '_' . $variable)->required()->label(self::getLabelFromField($variable));
+            } elseif (str_contains($variable, 'description')) {
+                $schema[] = Textarea::make('value.'.main_lang().'_'.$variable)->required()->label(self::getLabelFromField($variable));
                 if (is_multi_lang()) {
                     foreach (get_active_languages() as $lang) {
                         if ($lang->id == main_lang_id()) {
                             continue;
                         }
-                        $fields[] = Textarea::make('value.' . $lang->slug . '_' . $variable)->label(ucfirst($variable) . ' ' . $lang->name)->label(self::getLabelFromField($variable));
+                        $fields[] = Textarea::make('value.'.$lang->slug.'_'.$variable)->label(ucfirst($variable).' '.$lang->name)->label(self::getLabelFromField($variable));
                     }
                 }
-            } else if (str_contains($variable, 'image')) {
-                $schema[] = Schema::getImage('value.' . $variable);
+            } elseif (str_contains($variable, 'image')) {
+                $schema[] = Schema::getImage('value.'.$variable);
             } else {
-                $schema[] = TextInput::make('value.' . main_lang() . '.' . $variable)->required()->label(self::getLabelFromField($variable));
+                $schema[] = TextInput::make('value.'.main_lang().'.'.$variable)->required()->label(self::getLabelFromField($variable));
                 if (is_multi_lang()) {
                     foreach (get_active_languages() as $lang) {
                         if ($lang->id == main_lang_id()) {
                             continue;
                         }
-                        $fields[] = TextInput::make($lang->slug . '_' . $variable)->label(self::getLabelFromField($variable) . ' ' . $lang->name);
+                        $fields[] = TextInput::make($lang->slug.'_'.$variable)->label(self::getLabelFromField($variable).' '.$lang->name);
                     }
                 }
             }
@@ -138,7 +139,8 @@ class Helper
     {
         $field = preg_replace('/(?<!^)([A-Z])/', ' $1', $field);
         $field = explode('_', $field);
-        $field =  implode(' ', $field);
+        $field = implode(' ', $field);
+
         return __(ucfirst(strtolower($field)));
     }
 
@@ -149,7 +151,7 @@ class Helper
             return [];
         }
         $types = [];
-        $templatePath = base_path('templates/' . $template . '/' . $name . '/');
+        $templatePath = base_path('templates/'.$template.'/'.$name.'/');
         try {
             $files = File::files($templatePath);
         } catch (\Exception $e) {
@@ -167,35 +169,38 @@ class Helper
         $payments = module_path('Order', 'Services/Payment');
         $files = File::files($payments);
         foreach ($files as $file) {
-            $className = 'Modules\\Order\\Services\\Payment\\' . $file->getFilenameWithoutExtension();
-            if (!class_exists($className)) {
+            $className = 'Modules\\Order\\Services\\Payment\\'.$file->getFilenameWithoutExtension();
+            if (! class_exists($className)) {
                 require_once $file->getPathname();
             }
             if (class_exists($className)) {
-                $payment = new $className();
+                $payment = new $className;
                 if ($payment->getId() == $id) {
                     return $payment->getSchema();
                 }
             }
         }
+
         return [];
     }
+
     public static function getDeliveryOptions(int $id): array
     {
         $deliveries = module_path('Order', 'Services/Delivery');
         $files = File::files($deliveries);
         foreach ($files as $file) {
-            $className = 'Modules\\Order\\Services\\Delivery\\' . $file->getFilenameWithoutExtension();
-            if (!class_exists($className)) {
+            $className = 'Modules\\Order\\Services\\Delivery\\'.$file->getFilenameWithoutExtension();
+            if (! class_exists($className)) {
                 require_once $file->getPathname();
             }
             if (class_exists($className)) {
-                $delivery = new $className();
+                $delivery = new $className;
                 if ($delivery->getId() == $id) {
                     return $delivery->getSchema();
                 }
             }
         }
+
         return [];
     }
 
@@ -205,16 +210,17 @@ class Helper
         $reference = [];
         foreach ($files as $file) {
             $name = basename($file, '.blade.php');
-            if (str_contains($name, 'footer') && !$isFooter) {
+            if (str_contains($name, 'footer') && ! $isFooter) {
                 continue;
             }
             if (str_contains($name, 'header') && $isFooter) {
                 continue;
             }
             $name = explode('-', $name);
-            $prettyName = ucfirst($name[1]) . ' from collection ' . strtoupper($name[0]);
+            $prettyName = ucfirst($name[1]).' from collection '.strtoupper($name[0]);
             $reference[basename($file, '.blade.php')] = $prettyName;
         }
+
         return $reference;
         $files = File::allFiles(base_path('template/layout'));
         $templates = [];
@@ -234,8 +240,10 @@ class Helper
         if ($isFooter) {
             return $footers;
         }
+
         return $headers;
     }
+
     public static function extractVariables($fileContent)
     {
         $variables = [];
@@ -276,13 +284,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -292,7 +300,7 @@ class Helper
         // Combine variables and array properties
         $result = [];
         foreach ($variables as $variable) {
-            if (!isset($arrayProperties[$variable])) {
+            if (! isset($arrayProperties[$variable])) {
                 $result[] = $variable;
             }
         }
@@ -316,6 +324,7 @@ class Helper
         if (array_search('breadcrumbs', $result) !== false) {
             unset($result[array_search('breadcrumbs', $result)]);
         }
+
         return $result;
     }
     // public static function extractVariables($fileContent)

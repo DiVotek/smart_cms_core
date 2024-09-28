@@ -1,6 +1,6 @@
 <?php
 
-namespace  SmartCms\Core\Components\Layout;
+namespace SmartCms\Core\Components\Layout;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -37,9 +37,9 @@ class Layout extends Component
         $this->templateCss = File::exists(base_path('template/css/app.css')) ? 'template/css/app.css' : null;
         $this->scripts = $scripts;
         $this->meta_tags = $meta_tags;
-        $this->style = 'resources' . explode('/resources', $this->style)[1];
-        $this->fonts = 'resources' . explode('/resources', $this->fonts)[1];
-        $this->favicon = asset('/storage' . setting(config('settings.favicon'), '/favicon.ico'));
+        $this->style = 'resources'.explode('/resources', $this->style)[1];
+        $this->fonts = 'resources'.explode('/resources', $this->fonts)[1];
+        $this->favicon = asset('/storage'.setting(config('settings.favicon'), '/favicon.ico'));
     }
 
     public function render(): View|Closure|string

@@ -19,6 +19,7 @@ class Header extends Component
     public function render(): View|Closure|string
     {
         $view = setting(config('settings.design.header'), 'default-header');
-        return view('templates::layout.' . strtolower($view));
+
+        return view('templates::layout.'.strtolower($view));
     }
 }

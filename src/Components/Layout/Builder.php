@@ -40,21 +40,22 @@ class Builder extends Component
                 if ($key == current_lang()) {
                     $reference = array_merge($reference, $option);
                 }
-            } else if (is_array($option)) {
+            } elseif (is_array($option)) {
                 $newFields = [];
                 foreach ($option as $k => $v) {
                     $item = [];
-                    if (!is_array($v)) {
+                    if (! is_array($v)) {
                         $newFields[$k] = $v;
+
                         continue;
                     }
                     foreach ($v as $module_key => $module_value) {
                         if (str_contains($module_key, 'image')) {
-                            $module_value = '/storage' . $module_value;
+                            $module_value = '/storage'.$module_value;
                         }
                         if (str_contains($module_key, '_')) {
                             if (str_contains($module_key, current_lang())) {
-                                $module_key = str_replace(current_lang() . '_', '', $module_key);
+                                $module_key = str_replace(current_lang().'_', '', $module_key);
                             }
                         }
                         $item[$module_key] = $module_value;
@@ -62,14 +63,15 @@ class Builder extends Component
                     $newFields[$k] = $item;
                 }
                 $reference = array_merge($reference, [$key => $newFields]);
-            } else if (str_contains($key, 'image')) {
-                $reference[$key] = '/storage' . $option;
+            } elseif (str_contains($key, 'image')) {
+                $reference[$key] = '/storage'.$option;
             } else {
                 $reference[$key] = $option;
             }
         }
         $title = GetTitle::run($reference);
         $description = GetDescription::run($reference);
+
         return array_merge($reference, ['options' => $options, 'title' => $title, 'description' => $description]);
     }
 }

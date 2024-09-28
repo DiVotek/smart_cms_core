@@ -23,7 +23,7 @@ class Organization extends Microdata
         return [
             'name' => setting(config('settings.company_name'), 'Company name'),
             'url' => url('/'),
-            'logo' =>   asset(logo()),
+            'logo' => asset(logo()),
             'contactPoint' => [],
         ];
     }

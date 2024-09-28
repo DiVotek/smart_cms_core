@@ -20,6 +20,7 @@ class GetLinks
                 }
             }
         }
+
         return $links;
     }
 }

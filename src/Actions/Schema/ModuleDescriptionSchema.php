@@ -15,16 +15,17 @@ class ModuleDescriptionSchema
     public function handle(): array
     {
         $fields = [
-            Textarea::make('value.' . main_lang() . '.description')->label('Description'),
+            Textarea::make('value.'.main_lang().'.description')->label('Description'),
         ];
         if (is_multi_lang()) {
             foreach (get_active_languages() as $lang) {
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $fields[] = Textarea::make('value.' . $lang->slug . '.description')->label('Description ' . $lang->name);
+                $fields[] = Textarea::make('value.'.$lang->slug.'.description')->label('Description '.$lang->name);
             }
         }
+
         return [Fieldset::make('Description')->schema([
             ...$fields,
             Group::make([
@@ -44,6 +45,7 @@ class ModuleDescriptionSchema
                     }),
             ])->columns(2),
         ])->columns(1)];
+
         return $fields;
     }
 }

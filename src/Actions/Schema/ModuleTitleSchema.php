@@ -16,16 +16,17 @@ class ModuleTitleSchema
     public function handle(): array
     {
         $fields = [
-            TextInput::make('value.' . main_lang() . '.title')->label('Title'),
+            TextInput::make('value.'.main_lang().'.title')->label('Title'),
         ];
         if (is_multi_lang()) {
             foreach (get_active_languages() as $lang) {
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $fields[] = TextInput::make('value.' . $lang->slug . '.title')->label('Title ' . $lang->name);
+                $fields[] = TextInput::make('value.'.$lang->slug.'.title')->label('Title '.$lang->name);
             }
         }
+
         return [
             Fieldset::make(__('Heading'))->schema([
                 ...$fields,
@@ -60,9 +61,10 @@ class ModuleTitleSchema
                         ])
                         ->required()
                         ->default('h2')->inline(),
-                ])->columns(2)
+                ])->columns(2),
             ])->columns(1),
         ];
+
         return $fields;
     }
 }

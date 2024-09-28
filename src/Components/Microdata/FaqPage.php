@@ -29,10 +29,10 @@ class FaqPage extends Microdata
         foreach ($values as $value) {
             $data['mainEntity'][] = (object) [
                 '@type' => 'Question',
-                'name' => $value[current_lang() . '_question'],
+                'name' => $value[current_lang().'_question'],
                 'acceptedAnswer' => (object) [
                     '@type' => 'Answer',
-                    'text' => $value[current_lang() . '_answer'],
+                    'text' => $value[current_lang().'_answer'],
                 ],
             ];
         }
