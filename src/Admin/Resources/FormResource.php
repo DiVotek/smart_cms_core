@@ -29,6 +29,7 @@ class FormResource extends Resource
     {
         return _nav('communication');
     }
+
     public static function getModelLabel(): string
     {
         return _nav('form');
@@ -64,7 +65,7 @@ class FormResource extends Resource
                                 ])->required()->native(false)->searchable(true)->live(debounce: 250),
                             Textarea::make('options')
                                 ->nullable()
-                                ->rows(3)->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                                ->rows(3)->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
                             Schema::getName(true)->maxLength(255),
                             // Forms\Components\TextInput::make('label')
                             //     ->required()
