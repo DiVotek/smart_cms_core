@@ -1,6 +1,6 @@
 <?php
 
-namespace SmartCms\Core;
+namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

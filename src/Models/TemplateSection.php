@@ -2,7 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
-use SmartCms\Core\BaseModel;
+
 use SmartCms\Core\Traits\HasStatus;
 
 /**

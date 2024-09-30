@@ -3,7 +3,7 @@
 namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use SmartCms\Core\BaseModel;
+
 
 /**
  * class Translate

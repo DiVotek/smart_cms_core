@@ -2,7 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
-use SmartCms\Core\BaseModel;
+
 
 /**
  * class Translation

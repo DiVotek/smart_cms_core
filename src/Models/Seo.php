@@ -5,7 +5,7 @@ namespace SmartCms\Core\Models;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use SmartCms\Core\BaseModel;
+
 
 /**
  * class Seo

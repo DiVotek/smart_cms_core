@@ -3,7 +3,7 @@
 namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use SmartCms\Core\BaseModel;
+
 use SmartCms\Core\Traits\HasStatus;
 use SmartCms\Core\Traits\HasTable;
 
