@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Cache;
 
-
 if (! function_exists('logo')) {
     /**
      * @param  bool  $isHeader

@@ -7,12 +7,13 @@ use Lorisleiva\Actions\Concerns\AsAction;
 
 class SaveSettings
 {
-   use AsAction;
-   public function handle()
-   {
-      Notification::make()
-         ->title(_actions('saved_settings'))
-         ->success()
-         ->send();
-   }
+    use AsAction;
+
+    public function handle()
+    {
+        Notification::make()
+            ->title(_actions('saved_settings'))
+            ->success()
+            ->send();
+    }
 }
