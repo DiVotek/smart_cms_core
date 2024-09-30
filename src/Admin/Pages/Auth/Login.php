@@ -65,10 +65,10 @@ class Login extends AuthLogin
                 $this->makeForm()
                     ->schema([
                         TextInput::make('username')
-                            ->label(__('Username'))
+                            ->label(_fields('username'))
                             ->required(),
                         TextInput::make('password')
-                            ->label(__('Password'))
+                            ->label(_fields('password'))
                             ->password()
                             ->required(),
                         $this->getRememberFormComponent(),

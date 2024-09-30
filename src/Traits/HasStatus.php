@@ -51,21 +51,6 @@ trait HasStatus
         $table->tinyInteger('status')->default($defaultStatus)->after('id')->index();
     }
 
-    public function statusFilamentField(): Toggle
-    {
-        return Toggle::make('status')
-            ->label(__('Status'))
-            ->helperText(__('Enable or disable this record.'))
-            ->default(1);
-    }
-
-    public function statusFilamentColumn(): ToggleColumn
-    {
-        return ToggleColumn::make('status')
-            ->label(__('Status'))
-            ->sortable();
-    }
-
     public function fakeStatus(): int
     {
         return rand(0, 1);

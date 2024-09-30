@@ -30,10 +30,11 @@ class TranslatableRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('value')
-                    ->label(__('Name'))
+                    ->label(_fields('name'))
                     ->required()
                     ->maxLength(255),
                 Select::make('language_id')
+                    ->label(_fields('language'))
                     ->hiddenOn('edit')
                     ->disabledOn('edit')
                     ->options(Language::query()->whereIn('id', $languages)->pluck('name', 'id')->toArray())->native(false)
@@ -51,8 +52,8 @@ class TranslatableRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('value')
             ->columns([
-                Tables\Columns\TextColumn::make('value')->label(__('Name')),
-                Tables\Columns\TextColumn::make('language.name')->label(__('Language')),
+                Tables\Columns\TextColumn::make('value')->label(_columns('name')),
+                Tables\Columns\TextColumn::make('language.name')->label(_columns('language')),
             ])
             ->filters([
                 //

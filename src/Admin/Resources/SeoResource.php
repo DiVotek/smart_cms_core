@@ -30,7 +30,7 @@ class SeoResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return strans('admin.seo');
+        return _nav('seo');
     }
 
     public static function getNavigationBadge(): ?string
@@ -40,12 +40,12 @@ class SeoResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return strans('admin.seo');
+        return _nav('seo_model');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return strans('admin.seo');
+        return _nav('seo_models');
     }
 
     public static function form(Form $form): Form
@@ -60,20 +60,44 @@ class SeoResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     $language,
-                    TextInput::make('title')->required()->translatable()->rules('string', 'max:255')->characterLimit(255)->maxLength(255),
-                    TextInput::make('heading')->translatable()->rules('string', 'max:255')->characterLimit(255)->maxLength(255),
-                    Textarea::make('description')->required()->rules('string', 'max:255')->translatable()->characterLimit(255)->maxLength(255)->label(__('Meta Description')),
-                    RichEditor::make('summary')->translatable()->rules('string', 'max:500')->maxLength(500)->toolbarButtons([
-                        'blockquote',
-                        'bold',
-                        'italic',
-                        'redo',
-                        'strike',
-                        'underline',
-                        'undo',
-                        'codeBlock',
-                    ]),
-                    RichEditor::make('content')->translatable()->rules('string'),
+                    TextInput::make('title')
+                        ->label(_fields('title'))
+                        ->required()
+                        ->translatable()
+                        ->rules('string', 'max:255')
+                        ->characterLimit(255)
+                        ->maxLength(255),
+                    TextInput::make('heading')
+                        ->label(_fields('heading'))
+                        ->translatable()
+                        ->rules('string', 'max:255')
+                        ->characterLimit(255)
+                        ->maxLength(255),
+                    Textarea::make('description')
+                        ->label(_fields('description'))
+                        ->required()
+                        ->rules('string', 'max:255')
+                        ->translatable()
+                        ->characterLimit(255)
+                        ->maxLength(255),
+                    RichEditor::make('summary')
+                        ->label(_fields('summary'))
+                        ->translatable()
+                        ->rules('string', 'max:500')
+                        ->maxLength(500)->toolbarButtons([
+                            'blockquote',
+                            'bold',
+                            'italic',
+                            'redo',
+                            'strike',
+                            'underline',
+                            'undo',
+                            'codeBlock',
+                        ]),
+                    RichEditor::make('content')
+                        ->label(_fields('content'))
+                        ->translatable()
+                        ->rules('string'),
                 ]),
             ])
             ->columns(1);
@@ -82,11 +106,11 @@ class SeoResource extends Resource
     public static function table(Table $table): Table
     {
         $columns = [
-            TextColumn::make('title'),
-            TextColumn::make('description')->limit(50),
+            TextColumn::make('title')->label(_columns('title'))->limit(50),
+            TextColumn::make('description')->label(_columns('description'))->limit(50),
         ];
         if (is_multi_lang()) {
-            $columns[] = TextColumn::make('language.name')->label('Language');
+            $columns[] = TextColumn::make('language.name')->label(_columns('language'));
         }
         $columns[] = TableSchema::getUpdatedAt();
 
@@ -97,9 +121,7 @@ class SeoResource extends Resource
                 }
             })
             ->columns($columns)
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -133,59 +155,59 @@ class SeoResource extends Resource
                             ->schema([
                                 Section::make('')->schema([
                                     Toggle::make('indexation')
-                                        ->label(__('Indexation'))
-                                        ->helperText(__('Enable or disable indexation for search engines'))
+                                        ->label(_actions('indexation'))
+                                        ->helperText(_hints('Enable or disable indexation for search engines'))
                                         ->required(),
                                     TextInput::make('gtm')
-                                        ->label(__('Google Tag Manager Id'))
-                                        ->helperText(__('Enter your Google Tag Manager Id'))
+                                        ->label(_actions('google_tag'))
+                                        ->helperText(_hints('Enter your Google Tag Manager Id'))
                                         ->string(),
-                                    Fieldset::make(__('Title'))
+                                    Fieldset::make(_actions('title'))
                                         ->schema([
                                             TextInput::make('title.prefix')
-                                                ->label(__('Prefix'))
+                                                ->label(_actions('prefix'))
                                                 ->string()
-                                                ->helperText(__('Enter your title prefix')),
+                                                ->helperText(_hints('Enter your title prefix')),
                                             TextInput::make('title.suffix')
-                                                ->label(__('Suffix'))
-                                                ->helperText(__('Enter your title suffix'))
+                                                ->label(_actions('suffix'))
+                                                ->helperText(_hints('Enter your title suffix'))
                                                 ->string(),
                                         ]),
-                                    Fieldset::make(__('Description'))
+                                    Fieldset::make(_actions('description'))
                                         ->schema([
                                             TextInput::make('description.prefix')
-                                                ->label(__('Prefix'))
+                                                ->label(_actions('prefix'))
                                                 ->string()
-                                                ->helperText(__('Enter your description prefix')),
+                                                ->helperText(_hints('Enter your description prefix')),
                                             TextInput::make('description.suffix')
-                                                ->label(__('Suffix'))
-                                                ->helperText(__('Enter your description suffix'))
+                                                ->label(_actions('suffix'))
+                                                ->helperText(_hints('Enter your description suffix'))
                                                 ->string(),
                                         ]),
                                     Schema::getRepeater('meta')
-                                        ->label(__('Custom meta tags'))
+                                        ->label(_actions('custom_meta'))
                                         ->schema([
                                             TextInput::make('name')
-                                                ->label(__('Name'))
+                                                ->label(_actions('name'))
                                                 ->string(),
                                             TextInput::make('description')
-                                                ->label(__('Description'))
+                                                ->label(_actions('description'))
                                                 ->string(),
                                             Textarea::make('meta_tags')
-                                                ->label(__('Meta tags')),
+                                                ->label(_actions('meta_tags')),
                                         ])
                                         ->default([]),
                                     Schema::getRepeater('scripts')
-                                        ->label(__('Custom scripts'))
+                                        ->label(_actions('custom_scripts'))
                                         ->schema([
                                             TextInput::make('name')
-                                                ->label(__('Name'))
+                                                ->label(_actions('name'))
                                                 ->string(),
                                             TextInput::make('description')
-                                                ->label(__('Description'))
+                                                ->label(_actions('description'))
                                                 ->string(),
                                             Textarea::make('scripts')
-                                                ->label(__('Scripts')),
+                                                ->label(_actions('scripts')),
                                         ])
                                         ->default([]),
                                 ]),

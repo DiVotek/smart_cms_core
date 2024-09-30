@@ -1,7 +1,6 @@
 # This is my package core
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/smart-cms/core.svg?style=flat-square)](https://packagist.org/packages/smart-cms/core)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/smart-cms/core/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/smart-cms/core/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/smart-cms/core/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/smart-cms/core/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/smart-cms/core.svg?style=flat-square)](https://packagist.org/packages/smart-cms/core)
 

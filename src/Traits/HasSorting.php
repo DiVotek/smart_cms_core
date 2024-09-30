@@ -35,25 +35,4 @@ trait HasSorting
         return property_exists($this, 'sortingColumn') ? $this->sortingColumn : 'sorting';
     }
 
-    /**
-     * @return void
-     */
-    public function sortingMigrationField(Blueprint $table)
-    {
-        $table->integer($this->getSortingColumn())->default(0)->index();
-    }
-
-    public function sortingFilamentField(): TextInput
-    {
-        return TextInput::make($this->getSortingColumn())
-            ->label(__('Sorting'))
-            ->helperText(__('The sorting for this record'))
-            ->numeric()
-            ->default(0);
-    }
-
-    public function fakeSorting(): int
-    {
-        return rand(0, 10);
-    }
 }

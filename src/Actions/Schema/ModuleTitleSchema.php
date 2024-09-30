@@ -16,14 +16,14 @@ class ModuleTitleSchema
     public function handle(): array
     {
         $fields = [
-            TextInput::make('value.'.main_lang().'.title')->label('Title'),
+            TextInput::make('value.' . main_lang() . '.title')->label(_fields('title'))->required(),
         ];
         if (is_multi_lang()) {
             foreach (get_active_languages() as $lang) {
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $fields[] = TextInput::make('value.'.$lang->slug.'.title')->label('Title '.$lang->name);
+                $fields[] = TextInput::make('value.' . $lang->slug . '.title')->label(_fields('title') . $lang->name);
             }
         }
 
@@ -31,27 +31,18 @@ class ModuleTitleSchema
             Fieldset::make(__('Heading'))->schema([
                 ...$fields,
                 Group::make([
-                    Toggle::make('value.use_page_heading')->label(__('Use page heading'))->default(true)->afterStateUpdated(function ($state, callable $set) {
+                    Toggle::make('value.use_page_heading')->label(_fields('use_page_heading'))->default(true)->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
                             $set('value.use_page_name', false);
                         }
                     }),
-                    Toggle::make('value.use_page_name')->label(__('Use page name'))->default(false)->reactive()->afterStateUpdated(function ($state, callable $set) {
+                    Toggle::make('value.use_page_name')->label(_fields('use_page_name'))->default(false)->reactive()->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
                             $set('value.use_page_heading', false);
                         }
                     }),
                 ])->columns(2),
                 Group::make([
-                    // Radio::make('value.heading_size')
-                    //     ->options([
-                    //         'text-sm' => 'Small',
-                    //         'text-md' => 'Medium',
-                    //         'text-lg' => 'Large',
-                    //     ])
-                    //     ->default('md')
-                    //     ->required()
-                    //     ->inline(),
                     Radio::make('value.heading_type')
                         ->options([
                             'h1' => 'H1',

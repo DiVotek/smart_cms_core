@@ -10,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use SmartCms\Core\Admin\Resources\AdminResource\Pages;
 use SmartCms\Core\Models\Admin;
+use SmartCms\Core\Services\Schema;
 
 class AdminResource extends Resource
 {
@@ -17,7 +18,7 @@ class AdminResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return strans('admin.system');
+        return _nav('system');
     }
 
     public static function getNavigationBadge(): ?string
@@ -27,12 +28,12 @@ class AdminResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return strans('admin.admin');
+        return _nav('admin');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return strans('admin.admins');
+        return _nav('admins');
     }
 
     public static function form(Form $form): Form
@@ -41,11 +42,14 @@ class AdminResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Forms\Components\TextInput::make('username')
+                    ->label(_fields('username'))
                         ->required()->unique(),
                     Forms\Components\TextInput::make('email')
+                        ->label(_fields('email'))
                         ->email()->unique()
                         ->required(),
                     Forms\Components\TextInput::make('password')
+                        ->label(_fields('password'))
                         ->password()
                         ->required(),
                 ]),
@@ -57,17 +61,17 @@ class AdminResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('username')
+                    ->label(_columns('username'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(_columns('email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(_columns('created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Schema::getUpdatedAt(),
             ])
             ->filters([])
             ->actions([

@@ -24,6 +24,7 @@ use SmartCms\Core\Traits\HasTable;
  * @property \DateTime $updated_at The date and time when the model was last updated.
  * @property Page $parent The parent of the model.
  * @property Page[] $children The children of the model.
+ * @property bool $is_nav The navigation status of the model.
  */
 class Page extends BaseModel
 {
@@ -40,6 +41,7 @@ class Page extends BaseModel
         'status',
         'views',
         'parent_id',
+        'is_nav',
     ];
 
     public static function getDb(): string

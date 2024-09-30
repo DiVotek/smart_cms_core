@@ -1,3 +1,3 @@
 # Changelog
 
-All notable changes to `core` will be documented in this file.
+All notable changes to `smart-cms/core` will be documented in this file.

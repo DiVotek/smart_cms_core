@@ -12,6 +12,7 @@ class Profile extends EditProfile
     {
         return $form->schema([
             TextInput::make('username')
+                ->label(_fields('username'))
                 ->required()
                 ->maxLength(255)
                 ->unique(ignoreRecord: true),

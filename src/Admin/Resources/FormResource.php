@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use SmartCms\Core\Admin\Resources\FormResource\Pages;
 use SmartCms\Core\Models\Form as ModelForm;
 use SmartCms\Core\Services\Helper;
+use SmartCms\Core\Services\Schema;
 
 class FormResource extends Resource
 {
@@ -25,7 +26,7 @@ class FormResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Communication');
+        return _nav('communication');
     }
 
     public static function form(Form $form): Form
@@ -33,35 +34,37 @@ class FormResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
-                    Forms\Components\TextInput::make('name')
-                        ->required()
-                        ->maxLength(255),
+                    Schema::getName(true)->maxLength(255),
                     Repeater::make('fields')
                         ->schema([
-                            Forms\Components\Select::make('type')->options([
-                                'text' => 'Text',
-                                'textarea' => 'Textarea',
-                                'select' => 'Select',
-                                'radio' => 'Radio',
-                                'checkbox' => 'Checkbox',
-                                'file' => 'File',
-                                'date' => 'Date',
-                                'email' => 'Email',
-                                'number' => 'Number',
-                                // 'password' => 'Password',
-                                'tel' => 'Tel',
-                                'url' => 'Url',
-                            ])->required()->native(false)->searchable(true)->live(debounce: 250),
+                            Forms\Components\Select::make('type')
+                                ->label(_fields('field_type'))
+                                ->options([
+                                    'text' => 'Text',
+                                    'textarea' => 'Textarea',
+                                    'select' => 'Select',
+                                    'radio' => 'Radio',
+                                    'checkbox' => 'Checkbox',
+                                    'file' => 'File',
+                                    'date' => 'Date',
+                                    'email' => 'Email',
+                                    'number' => 'Number',
+                                    // 'password' => 'Password',
+                                    'tel' => 'Tel',
+                                    'url' => 'Url',
+                                ])->required()->native(false)->searchable(true)->live(debounce: 250),
                             Textarea::make('options')
                                 ->nullable()
-                                ->rows(3)->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                                ->rows(3)->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
                             Forms\Components\TextInput::make('name')
+                                ->label(_fields('name'))
                                 ->required()
                                 ->maxLength(255),
                             // Forms\Components\TextInput::make('label')
                             //     ->required()
                             //     ->maxLength(255),
                             Forms\Components\Toggle::make('required')
+                                ->label(_fields('required'))
                                 ->default(false),
                             // Forms\Components\TextInput::make('placeholder')
                             //     ->required()
@@ -69,15 +72,18 @@ class FormResource extends Resource
 
                         ]),
                 ]),
-                Section::make(__('Additional'))->schema([
+                Section::make(_fields('additional'))->schema([
                     Forms\Components\TextInput::make('html_id')
+                        ->label(_fields('html_id'))
                         ->required()
                         ->default('')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('class')
+                        ->label(_fields('html_class'))
                         ->default('')
                         ->maxLength(255),
                     Forms\Components\Select::make('style')
+                        ->label(_fields('style'))
                         ->options(Helper::getFormTemplates())
                         ->default(1)
                         ->required(),
@@ -90,20 +96,27 @@ class FormResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
+                    ->label(_columns('code'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(_columns('name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('html_id')
+                    ->label(_columns('html_id'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('class')
+                    ->label(_columns('class'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('style')
+                    ->label(_columns('style'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(_columns('created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(_columns('updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

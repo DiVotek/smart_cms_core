@@ -47,27 +47,6 @@ class DesignSetting extends BaseSettings
                                 ->searchable(),
                             Schema::getLinkBuilder(config('settings.menu.footer')),
                         ]),
-                    // Tabs\Tab::make(__('Cookie'))
-                    //    ->schema([
-                    //       Select::make(config('settings.design.cookie'))
-                    //          ->label(__('Design'))
-                    //          ->options(Helper::getTemplateByComponent('Layout/Topbar'))
-                    //          ->native(false)
-                    //          ->searchable(),
-                    //       Toggle::make(config('settings.cookie'))
-                    //          ->label(__('Enable Cookies')),
-                    //    ]),
-                    // Tabs\Tab::make(__('Scrolltop'))
-                    //     ->schema([
-                    //         Radio::make(config('settings.scroll_top.position'))
-                    //             ->label(__('Position'))
-                    //             ->options([
-                    //                 'left' => 'Left',
-                    //                 'right' => 'Right',
-                    //             ])->default('right'),
-                    //         TextInput::make(config('settings.scroll_top.margin'))->numeric()->label(__('Margin'))->default(0),
-                    //         Toggle::make(config('settings.preloader.status'))->label(__('Preloader'))->default(0),
-                    //     ]),
                 ]),
         ];
     }

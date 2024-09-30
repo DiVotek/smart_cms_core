@@ -31,7 +31,7 @@ class TemplateSectionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return strans('admin.design-template');
+        return _nav('design-template');
     }
 
     public static function getNavigationBadge(): ?string
@@ -56,8 +56,7 @@ class TemplateSectionResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
-                    Forms\Components\TextInput::make('name')
-                        ->required(),
+                    Schema::getName(true)->maxLength(255),
                     Hidden::make('type')->default(''),
                     // Fieldset::make()->schema([
                     //     Schema::getStatus(),
@@ -65,14 +64,15 @@ class TemplateSectionResource extends Resource
                     //         ->required(),
                     // ])->columns(2),
                     Radio::make('design')
+                        ->label(_fields('design'))
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn (Radio $component) => $component
+                        ->afterStateUpdated(fn(Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
                             ->fill())->live(),
-                    Section::make(__('Component settings'))
+                    Section::make(_fields('component_settings'))
                         ->schema(function (Get $get): array {
                             $class = $get('design');
                             if (! $class) {
@@ -92,13 +92,9 @@ class TemplateSectionResource extends Resource
             ->columns([
                 TableSchema::getName(),
                 TableSchema::getStatus(),
-                // Tables\Columns\IconColumn::make('locked')
-                //     ->boolean(),
                 TableSchema::getUpdatedAt(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
                 Schema::helpAction('TemplateSection help'),
             ])

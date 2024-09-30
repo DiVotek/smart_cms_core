@@ -26,17 +26,17 @@ class ContactFormResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Communication');
+        return _nav('communication');
     }
 
     public static function getModelLabel(): string
     {
-        return __('Contact form');
+        return _nav('contact_form');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Contact forms');
+        return _nav('contact_forms');
     }
 
     public static function form(Form $form): Form
@@ -45,6 +45,7 @@ class ContactFormResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Select::make('status')
+                        ->label(_fields('status'))
                         ->options(fn () => ContactForm::getStatuses()),
                     KeyValue::make('data')->addable(false)->deletable(false)->label(null)->editableKeys(false),
                 ]),
@@ -57,6 +58,7 @@ class ContactFormResource extends Resource
             ->columns([
                 TextColumn::make('form.name'),
                 IconColumn::make('status')
+                    ->label(_columns('status'))
                     ->icon(fn (int $state): string => match ($state) {
                         ContactForm::STATUS_NEW => 'heroicon-o-bell-alert',
                         ContactForm::STATUS_VIEWED => 'heroicon-o-eye',

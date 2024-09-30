@@ -36,7 +36,7 @@ class TranslationResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('System');
+        return _nav('system');
     }
 
     public static function getNavigationBadge(): ?string
@@ -61,9 +61,11 @@ class TranslationResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Forms\Components\TextInput::make('key')
+                        ->label(_fields('key'))
                         ->required(),
                     $language,
                     Forms\Components\TextInput::make('value')
+                        ->label(_fields('value'))
                         ->required(),
                 ]),
             ])->columns(1);
@@ -79,11 +81,14 @@ class TranslationResource extends Resource
             })
             ->columns([
                 Tables\Columns\TextColumn::make('key')
+                    ->label(_columns('key'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('language.name')
                     ->numeric()
+                    ->label(_columns('language'))
                     ->sortable()->hidden(! is_multi_lang()),
                 Tables\Columns\TextInputColumn::make('value')
+                    ->label(_columns('value'))
                     ->searchable(),
                 TableSchema::getUpdatedAt(),
             ])
@@ -96,14 +101,14 @@ class TranslationResource extends Resource
             ])
             ->headerActions([
                 Schema::helpAction('Translation help'),
-                Tables\Actions\Action::make('Clear cache')->action(function () {
+                Tables\Actions\Action::make(_actions('clear_cache'))->action(function () {
                     cache()->forget('translations');
                     Notification::make()
                         ->title(__('Translations cache was cleared'))
                         ->success()
                         ->send();
                 }),
-                Tables\Actions\Action::make(__('Settings'))
+                Tables\Actions\Action::make(_actions('settings'))
                     ->slideOver()
                     ->icon('heroicon-o-cog')
                     ->fillForm(function (): array {
@@ -115,14 +120,13 @@ class TranslationResource extends Resource
                         setting([
                             config('settings.add_translations') => $data['is_translates'],
                         ]);
-                        Setting::updatedSettings();
                     })
                     ->form(function ($form) {
                         return $form
                             ->schema([
                                 Toggle::make('is_translates')
-                                    ->label(__('Add translations'))
-                                    ->helperText(__('Enable or disable adding translations from front. This action reduce performance'))
+                                    ->label(_actions('add_translate'))
+                                    ->helperText(_hints('add_translate'))
                                     ->default(setting(config('settings.add_translations'), [])),
                             ]);
                     }),

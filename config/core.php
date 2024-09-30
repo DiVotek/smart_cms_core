@@ -1,10 +1,6 @@
 <?php
 
 return [
-    'database_table_name' => 'settings',
-
-    'cache_key' => 'smart_cms_settings_',
-
     'database_table_prefix' => 'smart_cms_',
 
     'mailer' => [
@@ -59,4 +55,5 @@ return [
         'margin' => 'scroll_top_margin',
         'position' => 'scroll_top_position',
     ],
+
 ];
