@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Models;
 
-
-
 /**
  * class Translation
  *

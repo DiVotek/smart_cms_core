@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Models;
 
-
 /**
  * class ContactForm
  *

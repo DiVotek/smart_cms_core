@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use SmartCms\Core\Traits\HasBreadcrumbs;
 use SmartCms\Core\Traits\HasRoute;
 use SmartCms\Core\Traits\HasStatus;
