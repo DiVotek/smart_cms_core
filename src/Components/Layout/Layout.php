@@ -76,7 +76,6 @@ class Layout extends Component
                     @vite($templateCss)
                     @vite('resources/js/app.js')
                     <body class="antialiased @handheld mobile @endif">
-                            @livewire('preloader')
                             <x-header />
                             <main class="min-h-80">
                                 @yield('content')

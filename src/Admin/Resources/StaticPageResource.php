@@ -35,12 +35,12 @@ class StaticPageResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return _nav('page');
+        return _nav('model_page');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return _nav('pages');
+        return _nav('model_pages');
     }
 
     public static function form(Form $form): Form
@@ -79,25 +79,24 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/'.$record->slug;
+                        return '/' . $record->slug;
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')
             ->headerActions([
                 Schema::helpAction('Static page help text'),
                 Tables\Actions\Action::make('Template')
+                    ->label(_actions('template'))
                     ->slideOver()
                     ->icon('heroicon-o-cog')
                     ->fillForm(function (): array {
                         return [
-                            'template' => setting(config('settings.static_page.template'), []),
-                            'design' => setting(config('settings.static_page.design'), 'default'),
+                            'template' => _settings('static_page.template', []),
                         ];
                     })
                     ->action(function (array $data): void {
                         setting([
-                            config('settings.static_page.template') => $data['template'],
-                            config('settings.static_page.design') => $data['design'],
+                            sconfig('static_page.template') => $data['template'],
                         ]);
                     })
                     ->form(function ($form) {

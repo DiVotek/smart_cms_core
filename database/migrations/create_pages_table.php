@@ -7,16 +7,13 @@ use SmartCms\Core\Models\Page;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create(sconfig('database_table_prefix').Page::getDb(), function (Blueprint $table) {
+        Schema::create(sconfig('database_table_prefix') . Page::getDb(), function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable()->index();
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('slug')->unique()->index();
             $table->integer('sorting')->default(0);
             $table->string('image')->nullable();
             $table->boolean('status')->default(1);

@@ -51,8 +51,8 @@ class SmartCmsPanelManager extends PanelProvider
         $widgets = [];
 
         FilamentAsset::register([
-            Css::make('custom-stylesheet', asset('/filament.css')),
-            Js::make('custom-script', asset('/filament.js')),
+            Css::make('custom-stylesheet', asset('/admin/index.css')),
+            JS::make('custom-script', asset('/admin/index.js')),
         ]);
 
         return $panel
@@ -74,25 +74,25 @@ class SmartCmsPanelManager extends PanelProvider
             ->font('Roboto')
             ->darkMode(false)
             ->brandName('SmartCms')
-           // ->brandLogo(fn() => view('logo'))
+            // ->brandLogo(fn() => view('logo'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->pages([
                 \Filament\Pages\Dashboard::class,
             ])
-           // ->navigationGroups([
-           //    NavigationGroup::make(fn() => __('Sales'))->icon('heroicon-m-clipboard-document-list')->collapsed(true)->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
-           //    NavigationGroup::make(fn() => __('Promotions'))->icon('heroicon-m-receipt-percent')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Catalog'))->icon('heroicon-m-building-storefront')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Filter'))->icon('heroicon-m-funnel')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Communication'))->icon('heroicon-m-megaphone')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Blog'))->icon('heroicon-m-academic-cap')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Info pages'))->icon('heroicon-m-book-open')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Search'))->icon('heroicon-m-magnifying-glass')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Modules'))->icon('heroicon-m-puzzle-piece')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('SEO'))->icon('heroicon-m-globe-alt')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('Design/Template'))->icon('heroicon-m-light-bulb')->collapsed(true),
-           //    NavigationGroup::make(fn() => __('System'))->icon('heroicon-m-cog-6-tooth')->collapsed(true)->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
-           // ])
+            // ->navigationGroups([
+            //    NavigationGroup::make(fn() => __('Sales'))->icon('heroicon-m-clipboard-document-list')->collapsed(true)->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
+            //    NavigationGroup::make(fn() => __('Promotions'))->icon('heroicon-m-receipt-percent')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Catalog'))->icon('heroicon-m-building-storefront')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Filter'))->icon('heroicon-m-funnel')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Communication'))->icon('heroicon-m-megaphone')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Blog'))->icon('heroicon-m-academic-cap')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Info pages'))->icon('heroicon-m-book-open')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Search'))->icon('heroicon-m-magnifying-glass')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Modules'))->icon('heroicon-m-puzzle-piece')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('SEO'))->icon('heroicon-m-globe-alt')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('Design/Template'))->icon('heroicon-m-light-bulb')->collapsed(true),
+            //    NavigationGroup::make(fn() => __('System'))->icon('heroicon-m-cog-6-tooth')->collapsed(true)->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
+            // ])
             ->sidebarCollapsibleOnDesktop()
             ->widgets($widgets)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')

@@ -20,13 +20,9 @@ class Builder extends Component
     public function render(): View|Closure|string
     {
         return <<<'blade'
-                    <div class="builder">
+            <div class="builder">
                 @foreach ($template as $key => $field)
-                @if(!str_contains($field['component'], 'template'))
-                    @livewire($field['component'], ['entity' => $field['options']['entity'],'breadcrumbs' => $field['options']['breadcrumbs']],key(rand()))
-                @else
                     @include($field['component'], $parse_options($field['options']))
-                @endif
                 @endforeach
             </div>
         blade;
@@ -51,11 +47,11 @@ class Builder extends Component
                     }
                     foreach ($v as $module_key => $module_value) {
                         if (str_contains($module_key, 'image')) {
-                            $module_value = '/storage'.$module_value;
+                            $module_value = '/storage' . $module_value;
                         }
                         if (str_contains($module_key, '_')) {
                             if (str_contains($module_key, current_lang())) {
-                                $module_key = str_replace(current_lang().'_', '', $module_key);
+                                $module_key = str_replace(current_lang() . '_', '', $module_key);
                             }
                         }
                         $item[$module_key] = $module_value;
@@ -64,7 +60,7 @@ class Builder extends Component
                 }
                 $reference = array_merge($reference, [$key => $newFields]);
             } elseif (str_contains($key, 'image')) {
-                $reference[$key] = '/storage'.$option;
+                $reference[$key] = '/storage' . $option;
             } else {
                 $reference[$key] = $option;
             }

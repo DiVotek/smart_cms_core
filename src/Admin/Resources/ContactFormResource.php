@@ -56,7 +56,7 @@ class ContactFormResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('form.name'),
+                TextColumn::make('form.name')->label(_columns('form')),
                 IconColumn::make('status')
                     ->label(_columns('status'))
                     ->icon(fn (int $state): string => match ($state) {

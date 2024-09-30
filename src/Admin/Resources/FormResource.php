@@ -14,6 +14,7 @@ use SmartCms\Core\Admin\Resources\FormResource\Pages;
 use SmartCms\Core\Models\Form as ModelForm;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
+use SmartCms\Core\Services\TableSchema;
 
 class FormResource extends Resource
 {
@@ -27,6 +28,15 @@ class FormResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return _nav('communication');
+    }
+    public static function getModelLabel(): string
+    {
+        return _nav('form');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return _nav('forms');
     }
 
     public static function form(Form $form): Form
@@ -49,17 +59,13 @@ class FormResource extends Resource
                                     'date' => 'Date',
                                     'email' => 'Email',
                                     'number' => 'Number',
-                                    // 'password' => 'Password',
                                     'tel' => 'Tel',
                                     'url' => 'Url',
                                 ])->required()->native(false)->searchable(true)->live(debounce: 250),
                             Textarea::make('options')
                                 ->nullable()
-                                ->rows(3)->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
-                            Forms\Components\TextInput::make('name')
-                                ->label(_fields('name'))
-                                ->required()
-                                ->maxLength(255),
+                                ->rows(3)->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                            Schema::getName(true)->maxLength(255),
                             // Forms\Components\TextInput::make('label')
                             //     ->required()
                             //     ->maxLength(255),
@@ -75,7 +81,6 @@ class FormResource extends Resource
                 Section::make(_fields('additional'))->schema([
                     Forms\Components\TextInput::make('html_id')
                         ->label(_fields('html_id'))
-                        ->required()
                         ->default('')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('class')
@@ -98,9 +103,7 @@ class FormResource extends Resource
                 Tables\Columns\TextColumn::make('code')
                     ->label(_columns('code'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->label(_columns('name'))
-                    ->searchable(),
+                TableSchema::getName(),
                 Tables\Columns\TextColumn::make('html_id')
                     ->label(_columns('html_id'))
                     ->searchable(),
@@ -110,11 +113,6 @@ class FormResource extends Resource
                 Tables\Columns\TextColumn::make('style')
                     ->label(_columns('style'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label(_columns('created_at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(_columns('updated_at'))
                     ->dateTime()

@@ -19,4 +19,5 @@ return [
     'language' => 'Language',
     'key' => 'Key',
     'value' => 'Value',
+    'form' => 'Form',
 ];

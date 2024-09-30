@@ -164,46 +164,6 @@ class Helper
         return $types;
     }
 
-    public static function getPaymentOptions(int $id): array
-    {
-        $payments = module_path('Order', 'Services/Payment');
-        $files = File::files($payments);
-        foreach ($files as $file) {
-            $className = 'Modules\\Order\\Services\\Payment\\'.$file->getFilenameWithoutExtension();
-            if (! class_exists($className)) {
-                require_once $file->getPathname();
-            }
-            if (class_exists($className)) {
-                $payment = new $className;
-                if ($payment->getId() == $id) {
-                    return $payment->getSchema();
-                }
-            }
-        }
-
-        return [];
-    }
-
-    public static function getDeliveryOptions(int $id): array
-    {
-        $deliveries = module_path('Order', 'Services/Delivery');
-        $files = File::files($deliveries);
-        foreach ($files as $file) {
-            $className = 'Modules\\Order\\Services\\Delivery\\'.$file->getFilenameWithoutExtension();
-            if (! class_exists($className)) {
-                require_once $file->getPathname();
-            }
-            if (class_exists($className)) {
-                $delivery = new $className;
-                if ($delivery->getId() == $id) {
-                    return $delivery->getSchema();
-                }
-            }
-        }
-
-        return [];
-    }
-
     public static function getLayoutTemplate($isFooter = false): array
     {
         $files = glob(base_path('template/layout/*.blade.php'));

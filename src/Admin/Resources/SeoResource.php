@@ -61,27 +61,27 @@ class SeoResource extends Resource
                 Section::make('')->schema([
                     $language,
                     TextInput::make('title')
-                        ->label(_fields('title'))
+                        ->label(_fields('seo_title'))
                         ->required()
                         ->translatable()
                         ->rules('string', 'max:255')
                         ->characterLimit(255)
                         ->maxLength(255),
                     TextInput::make('heading')
-                        ->label(_fields('heading'))
+                        ->label(_fields('seo_heading'))
                         ->translatable()
                         ->rules('string', 'max:255')
                         ->characterLimit(255)
                         ->maxLength(255),
                     Textarea::make('description')
-                        ->label(_fields('description'))
+                        ->label(_fields('seo_description'))
                         ->required()
                         ->rules('string', 'max:255')
                         ->translatable()
                         ->characterLimit(255)
                         ->maxLength(255),
                     RichEditor::make('summary')
-                        ->label(_fields('summary'))
+                        ->label(_fields('seo_summary'))
                         ->translatable()
                         ->rules('string', 'max:500')
                         ->maxLength(500)->toolbarButtons([
@@ -95,7 +95,7 @@ class SeoResource extends Resource
                             'codeBlock',
                         ]),
                     RichEditor::make('content')
-                        ->label(_fields('content'))
+                        ->label(_fields('seo_content'))
                         ->translatable()
                         ->rules('string'),
                 ]),
@@ -132,22 +132,22 @@ class SeoResource extends Resource
                     ->modal()
                     ->fillForm(function (): array {
                         return [
-                            'indexation' => setting(config('settings.indexation')),
-                            'gtm' => setting(config('settings.gtm')),
-                            'title' => setting(config('settings.title_mod')),
-                            'description' => setting(config('settings.description_mod')),
-                            'meta' => setting(config('settings.custom_meta')),
-                            'scripts' => setting(config('settings.custom_scripts')),
+                            'indexation' => _settings('indexation'),
+                            'gtm' => _settings('gtm'),
+                            'title' => _settings('title_mod'),
+                            'description' => _settings('description_mod'),
+                            'meta' => _settings('custom_meta'),
+                            'scripts' => _settings('custom_scripts'),
                         ];
                     })
                     ->action(function (array $data): void {
                         setting([
-                            config('settings.indexation') => $data['indexation'] ?? false,
-                            config('settings.gtm') => $data['gtm'] ?? '',
-                            config('settings.title_mod') => $data['title'] ?? [],
-                            config('settings.description_mod') => $data['description'] ?? [],
-                            config('settings.custom_meta') => $data['meta'] ?? [],
-                            config('settings.custom_scripts') => $data['scripts'] ?? [],
+                            sconfig('indexation') => $data['indexation'] ?? false,
+                            sconfig('gtm') => $data['gtm'] ?? '',
+                            sconfig('title_mod') => $data['title'] ?? [],
+                            sconfig('description_mod') => $data['description'] ?? [],
+                            sconfig('custom_meta') => $data['meta'] ?? [],
+                            sconfig('custom_scripts') => $data['scripts'] ?? [],
                         ]);
                     })
                     ->form(function ($form) {
@@ -155,59 +155,59 @@ class SeoResource extends Resource
                             ->schema([
                                 Section::make('')->schema([
                                     Toggle::make('indexation')
-                                        ->label(_actions('indexation'))
-                                        ->helperText(_hints('Enable or disable indexation for search engines'))
+                                        ->label(_fields('indexation'))
+                                        ->helperText(_hints('indexation'))
                                         ->required(),
                                     TextInput::make('gtm')
-                                        ->label(_actions('google_tag'))
-                                        ->helperText(_hints('Enter your Google Tag Manager Id'))
+                                        ->label(_fields('google_tag'))
+                                        ->helperText(_hints('gtm'))
                                         ->string(),
-                                    Fieldset::make(_actions('title'))
+                                    Fieldset::make(_fields('title'))
                                         ->schema([
                                             TextInput::make('title.prefix')
-                                                ->label(_actions('prefix'))
+                                                ->label(_fields('prefix'))
                                                 ->string()
-                                                ->helperText(_hints('Enter your title prefix')),
+                                                ->helperText(_hints('title_prefix')),
                                             TextInput::make('title.suffix')
-                                                ->label(_actions('suffix'))
-                                                ->helperText(_hints('Enter your title suffix'))
+                                                ->label(_fields('suffix'))
+                                                ->helperText(_hints('title_suffix'))
                                                 ->string(),
                                         ]),
-                                    Fieldset::make(_actions('description'))
+                                    Fieldset::make(_fields('description'))
                                         ->schema([
                                             TextInput::make('description.prefix')
-                                                ->label(_actions('prefix'))
+                                                ->label(_fields('prefix'))
                                                 ->string()
-                                                ->helperText(_hints('Enter your description prefix')),
+                                                ->helperText(_hints('description_prefix')),
                                             TextInput::make('description.suffix')
-                                                ->label(_actions('suffix'))
-                                                ->helperText(_hints('Enter your description suffix'))
+                                                ->label(_fields('suffix'))
+                                                ->helperText(_hints('description_suffix'))
                                                 ->string(),
                                         ]),
                                     Schema::getRepeater('meta')
-                                        ->label(_actions('custom_meta'))
+                                        ->label(_fields('custom_meta'))
                                         ->schema([
                                             TextInput::make('name')
-                                                ->label(_actions('name'))
+                                                ->label(_fields('name'))
                                                 ->string(),
                                             TextInput::make('description')
-                                                ->label(_actions('description'))
+                                                ->label(_fields('description'))
                                                 ->string(),
                                             Textarea::make('meta_tags')
-                                                ->label(_actions('meta_tags')),
+                                                ->label(_fields('meta_tags')),
                                         ])
                                         ->default([]),
                                     Schema::getRepeater('scripts')
-                                        ->label(_actions('custom_scripts'))
+                                        ->label(_fields('custom_scripts'))
                                         ->schema([
                                             TextInput::make('name')
-                                                ->label(_actions('name'))
+                                                ->label(_fields('name'))
                                                 ->string(),
                                             TextInput::make('description')
-                                                ->label(_actions('description'))
+                                                ->label(_fields('description'))
                                                 ->string(),
                                             Textarea::make('scripts')
-                                                ->label(_actions('scripts')),
+                                                ->label(_fields('scripts')),
                                         ])
                                         ->default([]),
                                 ]),

@@ -48,11 +48,6 @@ class PageComponent extends Component
                 @section("content")
                 @section('meta-image',asset($entity->image ?? logo()))
                 <x-core.builder :data="$template" />
-                @if (module_enabled('Order'))
-                <livewire:order::cart-component />
-                @endif
-                @livewire('notifications')
-                @livewire('feedback-component')
                 @endsection
             </x-layout>
         blade;

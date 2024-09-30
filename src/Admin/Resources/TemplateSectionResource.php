@@ -34,6 +34,16 @@ class TemplateSectionResource extends Resource
         return _nav('design-template');
     }
 
+    public static function getModelLabel(): string
+    {
+        return _nav('model_template_section');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return _nav('model_template_section');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::query()->withoutGlobalScopes()->count();

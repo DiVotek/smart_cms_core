@@ -5,7 +5,6 @@ namespace SmartCms\Core\Admin\Resources;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -38,6 +37,16 @@ class TranslationResource extends Resource
         return _nav('system');
     }
 
+    public static function getModelLabel(): string
+    {
+        return _nav('model_translation');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return _nav('model_translations');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $query = static::getModel()::query();
@@ -52,7 +61,7 @@ class TranslationResource extends Resource
     {
         $language = Hidden::make('language_id');
         if (is_multi_lang()) {
-            $language = Schema::getSelect('language_id')->relationship('language', 'name');
+            $language = Schema::getSelect('language_id')->relationship('language', 'name')->label(_fields('language'));
         }
         $language = $language->default(main_lang_id());
 
@@ -95,52 +104,25 @@ class TranslationResource extends Resource
                 SelectFilter::make('language_id')
                     ->relationship('language', 'name')->hidden(! is_multi_lang()),
             ])
-            ->actions([
-                // Tables\Actions\EditAction::make(),
-            ])
+            ->actions([])
             ->headerActions([
                 Schema::helpAction('Translation help'),
                 Tables\Actions\Action::make(_actions('clear_cache'))->action(function () {
                     cache()->forget('translations');
                     Notification::make()
-                        ->title(__('Translations cache was cleared'))
+                        ->title(_actions('cleared_tranlations'))
                         ->success()
                         ->send();
                 }),
-                Tables\Actions\Action::make(_actions('settings'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'is_translates' => setting(config('settings.add_translations'), []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            config('settings.add_translations') => $data['is_translates'],
-                        ]);
-                    })
-                    ->form(function ($form) {
-                        return $form
-                            ->schema([
-                                Toggle::make('is_translates')
-                                    ->label(_actions('add_translate'))
-                                    ->helperText(_hints('add_translate'))
-                                    ->default(setting(config('settings.add_translations'), [])),
-                            ]);
-                    }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
