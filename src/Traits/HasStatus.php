@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Traits;
 
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;

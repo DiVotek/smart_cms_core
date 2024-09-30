@@ -8,5 +8,4 @@ use SmartCms\Core\Admin\Resources\StaticPageResource;
 class EditStaticPage extends EditRecord
 {
     protected static string $resource = StaticPageResource::class;
-
 }

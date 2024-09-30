@@ -41,7 +41,6 @@ class TableSchema
             ->sortable();
     }
 
-
     public static function getViews(): TextColumn
     {
         return TextColumn::make('views')

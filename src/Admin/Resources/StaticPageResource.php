@@ -9,10 +9,10 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
-use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 
 class StaticPageResource extends Resource
 {
@@ -79,7 +79,7 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/' . $record->slug;
+                        return '/'.$record->slug;
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')

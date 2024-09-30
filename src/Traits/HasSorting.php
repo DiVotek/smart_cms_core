@@ -2,10 +2,8 @@
 
 namespace SmartCms\Core\Traits;
 
-use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Schema\Blueprint;
 
 trait HasSorting
 {
@@ -34,5 +32,4 @@ trait HasSorting
     {
         return property_exists($this, 'sortingColumn') ? $this->sortingColumn : 'sorting';
     }
-
 }

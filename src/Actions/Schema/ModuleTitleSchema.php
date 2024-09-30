@@ -16,14 +16,14 @@ class ModuleTitleSchema
     public function handle(): array
     {
         $fields = [
-            TextInput::make('value.' . main_lang() . '.title')->label(_fields('title'))->required(),
+            TextInput::make('value.'.main_lang().'.title')->label(_fields('title'))->required(),
         ];
         if (is_multi_lang()) {
             foreach (get_active_languages() as $lang) {
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $fields[] = TextInput::make('value.' . $lang->slug . '.title')->label(_fields('title') . $lang->name);
+                $fields[] = TextInput::make('value.'.$lang->slug.'.title')->label(_fields('title').$lang->name);
             }
         }
 

@@ -34,9 +34,10 @@ class TemplateRelationManager extends RelationManager
                         if ($section) {
                             $fields = $section->getFields();
                         }
+
                         return $fields;
                     })
-                    ->columnSpanFull()->key('dynamicTypeFields')
+                    ->columnSpanFull()->key('dynamicTypeFields'),
             ]);
     }
 
@@ -68,7 +69,9 @@ class TemplateRelationManager extends RelationManager
                         })
                         ->createOptionUsing(function (array $data, string $model): int {
                             $section = TemplateSection::query()->create($data);
+
                             return $section->getKey();
+
                             return [$section->id => $section->name];
                         })
                         ->multiple()
@@ -77,13 +80,13 @@ class TemplateRelationManager extends RelationManager
                         ->searchable()
                         ->label(_fields('component'))
                         ->required()
-                        ->live()
+                        ->live(),
                 ])
                     ->using(function (array $data, string $model): Model {
                         $newSection = null;
                         $sorting = $model::query()->where('entity_id', $this->ownerRecord->getKey())
-                        ->where('entity_type', $this->ownerRecord->getMorphClass())
-                        ->max('sorting');
+                            ->where('entity_type', $this->ownerRecord->getMorphClass())
+                            ->max('sorting');
                         if (isset($data['sections'])) {
 
                             foreach ($data['sections'] as $section) {
@@ -94,8 +97,9 @@ class TemplateRelationManager extends RelationManager
                                 ]);
                             }
                         }
+
                         return $newSection;
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data): array {
@@ -103,11 +107,12 @@ class TemplateRelationManager extends RelationManager
                     if ($data['value'] == null) {
                         $data['value'] = $section->value ?? [];
                     }
+
                     return $data;
                 }),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make(__('Clone'))
-                ->icon('heroicon-o-document-duplicate')
+                    ->icon('heroicon-o-document-duplicate')
                     ->hidden(function ($record) {
                         return $record->value == null;
                     })

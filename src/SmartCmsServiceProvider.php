@@ -14,8 +14,9 @@ class SmartCmsServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigrations($this->getMigrations())
-            ->hasRoute(__DIR__ . '/Routes/web.php');
+            ->hasRoute(__DIR__.'/Routes/web.php');
     }
+
     public function getMigrations(): array
     {
         return [
@@ -36,12 +37,12 @@ class SmartCmsServiceProvider extends PackageServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/auth.php',
+            __DIR__.'/../config/auth.php',
             'auth'
         );
         $this->mergeConfigFrom(
             __DIR__.'/../config/settings.php', 'settings'
         );
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
     }
 }

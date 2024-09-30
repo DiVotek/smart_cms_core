@@ -42,7 +42,7 @@ class AdminResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Forms\Components\TextInput::make('username')
-                    ->label(_fields('username'))
+                        ->label(_fields('username'))
                         ->required()->unique(),
                     Forms\Components\TextInput::make('email')
                         ->label(_fields('email'))

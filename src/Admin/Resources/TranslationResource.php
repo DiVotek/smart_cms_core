@@ -15,7 +15,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\TranslationResource\Pages;
-use SmartCms\Core\Models\Setting;
 use SmartCms\Core\Models\Translation;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;

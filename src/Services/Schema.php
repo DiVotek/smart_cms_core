@@ -149,6 +149,7 @@ class Schema
     public static function getLinkBuilder(string $name): AdjacencyList
     {
         $links = Page::query()->pluck('name', 'slug')->toArray();
+
         return AdjacencyList::make($name)->columnSpanFull()
             ->maxDepth(1)
             ->labelKey('name')
@@ -173,6 +174,7 @@ class Schema
                 }),
             ]);
     }
+
     public static function getTemplateBuilder(): Repeater
     {
         $options = TemplateSection::query()->pluck('name', 'id')->toArray();
@@ -185,7 +187,6 @@ class Schema
                 Hidden::make('value')->default([]),
             ])->default([]);
     }
-
 
     public static function getSeoAndTemplateRelationGroup(): RelationGroup
     {

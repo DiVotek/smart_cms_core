@@ -67,7 +67,7 @@ class TemplateSectionResource extends Resource
                         ->label(_fields('design'))
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn(Radio $component) => $component
+                        ->afterStateUpdated(fn (Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
