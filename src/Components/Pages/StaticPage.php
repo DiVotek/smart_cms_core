@@ -9,7 +9,7 @@ class StaticPage extends PageComponent
     public function __construct(Page $entity)
     {
         $componentKey = 'static-page-component';
-        $defaultTemplate = setting(config('settings.static_page.template'), []);
+        $defaultTemplate = _settings('static_page_template', []);
         parent::__construct($entity, $componentKey, [], $defaultTemplate);
     }
 }

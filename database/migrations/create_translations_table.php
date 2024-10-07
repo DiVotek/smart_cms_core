@@ -10,12 +10,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(sconfig('database_table_prefix').Translation::getDb(), function (Blueprint $table) {
+        Schema::create(Translation::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('key');
             $table->foreignIdFor(Language::class);
             $table->string('value')->nullable();
             $table->timestamps();
         });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(Translation::getDb());
     }
 };

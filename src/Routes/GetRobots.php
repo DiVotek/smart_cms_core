@@ -10,11 +10,11 @@ class GetRobots
 
     public function handle()
     {
-        $robots = setting(config('settings.indexation'));
+        $robots = _settings('indexation', false);
         if (! $robots) {
             $robots = "User-agent: *\nDisallow: /";
         } else {
-            $robots = "User-agent: *\nDisallow: /admin\nDisallow: /cart\nDisallow: /checkout\nDisallow: /search\nDisallow: /register\nDisallow: /reset-password\nDisallow: /*page*\nSitemap:".route('sitemap')."\nHost: ".request()->getHost();
+            $robots = "User-agent: *\nDisallow: /admin\nDisallow: /cart\nDisallow: /checkout\nDisallow: /search\nDisallow: /register\nDisallow: /reset-password\nDisallow: /*page*\nSitemap: " . route('sitemap') . "\nHost: " . request()->getHost();
         }
 
         return response($robots)->header('Content-Type', 'text/plain');

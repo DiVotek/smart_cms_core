@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(sconfig('database_table_prefix').Seo::getDb(), function (Blueprint $table) {
+        Schema::create(Seo::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('heading')->nullable();
@@ -19,7 +19,12 @@ return new class extends Migration
             $table->string('keywords')->nullable();
             $table->morphs('seoable');
             $table->unsignedBigInteger('language_id')->nullable();
-            (new Seo)->timestampMigrationFields($table);
+            $table->timestamps();
         });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(Seo::getDb());
     }
 };

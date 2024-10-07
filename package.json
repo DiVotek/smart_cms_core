@@ -1,0 +1,31 @@
+{
+   "private": true,
+   "type": "module",
+   "scripts": {
+       "dev": "vite",
+       "build": "vite build"
+   },
+   "devDependencies": {
+       "autoprefixer": "^10.4.19",
+       "axios": "^1.6.4",
+       "laravel-vite-plugin": "^1.0",
+       "postcss": "^8.4.47",
+       "postcss-hover-media-feature": "^1.0.2",
+       "prettier": "^3.2.5",
+       "prettier-plugin-blade": "^2.1.12",
+       "prettier-plugin-tailwindcss": "^0.5.14",
+       "sass": "^1.75.0",
+       "tailwindcss": "^3.4.3",
+       "vite": "^5.0"
+   },
+   "dependencies": {
+       "@alpinejs/collapse": "^3.14.0",
+       "@alpinejs/intersect": "^3.14.1",
+       "@alpinejs/mask": "^3.14.0",
+       "@googlemaps/js-api-loader": "^1.16.8",
+       "@splidejs/splide": "^4.1.4",
+       "@tailwindcss/aspect-ratio": "^0.4.2",
+       "@tailwindcss/forms": "^0.5.7",
+       "@tailwindcss/typography": "^0.5.13"
+   }
+}

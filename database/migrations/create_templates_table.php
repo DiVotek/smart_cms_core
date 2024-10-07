@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(sconfig('database_table_prefix').Template::getDb(), function (Blueprint $table) {
+        Schema::create(Template::getDb(), function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(TemplateSection::class);
             $table->morphs('entity');
@@ -18,5 +18,10 @@ return new class extends Migration
             $table->json('value')->nullable();
             $table->timestamps();
         });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(Template::getDb());
     }
 };

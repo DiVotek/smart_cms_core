@@ -23,23 +23,25 @@ class Layout extends Component
 
     public function __construct()
     {
-        $styles = setting(config('settings.styles'), []);
+        $styles = _settings('styles', []);
         $this->fonts = $styles['fonts'] ?? '/resources/schemas/fonts/roboto.css';
         $this->style = $styles['colors'] ?? '/resources/schemas/colors/yellow.css';
-        $scripts = setting(config('settings.custom_scripts'), []);
+        $scripts =  _settings('custom_scripts', []);
         if (! is_array($scripts)) {
             $scripts = [];
         }
-        $meta_tags = setting(config('settings.custom_meta'), []);
+        $meta_tags =  _settings('custom_meta', []);
         if (! is_array($meta_tags)) {
             $meta_tags = [];
         }
         $this->templateCss = File::exists(base_path('template/css/app.css')) ? 'template/css/app.css' : null;
         $this->scripts = $scripts;
         $this->meta_tags = $meta_tags;
-        $this->style = 'resources'.explode('/resources', $this->style)[1];
-        $this->fonts = 'resources'.explode('/resources', $this->fonts)[1];
-        $this->favicon = asset('/storage'.setting(config('settings.favicon'), '/favicon.ico'));
+        $this->style = '';
+        //  'resources' . explode('/resources', $this->style)[1];
+        $this->fonts = '';
+        // 'resources' . explode('/resources', $this->fonts)[1];
+        $this->favicon = asset('/storage' . _settings('favicon', '/favicon.ico'));
     }
 
     public function render(): View|Closure|string
@@ -61,7 +63,7 @@ class Layout extends Component
                         @foreach($meta_tags as $tag)
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
-                        <x-microdata.organization />
+                        <x-s::microdata.organization />
                         <meta property="og:type" content="website" />
                         <meta property="og:title" content="@yield('title')" />
                         <meta property="og:description" content="@yield('description')" />
@@ -70,20 +72,22 @@ class Layout extends Component
                         <meta property="og:site_name" content="{{company_name()}}">
                         @yield('microdata')
                     </head>
+                    @if($fonts)
                     @vite($fonts)
+                    @endif
+                    @if($style)
                     @vite($style)
+                    @endif
                     @vite('resources/css/app.css')
                     @vite($templateCss)
                     @vite('resources/js/app.js')
-                    <body class="antialiased @handheld mobile @endif">
-                            <x-header />
+                    <body class="antialiased">
+                            <x-s::layout.header />
                             <main class="min-h-80">
                                 @yield('content')
                             </main>
-                            <x-footer/>
-                            <x-core.scroll-top />
-                            <x-core.cookie />
-                            <x-core.gtm />
+                            <x-s::layout.footer/>
+                            <x-s::misc.gtm />
                             @foreach($scripts as $script)
                                 {!! $script['scripts'] !!}
                             @endforeach

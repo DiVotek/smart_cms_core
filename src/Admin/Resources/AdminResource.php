@@ -10,7 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use SmartCms\Core\Admin\Resources\AdminResource\Pages;
 use SmartCms\Core\Models\Admin;
-use SmartCms\Core\Services\Schema;
+use SmartCms\Core\Services\TableSchema;
 
 class AdminResource extends Resource
 {
@@ -71,7 +71,7 @@ class AdminResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Schema::getUpdatedAt(),
+                TableSchema::getUpdatedAt(),
             ])
             ->filters([])
             ->actions([

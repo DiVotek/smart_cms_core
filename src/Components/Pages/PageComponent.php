@@ -24,10 +24,10 @@ class PageComponent extends Component
 
     public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [])
     {
-        $titleMod = setting(config('settings.title_mod'), []);
-        $descriptionMod = setting(config('settings.description_mod'), []);
-        $this->title = ($titleMod->prefix ?? '').($entity?->seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($entity?->seo->description ?? '').($descriptionMod->suffix ?? '');
+        $titleMod = _settings('title_mod', []);
+        $descriptionMod = _settings('description_mod', []);
+        $this->title = ($titleMod->prefix ?? '') . ($entity?->seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($entity?->seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $entity?->seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $this->template = BuildTemplate::run($entity, $component, $defaultTemplate);
@@ -41,15 +41,15 @@ class PageComponent extends Component
     public function render()
     {
         return <<<'blade'
-            <x-layout>
+            <x-s::layout.layout>
                 @section("title", $title)
                 @section('description', $meta_description)
                 @section('keywords', $meta_keywords)
                 @section("content")
                 @section('meta-image',asset($entity->image ?? logo()))
-                <x-core.builder :data="$template" />
+                <x-s::layout.builder :data="$template" />
                 @endsection
-            </x-layout>
+            </x-s::layout.layout>
         blade;
     }
 }

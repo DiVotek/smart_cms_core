@@ -33,19 +33,28 @@ class Settings extends BaseSettings
             Tabs::make('Settings')
                 ->schema([
                     Tabs\Tab::make(strans('admin.general'))->schema([
-                        TextInput::make(config('settings.company_name'))->required(),
-                        Textarea::make(config('settings.company_description'))->characterLimit(255),
-                        Textarea::make(config('settings.company_slogan'))->characterLimit(120),
-                        Select::make(config('settings.main_language'))
+                        TextInput::make(sconfig('company_name'))
+                            ->label(_fields('company_name'))
+                            ->required(),
+                        Textarea::make(sconfig('company_description'))
+                            ->label(_fields('company_description'))
+                            ->characterLimit(255),
+                        Textarea::make(sconfig('company_slogan'))
+                            ->label(_fields('company_slogan'))
+                            ->characterLimit(120),
+                        Select::make(sconfig('main_language'))
+                            ->label(_fields('main_language'))
                             ->options(Language::query()->pluck('name', 'id')->toArray())
                             ->required(),
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
-                            Schema::getImage(config('settings.header_logo'))->required(),
-                            Schema::getImage(config('settings.footer_logo')),
-                            Schema::getImage(config('settings.favicon')),
-                            Schema::getRepeater(config('settings.socials'))
+                            Schema::getImage(sconfig('header_logo'))
+                            ->label(_fields('header_logo'))
+                            ->required(),
+                            Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
+                            Schema::getImage(sconfig('favicon'))->label(_fields('favicon')),
+                            Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))
                                 ->schema([
                                     TextInput::make('name')
                                         ->label(strans('admin.name'))
@@ -63,8 +72,8 @@ class Settings extends BaseSettings
                         ]),
                     Tabs\Tab::make(strans('admin.company_info'))
                         ->schema([
-                            TextInput::make('country'),
-                            Repeater::make(config('settings.company_info'))
+                            TextInput::make('country')->label(_fields('country'))->required(),
+                            Repeater::make(sconfig('company_info'))->label(_fields('company_info'))
                                 ->schema([
                                     TextInput::make('address')
                                         ->required(),
@@ -85,18 +94,18 @@ class Settings extends BaseSettings
                                 ->label(strans('admin.admin_mails'))->helperText(strans('admin.admin_mails_helper')),
                             Fieldset::make(__('Mailer'))
                                 ->schema([
-                                    TextInput::make(config('settings.mailer.host'))->label(strans('admin.host')),
-                                    TextInput::make(config('settings.mailer.port'))->label(strans('admin.port')),
-                                    TextInput::make(config('settings.mailer.username'))->label(strans('admin.username')),
-                                    TextInput::make(config('settings.mailer.password'))->label(strans('admin.password')),
-                                    Select::make(config('settings.mailer.encryption'))
+                                    TextInput::make(sconfig('mail.host'))->label(strans('admin.host')),
+                                    TextInput::make(sconfig('mail.port'))->label(strans('admin.port')),
+                                    TextInput::make(sconfig('mail.username'))->label(strans('admin.username')),
+                                    TextInput::make(sconfig('mail.password'))->label(strans('admin.password')),
+                                    Select::make(sconfig('mail.encryption'))
                                         ->label(strans('admin.encryption'))
                                         ->options([
                                             'ssl' => 'SSL',
                                             'tls' => 'TLS',
                                         ]),
-                                    TextInput::make(config('settings.mailer.from'))->label(strans('admin.from')),
-                                    TextInput::make(config('settings.mailer.name'))->label(strans('admin.name')),
+                                    TextInput::make(sconfig('mail.from'))->label(strans('admin.from')),
+                                    TextInput::make(sconfig('mail.name'))->label(strans('admin.name')),
                                 ]),
                         ]),
                 ]),

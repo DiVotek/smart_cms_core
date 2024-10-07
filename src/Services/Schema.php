@@ -175,11 +175,11 @@ class Schema
             ]);
     }
 
-    public static function getTemplateBuilder(): Repeater
+    public static function getTemplateBuilder(string $name = 'template' ): Repeater
     {
         $options = TemplateSection::query()->pluck('name', 'id')->toArray();
 
-        return self::getRepeater('template')
+        return self::getRepeater($name)
             ->hiddenLabel(true)
             ->helperText(_hints('template'))
             ->schema([

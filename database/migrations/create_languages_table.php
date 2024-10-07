@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create(sconfig('database_table_prefix').Language::getDb(), function (Blueprint $table) {
+        Schema::create(Language::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug');
@@ -20,5 +20,10 @@ return new class extends Migration
         foreach (Language::LANGUAGES as $language) {
             Language::query()->create($language);
         }
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(Language::getDb());
     }
 };

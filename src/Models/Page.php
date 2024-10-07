@@ -2,11 +2,15 @@
 
 namespace SmartCms\Core\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Traits\HasBreadcrumbs;
 use SmartCms\Core\Traits\HasRoute;
+use SmartCms\Core\Traits\HasSeo;
+use SmartCms\Core\Traits\HasSlug;
+use SmartCms\Core\Traits\HasSorting;
 use SmartCms\Core\Traits\HasStatus;
-use SmartCms\Core\Traits\HasTable;
+use SmartCms\Core\Traits\HasTemplate;
+use SmartCms\Core\Traits\HasTranslate;
+use SmartCms\Core\Traits\HasViews;
 
 /**
  * class Page
@@ -29,8 +33,13 @@ class Page extends BaseModel
 {
     use HasBreadcrumbs;
     use HasRoute;
+    use HasSeo;
+    use HasSlug;
+    use HasSorting;
     use HasStatus;
-    use HasTable;
+    use HasTranslate;
+    use HasViews;
+    use HasTemplate;
 
     protected $fillable = [
         'name',
@@ -41,14 +50,16 @@ class Page extends BaseModel
         'views',
         'parent_id',
         'is_nav',
+        'nav_settings',
+        'custom',
     ];
 
-    public static function getDb(): string
-    {
-        return 'pages';
-    }
+    protected $casts = [
+        'is_nav' => 'boolean',
+        'nav_settings' => 'array',
+        'custom' => 'array',
+    ];
 
-    protected $table = 'pages';
 
     public function getBreadcrumbs(): array
     {
@@ -60,8 +71,14 @@ class Page extends BaseModel
 
     public function route(): string
     {
-        return '/';
-        // route('page', ['slug' => $this->slug]);
+        $slugs = [];
+        $current = $this;
+
+        while ($current) {
+            array_unshift($slugs, $current->slug);
+            $current = $current->parent;
+        }
+        return tRoute('page', ['slug' => implode('/', $slugs)]);
     }
 
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use SmartCms\Core\Models\Page;
 
 if (! function_exists('logo')) {
     /**
@@ -8,15 +9,14 @@ if (! function_exists('logo')) {
      */
     function logo($isHeader = true): string
     {
-        $key = $isHeader ? 'settings.header_logo' : 'settings.footer_logo';
-
-        return setting(config($key), '');
+        $key = $isHeader ? 'header_logo' : 'footer_logo';
+        return _settings($key, '');
     }
 }
 if (! function_exists('phones')) {
     function phones(): array
     {
-        $setting = setting(config('settings.company_info'), []);
+        $setting = _settings('company_info', []);
         $setting = $setting[0] ?? [];
         $phones = $setting['phones'] ?? [];
         $newPhones = [];
@@ -32,7 +32,7 @@ if (! function_exists('phones')) {
 if (! function_exists('email')) {
     function email(): string
     {
-        $setting = setting(config('settings.company_info'), []);
+        $setting = _settings('company_info', []);
         $setting = $setting[0] ?? [];
 
         return $setting['email'] ?? '';
@@ -41,78 +41,48 @@ if (! function_exists('email')) {
 if (! function_exists('socials')) {
     function socials(): array
     {
-        return setting(config('settings.socials'), []);
+        return _settings('socials', []);
     }
 }
 if (! function_exists('template')) {
     function template(): string
     {
-        return setting(config('settings.template'), 'Base');
-    }
-}
-if (! function_exists('ceilPrice')) {
-    function ceilPrice(int|float $price): string
-    {
-        $roundFor = setting(config('settings.price_round'), 0);
-
-        return round($price, $roundFor);
+        return _settings('template', 'default');
     }
 }
 
 if (! function_exists('slogan')) {
     function slogan(): string
     {
-        return setting(config('settings.company_slogan'), '');
+        return _settings('company_slogan', '');
     }
 }
 if (! function_exists('company_name')) {
     function company_name(): string
     {
-        return setting(config('settings.company_name'), '');
+        return _settings('company_name', '');
     }
 }
 if (! function_exists('home')) {
     function home(): string
     {
         return Cache::remember('home', 3600, function () {
-            $systemPage = SystemPage::query()->where('name', 'Home')->first()->page_id ?? 0;
-            $page = StaticPage::query()->find($systemPage);
-            if ($page) {
-                return tRoute('slug', [
-                    'slug' => $page->slug,
-                ]);
-            }
-
-            return '/';
+            return Page::query()->first()->route() ?? '/';
         });
     }
 }
 if (! function_exists('home_name')) {
     function home_name(): string
     {
-        $page = StaticPage::query()->where('slug', home())->first();
-
-        return $page->translate_name ?? $page->name ?? 'Home';
-    }
-}
-if (! function_exists('home_slug')) {
-    function home_slug()
-    {
-        return Cache::remember('home_slug', 3600, function () {
-            $systemPage = SystemPage::query()->where('name', 'Home')->first()->page_id ?? 0;
-            $page = StaticPage::query()->find($systemPage);
-            if ($page) {
-                return $page->slug;
-            }
-
-            return '/';
+        return Cache::remember('home_name', 3600, function () {
+            return Page::query()->first()->name() ?? '/';
         });
     }
 }
 if (! function_exists('address')) {
     function address(): string
     {
-        $setting = setting(config('settings.company_info'), []);
+        $setting = _settings('company_info', []);
         $setting = $setting[0] ?? [];
 
         return $setting['address'] ?? '';
@@ -121,7 +91,7 @@ if (! function_exists('address')) {
 if (! function_exists('addresses')) {
     function addresses(): array
     {
-        $setting = setting(config('settings.company_info'), []);
+        $setting = _settings('company_info', []);
 
         return array_map(function ($item) {
             return [
@@ -134,7 +104,7 @@ if (! function_exists('addresses')) {
 if (! function_exists('schedule')) {
     function schedule(): string
     {
-        $setting = setting(config('settings.company_info'), []);
+        $setting = _settings('company_info', []);
         $setting = $setting[0] ?? [];
         $schedule = $setting['schedule'] ?? '';
 
@@ -144,7 +114,7 @@ if (! function_exists('schedule')) {
 if (! function_exists('company_info')) {
     function company_info(): array
     {
-        return setting(config('settings.company_info'), []);
+        return _settings('company_info', []);
     }
 }
 if (! function_exists('format_phone')) {

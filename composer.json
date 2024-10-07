@@ -74,7 +74,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "SmartCms\\Core\\SmartCmsServiceProvider"
+                "SmartCms\\Core\\SmartCmsServiceProvider",
+                "SmartCms\\Core\\SmartCmsPanelManager"
             ],
             "aliases": {
                 "Core": "SmartCms\\Core\\Facades\\Core"

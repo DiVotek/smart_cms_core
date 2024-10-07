@@ -1,0 +1,132 @@
+{
+   "name": "Default",
+   "description": "Default template",
+   "author": "Smart CMS",
+   "url": "https://smartcms.io",
+   "version": "1.0",
+   "license": "MIT",
+   "keywords": [
+      "default",
+      "template"
+   ],
+   "sha-256": "0x1234567890abcdef",
+   "fonts": {
+      "default": {
+         "name": "Arial",
+         "url": "https://fonts.googleapis.com/css?family=Arial",
+         "weight": "400",
+         "style": "normal",
+         "size": 12,
+         "color": "#000000"
+      },
+      "decorative": {
+         "name": "Montserrat",
+         "url": "https://fonts.googleapis.com/css?family=Montserrat",
+         "weight": "400",
+         "style": "normal",
+         "size": 22,
+         "color": "#000000"
+      }
+   },
+   "custom_js": [],
+   "custom_css": [],
+   "theme": {
+      "primary": "#000000",
+      "secondary": "#ffffff",
+      "accent": "#ff0000",
+      "background": "#f0f0f0",
+      "text": "#000000",
+      "link": "#0000ff",
+      "hover": "#ff0000",
+      "active": "#00ff00",
+      "error": "#ff0000",
+      "warning": "#ffff00",
+      "success": "#00ff00"
+   },
+   "layout": {
+      "header": {
+         "variables": [
+            "links", "logo","slogan","socials","phones","address",
+             {
+               "name": "phones",
+               "label": "My phone numbers for header",
+               "type": "phones"
+            }
+         ]
+      },
+      "main": {
+
+      },
+      "footer": {}
+   },
+   "sections": [
+      {
+         "name": "About"
+      },
+      {
+         "name": "Services",
+         "image": "base64......"
+      },
+      {
+         "name": "Portfolio"
+      },
+      {
+         "name": "Contact"
+      },
+      {
+         "name": "Advantages",
+         "schema": [
+            {
+               "name": "modules",
+               "type": "array",
+               "keys": ["name","description"]
+            }
+         ]
+      },
+      {
+         "name": "reviews",
+         "schema": [
+            {
+               "name": "reviews",
+               "type": "array",
+               "keys": ["name","description","image"]
+            },
+            "pages",
+            {
+               "name": "posts",
+               "length": 3,
+               "required": false
+            }
+         ]
+      }
+   ],
+   "defaultVariables": [
+      {
+         "name": "phones",
+         "label": "My phone numbers",
+         "type": "phones"
+      },
+      {
+         "name": "address",
+         "label": "My address",
+         "type": "text"
+      },
+      {
+         "name": "logo",
+         "label": "My logo",
+         "type": "image"
+      },
+      {
+         "name": "slogan",
+         "label": "My slogan",
+         "type": "text"
+      },
+      {
+         "name": "socials",
+         "label": "My socials",
+         "type": "socials"
+      }
+   ],
+   "default_sections": [],
+   "pages": []
+}

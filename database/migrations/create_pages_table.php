@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(sconfig('database_table_prefix').Page::getDb(), function (Blueprint $table) {
+        Schema::create(Page::getDb(), function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('parent_id')->nullable()->index();
             $table->string('name');
@@ -19,7 +19,20 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->integer('views')->default(0);
             $table->boolean('is_nav')->default(0);
+            $table->json('nav_settings')->nullable();
+            $table->json('custom')->nullable();
             $table->timestamps();
         });
+        Page::query()->create([
+            'name' => 'Home',
+            'slug' => 'home',
+            'status' => 1,
+            'is_nav' => 0,
+        ]);
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(Page::getDb());
     }
 };

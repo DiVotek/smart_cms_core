@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
          continue
       }
       nav.querySelector('div').addEventListener('click', function () {
-         console.log('Clicked');
-
          for (let group of groups) {
             if (group == nav.getAttribute('data-group-label')) {
                continue

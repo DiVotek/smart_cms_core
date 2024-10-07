@@ -17,5 +17,15 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+        Admin::query()->create([
+            'username' => 'superadmin',
+            'email' => 'admin@admin.com',
+            'password' => env('ADMIN_PASSWORD', 'password'),
+        ]);
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists(sconfig('database_table_prefix').Admin::getDb());
     }
 };

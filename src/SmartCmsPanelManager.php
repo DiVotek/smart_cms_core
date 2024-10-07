@@ -28,6 +28,13 @@ use SmartCms\Core\Admin\Pages\Auth\Profile;
 use SmartCms\Core\Admin\Pages\Settings\DesignSetting;
 use SmartCms\Core\Admin\Pages\Settings\Settings;
 use SmartCms\Core\Admin\Resources\AdminResource;
+use SmartCms\Core\Admin\Resources\ContactFormResource;
+use SmartCms\Core\Admin\Resources\FormResource;
+use SmartCms\Core\Admin\Resources\SeoResource;
+use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
+use SmartCms\Core\Admin\Resources\TranslationResource;
+use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Page;
 
 class SmartCmsPanelManager extends PanelProvider
@@ -43,7 +50,7 @@ class SmartCmsPanelManager extends PanelProvider
 
             return $this;
         });
-
+        $this->registerDynamicResources();
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
                 ->locales(['en', 'ru', 'uk']);
@@ -51,8 +58,8 @@ class SmartCmsPanelManager extends PanelProvider
         $widgets = [];
 
         FilamentAsset::register([
-            Css::make('custom-stylesheet', asset('/admin/index.css')),
-            JS::make('custom-script', asset('/admin/index.js')),
+            Css::make('custom-stylesheet', asset('/smart_cms_core/index.css')),
+            JS::make('custom-script', asset('/smart_cms_core/index.js')),
         ]);
 
         return $panel
@@ -74,6 +81,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->font('Roboto')
             ->darkMode(false)
             ->brandName('SmartCms')
+            ->resources($this->getResources())
             // ->brandLogo(fn() => view('logo'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->pages([
@@ -124,11 +132,27 @@ class SmartCmsPanelManager extends PanelProvider
     {
         Filament::serving(function () {
             $pages = Page::query()->where('is_nav', true)->get();
+            $items = [
+                NavigationItem::make(_nav('pages'))->sort(1)
+                    ->url(StaticPageResource::getUrl('index'))
+                    ->isActiveWhen(function () {
+                        return request()->route()->getName() === ListStaticPages::getRouteName() && (!request('activeTab')||request('activeTab') == 'all');
+                    }),
+            ];
             foreach ($pages as $page) {
-                Filament::registerNavigationItems([
-                    NavigationItem::make($page->name())->url(route('filament.resources.pages.index', ['parent' => $page->id]))->icon('heroicon-m-document-text'),
-                ]);
+                $group = null;
+                if ($page->parent_id && $page->parent->is_nav) {
+                    $group = $page->parent->name();
+                } else if ($page->children()->where('is_nav', true)->exists()) {
+                    $group = $page->name();
+                }
+                $items[] = NavigationItem::make($page->name())->url(StaticPageResource::getUrl('index', ['activeTab' => $page->name()]))->sort($page->sorting + 1)
+                    ->group($group)
+                    ->isActiveWhen(function () use ($page) {
+                        return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $page->name();
+                    })->sort(1000);
             }
+            Filament::registerNavigationItems($items);
         });
     }
 
@@ -136,6 +160,11 @@ class SmartCmsPanelManager extends PanelProvider
     {
         return [
             AdminResource::class,
+            SeoResource::class,
+            ContactFormResource::class,
+            FormResource::class,
+            TranslationResource::class,
+            StaticPageResource::class,
         ];
     }
 }

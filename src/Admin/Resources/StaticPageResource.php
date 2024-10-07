@@ -2,13 +2,20 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
+use Cmgmyr\PHPLOC\Log\Text;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page as PagesPage;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
@@ -30,7 +37,11 @@ class StaticPageResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withoutGlobalScopes();
+        $query =  parent::getEloquentQuery()->withoutGlobalScopes();
+        if (request('parent')) {
+            $query->where('parent_id', request('parent'));
+        }
+        return $query;
     }
 
     public static function getModelLabel(): string
@@ -43,18 +54,67 @@ class StaticPageResource extends Resource
         return _nav('model_pages');
     }
 
+
+    public static function getTableQuery(): Builder
+    {
+        // Get parent_id from the request (if any)
+        $parentId = request()->input('parent_id');
+
+        // Create the base query
+        $query = parent::getTableQuery();
+
+        // If parent_id is present, filter the pages by parent_id
+        if ($parentId) {
+            $query->where('parent_id', $parentId);
+        } else {
+            // Optionally, filter top-level pages if no parent_id is provided
+            $query->whereNull('parent_id');
+        }
+
+        return $query;
+    }
     public static function form(Form $form): Form
     {
-
+        $parent = $form->getRecord()->parent_id ?? request('parent') ?? null;
+        $parentFields = Page::query()->where('id', $parent)->first()->nav_settings ?? [];
+        $currentFields = [];
+        if ($form->getRecord() && $form->getRecord()->custom) {
+            $currentFields = $form->getRecord()->custom;
+        }
+        if (isset($parentFields['fields'])) {
+            $parentFields = $parentFields['fields'];
+        } else {
+            $parentFields = [];
+        }
+        foreach ($parentFields as $field) {
+            if (!isset($currentFields[$field['name']])) {
+                $currentFields[] = [
+                    'name' => $field['name'],
+                    'value' => $field['value'] ?? '',
+                ];
+            }
+        }
+        // $form->fill([
+        //     'custom' => $currentFields ?? [],
+        // ]);
         return $form
             ->schema([
                 Section::make()
                     ->schema([
                         Schema::getReactiveName(),
                         Schema::getSlug(),
+                        Schema::getStatus(),
                         Schema::getSorting(),
                         Schema::getImage(),
-                        Schema::getStatus(),
+                        Select::make('parent_id')
+                            ->label(_fields('parent'))
+                            ->relationship('parent', 'name')->nullable()->default(function () {
+                                return request('parent') ?? null;
+                            })->hidden(!!request('parent'))->live(),
+                        Schema::getRepeater('nav_settings.fields')->schema([
+                            TextInput::make('name')->label(_fields('name'))->required(),
+                            TextInput::make('value')->label(_fields('value'))->required(),
+                        ])->default([]),
                     ]),
             ]);
     }
@@ -79,12 +139,14 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/'.$record->slug;
+                        return '/' . $record->slug;
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')
             ->headerActions([
-                Schema::helpAction('Static page help text'),
+                Schema::helpAction('Static page help text')->hidden(function () {
+                    return !!request('parent');
+                }),
                 Tables\Actions\Action::make('Template')
                     ->label(_actions('template'))
                     ->slideOver()
@@ -98,6 +160,9 @@ class StaticPageResource extends Resource
                         setting([
                             sconfig('static_page.template') => $data['template'],
                         ]);
+                    })
+                    ->hidden(function () {
+                        return !!request('parent');
                     })
                     ->form(function ($form) {
                         return $form
@@ -118,6 +183,12 @@ class StaticPageResource extends Resource
     public static function getRelations(): array
     {
         return [Schema::getSeoAndTemplateRelationGroup()];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+        // return true;
     }
 
     public static function getPages(): array

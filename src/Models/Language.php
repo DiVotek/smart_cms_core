@@ -20,12 +20,6 @@ use SmartCms\Core\Traits\HasTable;
 class Language extends BaseModel
 {
     use HasStatus;
-    use HasTable;
-
-    public static function getDb(): string
-    {
-        return 'languages';
-    }
 
     protected $guarded = [];
 

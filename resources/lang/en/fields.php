@@ -41,4 +41,27 @@ return [
     'meta_tags' => 'Meta tags',
     'custom_scripts' => 'Custom scripts',
     'scripts' => 'Scripts',
+    'title' => 'Title',
+
+    'parent' => 'Parent',
+
+    'company_name' => 'Company name',
+    'company_slogan' => 'Company slogan',
+    'company_description' => 'Company description',
+    'country' => 'Country',
+    'company_info' => 'Company info',
+    'phones' => 'Phones',
+    'main_language' => 'Main language',
+
+    'header_logo' => 'Header logo',
+    'footer_logo' => 'Footer logo',
+    'favicon' => 'Favicon',
+    'socials' => 'Socials',
+
+    'menu_header' => 'Header menu',
+    'menu_footer' => 'Footer menu',
+
+    'is_required' => 'Is required',
+    'custom' => 'Custom fields',
+    'value' => 'Value',
 ];

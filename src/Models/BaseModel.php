@@ -10,16 +10,19 @@ class BaseModel extends Model
 
     public function getTable()
     {
-        $this->tablePrefix = config('smart_cms.database_table_prefix', 'smart_cms_');
-        if (isset($this->table)) {
-            return $this->tablePrefix.$this->table;
+        $this->tablePrefix = sconfig('database_table_prefix', 'smart_cms_');
+
+        $table = parent::getTable();
+
+        if (!str_starts_with($table, $this->tablePrefix)) {
+            return $this->tablePrefix . $table;
         }
 
-        return $this->tablePrefix.parent::getTable();
+        return $table;
     }
 
     public static function getDb(): string
     {
-        return self::new()->getTable();
+        return (new static())->getTable();
     }
 }

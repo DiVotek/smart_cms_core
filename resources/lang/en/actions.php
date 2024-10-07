@@ -7,4 +7,7 @@ return [
     'saved_settings' => 'Settings was saved!',
     'template' => 'Template',
     'cleared_tranlations' => 'Translations cache was cleared!',
+    'save_as_nav' => 'Add to navigation',
+    'save_as_not_nav' => 'Remove from navigation',
+    'nav_settings' => 'Navigation settings',
 ];

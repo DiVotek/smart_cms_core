@@ -30,7 +30,7 @@ class Admin extends User implements FilamentUser
         return 'admins';
     }
 
-    protected $table = 'admins';
+    protected $table = 'smart_cms_admins';
 
     public function canAccessPanel(Panel $panel): bool
     {

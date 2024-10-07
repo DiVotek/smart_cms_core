@@ -9,4 +9,5 @@ return [
     'title_suffix' => 'Enter your title suffix',
     'description_prefix' => 'Enter your description prefix',
     'description_suffix' => 'Enter your description suffix',
+    'template' => 'Select template',
 ];

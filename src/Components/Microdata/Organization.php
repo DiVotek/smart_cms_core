@@ -15,13 +15,13 @@ class Organization extends Microdata
 
     public function render(): View|Closure|string
     {
-        return '<x-microdata :type="$type" :properties="$properties" />';
+        return '<x-s::microdata.microdata :type="$type" :properties="$properties" />';
     }
 
     public function buildData(): array
     {
         return [
-            'name' => setting(config('settings.company_name'), 'Company name'),
+            'name' => _settings('company_name', 'Company name'),
             'url' => url('/'),
             'logo' => asset(logo()),
             'contactPoint' => [],

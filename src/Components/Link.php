@@ -26,14 +26,6 @@ class Link extends Component
                     $data['attributes']['title'] = $data['slot']->__toString();
                 }
             }
-            if (! isset($data['attributes']['title'])) {
-                if (config('app.env') === 'production') {
-                    $data['attributes']['title'] = 'This link does not have a title';
-                } else {
-                    $data['attributes']['x-data'] = '';
-                    $data['attributes']['x-init'] = "console.error('This link does not have a title', \$el)";
-                }
-            }
             if (url()->current() == $data['attributes']['href']) {
                 $data['attributes']['aria-current'] = 'page';
                 if (! isset($data['attributes']['class'])) {

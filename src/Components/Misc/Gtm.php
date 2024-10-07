@@ -12,7 +12,7 @@ class Gtm extends Component
 
     public function __construct()
     {
-        $this->gtm = setting(config('settings.gtm'), '');
+        $this->gtm = _settings('gtm', '');
     }
 
     public function render(): View|Closure|string

@@ -29,19 +29,6 @@ class Helper
         return $reference;
     }
 
-    public static function getTemplates(): array
-    {
-        $templates = [];
-        $templatesPath = base_path('templates/');
-        $files = File::directories($templatesPath);
-        foreach ($files as $file) {
-            $templateName = basename($file);
-            $templates[$templateName] = $templateName;
-        }
-
-        return $templates;
-    }
-
     public static function getTemplateComponentTypes(string $template): array
     {
         $types = [];
@@ -286,6 +273,18 @@ class Helper
         }
 
         return $result;
+    }
+
+    public static function getTemplates():array{
+        $templates = [];
+        $templatesPath = base_path('scms/templates/');
+        $files = File::directories($templatesPath);
+        foreach ($files as $file) {
+            $templateName = basename($file);
+            $templates[$templateName] = $templateName;
+        }
+
+        return $templates;
     }
     // public static function extractVariables($fileContent)
     // {
