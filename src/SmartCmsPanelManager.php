@@ -34,7 +34,6 @@ use SmartCms\Core\Admin\Resources\SeoResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
 use SmartCms\Core\Admin\Resources\TranslationResource;
-use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Page;
 
 class SmartCmsPanelManager extends PanelProvider
@@ -136,14 +135,14 @@ class SmartCmsPanelManager extends PanelProvider
                 NavigationItem::make(_nav('pages'))->sort(1)
                     ->url(StaticPageResource::getUrl('index'))
                     ->isActiveWhen(function () {
-                        return request()->route()->getName() === ListStaticPages::getRouteName() && (!request('activeTab')||request('activeTab') == 'all');
+                        return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == 'all');
                     }),
             ];
             foreach ($pages as $page) {
                 $group = null;
                 if ($page->parent_id && $page->parent->is_nav) {
                     $group = $page->parent->name();
-                } else if ($page->children()->where('is_nav', true)->exists()) {
+                } elseif ($page->children()->where('is_nav', true)->exists()) {
                     $group = $page->name();
                 }
                 $items[] = NavigationItem::make($page->name())->url(StaticPageResource::getUrl('index', ['activeTab' => $page->name()]))->sort($page->sorting + 1)

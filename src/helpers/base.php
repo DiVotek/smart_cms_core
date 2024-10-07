@@ -9,13 +9,13 @@ if (! function_exists('scms_templates_path')) {
 if (! function_exists('scms_template_path')) {
     function scms_template_path(string $template): string
     {
-        return scms_templates_path() . $template . '/';
+        return scms_templates_path().$template.'/';
     }
 }
 if (! function_exists('sconfig')) {
     function sconfig(string $key): string
     {
-        return config('smart_cms.' . $key);
+        return config('smart_cms.'.$key);
     }
 }
 

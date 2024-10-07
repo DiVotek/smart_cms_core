@@ -10,6 +10,7 @@ if (! function_exists('logo')) {
     function logo($isHeader = true): string
     {
         $key = $isHeader ? 'header_logo' : 'footer_logo';
+
         return _settings($key, '');
     }
 }

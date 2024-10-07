@@ -50,8 +50,8 @@ class Settings extends BaseSettings
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
                             Schema::getImage(sconfig('header_logo'))
-                            ->label(_fields('header_logo'))
-                            ->required(),
+                                ->label(_fields('header_logo'))
+                                ->required(),
                             Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
                             Schema::getImage(sconfig('favicon'))->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))

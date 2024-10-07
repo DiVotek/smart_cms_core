@@ -26,11 +26,11 @@ class Layout extends Component
         $styles = _settings('styles', []);
         $this->fonts = $styles['fonts'] ?? '/resources/schemas/fonts/roboto.css';
         $this->style = $styles['colors'] ?? '/resources/schemas/colors/yellow.css';
-        $scripts =  _settings('custom_scripts', []);
+        $scripts = _settings('custom_scripts', []);
         if (! is_array($scripts)) {
             $scripts = [];
         }
-        $meta_tags =  _settings('custom_meta', []);
+        $meta_tags = _settings('custom_meta', []);
         if (! is_array($meta_tags)) {
             $meta_tags = [];
         }
@@ -41,7 +41,7 @@ class Layout extends Component
         //  'resources' . explode('/resources', $this->style)[1];
         $this->fonts = '';
         // 'resources' . explode('/resources', $this->fonts)[1];
-        $this->favicon = asset('/storage' . _settings('favicon', '/favicon.ico'));
+        $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
     }
 
     public function render(): View|Closure|string

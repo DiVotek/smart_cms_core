@@ -275,7 +275,8 @@ class Helper
         return $result;
     }
 
-    public static function getTemplates():array{
+    public static function getTemplates(): array
+    {
         $templates = [];
         $templatesPath = base_path('scms/templates/');
         $files = File::directories($templatesPath);

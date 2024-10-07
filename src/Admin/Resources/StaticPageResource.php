@@ -2,20 +2,16 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use Cmgmyr\PHPLOC\Log\Text;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Resources\Pages\Page as PagesPage;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
@@ -37,10 +33,11 @@ class StaticPageResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query =  parent::getEloquentQuery()->withoutGlobalScopes();
+        $query = parent::getEloquentQuery()->withoutGlobalScopes();
         if (request('parent')) {
             $query->where('parent_id', request('parent'));
         }
+
         return $query;
     }
 
@@ -53,7 +50,6 @@ class StaticPageResource extends Resource
     {
         return _nav('model_pages');
     }
-
 
     public static function getTableQuery(): Builder
     {
@@ -73,6 +69,7 @@ class StaticPageResource extends Resource
 
         return $query;
     }
+
     public static function form(Form $form): Form
     {
         $parent = $form->getRecord()->parent_id ?? request('parent') ?? null;
@@ -87,13 +84,14 @@ class StaticPageResource extends Resource
             $parentFields = [];
         }
         foreach ($parentFields as $field) {
-            if (!isset($currentFields[$field['name']])) {
+            if (! isset($currentFields[$field['name']])) {
                 $currentFields[] = [
                     'name' => $field['name'],
                     'value' => $field['value'] ?? '',
                 ];
             }
         }
+
         // $form->fill([
         //     'custom' => $currentFields ?? [],
         // ]);
@@ -110,7 +108,7 @@ class StaticPageResource extends Resource
                             ->label(_fields('parent'))
                             ->relationship('parent', 'name')->nullable()->default(function () {
                                 return request('parent') ?? null;
-                            })->hidden(!!request('parent'))->live(),
+                            })->hidden((bool) request('parent'))->live(),
                         Schema::getRepeater('nav_settings.fields')->schema([
                             TextInput::make('name')->label(_fields('name'))->required(),
                             TextInput::make('value')->label(_fields('value'))->required(),
@@ -139,13 +137,13 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/' . $record->slug;
+                        return '/'.$record->slug;
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')
             ->headerActions([
                 Schema::helpAction('Static page help text')->hidden(function () {
-                    return !!request('parent');
+                    return (bool) request('parent');
                 }),
                 Tables\Actions\Action::make('Template')
                     ->label(_actions('template'))
@@ -162,7 +160,7 @@ class StaticPageResource extends Resource
                         ]);
                     })
                     ->hidden(function () {
-                        return !!request('parent');
+                        return (bool) request('parent');
                     })
                     ->form(function ($form) {
                         return $form

@@ -23,12 +23,13 @@ class DesignSetting extends BaseSettings
 
     public function schema(): array|Closure
     {
-        $templateConfigPath = scms_template_path(_settings('template','default')) . '/config.json';
-        if(file_exists($templateConfigPath)){
+        $templateConfigPath = scms_template_path(_settings('template', 'default')).'/config.json';
+        if (file_exists($templateConfigPath)) {
             $templateSchema = json_decode(file_get_contents($templateConfigPath), true);
-        }else{
+        } else {
             $templateSchema = [];
         }
+
         return [
             Tabs::make(strans('admin.settings'))
                 ->schema([

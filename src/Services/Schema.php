@@ -175,7 +175,7 @@ class Schema
             ]);
     }
 
-    public static function getTemplateBuilder(string $name = 'template' ): Repeater
+    public static function getTemplateBuilder(string $name = 'template'): Repeater
     {
         $options = TemplateSection::query()->pluck('name', 'id')->toArray();
 

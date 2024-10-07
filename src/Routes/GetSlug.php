@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Attribute\Cache;
 class GetSlug
 {
     public $limit = 3;
+
     #[Cache(public: true, maxage: 31536000, mustRevalidate: true)]
     public function __invoke(Request $request): string
     {
@@ -25,9 +26,10 @@ class GetSlug
             return abort(404);
         }
         $page = $this->findPage($segments);
-        if (!$page) {
+        if (! $page) {
             abort(404);
         }
+
         return Blade::renderComponent(new StaticPage($page));
     }
 
@@ -38,12 +40,13 @@ class GetSlug
             ->where('parent_id', $parentId)
             ->first();
 
-        if (!$page) {
+        if (! $page) {
             return null;
         }
         if (count($segments) > 0) {
             return $this->findPage($segments, $page->id);
         }
+
         return $page;
     }
 

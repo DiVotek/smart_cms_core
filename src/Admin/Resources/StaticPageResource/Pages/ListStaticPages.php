@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
 use Filament\Actions;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,8 +27,9 @@ class ListStaticPages extends ListRecords
         ];
         foreach (Page::query()->where('is_nav', true)->get() as $page) {
             $tabs[$page->name()] = Tab::make($page->name())
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $page->id));
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $page->id));
         }
+
         return $tabs;
     }
 }

@@ -14,8 +14,8 @@ class BaseModel extends Model
 
         $table = parent::getTable();
 
-        if (!str_starts_with($table, $this->tablePrefix)) {
-            return $this->tablePrefix . $table;
+        if (! str_starts_with($table, $this->tablePrefix)) {
+            return $this->tablePrefix.$table;
         }
 
         return $table;
@@ -23,6 +23,6 @@ class BaseModel extends Model
 
     public static function getDb(): string
     {
-        return (new static())->getTable();
+        return (new static)->getTable();
     }
 }

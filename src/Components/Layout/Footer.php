@@ -19,6 +19,7 @@ class Footer extends Component
     public function render(): View|Closure|string
     {
         $view = _settings('design.footer', 'default-footer');
-        return view('templates::' . template() . '.'  . 'layout.' . strtolower($view));
+
+        return view('templates::'.template().'.'.'layout.'.strtolower($view));
     }
 }

@@ -37,9 +37,9 @@ class Page extends BaseModel
     use HasSlug;
     use HasSorting;
     use HasStatus;
+    use HasTemplate;
     use HasTranslate;
     use HasViews;
-    use HasTemplate;
 
     protected $fillable = [
         'name',
@@ -60,7 +60,6 @@ class Page extends BaseModel
         'custom' => 'array',
     ];
 
-
     public function getBreadcrumbs(): array
     {
         return [
@@ -78,6 +77,7 @@ class Page extends BaseModel
             array_unshift($slugs, $current->slug);
             $current = $current->parent;
         }
+
         return tRoute('page', ['slug' => implode('/', $slugs)]);
     }
 
