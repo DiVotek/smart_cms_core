@@ -14,8 +14,7 @@ return new class extends Migration
             $table->id();
             $table->string('value');
             $table->unsignedBigInteger('language_id');
-            $table->references('id')->on(Language::getDb());
-            $table->foreignIdFor(Language::class)->constrained()->cascadeOnDelete()->references('id')->on('smart_cms_languages');
+            $table->foreign('language_id')->references('id')->on(Language::getDb());
             $table->morphs('entity');
             $table->timestamps();
         });
