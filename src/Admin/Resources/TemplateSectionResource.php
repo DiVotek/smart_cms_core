@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -76,7 +75,7 @@ class TemplateSectionResource extends Resource
                         ->label(_fields('design'))
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn(Radio $component) => $component
+                        ->afterStateUpdated(fn (Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
@@ -136,17 +135,19 @@ class TemplateSectionResource extends Resource
                             return true;
                         }
                         $config = scms_template_config();
-                        return !isset($config['theme']);
+
+                        return ! isset($config['theme']);
                     })
                     ->form(function ($form) {
                         $config = scms_template_config();
                         $theme = $config['theme'] ?? [];
                         $schema = [];
                         foreach ($theme as $key => $value) {
-                            $schema[] = Forms\Components\ColorPicker::make('theme.' . $key)
+                            $schema[] = Forms\Components\ColorPicker::make('theme.'.$key)
                                 ->label(ucfirst($key))
                                 ->default($value);
                         }
+
                         return $form
                             ->schema([
                                 Section::make('')->schema($schema),
@@ -176,10 +177,11 @@ class TemplateSectionResource extends Resource
                         $theme = $config['theme'] ?? [];
                         $schema = [];
                         foreach ($theme as $key => $value) {
-                            $schema[] = Forms\Components\ColorPicker::make('theme.' . $key)
+                            $schema[] = Forms\Components\ColorPicker::make('theme.'.$key)
                                 ->label(ucfirst($key))
                                 ->default($value);
                         }
+
                         return $form
                             ->schema([
                                 Section::make('')->schema([
@@ -211,16 +213,16 @@ class TemplateSectionResource extends Resource
                         ]);
                     })
                     ->hidden(function () {
-                        template() == '' || !isset(scms_template_config()['defaultVariables']);
+                        template() == '' || ! isset(scms_template_config()['defaultVariables']);
                     })
                     ->form(function ($form) {
                         $config = scms_template_config();
                         $variables = $config['defaultVariables'] ?? [];
                         $schema = Helper::parseSchema($variables, 'default_variables.');
+
                         return $form->schema($schema);
                     }),
-            ])
-        ;
+            ]);
     }
 
     public static function getPages(): array

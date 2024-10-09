@@ -36,7 +36,7 @@ class EditStaticPage extends EditRecord
                         TextInput::make('name')->label(_fields('name'))->required(),
                     ]),
                 ]);
-            })->fillForm(fn($record): array => [
+            })->fillForm(fn ($record): array => [
                 'nav_settings' => $record->nav_settings ?? [],
             ])->modal()->action(function (Model $record, $data) {
                 $record->update($data);

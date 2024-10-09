@@ -43,6 +43,7 @@ if (! function_exists('emails')) {
     function emails(): array
     {
         $setting = _settings('company_info', []);
+
         return array_map(function ($item) {
             return $item['email'];
         }, $setting);
@@ -133,6 +134,7 @@ if (! function_exists('schedules')) {
     function schedules(): array
     {
         $setting = _settings('company_info', []);
+
         return array_filter(array_map(function ($item) {
             return $item['schedule'] ?? '';
         }, $setting));

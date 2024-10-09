@@ -6,8 +6,6 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildLayoutTemplate;
-use SmartCms\Core\Actions\Template\BuildTemplate;
-use SmartCms\Core\Actions\Template\GetLinks;
 
 class Header extends Component
 {
@@ -15,7 +13,7 @@ class Header extends Component
 
     public function __construct()
     {
-        $headerSections = _settings('header',[]);
+        $headerSections = _settings('header', []);
         $template = BuildLayoutTemplate::run($headerSections);
         $this->template = $template;
     }

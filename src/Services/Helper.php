@@ -2,13 +2,7 @@
 
 namespace SmartCms\Core\Services;
 
-use App\Actions\ModuleDescriptionSchema;
-use App\Actions\ModuleTitleSchema;
 use Exception;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\File;
 use SmartCms\Core\Models\Form;
 
@@ -17,7 +11,7 @@ class Helper
     public static function getComponents(): array
     {
         $sections = [];
-        $directoryPath = scms_template_path(template() . '/sections');
+        $directoryPath = scms_template_path(template().'/sections');
         if (! File::exists($directoryPath)) {
             return [];
         }
@@ -41,9 +35,10 @@ class Helper
         foreach ($directories as $directory) {
             foreach (File::files($directory) as $file) {
                 $lastDir = basename($directory);
-                $files[$lastDir . '/' . basename($file)] = ucfirst($lastDir) . ' - ' . ucfirst(basename($file, '.blade.php'));
+                $files[$lastDir.'/'.basename($file)] = ucfirst($lastDir).' - '.ucfirst(basename($file, '.blade.php'));
             }
         }
+
         return $sections;
     }
 
@@ -53,21 +48,21 @@ class Helper
         $config = scms_template_config();
         $sections = $config['sections'] ?? [];
         foreach ($sections as $section) {
-            if (!isset($section['file'])) {
+            if (! isset($section['file'])) {
                 continue;
             }
             if ($section['file'] == $component) {
                 if (isset($section['schema'])) {
                     return self::parseSchema($section['schema'], 'value.');
                 } else {
-                    $file = scms_template_path(template()) . 'sections/' .  $section['file'] . '.blade.php';
+                    $file = scms_template_path(template()).'sections/'.$section['file'].'.blade.php';
                 }
             }
         }
-        if (!$file) {
-            $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
+        if (! $file) {
+            $file = scms_template_path(template()).'sections/'.strtolower($component).'.blade.php';
         }
-        if (!File::exists($file)) {
+        if (! File::exists($file)) {
             return [];
         }
         $file = File::get($file);
@@ -77,11 +72,12 @@ class Helper
                 $variables[$key] = [
                     'name' => $key,
                     'type' => 'array',
-                    'schema' => $variable
+                    'schema' => $variable,
                 ];
             }
         }
         $schema = self::parseSchema($variables, 'value.');
+
         // dd($schema);
         return $schema;
     }
@@ -102,7 +98,7 @@ class Helper
             return [];
         }
         $types = [];
-        $templatePath = base_path('templates/' . $template . '/' . $name . '/');
+        $templatePath = base_path('templates/'.$template.'/'.$name.'/');
         try {
             $files = File::files($templatePath);
         } catch (\Exception $e) {
@@ -128,7 +124,7 @@ class Helper
                 continue;
             }
             $name = explode('-', $name);
-            $prettyName = ucfirst($name[1]) . ' from collection ' . strtoupper($name[0]);
+            $prettyName = ucfirst($name[1]).' from collection '.strtoupper($name[0]);
             $reference[basename($file, '.blade.php')] = $prettyName;
         }
 
@@ -195,13 +191,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -351,6 +347,7 @@ class Helper
         foreach ($schema as $var) {
             $vars = array_merge($vars, self::parseVariable($var, $prefix));
         }
+
         return $vars;
     }
 
@@ -410,9 +407,10 @@ class Helper
         if (str_contains($var, 'pages')) {
             $variable['type'] = VariableTypes::PAGES->value;
         }
-        if (!isset($variable['type'])) {
+        if (! isset($variable['type'])) {
             $variable['type'] = VariableTypes::TEXT->value;
         }
+
         return self::parseVariableByType($variable, $prefix);
     }
 

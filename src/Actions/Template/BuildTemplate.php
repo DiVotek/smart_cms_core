@@ -26,7 +26,7 @@ class BuildTemplate
                 continue;
             }
             if ($section->name != 'Page content') {
-                $sectionComponent = 'templates::'. template() .'.sections';
+                $sectionComponent = 'templates::'.template().'.sections';
                 $design = $section->design;
                 $design = explode('\\', $design);
                 $design = $design[count($design) - 1];

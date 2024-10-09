@@ -92,7 +92,7 @@ class TemplateRelationManager extends RelationManager
                             foreach ($data['sections'] as $section) {
                                 $sorting++;
                                 $newSection = $this->ownerRecord->template()->create([
-                                    'template_section_id' => (int)$section,
+                                    'template_section_id' => (int) $section,
                                     'sorting' => $sorting,
                                 ]);
                             }

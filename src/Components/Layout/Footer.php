@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildLayoutTemplate;
-use SmartCms\Core\Actions\Template\GetLinks;
 
 class Footer extends Component
 {

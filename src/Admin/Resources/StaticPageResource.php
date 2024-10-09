@@ -137,7 +137,7 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/' . $record->slug;
+                        return '/'.$record->slug;
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')

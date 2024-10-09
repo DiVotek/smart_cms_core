@@ -32,7 +32,7 @@ class DesignSetting extends BaseSettings
     public function schema(): array|Closure
     {
         $templateConfig = [];
-        $templateConfigPath = scms_template_path(_settings('template', 'default')) . '/config.json';
+        $templateConfigPath = scms_template_path(_settings('template', 'default')).'/config.json';
         if (file_exists($templateConfigPath)) {
             $templateConfig = json_decode(file_get_contents($templateConfigPath), true);
         }
@@ -50,7 +50,7 @@ class DesignSetting extends BaseSettings
         if (isset($templateConfig['theme'])) {
             $colors = [];
             foreach ($templateConfig['theme'] as $key => $value) {
-                $colors[] = ColorPicker::make('theme.' . $key)
+                $colors[] = ColorPicker::make('theme.'.$key)
                     ->label(ucfirst($key))
                     ->default($value);
             }
@@ -59,6 +59,7 @@ class DesignSetting extends BaseSettings
                     ->columns(2)
                     ->schema($colors)]);
         }
+
         return [
             Tabs::make(strans('admin.settings'))
                 ->schema([
@@ -66,7 +67,7 @@ class DesignSetting extends BaseSettings
                         ->schema([Group::make($headerSchema)]),
                     Tabs\Tab::make(strans('admin.footer'))
                         ->schema($footerSchema),
-                    ...$tabs
+                    ...$tabs,
                 ]),
         ];
     }

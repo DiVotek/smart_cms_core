@@ -11,7 +11,6 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Contracts\Support\Htmlable;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
-use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use SmartCms\Core\Models\Language;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;

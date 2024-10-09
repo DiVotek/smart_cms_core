@@ -14,7 +14,7 @@ class ModuleDescriptionSchema
 
     public function handle(string $name = 'value.description', string $label = ''): array
     {
-        if($label == '') {
+        if ($label == '') {
             $label = _fields('description');
         }
         $fields = [
