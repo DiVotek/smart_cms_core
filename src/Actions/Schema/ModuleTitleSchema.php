@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace SmartCms\Core\Actions\Schema;
 
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;

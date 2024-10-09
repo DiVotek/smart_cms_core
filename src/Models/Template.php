@@ -22,6 +22,11 @@ class Template extends BaseModel
 
     protected $guarded = [];
 
+    protected $fillable = [
+        'template_section_id',
+        'value',
+    ];
+
     protected $casts = [
         'value' => 'array',
     ];

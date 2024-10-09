@@ -33,6 +33,7 @@ use SmartCms\Core\Admin\Resources\FormResource;
 use SmartCms\Core\Admin\Resources\SeoResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
+use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 use SmartCms\Core\Admin\Resources\TranslationResource;
 use SmartCms\Core\Models\Page;
 
@@ -122,7 +123,7 @@ class SmartCmsPanelManager extends PanelProvider
                 FilamentSettingsPlugin::make()
                     ->pages([
                         Settings::class,
-                        DesignSetting::class,
+                        // DesignSetting::class,
                     ]),
             ]);
     }
@@ -134,12 +135,13 @@ class SmartCmsPanelManager extends PanelProvider
             $items = [
                 NavigationItem::make(_nav('pages'))->sort(1)
                     ->url(StaticPageResource::getUrl('index'))
+                    ->group(_nav('pages'))
                     ->isActiveWhen(function () {
                         return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == 'all');
                     }),
             ];
             foreach ($pages as $page) {
-                $group = null;
+                $group = _nav('pages');
                 if ($page->parent_id && $page->parent->is_nav) {
                     $group = $page->parent->name();
                 } elseif ($page->children()->where('is_nav', true)->exists()) {
@@ -164,6 +166,7 @@ class SmartCmsPanelManager extends PanelProvider
             FormResource::class,
             TranslationResource::class,
             StaticPageResource::class,
+            TemplateSectionResource::class,
         ];
     }
 }

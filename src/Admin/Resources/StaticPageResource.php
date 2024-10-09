@@ -137,7 +137,7 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/'.$record->slug;
+                        return '/' . $record->slug;
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')
@@ -151,12 +151,12 @@ class StaticPageResource extends Resource
                     ->icon('heroicon-o-cog')
                     ->fillForm(function (): array {
                         return [
-                            'template' => _settings('static_page.template', []),
+                            'template' => _settings('static_page_template', []),
                         ];
                     })
                     ->action(function (array $data): void {
                         setting([
-                            sconfig('static_page.template') => $data['template'],
+                            sconfig('static_page_template') => $data['template'],
                         ]);
                     })
                     ->hidden(function () {

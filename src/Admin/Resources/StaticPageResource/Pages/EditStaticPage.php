@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -35,13 +36,14 @@ class EditStaticPage extends EditRecord
                         TextInput::make('name')->label(_fields('name'))->required(),
                     ]),
                 ]);
-            })->fillForm(fn ($record): array => [
+            })->fillForm(fn($record): array => [
                 'nav_settings' => $record->nav_settings ?? [],
             ])->modal()->action(function (Model $record, $data) {
                 $record->update($data);
             })->hidden(function (): bool {
                 return ! $this->record->is_nav;
             }),
+            ViewAction::make('View Page')->url($this->record->route())->openUrlInNewTab(),
         ];
     }
 }

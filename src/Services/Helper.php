@@ -4,6 +4,7 @@ namespace SmartCms\Core\Services;
 
 use App\Actions\ModuleDescriptionSchema;
 use App\Actions\ModuleTitleSchema;
+use Exception;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -15,110 +16,73 @@ class Helper
 {
     public static function getComponents(): array
     {
-        $directoryPath = base_path('template/modules/');
+        $sections = [];
+        $directoryPath = scms_template_path(template() . '/sections');
         if (! File::exists($directoryPath)) {
             return [];
         }
+        $config = scms_template_config();
         $files = File::files($directoryPath);
-        $files = glob(base_path('template/modules/*.blade.php'));
-        $reference = [];
+        $configSections = $config['sections'] ?? [];
+        foreach ($configSections as $section) {
+            if (isset($section['name']) && isset($section['file'])) {
+                $fileName = $section['file'];
+                $sections[$fileName] = $section['name'];
+            }
+        }
         foreach ($files as $file) {
-            $reference[basename($file, '.blade.php')] = basename($file, '.blade.php');
+            $name = basename($file, '.blade.php');
+            if (in_array($name, $sections)) {
+                continue;
+            }
+            $sections[$name] = ucfirst($name);
         }
-
-        return $reference;
-    }
-
-    public static function getTemplateComponentTypes(string $template): array
-    {
-        $types = [];
-        $templatePath = base_path('templates/'.$template.'/Modules/');
-        if (! File::exists($templatePath)) {
-            return $types;
+        $directories = File::directories($directoryPath);
+        foreach ($directories as $directory) {
+            foreach (File::files($directory) as $file) {
+                $lastDir = basename($directory);
+                $files[$lastDir . '/' . basename($file)] = ucfirst($lastDir) . ' - ' . ucfirst(basename($file, '.blade.php'));
+            }
         }
-        $files = File::directories($templatePath);
-        foreach ($files as $file) {
-            $typeName = basename($file);
-            $types[$typeName] = $typeName;
-        }
-
-        return $types;
+        return $sections;
     }
 
     public static function getComponentClass(string $component): array
     {
-        if (! File::exists(base_path('template/modules/'.$component.'.blade.php'))) {
-            return [];
-        }
-        $file = File::get(base_path('template/modules/'.$component.'.blade.php'));
-        if (! $file) {
-            return [];
-        }
-        $variables = self::extractVariables($file);
-        $schema = [];
-        foreach ($variables as $key => $variable) {
-            if ($variable == 'form') {
-                $schema[] = Select::make('value.'.$variable)->options(Form::query()->pluck('name', 'id')->toArray());
-
+        $file = null;
+        $config = scms_template_config();
+        $sections = $config['sections'] ?? [];
+        foreach ($sections as $section) {
+            if (!isset($section['file'])) {
                 continue;
             }
-            if (is_array($variable)) {
-                $fields = [];
-                foreach ($variable as $field) {
-                    if (str_contains($field, 'image')) {
-                        $fields[] = Schema::getImage($field);
-                    } elseif (str_contains($field, 'description')) {
-                        $fields[] = Textarea::make(main_lang().'_'.$field)->required();
-                        if (is_multi_lang()) {
-                            foreach (get_active_languages() as $lang) {
-                                if ($lang->id == main_lang_id()) {
-                                    continue;
-                                }
-                                $fields[] = Textarea::make($lang->slug.'_'.$field)->label(ucfirst($field).' '.$lang->name);
-                            }
-                        }
-                    } else {
-                        $fields[] = TextInput::make(main_lang().'_'.$field)->required();
-                        if (is_multi_lang()) {
-                            foreach (get_active_languages() as $lang) {
-                                if ($lang->id == main_lang_id()) {
-                                    continue;
-                                }
-                                $fields[] = TextInput::make($lang->slug.'_'.$field)->label(ucfirst($field).' '.$lang->name);
-                            }
-                        }
-                    }
-                }
-                $schema[] = Repeater::make('value.'.$key)->schema($fields);
-            } elseif ($variable == 'heading') {
-                $schema = array_merge($schema, ModuleTitleSchema::run());
-            } elseif ($variable == 'description') {
-                $schema = array_merge($schema, ModuleDescriptionSchema::run());
-            } elseif (str_contains($variable, 'description')) {
-                $schema[] = Textarea::make('value.'.main_lang().'_'.$variable)->required()->label(self::getLabelFromField($variable));
-                if (is_multi_lang()) {
-                    foreach (get_active_languages() as $lang) {
-                        if ($lang->id == main_lang_id()) {
-                            continue;
-                        }
-                        $fields[] = Textarea::make('value.'.$lang->slug.'_'.$variable)->label(ucfirst($variable).' '.$lang->name)->label(self::getLabelFromField($variable));
-                    }
-                }
-            } elseif (str_contains($variable, 'image')) {
-                $schema[] = Schema::getImage('value.'.$variable);
-            } else {
-                $schema[] = TextInput::make('value.'.main_lang().'.'.$variable)->required()->label(self::getLabelFromField($variable));
-                if (is_multi_lang()) {
-                    foreach (get_active_languages() as $lang) {
-                        if ($lang->id == main_lang_id()) {
-                            continue;
-                        }
-                        $fields[] = TextInput::make($lang->slug.'_'.$variable)->label(self::getLabelFromField($variable).' '.$lang->name);
-                    }
+            if ($section['file'] == $component) {
+                if (isset($section['schema'])) {
+                    return self::parseSchema($section['schema'], 'value.');
+                } else {
+                    $file = scms_template_path(template()) . 'sections/' .  $section['file'] . '.blade.php';
                 }
             }
         }
-
+        if (!$file) {
+            $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
+        }
+        if (!File::exists($file)) {
+            return [];
+        }
+        $file = File::get($file);
+        $variables = self::extractVariables($file);
+        foreach ($variables as $key => &$variable) {
+            if (is_array($variable)) {
+                $variables[$key] = [
+                    'name' => $key,
+                    'type' => 'array',
+                    'schema' => $variable
+                ];
+            }
+        }
+        $schema = self::parseSchema($variables, 'value.');
+        // dd($schema);
         return $schema;
     }
 
@@ -138,7 +102,7 @@ class Helper
             return [];
         }
         $types = [];
-        $templatePath = base_path('templates/'.$template.'/'.$name.'/');
+        $templatePath = base_path('templates/' . $template . '/' . $name . '/');
         try {
             $files = File::files($templatePath);
         } catch (\Exception $e) {
@@ -164,7 +128,7 @@ class Helper
                 continue;
             }
             $name = explode('-', $name);
-            $prettyName = ucfirst($name[1]).' from collection '.strtoupper($name[0]);
+            $prettyName = ucfirst($name[1]) . ' from collection ' . strtoupper($name[0]);
             $reference[basename($file, '.blade.php')] = $prettyName;
         }
 
@@ -231,13 +195,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -379,5 +343,85 @@ class Helper
         }
 
         return $data;
+    }
+
+    public static function parseSchema(array $schema, string $prefix = ''): array
+    {
+        $vars = [];
+        foreach ($schema as $var) {
+            $vars = array_merge($vars, self::parseVariable($var, $prefix));
+        }
+        return $vars;
+    }
+
+    public static function parseVariable(array|string $var, string $prefix = ''): array
+    {
+        // if (is_array($var) && isset($var['type']) && $var['type'] == 'array') {
+        //     return [];
+        // }
+        if (is_array($var) && isset($var['name']) && isset($var['type'])) {
+            return self::parseVariableByType($var, $prefix);
+        }
+        $variable = [
+            'name' => $var,
+        ];
+        if (str_contains('heading', $var)) {
+            $variable['type'] = VariableTypes::HEADING->value;
+        }
+        if (str_contains('description', $var)) {
+            $variable['type'] = VariableTypes::DESCRIPTION->value;
+        }
+        if (str_contains('image', $var)) {
+            $variable['type'] = VariableTypes::IMAGE->value;
+        }
+        if (str_contains('status', $var)) {
+            $variable['type'] = VariableTypes::BOOLEAN->value;
+        }
+        if (str_contains('links', $var)) {
+            $variable['type'] = VariableTypes::LINKS->value;
+        }
+        if (str_contains($var, 'phone')) {
+            $variable['type'] = VariableTypes::PHONE->value;
+        }
+        if (str_contains($var, 'phones')) {
+            $variable['type'] = VariableTypes::PHONES->value;
+        }
+        if (str_contains($var, 'email')) {
+            $variable['type'] = VariableTypes::EMAIL->value;
+        }
+        if (str_contains($var, 'address')) {
+            $variable['type'] = VariableTypes::ADDRESS->value;
+        }
+        if (str_contains($var, 'addresses')) {
+            $variable['type'] = VariableTypes::ADDRESSES->value;
+        }
+        if (str_contains($var, 'schedule')) {
+            $variable['type'] = VariableTypes::SCHEDULE->value;
+        }
+        if (str_contains($var, 'schedules')) {
+            $variable['type'] = VariableTypes::SCHEDULES->value;
+        }
+        if (str_contains($var, 'socials')) {
+            $variable['type'] = VariableTypes::SOCIALS->value;
+        }
+        if (str_contains($var, 'page')) {
+            $variable['type'] = VariableTypes::PAGE->value;
+        }
+        if (str_contains($var, 'pages')) {
+            $variable['type'] = VariableTypes::PAGES->value;
+        }
+        if (!isset($variable['type'])) {
+            $variable['type'] = VariableTypes::TEXT->value;
+        }
+        return self::parseVariableByType($variable, $prefix);
+    }
+
+    public static function parseVariableByType(array $var, string $prefix = ''): array
+    {
+        try {
+            return VariableTypes::fromType($var['type'])->toFilamentField($var, $prefix);
+        } catch (Exception $exception) {
+            dd($var, $exception->getMessage());
+        }
     }
 }

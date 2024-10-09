@@ -97,7 +97,7 @@ if (! function_exists('get_active_languages')) {
 if (! function_exists('is_multi_lang')) {
     function is_multi_lang(): bool
     {
-        return true;
+        return false;
         try {
             return _settings('is_multi_lang', false);
         } catch (Exception $exception) {

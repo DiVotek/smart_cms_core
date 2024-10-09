@@ -28,8 +28,6 @@
          "color": "#000000"
       }
    },
-   "custom_js": [],
-   "custom_css": [],
    "theme": {
       "primary": "#000000",
       "secondary": "#ffffff",
@@ -44,24 +42,27 @@
       "success": "#00ff00"
    },
    "layout": {
-      "header": {
-         "variables": [
-            "links", "logo","slogan","socials","phones","address",
-             {
-               "name": "phones",
-               "label": "My phone numbers for header",
-               "type": "phones"
-            }
-         ]
-      },
-      "main": {
-
-      },
+      "header": [
+         "links",
+         "image",
+         "slogan",
+         "socials",
+         "phones",
+         "address",
+         {
+            "name": "phones",
+            "label": "My phone numbers for header",
+            "type": "phones"
+         }
+      ],
+      "main": {},
       "footer": {}
    },
    "sections": [
       {
-         "name": "About"
+         "name": "About",
+         "file": "about.blade.php",
+         "schema": ["label","phone"]
       },
       {
          "name": "Services",
@@ -79,7 +80,10 @@
             {
                "name": "modules",
                "type": "array",
-               "keys": ["name","description"]
+               "schema": [
+                  "name",
+                  "description"
+               ]
             }
          ]
       },
@@ -89,7 +93,11 @@
             {
                "name": "reviews",
                "type": "array",
-               "keys": ["name","description","image"]
+               "keys": [
+                  "name",
+                  "description",
+                  "image"
+               ]
             },
             "pages",
             {
@@ -127,6 +135,5 @@
          "type": "socials"
       }
    ],
-   "default_sections": [],
-   "pages": []
+   "default_sections": []
 }

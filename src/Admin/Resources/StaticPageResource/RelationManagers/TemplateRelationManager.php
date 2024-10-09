@@ -86,13 +86,13 @@ class TemplateRelationManager extends RelationManager
                         $newSection = null;
                         $sorting = $model::query()->where('entity_id', $this->ownerRecord->getKey())
                             ->where('entity_type', $this->ownerRecord->getMorphClass())
-                            ->max('sorting');
+                            ->max('sorting') ?? 0;
                         if (isset($data['sections'])) {
 
                             foreach ($data['sections'] as $section) {
                                 $sorting++;
                                 $newSection = $this->ownerRecord->template()->create([
-                                    'template_section_id' => $section,
+                                    'template_section_id' => (int)$section,
                                     'sorting' => $sorting,
                                 ]);
                             }

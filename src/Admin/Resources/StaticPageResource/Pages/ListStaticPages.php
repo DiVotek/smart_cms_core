@@ -23,7 +23,7 @@ class ListStaticPages extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('All'),
+            'all' => Tab::make('All')->modifyQueryUsing(fn (Builder $query) => $query->whereNull('parent_id')),
         ];
         foreach (Page::query()->where('is_nav', true)->get() as $page) {
             $tabs[$page->name()] = Tab::make($page->name())

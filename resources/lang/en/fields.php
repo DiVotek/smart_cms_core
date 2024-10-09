@@ -64,4 +64,5 @@ return [
     'is_required' => 'Is required',
     'custom' => 'Custom fields',
     'value' => 'Value',
+    'template_section' => 'Template section',
 ];

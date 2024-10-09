@@ -5,21 +5,27 @@ namespace SmartCms\Core\Components\Layout;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use SmartCms\Core\Actions\Template\BuildLayoutTemplate;
+use SmartCms\Core\Actions\Template\BuildTemplate;
 use SmartCms\Core\Actions\Template\GetLinks;
 
 class Header extends Component
 {
-    public array $links;
+    public array $template;
 
     public function __construct()
     {
-        $this->links = GetLinks::run();
+        $headerSections = _settings('header',[]);
+        $template = BuildLayoutTemplate::run($headerSections);
+        $this->template = $template;
     }
 
     public function render(): View|Closure|string
     {
-        $view = _settings('design.header', 'default-header');
-
-        return view('templates::'.template().'.'.'layout.'.strtolower($view));
+        return <<<'blade'
+            <header>
+                <x-s::layout.builder :data="$template" />
+            </header>
+        blade;
     }
 }

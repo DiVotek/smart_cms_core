@@ -39,10 +39,27 @@ if (! function_exists('email')) {
         return $setting['email'] ?? '';
     }
 }
+if (! function_exists('emails')) {
+    function emails(): array
+    {
+        $setting = _settings('company_info', []);
+        return array_map(function ($item) {
+            return $item['email'];
+        }, $setting);
+    }
+}
 if (! function_exists('socials')) {
     function socials(): array
     {
         return _settings('socials', []);
+    }
+}
+if (! function_exists('social_names')) {
+    function social_names(): array
+    {
+        return array_map(function ($item) {
+            return $item['name'];
+        }, _settings('socials', []));
     }
 }
 if (! function_exists('template')) {
@@ -110,6 +127,15 @@ if (! function_exists('schedule')) {
         $schedule = $setting['schedule'] ?? '';
 
         return $schedule;
+    }
+}
+if (! function_exists('schedules')) {
+    function schedules(): array
+    {
+        $setting = _settings('company_info', []);
+        return array_filter(array_map(function ($item) {
+            return $item['schedule'] ?? '';
+        }, $setting));
     }
 }
 if (! function_exists('company_info')) {

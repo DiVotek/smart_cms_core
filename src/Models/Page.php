@@ -78,7 +78,7 @@ class Page extends BaseModel
             $current = $current->parent;
         }
 
-        return tRoute('page', ['slug' => implode('/', $slugs)]);
+        return tRoute('smart_cms_page', ['slug' => implode('/', $slugs)]);
     }
 
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo

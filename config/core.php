@@ -68,4 +68,8 @@ return [
         'from' => $prefix.'mail_from',
         'name' => $prefix.'mail_name',
     ],
+    'theme' => $prefix.'theme',
+    'header' => $prefix.'header',
+    'footer' => $prefix.'footer',
+    'default_variables' => $prefix.'default_variables',
 ];

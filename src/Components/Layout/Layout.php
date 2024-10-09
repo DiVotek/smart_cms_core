@@ -4,6 +4,7 @@ namespace SmartCms\Core\Components\Layout;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\Component;
 
@@ -15,17 +16,17 @@ class Layout extends Component
 
     public array $meta_tags;
 
-    public string $fonts;
+    public string $script;
 
     public ?string $templateCss;
 
     public string $favicon;
 
+    public array $theme;
+
     public function __construct()
     {
         $styles = _settings('styles', []);
-        $this->fonts = $styles['fonts'] ?? '/resources/schemas/fonts/roboto.css';
-        $this->style = $styles['colors'] ?? '/resources/schemas/colors/yellow.css';
         $scripts = _settings('custom_scripts', []);
         if (! is_array($scripts)) {
             $scripts = [];
@@ -37,11 +38,26 @@ class Layout extends Component
         $this->templateCss = File::exists(base_path('template/css/app.css')) ? 'template/css/app.css' : null;
         $this->scripts = $scripts;
         $this->meta_tags = $meta_tags;
-        $this->style = '';
-        //  'resources' . explode('/resources', $this->style)[1];
-        $this->fonts = '';
-        // 'resources' . explode('/resources', $this->fonts)[1];
-        $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
+        $theme = _settings('theme', []);
+        if (! is_array($theme)) {
+            $theme = [];
+        }
+        $this->theme = $theme;
+        $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
+            if (File::exists(scms_template_path(template()) . 'css/app.css')) {
+                return 'scms/templates/' . template() . 'css/app.css';
+            } else {
+                return '';
+            }
+        });
+        $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
+            if (File::exists(scms_template_path(template()) . 'js/app.js')) {
+                return 'scms/templates/' . template() . 'js/app.js';
+            } else {
+                return '';
+            }
+        });
+        $this->favicon = asset('/storage' . _settings('favicon', '/favicon.ico'));
     }
 
     public function render(): View|Closure|string
@@ -71,9 +87,12 @@ class Layout extends Component
                         <meta property="og:image" content="@yield('meta-image')" />
                         <meta property="og:site_name" content="{{company_name()}}">
                         @yield('microdata')
+                        <style>
+                            :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
+                        </style>
                     </head>
-                    @if($fonts)
-                    @vite($fonts)
+                    @if($script)
+                    @vite($script)
                     @endif
                     @if($style)
                     @vite($style)

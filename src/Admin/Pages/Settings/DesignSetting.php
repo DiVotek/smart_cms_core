@@ -3,17 +3,25 @@
 namespace SmartCms\Core\Admin\Pages\Settings;
 
 use Closure;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Illuminate\Contracts\Support\Htmlable;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Services\Helper;
-use SmartCms\Core\Services\Schema;
 
 class DesignSetting extends BaseSettings
 {
     public static function getNavigationGroup(): ?string
     {
         return strans('admin.design-template');
+    }
+
+    public static function getNavigationIcon(): string|Htmlable|null
+    {
+        return null;
     }
 
     public static function getNavigationBadge(): ?string
@@ -23,42 +31,42 @@ class DesignSetting extends BaseSettings
 
     public function schema(): array|Closure
     {
-        $templateConfigPath = scms_template_path(_settings('template', 'default')).'/config.json';
+        $templateConfig = [];
+        $templateConfigPath = scms_template_path(_settings('template', 'default')) . '/config.json';
         if (file_exists($templateConfigPath)) {
-            $templateSchema = json_decode(file_get_contents($templateConfigPath), true);
-        } else {
-            $templateSchema = [];
+            $templateConfig = json_decode(file_get_contents($templateConfigPath), true);
         }
-
+        $headerSchema = [];
+        $footerSchema = [];
+        $tabs = [];
+        if (isset($templateConfig['layout'])) {
+            $headerSchema = Helper::parseSchema($templateConfig['layout']['header'] ?? [], 'header');
+            $footerSchema = Helper::parseSchema($templateConfig['layout']['footer'] ?? [], 'footer');
+        }
+        if (isset($templateConfig['defaultVariables'])) {
+            $tabs[] = Tab::make(_nav('default_variables'))
+                ->schema(Helper::parseSchema($templateConfig['defaultVariables'] ?? [], 'default_variables'));
+        }
+        if (isset($templateConfig['theme'])) {
+            $colors = [];
+            foreach ($templateConfig['theme'] as $key => $value) {
+                $colors[] = ColorPicker::make('theme.' . $key)
+                    ->label(ucfirst($key))
+                    ->default($value);
+            }
+            $tabs[] = Tab::make(_nav('theme'))
+                ->schema([Grid::make()
+                    ->columns(2)
+                    ->schema($colors)]);
+        }
         return [
             Tabs::make(strans('admin.settings'))
                 ->schema([
-                    Tabs\Tab::make(__('General'))->schema([
-                        Select::make('template')
-                            ->label(_fields('template'))
-                            ->options(Helper::getTemplates())
-                            ->native(false)
-                            ->searchable(),
-                        // ...Setting::getStyleForm(),
-                    ]),
                     Tabs\Tab::make(strans('admin.header'))
-                        ->schema([
-                            Select::make(sconfig('design.header'))
-                                ->label(strans('admin.design'))
-                                ->options(Helper::getLayoutTemplate())
-                                ->native(false)
-                                ->searchable(),
-                            Schema::getLinkBuilder(sconfig('menu.header'))->label(_fields('menu_header')),
-                        ]),
+                        ->schema([Group::make($headerSchema)]),
                     Tabs\Tab::make(strans('admin.footer'))
-                        ->schema([
-                            Select::make(sconfig('design.footer'))
-                                ->label(strans('admin.design'))
-                                ->options(Helper::getLayoutTemplate(true))
-                                ->native(false)
-                                ->searchable(),
-                            Schema::getLinkBuilder(sconfig('menu.footer'))->label(_fields('menu_footer')),
-                        ]),
+                        ->schema($footerSchema),
+                    ...$tabs
                 ]),
         ];
     }

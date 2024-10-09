@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace SmartCms\Core\Actions\Schema;
 
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
@@ -12,8 +12,11 @@ class ModuleDescriptionSchema
 {
     use AsAction;
 
-    public function handle(): array
+    public function handle(string $name = 'value.description', string $label = ''): array
     {
+        if($label == '') {
+            $label = _fields('description');
+        }
         $fields = [
             Textarea::make('value.'.main_lang().'.description')->label(_fields('description')),
         ];

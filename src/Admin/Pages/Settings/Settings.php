@@ -8,10 +8,12 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Contracts\Support\Htmlable;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use SmartCms\Core\Models\Language;
+use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -19,12 +21,17 @@ class Settings extends BaseSettings
 {
     public static function getNavigationGroup(): ?string
     {
-        return strans('admin.system');
+        return _nav('design-template');
     }
 
     public static function getNavigationBadge(): ?string
     {
         return 8;
+    }
+
+    public static function getNavigationIcon(): string|Htmlable|null
+    {
+        return null;
     }
 
     public function schema(): array|Closure
@@ -36,23 +43,23 @@ class Settings extends BaseSettings
                         TextInput::make(sconfig('company_name'))
                             ->label(_fields('company_name'))
                             ->required(),
-                        Textarea::make(sconfig('company_description'))
-                            ->label(_fields('company_description'))
-                            ->characterLimit(255),
-                        Textarea::make(sconfig('company_slogan'))
-                            ->label(_fields('company_slogan'))
-                            ->characterLimit(120),
                         Select::make(sconfig('main_language'))
                             ->label(_fields('main_language'))
                             ->options(Language::query()->pluck('name', 'id')->toArray())
                             ->required(),
+                        TextInput::make('country')->label(_fields('country'))->required(),
+                        Select::make('template')
+                            ->label(_fields('template'))
+                            ->options(Helper::getTemplates())
+                            ->native(false)
+                            ->searchable(),
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
-                            Schema::getImage(sconfig('header_logo'))
-                                ->label(_fields('header_logo'))
-                                ->required(),
-                            Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
+                            // Schema::getImage(sconfig('header_logo'))
+                            //     ->label(_fields('header_logo'))
+                            //     ->required(),
+                            // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
                             Schema::getImage(sconfig('favicon'))->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))
                                 ->schema([
@@ -72,7 +79,6 @@ class Settings extends BaseSettings
                         ]),
                     Tabs\Tab::make(strans('admin.company_info'))
                         ->schema([
-                            TextInput::make('country')->label(_fields('country'))->required(),
                             Repeater::make(sconfig('company_info'))->label(_fields('company_info'))
                                 ->schema([
                                     TextInput::make('address')

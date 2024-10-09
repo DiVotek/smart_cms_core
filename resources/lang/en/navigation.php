@@ -20,4 +20,6 @@ return [
     'model_template_sections' => 'Template Sections',
     'model_translation' => 'Translation',
     'model_translations' => 'Translations',
+    'default_variables' => 'Default variables',
+    'theme' => 'Theme',
 ];

@@ -39,6 +39,13 @@ class Builder extends Component
             } elseif (is_array($option)) {
                 $newFields = [];
                 foreach ($option as $k => $v) {
+                    if (strlen($k) == 2) {
+                        if ($k == current_lang()) {
+                            $newFields = array_merge($newFields, $v);
+                        }
+                    } else {
+                        continue;
+                    }
                     $item = [];
                     if (! is_array($v)) {
                         $newFields[$k] = $v;

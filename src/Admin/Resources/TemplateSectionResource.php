@@ -5,7 +5,9 @@ namespace SmartCms\Core\Admin\Resources;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -21,8 +23,6 @@ use SmartCms\Core\Services\TableSchema;
 class TemplateSectionResource extends Resource
 {
     protected static ?string $model = TemplateSection::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
@@ -67,7 +67,6 @@ class TemplateSectionResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Schema::getName(true)->maxLength(255),
-                    Hidden::make('type')->default(''),
                     // Fieldset::make()->schema([
                     //     Schema::getStatus(),
                     //     Forms\Components\Toggle::make('locked')
@@ -77,7 +76,7 @@ class TemplateSectionResource extends Resource
                         ->label(_fields('design'))
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn (Radio $component) => $component
+                        ->afterStateUpdated(fn(Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
@@ -116,7 +115,112 @@ class TemplateSectionResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make(_actions('theme'))
+                    ->label(_actions('theme'))
+                    ->slideOver()
+                    ->icon('heroicon-o-cog')
+                    ->fillForm(function (): array {
+                        return [
+                            'theme' => _settings('theme', []),
+                        ];
+                    })
+                    ->action(function (array $data): void {
+                        setting([
+                            sconfig('theme') => $data['theme'],
+                        ]);
+                    })
+                    ->hidden(function () {
+                        if (template() == '') {
+                            return true;
+                        }
+                        $config = scms_template_config();
+                        return !isset($config['theme']);
+                    })
+                    ->form(function ($form) {
+                        $config = scms_template_config();
+                        $theme = $config['theme'] ?? [];
+                        $schema = [];
+                        foreach ($theme as $key => $value) {
+                            $schema[] = Forms\Components\ColorPicker::make('theme.' . $key)
+                                ->label(ucfirst($key))
+                                ->default($value);
+                        }
+                        return $form
+                            ->schema([
+                                Section::make('')->schema($schema),
+                            ]);
+                    }),
+                Tables\Actions\Action::make(_actions('header_footer'))
+                    ->label(_actions('header_footer'))
+                    ->slideOver()
+                    ->icon('heroicon-o-cog')
+                    ->fillForm(function (): array {
+                        return [
+                            'header' => _settings('header', []),
+                            'footer' => _settings('footer', []),
+                        ];
+                    })
+                    ->action(function (array $data): void {
+                        setting([
+                            sconfig('header') => $data['header'],
+                            sconfig('footer') => $data['footer'],
+                        ]);
+                    })
+                    ->hidden(function () {
+                        template() == '';
+                    })
+                    ->form(function ($form) {
+                        $config = scms_template_config();
+                        $theme = $config['theme'] ?? [];
+                        $schema = [];
+                        foreach ($theme as $key => $value) {
+                            $schema[] = Forms\Components\ColorPicker::make('theme.' . $key)
+                                ->label(ucfirst($key))
+                                ->default($value);
+                        }
+                        return $form
+                            ->schema([
+                                Section::make('')->schema([
+                                    Repeater::make('header')->schema([
+                                        Select::make('template_section_id')->options(
+                                            TemplateSection::query()->where('design', 'like', '%layout%')->pluck('name', 'id')->toArray()
+                                        )->label(_fields('template_section')),
+                                    ]),
+                                    Repeater::make('footer')->schema([
+                                        Select::make('template_section_id')->options(
+                                            TemplateSection::query()->where('design', 'like', '%layout%')->pluck('name', 'id')->toArray()
+                                        )->label(_fields('template_section')),
+                                    ]),
+                                ]),
+                            ]);
+                    }),
+                Tables\Actions\Action::make(_actions('default_variables'))
+                    ->label(_actions('default_variables'))
+                    ->slideOver()
+                    ->icon('heroicon-o-cog')
+                    ->fillForm(function (): array {
+                        return [
+                            'default_variables' => _settings('default_variables', []),
+                        ];
+                    })
+                    ->action(function (array $data): void {
+                        setting([
+                            sconfig('default_variables') => $data['default_variables'],
+                        ]);
+                    })
+                    ->hidden(function () {
+                        template() == '' || !isset(scms_template_config()['defaultVariables']);
+                    })
+                    ->form(function ($form) {
+                        $config = scms_template_config();
+                        $variables = $config['defaultVariables'] ?? [];
+                        $schema = Helper::parseSchema($variables, 'default_variables.');
+                        return $form->schema($schema);
+                    }),
+            ])
+        ;
     }
 
     public static function getPages(): array
