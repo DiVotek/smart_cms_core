@@ -1,5 +1,5 @@
 {
-   "name": "Default",
+   "name": "Demo",
    "description": "Default template",
    "author": "Smart CMS",
    "url": "https://smartcms.io",
@@ -41,98 +41,10 @@
       "warning": "#ffff00",
       "success": "#00ff00"
    },
-   "layout": {
-      "header": [
-         "links",
-         "image",
-         "slogan",
-         "socials",
-         "phones",
-         "address",
-         {
-            "name": "phones",
-            "label": "My phone numbers for header",
-            "type": "phones"
-         }
-      ],
-      "main": {},
-      "footer": {}
-   },
    "sections": [
       {
-         "name": "About",
-         "file": "about.blade.php",
-         "schema": ["label","phone"]
-      },
-      {
-         "name": "Services",
-         "image": "base64......"
-      },
-      {
-         "name": "Portfolio"
-      },
-      {
-         "name": "Contact"
-      },
-      {
-         "name": "Advantages",
-         "schema": [
-            {
-               "name": "modules",
-               "type": "array",
-               "schema": [
-                  "name",
-                  "description"
-               ]
-            }
-         ]
-      },
-      {
-         "name": "reviews",
-         "schema": [
-            {
-               "name": "reviews",
-               "type": "array",
-               "keys": [
-                  "name",
-                  "description",
-                  "image"
-               ]
-            },
-            "pages",
-            {
-               "name": "posts",
-               "length": 3,
-               "required": false
-            }
-         ]
-      }
-   ],
-   "defaultVariables": [
-      {
-         "name": "phones",
-         "label": "My phone numbers",
-         "type": "phones"
-      },
-      {
-         "name": "address",
-         "label": "My address",
-         "type": "text"
-      },
-      {
-         "name": "logo",
-         "label": "My logo",
-         "type": "image"
-      },
-      {
-         "name": "slogan",
-         "label": "My slogan",
-         "type": "text"
-      },
-      {
-         "name": "socials",
-         "label": "My socials",
-         "type": "socials"
+         "name": "Demo",
+         "file": "demo"
       }
    ],
    "default_sections": []

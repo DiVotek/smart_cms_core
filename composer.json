@@ -28,7 +28,6 @@
         "laravel/framework": "^11.9",
         "livewire/livewire": "^3.4",
         "lorisleiva/laravel-actions": "^2.8",
-        "nunomaduro/phpinsights": "^2.0",
         "outerweb/filament-settings": "*",
         "outerweb/settings": "^1.0",
         "ralphjsmit/laravel-glide": "^1.2",

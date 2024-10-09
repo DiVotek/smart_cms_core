@@ -5,7 +5,7 @@
    <p>{!! $content !!}</p>
    <ul>
       @foreach($phones as $phone)
-            <li>{{ $phone }}</li>
+      <li>{{ $phone }}</li>
       @endforeach
    </ul>
 </div>
