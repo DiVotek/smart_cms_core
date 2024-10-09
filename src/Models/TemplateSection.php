@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
+use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Traits\HasStatus;
 
 /**
@@ -33,5 +34,8 @@ class TemplateSection extends BaseModel
     public function morphs()
     {
         return $this->morphMany(self::class, 'en');
+    }
+    public function getFields():array{
+        return Helper::getComponentClass($this->design);
     }
 }
