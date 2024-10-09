@@ -54,6 +54,7 @@ return [
     'main_language' => 'Main language',
 
     'header_logo' => 'Header logo',
+    'logo' => 'Logo',
     'footer_logo' => 'Footer logo',
     'favicon' => 'Favicon',
     'socials' => 'Socials',
@@ -65,4 +66,5 @@ return [
     'custom' => 'Custom fields',
     'value' => 'Value',
     'template_section' => 'Template section',
+    'branch_name' => 'Branch name',
 ];

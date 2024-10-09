@@ -55,9 +55,9 @@ class Settings extends BaseSettings
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
-                            // Schema::getImage(sconfig('header_logo'))
-                            //     ->label(_fields('header_logo'))
-                            //     ->required(),
+                            Schema::getImage(sconfig('branding.logo'))
+                                ->label(_fields('logo'))
+                                ->required(),
                             // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
                             Schema::getImage(sconfig('favicon'))->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))
@@ -71,8 +71,7 @@ class Settings extends BaseSettings
                                         ->string()
                                         ->required(),
                                     Schema::getImage('icon')
-                                        ->label(strans('admin.icon'))
-                                        ->required(),
+                                        ->label(strans('admin.icon'))->default(''),
                                 ])
                                 ->default([]),
                         ]),
@@ -80,9 +79,13 @@ class Settings extends BaseSettings
                         ->schema([
                             Repeater::make(sconfig('company_info'))->label(_fields('company_info'))
                                 ->schema([
+                                    TextInput::make('name')
+                                        ->label(_fields('branch_name'))
+                                        ->required(),
                                     TextInput::make('address')
                                         ->required(),
                                     TextInput::make('coordinates'),
+                                    TextInput::make('city'),
                                     TextInput::make('schedule')->required(),
                                     TextInput::make('email')->required(),
                                     Schema::getRepeater('phones')->schema([
