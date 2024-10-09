@@ -46,8 +46,8 @@ class Settings extends BaseSettings
                             ->label(_fields('main_language'))
                             ->options(Language::query()->pluck('name', 'id')->toArray())
                             ->required(),
-                        TextInput::make('country')->label(_fields('country'))->required(),
-                        Select::make('template')
+                        TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
+                        Select::make(sconfig('template'))
                             ->label(_fields('template'))
                             ->options(Helper::getTemplates())
                             ->native(false)
