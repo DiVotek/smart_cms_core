@@ -13,7 +13,9 @@ return new class extends Migration
         Schema::create(Translate::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('value');
-            $table->foreignIdFor(Language::class)->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('language_id');
+            $table->references('id')->on(Language::getDb());
+            $table->foreignIdFor(Language::class)->constrained()->cascadeOnDelete()->references('id')->on('smart_cms_languages');
             $table->morphs('entity');
             $table->timestamps();
         });
