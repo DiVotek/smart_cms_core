@@ -22,6 +22,8 @@ class Language extends BaseModel
 
     protected $guarded = [];
 
+    protected $table = 'smart_cms_languages';
+
     public const LANGUAGES = [
         'English' => [
             'name' => 'English',
