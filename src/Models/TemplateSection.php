@@ -35,7 +35,9 @@ class TemplateSection extends BaseModel
     {
         return $this->morphMany(self::class, 'en');
     }
-    public function getFields():array{
+
+    public function getFields(): array
+    {
         return Helper::getComponentClass($this->design);
     }
 }
