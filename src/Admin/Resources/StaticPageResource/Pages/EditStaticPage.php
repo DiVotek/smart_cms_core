@@ -46,4 +46,12 @@ class EditStaticPage extends EditRecord
             ViewAction::make('View Page')->url($this->record->route())->openUrlInNewTab(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if($data['slug'] == null){
+            $data['slug'] = '';
+        }
+        return $data;
+    }
 }

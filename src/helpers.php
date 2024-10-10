@@ -4,14 +4,9 @@ use Illuminate\Support\Facades\Cache;
 use SmartCms\Core\Models\Page;
 
 if (! function_exists('logo')) {
-    /**
-     * @param  bool  $isHeader
-     */
-    function logo($isHeader = true): string
+    function logo(): string
     {
-        $key = $isHeader ? 'header_logo' : 'footer_logo';
-
-        return _settings($key, '');
+        return _settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {

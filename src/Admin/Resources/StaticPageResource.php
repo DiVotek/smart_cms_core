@@ -13,6 +13,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
+use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
@@ -70,6 +71,7 @@ class StaticPageResource extends Resource
         return $query;
     }
 
+
     public static function form(Form $form): Form
     {
         $parent = $form->getRecord()->parent_id ?? request('parent') ?? null;
@@ -91,7 +93,10 @@ class StaticPageResource extends Resource
                 ];
             }
         }
-
+        $isRequired = true;
+        if(!Page::query()->where('slug', '')->exists() ||$form->getRecord() && $form->getRecord()->slug === '') {
+            $isRequired = false;
+        }
         // $form->fill([
         //     'custom' => $currentFields ?? [],
         // ]);
@@ -100,7 +105,7 @@ class StaticPageResource extends Resource
                 Section::make()
                     ->schema([
                         Schema::getReactiveName(),
-                        Schema::getSlug(),
+                        Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
                         Schema::getImage(),

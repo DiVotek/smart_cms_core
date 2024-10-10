@@ -25,7 +25,7 @@ return new class extends Migration
         });
         Page::query()->create([
             'name' => 'Home',
-            'slug' => 'home',
+            'slug' => '',
             'status' => 1,
             'is_nav' => 0,
         ]);

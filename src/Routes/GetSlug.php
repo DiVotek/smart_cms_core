@@ -36,10 +36,9 @@ class GetSlug
     protected function findPage(array $segments, $parentId = null)
     {
         $slug = array_shift($segments);
-        $page = Page::query()->where('slug', $slug)
+        $page = Page::query()->where('slug', $slug ?? '')
             ->where('parent_id', $parentId)
             ->first();
-
         if (! $page) {
             return null;
         }

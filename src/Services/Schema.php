@@ -43,7 +43,6 @@ class Schema
             ->readOnly()
             ->required($isRequired)
             ->helperText(__('Slug will be generated automatically from title of any language'))
-            ->disabled(! $isRequired)
             ->hintAction(Action::make(__('Clear slug'))
                 ->requiresConfirmation()
                 ->action(function (Set $set, $state) {
