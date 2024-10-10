@@ -6,7 +6,6 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -32,6 +31,7 @@ class StaticPageResource extends Resource
         $query = parent::getEloquentQuery()->withoutGlobalScopes();
         $menuSections = MenuSection::query()->pluck('id')->toArray();
         $query->whereNotIn('id', $menuSections);
+
         return $query;
     }
 

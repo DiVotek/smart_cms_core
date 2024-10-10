@@ -20,8 +20,9 @@ class Field extends Component
 
     public function render(): View|Closure|string
     {
-        $id = $this->field->type . '_' . now()->timestamp;
-        $view = 'templates::' . template() . '.forms.' . $this->style . '.' . $this->field->type;
+        $id = $this->field->type.'_'.now()->timestamp;
+        $view = 'templates::'.template().'.forms.'.$this->style.'.'.$this->field->type;
+
         return view($view, ['field' => $this->field, 'id' => $id]);
     }
 }

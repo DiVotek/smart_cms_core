@@ -7,16 +7,19 @@ use SmartCms\Core\Models\Form as ModelsForm;
 
 class Form extends Component
 {
-   public ?ModelsForm $form;
-   public string $button;
-   public function __construct($form)
-   {
-      $this->form = ModelsForm::find($form);
-      $this->button = 'templates::' . template() . '.forms.' . $this->form->style . '.button';
-   }
-   public function render()
-   {
-      return <<<'blade'
+    public ?ModelsForm $form;
+
+    public string $button;
+
+    public function __construct($form)
+    {
+        $this->form = ModelsForm::find($form);
+        $this->button = 'templates::'.template().'.forms.'.$this->form->style.'.button';
+    }
+
+    public function render()
+    {
+        return <<<'blade'
           <script src="https://unpkg.com/htmx.org@1.9.2"></script>
             <form id="{{$form->html_id ?? $form->code}}" name="{{$form->code}}" hx-get="{{route('smartcms.form.submit')}}" hx-target="#{{$form->html_id ?? $form->code}}" hx-swap="outerHTML" hx-trigger="submit" {{$attributes}}>
                <input type="hidden" name="form" value="{{$form->code}}" />
@@ -27,5 +30,5 @@ class Form extends Component
             </form>
 
          blade;
-   }
+    }
 }

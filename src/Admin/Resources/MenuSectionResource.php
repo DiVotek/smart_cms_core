@@ -4,16 +4,12 @@ namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
-use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\MenuSectionResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
@@ -86,10 +82,10 @@ class MenuSectionResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\EditAction::make('Page')
-                ->label(_actions('edit_page'))
-                ->url(function ($record) {
-                    return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
-                }),
+                    ->label(_actions('edit_page'))
+                    ->url(function ($record) {
+                        return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->reorderable('sorting')

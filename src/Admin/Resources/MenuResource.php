@@ -2,14 +2,11 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use SmartCms\Core\Admin\Resources\MenuResource\Pages as Pages;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Services\Schema;
@@ -17,7 +14,6 @@ use SmartCms\Core\Services\TableSchema;
 
 class MenuResource extends Resource
 {
-
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

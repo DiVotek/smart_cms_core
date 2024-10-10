@@ -6,8 +6,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Services\TableSchema;
 

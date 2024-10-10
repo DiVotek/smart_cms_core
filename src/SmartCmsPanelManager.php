@@ -72,6 +72,7 @@ class SmartCmsPanelManager extends PanelProvider
             Css::make('custom-stylesheet', asset('/smart_cms_core/index.css')),
             JS::make('custom-script', asset('/smart_cms_core/index.js')),
         ]);
+
         return $panel
             ->default()
             ->id('smart_cms_admin')
@@ -145,7 +146,7 @@ class SmartCmsPanelManager extends PanelProvider
                     }),
             ];
             foreach ($menuSections as $section) {
-                $items[] = NavigationItem::make($section->name . ' ' . _nav('items'))
+                $items[] = NavigationItem::make($section->name.' '._nav('items'))
                     ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name]))
                     ->sort($section->sorting + 1)
                     ->group($section->name)
@@ -153,12 +154,12 @@ class SmartCmsPanelManager extends PanelProvider
                         return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == $section->name);
                     });
                 if ($section->is_categories) {
-                    $items[] = NavigationItem::make($section->name . ' ' . _nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                    $items[] = NavigationItem::make($section->name.' '._nav('categories'))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 2)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
             }
@@ -194,6 +195,7 @@ class SmartCmsPanelManager extends PanelProvider
         }
         $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('design-template'))->icon('heroicon-m-light-bulb');
         $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('system'))->icon('heroicon-m-cog-6-tooth');
+
         return $groups;
     }
 
@@ -207,6 +209,7 @@ class SmartCmsPanelManager extends PanelProvider
                     <p>Powered by <a href="https://smartcms.com" target="_blank" class="hover:text-gray-700">SmartCms</a></p>
                 </div>
                 HTML;
+
                 return view('filament.components.footer-branding')->render();
             }
         );

@@ -5,13 +5,10 @@ namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 use Filament\Actions;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Route;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
@@ -34,7 +31,7 @@ class ListStaticPages extends ListRecords
         $activeTab = request('activeTab');
         foreach (MenuSection::all() as $section) {
             if ($section->is_categories) {
-                if ($section->name . _nav('categories') == $activeTab) {
+                if ($section->name._nav('categories') == $activeTab) {
                     $this->menuSection = $section;
                     break;
                 } else {
@@ -51,12 +48,12 @@ class ListStaticPages extends ListRecords
             }
         }
         $actionName = request('activeTab') ?? 'Static Page';
-        $actionName = 'Create ' . $actionName;
-        if (!str_contains($actionName, _nav('categories'))) {
-            $actionName = $actionName . ' ' . _nav('item');
+        $actionName = 'Create '.$actionName;
+        if (! str_contains($actionName, _nav('categories'))) {
+            $actionName = $actionName.' '._nav('item');
         }
         $this->actionName = $actionName;
-        $this->isCategories = $this->menuSection && $this->menuSection->is_categories && !str_contains($actionName, _nav('categories'));
+        $this->isCategories = $this->menuSection && $this->menuSection->is_categories && ! str_contains($actionName, _nav('categories'));
     }
 
     protected function getHeaderActions(): array
@@ -74,6 +71,7 @@ class ListStaticPages extends ListRecords
                     } else {
                         $parent_id = Hidden::make('parent_id')->default(null);
                     }
+
                     return $form->schema([
                         Schema::getReactiveName(),
                         Schema::getSlug(),
@@ -91,19 +89,19 @@ class ListStaticPages extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('All')->modifyQueryUsing(fn(Builder $query) => $query->whereNull('parent_id')),
+            'all' => Tab::make('All')->modifyQueryUsing(fn (Builder $query) => $query->whereNull('parent_id')),
         ];
         foreach (MenuSection::query()->get() as $section) {
             if ($section->is_categories) {
-                $name = $section->name . _nav('categories');
+                $name = $section->name._nav('categories');
                 $tabs[$name] = Tab::make($name)
-                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
                 $categories = Page::query()->where('parent_id', $section->parent_id)->pluck('id')->toArray();
-                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
-                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('parent_id', $categories));
+                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('parent_id', $categories));
             } else {
-                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
-                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
+                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
             }
         }
         // foreach (Page::query()->where('is_nav', true)->get() as $page) {

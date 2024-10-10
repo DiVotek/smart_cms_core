@@ -213,21 +213,22 @@ class TemplateSectionResource extends Resource
                         ]);
                     })
                     ->hidden(function () {
-                        if(template() == ''){
+                        if (template() == '') {
                             return true;
                         }
-                        if(! isset(scms_template_config()['defaultVariables'])){
+                        if (! isset(scms_template_config()['defaultVariables'])) {
                             return true;
                         }
-                        if(empty(scms_template_config()['defaultVariables'])){
+                        if (empty(scms_template_config()['defaultVariables'])) {
                             return true;
                         }
+
                         return false;
                     })
                     ->form(function ($form) {
                         $config = scms_template_config();
                         $variables = $config['defaultVariables'] ?? [];
-                        if(empty($variables)){
+                        if (empty($variables)) {
                             $schema = [];
                         } else {
                             $schema = Helper::parseSchema($variables, 'default_variables.');

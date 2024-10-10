@@ -103,8 +103,8 @@ class FormResource extends Resource
             ->columns([
                 TableSchema::getName(),
                 Tables\Columns\TextColumn::make('code')
-                ->label(_columns('code'))
-                ->searchable(),
+                    ->label(_columns('code'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('style')
                     ->label(_columns('style'))
                     ->searchable(),

@@ -5,7 +5,6 @@ namespace SmartCms\Core\Admin\Resources\MenuSectionResource\Pages;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\MenuSectionResource;
-use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\Page;
 
 class CreateMenuSectionPage extends CreateRecord
