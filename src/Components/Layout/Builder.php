@@ -7,7 +7,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\GetDescription;
 use SmartCms\Core\Actions\Template\GetTitle;
-use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\Page;
 
 class Builder extends Component
@@ -84,8 +83,9 @@ class Builder extends Component
         $title = GetTitle::run($reference);
         $description = GetDescription::run($reference);
         $host = Page::first();
+
         return array_merge($reference, ['options' => $options, 'title' => $title, 'description' => $description,
-        'logo' =>asset('/storage' . logo() ), 'host'=>$host->route() ?? '' ,'hostname' => $host->name() ?? '','company_name' => company_name()
-    ]);
+            'logo' => asset('/storage'.logo()), 'host' => $host->route() ?? '', 'hostname' => $host->name() ?? '', 'company_name' => company_name(),
+        ]);
     }
 }

@@ -49,9 +49,10 @@ class EditStaticPage extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if($data['slug'] == null){
+        if ($data['slug'] == null) {
             $data['slug'] = '';
         }
+
         return $data;
     }
 }
