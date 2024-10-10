@@ -19,31 +19,7 @@ class EditStaticPage extends EditRecord
     {
         return [
             DeleteAction::make(),
-            Action::make(_actions('save_as_nav'))->requiresConfirmation()->hidden(function (): bool {
-                return $this->record->is_nav;
-            })->action(function (Model $record) {
-                $record->update(['is_nav' => true]);
-            }),
-            Action::make(_actions('save_as_not_nav'))->requiresConfirmation()->hidden(function (): bool {
-                return ! $this->record->is_nav;
-            })->action(function (Model $record) {
-                $record->update(['is_nav' => false]);
-            })->color('danger'),
-            Action::make(_actions('nav_settings'))->form(function ($form) {
-                return $form->schema([
-                    Schema::getTemplateBuilder('nav_settings.template'),
-                    Schema::getRepeater('nav_settings.fields')->schema([
-                        TextInput::make('name')->label(_fields('name'))->required(),
-                    ]),
-                ]);
-            })->fillForm(fn ($record): array => [
-                'nav_settings' => $record->nav_settings ?? [],
-            ])->modal()->action(function (Model $record, $data) {
-                $record->update($data);
-            })->hidden(function (): bool {
-                return ! $this->record->is_nav;
-            }),
-            ViewAction::make('View Page')->url($this->record->route())->openUrlInNewTab(),
+            ViewAction::make(_actions('view'))->url($this->record->route())->openUrlInNewTab(),
         ];
     }
 

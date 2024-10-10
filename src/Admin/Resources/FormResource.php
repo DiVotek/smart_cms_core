@@ -101,16 +101,10 @@ class FormResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')
-                    ->label(_columns('code'))
-                    ->searchable(),
                 TableSchema::getName(),
-                Tables\Columns\TextColumn::make('html_id')
-                    ->label(_columns('html_id'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('class')
-                    ->label(_columns('class'))
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('code')
+                ->label(_columns('code'))
+                ->searchable(),
                 Tables\Columns\TextColumn::make('style')
                     ->label(_columns('style'))
                     ->searchable(),

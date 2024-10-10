@@ -13,6 +13,7 @@ use Filament\Forms\Components\Toggle;
 use SmartCms\Core\Actions\Schema\ModuleDescriptionSchema;
 use SmartCms\Core\Actions\Schema\ModuleTitleSchema;
 use SmartCms\Core\Models\Form;
+use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
 
 enum VariableTypes: string
@@ -71,7 +72,7 @@ enum VariableTypes: string
             self::SCHEDULE => Select::make($name)->label($label)->options(schedules())->required($var['required'] ?? true),
             self::SCHEDULES => Select::make($name)->label($label)->options(schedules())->multiple()->required($var['required'] ?? true),
             self::SOCIALS => Select::make($name)->label($label)->options(social_names())->multiple()->required($var['required'] ?? true),
-            self::LINKS => Schema::getLinkBuilder($name)->label($label)->required($var['required'] ?? true),
+            self::LINKS => Schema::getSelect($name)->label($label)->options(Menu::query()->pluck('name','id')->toArray()),
             self::HEADING => ModuleTitleSchema::run()[0],
             self::DESCRIPTION => ModuleDescriptionSchema::run()[0],
             self::FORM => Select::make($name)->label($label)->options(Form::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),

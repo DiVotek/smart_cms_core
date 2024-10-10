@@ -20,13 +20,6 @@ class Form extends BaseModel
 {
     use HasTable;
 
-    public static function getDb(): string
-    {
-        return 'forms';
-    }
-
-    protected $table = 'forms';
-
     protected $guarded = [];
 
     protected $casts = [

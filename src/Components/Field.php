@@ -12,7 +12,7 @@ class Field extends Component
 
     public string $style;
 
-    public function __construct($field, string $style = 'demo')
+    public function __construct($field, string $style = 'default')
     {
         $this->field = (object) $field;
         $this->style = $style;
@@ -20,8 +20,8 @@ class Field extends Component
 
     public function render(): View|Closure|string
     {
-        $id = $this->field->type.'_'.now()->timestamp;
-
-        return view('templates::forms.'.$this->style.'.'.$this->field->type, ['field' => $this->field, 'id' => $id]);
+        $id = $this->field->type . '_' . now()->timestamp;
+        $view = 'templates::' . template() . '.forms.' . $this->style . '.' . $this->field->type;
+        return view($view, ['field' => $this->field, 'id' => $id]);
     }
 }

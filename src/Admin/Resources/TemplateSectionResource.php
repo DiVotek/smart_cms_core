@@ -209,16 +209,29 @@ class TemplateSectionResource extends Resource
                     })
                     ->action(function (array $data): void {
                         setting([
-                            sconfig('default_variables') => $data['default_variables'],
+                            sconfig('default_variables') => $data['default_variables'] ?? [],
                         ]);
                     })
                     ->hidden(function () {
-                        template() == '' || ! isset(scms_template_config()['defaultVariables']);
+                        if(template() == ''){
+                            return true;
+                        }
+                        if(! isset(scms_template_config()['defaultVariables'])){
+                            return true;
+                        }
+                        if(empty(scms_template_config()['defaultVariables'])){
+                            return true;
+                        }
+                        return false;
                     })
                     ->form(function ($form) {
                         $config = scms_template_config();
                         $variables = $config['defaultVariables'] ?? [];
-                        $schema = Helper::parseSchema($variables, 'default_variables.');
+                        if(empty($variables)){
+                            $schema = [];
+                        } else {
+                            $schema = Helper::parseSchema($variables, 'default_variables.');
+                        }
 
                         return $form->schema($schema);
                     }),

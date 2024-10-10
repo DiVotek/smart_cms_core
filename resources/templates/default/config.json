@@ -4,30 +4,10 @@
    "author": "Smart CMS",
    "url": "https://smartcms.io",
    "version": "1.0",
-   "license": "MIT",
    "keywords": [
       "default",
       "template"
    ],
-   "sha-256": "0x1234567890abcdef",
-   "fonts": {
-      "default": {
-         "name": "Arial",
-         "url": "https://fonts.googleapis.com/css?family=Arial",
-         "weight": "400",
-         "style": "normal",
-         "size": 12,
-         "color": "#000000"
-      },
-      "decorative": {
-         "name": "Montserrat",
-         "url": "https://fonts.googleapis.com/css?family=Montserrat",
-         "weight": "400",
-         "style": "normal",
-         "size": 22,
-         "color": "#000000"
-      }
-   },
    "theme": {
       "primary": "#000000",
       "secondary": "#ffffff",
@@ -46,6 +26,5 @@
          "name": "Demo",
          "file": "demo"
       }
-   ],
-   "default_sections": []
+   ]
 }

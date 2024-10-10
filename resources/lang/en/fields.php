@@ -67,4 +67,6 @@ return [
     'value' => 'Value',
     'template_section' => 'Template section',
     'branch_name' => 'Branch name',
+    'email' => 'Email',
+    'menu' => 'Menu',
 ];

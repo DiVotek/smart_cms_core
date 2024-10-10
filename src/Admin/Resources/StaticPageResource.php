@@ -13,6 +13,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
@@ -20,11 +21,6 @@ use SmartCms\Core\Services\TableSchema;
 class StaticPageResource extends Resource
 {
     protected static ?string $model = Page::class;
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 
     public static function getNavigationGroup(): ?string
     {
@@ -34,10 +30,8 @@ class StaticPageResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery()->withoutGlobalScopes();
-        if (request('parent')) {
-            $query->where('parent_id', request('parent'));
-        }
-
+        $menuSections = MenuSection::query()->pluck('id')->toArray();
+        $query->whereNotIn('id', $menuSections);
         return $query;
     }
 
@@ -49,25 +43,6 @@ class StaticPageResource extends Resource
     public static function getPluralModelLabel(): string
     {
         return _nav('model_pages');
-    }
-
-    public static function getTableQuery(): Builder
-    {
-        // Get parent_id from the request (if any)
-        $parentId = request()->input('parent_id');
-
-        // Create the base query
-        $query = parent::getTableQuery();
-
-        // If parent_id is present, filter the pages by parent_id
-        if ($parentId) {
-            $query->where('parent_id', $parentId);
-        } else {
-            // Optionally, filter top-level pages if no parent_id is provided
-            $query->whereNull('parent_id');
-        }
-
-        return $query;
     }
 
     public static function form(Form $form): Form
@@ -190,14 +165,14 @@ class StaticPageResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         return false;
-        // return true;
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListStaticPages::route('/'),
-            'create' => Pages\CreateStaticPage::route('/create'),
+            // 'create' => Pages\CreateStaticPage::route('/create'),
+            // 'create-page' => Pages\CreateStaticPage::route('/create'),
             'edit' => Pages\EditStaticPage::route('/{record}/edit'),
         ];
     }

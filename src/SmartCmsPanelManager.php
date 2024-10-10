@@ -15,6 +15,7 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -30,11 +31,17 @@ use SmartCms\Core\Admin\Pages\Settings\Settings;
 use SmartCms\Core\Admin\Resources\AdminResource;
 use SmartCms\Core\Admin\Resources\ContactFormResource;
 use SmartCms\Core\Admin\Resources\FormResource;
+use SmartCms\Core\Admin\Resources\MenuResource;
+use SmartCms\Core\Admin\Resources\MenuSectionResource;
 use SmartCms\Core\Admin\Resources\SeoResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListNestedPages;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 use SmartCms\Core\Admin\Resources\TranslationResource;
+use SmartCms\Core\Admin\Widgets\TopContactForms;
+use SmartCms\Core\Admin\Widgets\TopStaticPages;
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 
 class SmartCmsPanelManager extends PanelProvider
@@ -51,17 +58,20 @@ class SmartCmsPanelManager extends PanelProvider
             return $this;
         });
         $this->registerDynamicResources();
+        $this->registerBranding();
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
                 ->locales(['en', 'ru', 'uk']);
         });
-        $widgets = [];
+        $widgets = [
+            TopStaticPages::class,
+            TopContactForms::class,
+        ];
 
         FilamentAsset::register([
             Css::make('custom-stylesheet', asset('/smart_cms_core/index.css')),
             JS::make('custom-script', asset('/smart_cms_core/index.js')),
         ]);
-
         return $panel
             ->default()
             ->id('smart_cms_admin')
@@ -80,31 +90,21 @@ class SmartCmsPanelManager extends PanelProvider
             ->profile(Profile::class)
             ->font('Roboto')
             ->darkMode(false)
-            ->brandName('SmartCms')
+            ->brandName(company_name() ?? 'SmartCms')
             ->resources($this->getResources())
             // ->brandLogo(fn() => view('logo'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->pages([
                 \Filament\Pages\Dashboard::class,
+                // ListNestedPages::class,
             ])
-            // ->navigationGroups([
-            //    NavigationGroup::make(fn() => __('Sales'))->icon('heroicon-m-clipboard-document-list')->collapsed(true)->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
-            //    NavigationGroup::make(fn() => __('Promotions'))->icon('heroicon-m-receipt-percent')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Catalog'))->icon('heroicon-m-building-storefront')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Filter'))->icon('heroicon-m-funnel')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Communication'))->icon('heroicon-m-megaphone')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Blog'))->icon('heroicon-m-academic-cap')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Info pages'))->icon('heroicon-m-book-open')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Search'))->icon('heroicon-m-magnifying-glass')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Modules'))->icon('heroicon-m-puzzle-piece')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('SEO'))->icon('heroicon-m-globe-alt')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('Design/Template'))->icon('heroicon-m-light-bulb')->collapsed(true),
-            //    NavigationGroup::make(fn() => __('System'))->icon('heroicon-m-cog-6-tooth')->collapsed(true)->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
-            // ])
             ->sidebarCollapsibleOnDesktop()
             ->widgets($widgets)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->resources($moduleResource)
+            ->navigationGroups(
+                $this->getNavigationGroups()
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -131,27 +131,36 @@ class SmartCmsPanelManager extends PanelProvider
     public function registerDynamicResources()
     {
         Filament::serving(function () {
-            $pages = Page::query()->where('is_nav', true)->get();
+            $menuSections = MenuSection::query()->get();
             $items = [
                 NavigationItem::make(_nav('pages'))->sort(1)
                     ->url(StaticPageResource::getUrl('index'))
                     ->group(_nav('pages'))
                     ->isActiveWhen(function () {
-                        return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == 'all');
+                        return request()->route()->getName() === ListStaticPages::getRouteName() &&
+                            (! request('activeTab') || request('activeTab') == 'all');
+                    })->badge(function () use ($menuSections) {
+                        return Page::query()->whereNull('parent_id')->whereNotIn('id', $menuSections->pluck('id')->toArray())
+                            ->count();
                     }),
             ];
-            foreach ($pages as $page) {
-                $group = _nav('pages');
-                if ($page->parent_id && $page->parent->is_nav) {
-                    $group = $page->parent->name();
-                } elseif ($page->children()->where('is_nav', true)->exists()) {
-                    $group = $page->name();
+            foreach ($menuSections as $section) {
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('items'))
+                    ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name]))
+                    ->sort($section->sorting + 1)
+                    ->group($section->name)
+                    ->isActiveWhen(function () use ($section) {
+                        return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == $section->name);
+                    });
+                if ($section->is_categories) {
+                    $items[] = NavigationItem::make($section->name . ' ' . _nav('categories'))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->sort($section->sorting + 2)
+                        ->group($section->name)
+                        ->isActiveWhen(function () use ($section) {
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                        });
                 }
-                $items[] = NavigationItem::make($page->name())->url(StaticPageResource::getUrl('index', ['activeTab' => $page->name()]))->sort($page->sorting + 1)
-                    ->group($group)
-                    ->isActiveWhen(function () use ($page) {
-                        return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $page->name();
-                    })->sort(1000);
             }
             Filament::registerNavigationItems($items);
         });
@@ -161,12 +170,55 @@ class SmartCmsPanelManager extends PanelProvider
     {
         return [
             AdminResource::class,
-            SeoResource::class,
+            // SeoResource::class,
+            MenuSectionResource::class,
             ContactFormResource::class,
             FormResource::class,
             TranslationResource::class,
             StaticPageResource::class,
             TemplateSectionResource::class,
+            MenuResource::class,
         ];
+    }
+
+    public function getNavigationGroups(): array
+    {
+        $groups = [
+            \Filament\Navigation\NavigationGroup::make(_nav('communication'))->icon('heroicon-m-megaphone'),
+            \Filament\Navigation\NavigationGroup::make(_nav('pages'))->icon('heroicon-m-book-open'),
+        ];
+        $menuSections = MenuSection::query()->get();
+
+        foreach ($menuSections as $section) {
+            $groups[] = \Filament\Navigation\NavigationGroup::make($section->name)->icon($section->icon ?? 'heroicon-m-book-open');
+        }
+        $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('design-template'))->icon('heroicon-m-light-bulb');
+        $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('system'))->icon('heroicon-m-cog-6-tooth');
+        return $groups;
+    }
+
+    public function registerBranding()
+    {
+        Filament::registerRenderHook(
+            PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER,
+            function (): string {
+                return <<<'HTML'
+                <div class="text-xs text-center text-gray-500">
+                    <p>Powered by <a href="https://smartcms.com" target="_blank" class="hover:text-gray-700">SmartCms</a></p>
+                </div>
+                HTML;
+                return view('filament.components.footer-branding')->render();
+            }
+        );
+        Filament::registerRenderHook(
+            PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+            function (): string {
+                return <<<'HTML'
+            <a href="/" target="_blank" class="flex items-center justify-center p-2 font-semibold rounded-lg h-9 text-primary-600 bg-primary-500/10">
+                View Website
+            </a>
+            HTML;
+            }
+        );
     }
 }

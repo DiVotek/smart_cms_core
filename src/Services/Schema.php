@@ -108,7 +108,7 @@ class Schema
     {
         return TextInput::make('sorting')
             ->label(_fields('sorting'))
-            ->numeric()->default(0)
+            ->numeric()->default(1)
             ->helperText(__('The lower the number, the higher the record will be displayed'));
     }
 

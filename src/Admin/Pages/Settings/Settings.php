@@ -20,7 +20,7 @@ class Settings extends BaseSettings
 {
     public static function getNavigationGroup(): ?string
     {
-        return _nav('design-template');
+        return _nav('system');
     }
 
     public static function getNavigationBadge(): ?string

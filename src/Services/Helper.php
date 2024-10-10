@@ -332,13 +332,15 @@ class Helper
 
     public static function getFormTemplates()
     {
-        $dirs = File::directories(base_path('template/forms'));
-        $data = [];
-        foreach ($dirs as $dir) {
-            $data[basename($dir)] = ucfirst(basename($dir));
+        $path = scms_template_path(template() . '/forms');
+        if(File::exists($path) && File::isDirectory($path)) {
+            $dirs = File::directories($path);
+            $data = [];
+            foreach ($dirs as $dir) {
+                $data[basename($dir)] = ucfirst(basename($dir));
+            }
+            return $data;
         }
-
-        return $data;
     }
 
     public static function parseSchema(array $schema, string $prefix = ''): array
@@ -409,6 +411,9 @@ class Helper
         }
         if (! isset($variable['type'])) {
             $variable['type'] = VariableTypes::TEXT->value;
+        }
+        if(str_contains($var, 'form')) {
+            $variable['type'] = VariableTypes::FORM->value;
         }
 
         return self::parseVariableByType($variable, $prefix);
