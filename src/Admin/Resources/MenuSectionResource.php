@@ -48,9 +48,8 @@ class MenuSectionResource extends Resource
                     ->schema([
                         Schema::getName(),
                         Schema::getSorting(),
-                        // IconPicker::make('icon')
-                        //     ->label(_fields('icon'))
-                        //     ->required(),
+                        IconPicker::make('icon')->columns(6)
+                            ->label(_fields('icon')),
                         Toggle::make('is_categories')
                             ->label(_fields('is_categories'))
                             ->default(false),

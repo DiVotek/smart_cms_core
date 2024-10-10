@@ -69,4 +69,5 @@ return [
     'branch_name' => 'Branch name',
     'email' => 'Email',
     'menu' => 'Menu',
+    'icon' => 'Icon',
 ];

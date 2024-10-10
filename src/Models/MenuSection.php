@@ -19,6 +19,7 @@ class MenuSection extends BaseModel
         'custom_fields',
         'template',
         'parent_id',
+        'icon',
     ];
 
     protected $guarded = [];
