@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
+
 if (! function_exists('scms_templates_path')) {
     function scms_templates_path(): string
     {
@@ -28,6 +30,18 @@ if (! function_exists('_settings')) {
 if (! function_exists('scms_template_config')) {
     function scms_template_config(): array
     {
+        if(config('app.env') == 'production') {
+            return Cache::rememberForever('scms_template_config', function () {
+                $templateConfig = [];
+                $template = template();
+                $templateConfigPath = scms_template_path($template).'/config.json';
+                if (file_exists($templateConfigPath)) {
+                    $templateConfig = json_decode(file_get_contents($templateConfigPath), true);
+                }
+
+                return $templateConfig;
+            });
+        }
         $templateConfig = [];
         $template = template();
         $templateConfigPath = scms_template_path($template).'/config.json';

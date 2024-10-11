@@ -29,6 +29,7 @@ class TemplateSection extends BaseModel
         'status' => 'boolean',
         'locked' => 'boolean',
         'value' => 'array',
+        'schema' => 'array',
     ];
 
     public function morphs()

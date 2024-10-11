@@ -31,8 +31,8 @@ class GetForm
                 'errors' => $validator->errors(),
             ], 422);
         }
-
-        return Blade::renderComponent(new ComponentsForm($form->id));
+        $attributes  = json_decode($request->input('form_attributes'), true);
+        return Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes));
 
         return response()->json([
             'success' => true,

@@ -93,26 +93,14 @@ if (! function_exists('home_name')) {
         });
     }
 }
-if (! function_exists('address')) {
-    function address(): string
-    {
-        $setting = _settings('company_info', []);
-        $setting = $setting[0] ?? [];
-
-        return $setting['address'] ?? '';
-    }
-}
 if (! function_exists('addresses')) {
     function addresses(): array
     {
         $setting = _settings('company_info', []);
 
-        return array_map(function ($item) {
-            return [
-                'address' => $item['address'],
-                'coordinates' => $item['coordinates'] ?? '',
-            ];
-        }, $setting);
+        return array_filter(array_map(function ($item) {
+            return $item['address'] ?? '';
+        }, $setting));
     }
 }
 if (! function_exists('schedule')) {

@@ -40,9 +40,9 @@ class BuildTemplate
                 $value = [$value];
             }
             $template[] = [
-                'is_mobile' => true,
-                'is_desktop' => true,
                 'component' => $sectionComponent,
+                'schema' => $section->schema ?? [],
+                'file' => $section->design,
                 'options' => [...$value, ...[
                     'entity' => $entity,
                     'breadcrumbs' => $entity->getBreadcrumbs(),

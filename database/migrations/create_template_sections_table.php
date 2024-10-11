@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('is_system')->default(false);
             $table->string('design')->nullable();
             $table->json('value')->nullable();
+            $table->json('schema')->nullable();
             $table->timestamps();
         });
 

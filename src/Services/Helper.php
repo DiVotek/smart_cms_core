@@ -3,6 +3,8 @@
 namespace SmartCms\Core\Services;
 
 use Exception;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\File;
 use SmartCms\Core\Models\Form;
 
@@ -11,7 +13,7 @@ class Helper
     public static function getComponents(): array
     {
         $sections = [];
-        $directoryPath = scms_template_path(template().'/sections');
+        $directoryPath = scms_template_path(template() . '/sections');
         if (! File::exists($directoryPath)) {
             return [];
         }
@@ -35,16 +37,69 @@ class Helper
         foreach ($directories as $directory) {
             foreach (File::files($directory) as $file) {
                 $lastDir = basename($directory);
-                $files[$lastDir.'/'.basename($file)] = ucfirst($lastDir).' - '.ucfirst(basename($file, '.blade.php'));
+                $files[$lastDir . '/' . basename($file)] = ucfirst($lastDir) . ' - ' . ucfirst(basename($file, '.blade.php'));
             }
         }
 
         return $sections;
     }
 
-    public static function getComponentClass(string $component): array
+    public static function getComponentSchema(string $component): array
     {
         $file = null;
+        $schema = [];
+        $isSchema = false;
+        $config = scms_template_config();
+        $sections = $config['sections'] ?? [];
+        foreach ($sections as $section) {
+            if (! isset($section['file'])) {
+                continue;
+            }
+            if ($section['file'] == $component) {
+                if (isset($section['schema'])) {
+                    $schema = $section['schema'];
+                    $isSchema = true;
+                } else {
+                    $file = scms_template_path(template()) . 'sections/' . $section['file'] . '.blade.php';
+                }
+            }
+        }
+        if (!$isSchema) {
+            if (! $file) {
+                $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
+            }
+            if (! File::exists($file)) {
+                return [];
+            }
+            $file = File::get($file);
+            $variables = self::extractVariables($file);
+            foreach ($variables as $key => $variable) {
+                if (is_array($variable)) {
+                    $schema[$key] = [
+                        'name' => $key,
+                        'type' => 'array',
+                        'schema' => $variable,
+                    ];
+                } else {
+                    $schema[$key] = $variable;
+                }
+            }
+        }
+        $newSchema = [];
+        foreach($schema as $key => $value){
+            $newSchema[$key] = self::getVariableSchema($value);
+        }
+        return $newSchema;
+    }
+
+    public static function getComponentClass(string $component): array
+    {
+        $schema = self::getComponentSchema($component);
+        $fields = [];
+        foreach($schema as $key => $value){
+            $fields = array_merge($fields,self::parseVariable($value, 'value.'));
+        }
+        return $fields;
         $config = scms_template_config();
         $sections = $config['sections'] ?? [];
         foreach ($sections as $section) {
@@ -55,12 +110,12 @@ class Helper
                 if (isset($section['schema'])) {
                     return self::parseSchema($section['schema'], 'value.');
                 } else {
-                    $file = scms_template_path(template()).'sections/'.$section['file'].'.blade.php';
+                    $file = scms_template_path(template()) . 'sections/' . $section['file'] . '.blade.php';
                 }
             }
         }
         if (! $file) {
-            $file = scms_template_path(template()).'sections/'.strtolower($component).'.blade.php';
+            $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
         }
         if (! File::exists($file)) {
             return [];
@@ -77,8 +132,6 @@ class Helper
             }
         }
         $schema = self::parseSchema($variables, 'value.');
-
-        // dd($schema);
         return $schema;
     }
 
@@ -98,7 +151,7 @@ class Helper
             return [];
         }
         $types = [];
-        $templatePath = base_path('templates/'.$template.'/'.$name.'/');
+        $templatePath = base_path('templates/' . $template . '/' . $name . '/');
         try {
             $files = File::files($templatePath);
         } catch (\Exception $e) {
@@ -124,7 +177,7 @@ class Helper
                 continue;
             }
             $name = explode('-', $name);
-            $prettyName = ucfirst($name[1]).' from collection '.strtoupper($name[0]);
+            $prettyName = ucfirst($name[1]) . ' from collection ' . strtoupper($name[0]);
             $reference[basename($file, '.blade.php')] = $prettyName;
         }
 
@@ -191,13 +244,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -247,92 +300,10 @@ class Helper
 
         return $templates;
     }
-    // public static function extractVariables($fileContent)
-    // {
-    //     $variables = [];
-    //     $arrayProperties = [];
-
-    //     // Check for components like <x-heading> and <x-description>
-    //     if (str_contains($fileContent, '<x-heading')) {
-    //         $variables[] = 'heading';
-    //     }
-    //     if (str_contains($fileContent, '<x-description')) {
-    //         $variables[] = 'description';
-    //     }
-
-    //     // Match {{ $variable }}, {{ $variable['key'] }}, and {{ $variable['key']['subkey'] }}
-    //     preg_match_all('/\{\{\s*\$([a-zA-Z_][a-zA-Z0-9_]*)(?:\[(?:\'|\")(.+?)(?:\'|\")\])*\s*\}\}/', $fileContent, $matches, PREG_SET_ORDER);
-    //     foreach ($matches as $match) {
-    //         $varName = $match[1];
-    //         if (!in_array($varName, $variables)) {
-    //             $variables[] = $varName;
-    //         }
-    //         if (isset($match[2])) {
-    //             $keys = explode("']['", $match[2]);
-    //             $current = &$arrayProperties[$varName];
-    //             foreach ($keys as $key) {
-    //                 if (!isset($current[$key])) {
-    //                     $current[$key] = [];
-    //                 }
-    //                 $current = &$current[$key];
-    //             }
-    //         }
-    //     }
-
-    //     // Match component attributes like :options="$options" or :anyVar="$anyVar"
-    //     preg_match_all('/:\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*"\s*\$([a-zA-Z_][a-zA-Z0-9_]*)\s*"/', $fileContent, $matches2);
-    //     $variables = array_merge($variables, $matches2[2]);
-
-    //     // Updated regex for @foreach to handle both ($key => $value) and ($value) syntax
-    //     preg_match_all('/@foreach\s*\(\s*\$([a-zA-Z_][a-zA-Z0-9_]*)\s+as\s*(?:\$([a-zA-Z_][a-zA-Z0-9_]*)\s*=>\s*)?\$([a-zA-Z_][a-zA-Z0-9_]*)\)/', $fileContent, $matches3, PREG_SET_ORDER);
-    //     foreach ($matches3 as $match) {
-    //         $arrayVar = $match[1];
-    //         $singularVar = $match[3];
-    //         if (!in_array($arrayVar, $variables)) {
-    //             $variables[] = $arrayVar;
-    //         }
-
-    //         // Match $singular['key'] and $singular['key']['subkey'] inside the foreach
-    //         preg_match_all('/\$\s*' . preg_quote($singularVar) . '(?:\[(?:\'|\")(.+?)(?:\'|\")\])+/', $fileContent, $matches4, PREG_SET_ORDER);
-    //         foreach ($matches4 as $propertyMatch) {
-    //             $keys = explode("']['", $propertyMatch[1]);
-    //             $current = &$arrayProperties[$arrayVar];
-    //             foreach ($keys as $key) {
-    //                 if (!isset($current[$key])) {
-    //                     $current[$key] = [];
-    //                 }
-    //                 $current = &$current[$key];
-    //             }
-    //         }
-    //     }
-
-    //     // Remove duplicates from the variables
-    //     $variables = array_unique($variables);
-
-    //     // Combine variables and array properties
-    //     $result = [];
-    //     foreach ($variables as $variable) {
-    //         if (!isset($arrayProperties[$variable])) {
-    //             $result[] = $variable;
-    //         } else {
-    //             $result[$variable] = $arrayProperties[$variable];
-    //         }
-    //     }
-
-    //     // Clean up unnecessary variables
-    //     $unnecessaryVars = ['options', 'title', 'key', 'breadcrumbs'];
-    //     foreach ($unnecessaryVars as $var) {
-    //         if (isset($result[$var])) {
-    //             unset($result[$var]);
-    //         }
-    //     }
-
-    //     return $result;
-    // }
 
     public static function getFormTemplates()
     {
-        $path = scms_template_path(template().'/forms');
+        $path = scms_template_path(template() . '/forms');
         if (File::exists($path) && File::isDirectory($path)) {
             $dirs = File::directories($path);
             $data = [];
@@ -347,20 +318,19 @@ class Helper
     public static function parseSchema(array $schema, string $prefix = ''): array
     {
         $vars = [];
+        $varSchema = [];
         foreach ($schema as $var) {
             $vars = array_merge($vars, self::parseVariable($var, $prefix));
+            $varSchema[] = self::getVariableSchema($var, $prefix);
         }
-
+        $vars[] = Hidden::make('value.schema')->default($varSchema);
         return $vars;
     }
 
-    public static function parseVariable(array|string $var, string $prefix = ''): array
+    public static function getVariableSchema(array|string $var, string $prefix = ''): array
     {
-        // if (is_array($var) && isset($var['type']) && $var['type'] == 'array') {
-        //     return [];
-        // }
         if (is_array($var) && isset($var['name']) && isset($var['type'])) {
-            return self::parseVariableByType($var, $prefix);
+            return $var;
         }
         $variable = [
             'name' => $var,
@@ -416,6 +386,19 @@ class Helper
         if (str_contains($var, 'form')) {
             $variable['type'] = VariableTypes::FORM->value;
         }
+
+        return $variable;
+    }
+
+    public static function parseVariable(array|string $var, string $prefix = ''): array
+    {
+        // if (is_array($var) && isset($var['type']) && $var['type'] == 'array') {
+        //     return [];
+        // }
+        if (is_array($var) && isset($var['name']) && isset($var['type'])) {
+            return self::parseVariableByType($var, $prefix);
+        }
+        $variable = self::getVariableSchema($var, $prefix);
 
         return self::parseVariableByType($variable, $prefix);
     }
