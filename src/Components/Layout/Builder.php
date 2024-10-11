@@ -37,7 +37,7 @@ class Builder extends Component
         $options = $field['options'];
         $host = Page::first();
         $reference = [
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -47,6 +47,7 @@ class Builder extends Component
         if (isset($field['schema'])) {
             $reference = array_merge($reference, $this->parseSchema($field['schema'], $options));
         }
+
         return $reference;
     }
     // public function parse($options)
@@ -122,7 +123,7 @@ class Builder extends Component
         }
         $variables = [];
         foreach ($schema as $field) {
-            if (!isset($field['type']) || !isset($field['name'])) {
+            if (! isset($field['type']) || ! isset($field['name'])) {
                 continue;
             }
             switch ($field['type']) {
@@ -166,7 +167,7 @@ class Builder extends Component
                     $variables[$field['name']] = GetTitle::run($options);
                     break;
                 case VariableTypes::DESCRIPTION->value:
-                    $variables[$field['name']]  = GetDescription::run($options);
+                    $variables[$field['name']] = GetDescription::run($options);
                     break;
                 case VariableTypes::LINKS->value:
                     $menu = $options[current_lang()][$field['name']];
@@ -185,7 +186,7 @@ class Builder extends Component
                     break;
                 case VariableTypes::ARRAY->value:
                     $array = $options[$field['name']];
-                    $variables[$field['name']] =  array_map(function ($item) {
+                    $variables[$field['name']] = array_map(function ($item) {
                         return $item[current_lang()] ?? [];
                     }, $array);
                     break;
@@ -194,6 +195,7 @@ class Builder extends Component
                     break;
             }
         }
+
         return $variables;
         dd($schema, $options, $variables);
         $reference = [];
@@ -227,11 +229,11 @@ class Builder extends Component
                     }
                     foreach ($v as $module_key => $module_value) {
                         if (str_contains($module_key, 'image')) {
-                            $module_value = '/storage' . $module_value;
+                            $module_value = '/storage'.$module_value;
                         }
                         if (str_contains($module_key, '_')) {
                             if (str_contains($module_key, current_lang())) {
-                                $module_key = str_replace(current_lang() . '_', '', $module_key);
+                                $module_key = str_replace(current_lang().'_', '', $module_key);
                             }
                         }
                         $item[$module_key] = $module_value;
@@ -240,7 +242,7 @@ class Builder extends Component
                 }
                 $reference = array_merge($reference, [$key => $newFields]);
             } elseif (str_contains($key, 'image')) {
-                $reference[$key] = '/storage' . $option;
+                $reference[$key] = '/storage'.$option;
             } else {
                 $reference[$key] = $option;
             }
@@ -253,7 +255,7 @@ class Builder extends Component
             'options' => $options,
             'title' => $title,
             'description' => $description,
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
         ]);

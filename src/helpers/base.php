@@ -30,7 +30,7 @@ if (! function_exists('_settings')) {
 if (! function_exists('scms_template_config')) {
     function scms_template_config(): array
     {
-        if(config('app.env') == 'production') {
+        if (config('app.env') == 'production') {
             return Cache::rememberForever('scms_template_config', function () {
                 $templateConfig = [];
                 $template = template();

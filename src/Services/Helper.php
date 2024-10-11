@@ -4,7 +4,6 @@ namespace SmartCms\Core\Services;
 
 use Exception;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\File;
 use SmartCms\Core\Models\Form;
 
@@ -13,7 +12,7 @@ class Helper
     public static function getComponents(): array
     {
         $sections = [];
-        $directoryPath = scms_template_path(template() . '/sections');
+        $directoryPath = scms_template_path(template().'/sections');
         if (! File::exists($directoryPath)) {
             return [];
         }
@@ -37,7 +36,7 @@ class Helper
         foreach ($directories as $directory) {
             foreach (File::files($directory) as $file) {
                 $lastDir = basename($directory);
-                $files[$lastDir . '/' . basename($file)] = ucfirst($lastDir) . ' - ' . ucfirst(basename($file, '.blade.php'));
+                $files[$lastDir.'/'.basename($file)] = ucfirst($lastDir).' - '.ucfirst(basename($file, '.blade.php'));
             }
         }
 
@@ -60,13 +59,13 @@ class Helper
                     $schema = $section['schema'];
                     $isSchema = true;
                 } else {
-                    $file = scms_template_path(template()) . 'sections/' . $section['file'] . '.blade.php';
+                    $file = scms_template_path(template()).'sections/'.$section['file'].'.blade.php';
                 }
             }
         }
-        if (!$isSchema) {
+        if (! $isSchema) {
             if (! $file) {
-                $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
+                $file = scms_template_path(template()).'sections/'.strtolower($component).'.blade.php';
             }
             if (! File::exists($file)) {
                 return [];
@@ -86,9 +85,10 @@ class Helper
             }
         }
         $newSchema = [];
-        foreach($schema as $key => $value){
+        foreach ($schema as $key => $value) {
             $newSchema[$key] = self::getVariableSchema($value);
         }
+
         return $newSchema;
     }
 
@@ -96,9 +96,10 @@ class Helper
     {
         $schema = self::getComponentSchema($component);
         $fields = [];
-        foreach($schema as $key => $value){
-            $fields = array_merge($fields,self::parseVariable($value, 'value.'));
+        foreach ($schema as $key => $value) {
+            $fields = array_merge($fields, self::parseVariable($value, 'value.'));
         }
+
         return $fields;
         $config = scms_template_config();
         $sections = $config['sections'] ?? [];
@@ -110,12 +111,12 @@ class Helper
                 if (isset($section['schema'])) {
                     return self::parseSchema($section['schema'], 'value.');
                 } else {
-                    $file = scms_template_path(template()) . 'sections/' . $section['file'] . '.blade.php';
+                    $file = scms_template_path(template()).'sections/'.$section['file'].'.blade.php';
                 }
             }
         }
         if (! $file) {
-            $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
+            $file = scms_template_path(template()).'sections/'.strtolower($component).'.blade.php';
         }
         if (! File::exists($file)) {
             return [];
@@ -132,6 +133,7 @@ class Helper
             }
         }
         $schema = self::parseSchema($variables, 'value.');
+
         return $schema;
     }
 
@@ -151,7 +153,7 @@ class Helper
             return [];
         }
         $types = [];
-        $templatePath = base_path('templates/' . $template . '/' . $name . '/');
+        $templatePath = base_path('templates/'.$template.'/'.$name.'/');
         try {
             $files = File::files($templatePath);
         } catch (\Exception $e) {
@@ -177,7 +179,7 @@ class Helper
                 continue;
             }
             $name = explode('-', $name);
-            $prettyName = ucfirst($name[1]) . ' from collection ' . strtoupper($name[0]);
+            $prettyName = ucfirst($name[1]).' from collection '.strtoupper($name[0]);
             $reference[basename($file, '.blade.php')] = $prettyName;
         }
 
@@ -244,13 +246,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -303,7 +305,7 @@ class Helper
 
     public static function getFormTemplates()
     {
-        $path = scms_template_path(template() . '/forms');
+        $path = scms_template_path(template().'/forms');
         if (File::exists($path) && File::isDirectory($path)) {
             $dirs = File::directories($path);
             $data = [];
@@ -324,6 +326,7 @@ class Helper
             $varSchema[] = self::getVariableSchema($var, $prefix);
         }
         $vars[] = Hidden::make('value.schema')->default($varSchema);
+
         return $vars;
     }
 
