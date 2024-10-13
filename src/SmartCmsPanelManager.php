@@ -22,6 +22,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Schema as FacadesSchema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 use SmartCms\Core\Admin\Pages\Auth\Login;
@@ -43,11 +44,15 @@ use SmartCms\Core\Admin\Widgets\TopContactForms;
 use SmartCms\Core\Admin\Widgets\TopStaticPages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Services\Schema;
 
 class SmartCmsPanelManager extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        if(!FacadesSchema::hasTable('settings')) {
+            return $panel;
+        }
         $moduleResource = [];
         Field::macro('translatable', function () {
             if (is_multi_lang()) {
