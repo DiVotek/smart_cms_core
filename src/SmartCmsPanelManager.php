@@ -44,13 +44,12 @@ use SmartCms\Core\Admin\Widgets\TopContactForms;
 use SmartCms\Core\Admin\Widgets\TopStaticPages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
-use SmartCms\Core\Services\Schema;
 
 class SmartCmsPanelManager extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        if(!FacadesSchema::hasTable('settings')) {
+        if (! FacadesSchema::hasTable('settings')) {
             return $panel;
         }
         $moduleResource = [];
