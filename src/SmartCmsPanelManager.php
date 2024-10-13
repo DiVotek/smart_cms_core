@@ -49,7 +49,7 @@ class SmartCmsPanelManager extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        if  (! FacadesSchema::hasTable('settings')) {
+        if (! FacadesSchema::hasTable('settings')) {
             return $panel->default()
                 ->id('smart_cms_admin')
                 ->path('admin');
@@ -152,7 +152,7 @@ class SmartCmsPanelManager extends PanelProvider
                     }),
             ];
             foreach ($menuSections as $section) {
-                $items[] = NavigationItem::make($section->name . ' ' . _nav('items'))
+                $items[] = NavigationItem::make($section->name.' '._nav('items'))
                     ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name]))
                     ->sort($section->sorting + 1)
                     ->group($section->name)
@@ -160,12 +160,12 @@ class SmartCmsPanelManager extends PanelProvider
                         return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == $section->name);
                     });
                 if ($section->is_categories) {
-                    $items[] = NavigationItem::make($section->name . ' ' . _nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                    $items[] = NavigationItem::make($section->name.' '._nav('categories'))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 2)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
             }
