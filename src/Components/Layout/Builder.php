@@ -9,7 +9,6 @@ use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\GetDescription;
 use SmartCms\Core\Actions\Template\GetLinks;
 use SmartCms\Core\Actions\Template\GetTitle;
-use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\VariableTypes;
@@ -39,11 +38,11 @@ class Builder extends Component
         $options = $field['options'];
         $host = Page::first();
         $reference = [
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
-            'entity' => $options['entity'] ?? new Page(),
+            'entity' => $options['entity'] ?? new Page,
             'breadcrumbs' => $options['breadcrumbs'] ?? [],
         ];
         if (isset($field['schema'])) {
@@ -52,7 +51,6 @@ class Builder extends Component
 
         return $reference;
     }
-
 
     public function parseSchema(array $schema, array $options): array
     {
