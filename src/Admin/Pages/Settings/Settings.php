@@ -5,9 +5,12 @@ namespace SmartCms\Core\Admin\Pages\Settings;
 use Closure;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Illuminate\Contracts\Support\Htmlable;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
@@ -116,6 +119,64 @@ class Settings extends BaseSettings
                                     TextInput::make(sconfig('mail.name'))->label(strans('admin.name')),
                                 ]),
                         ]),
+                    Tabs\Tab::make(strans('admin.seo'))->schema([
+                            Toggle::make('indexation')
+                                ->label(_fields('indexation'))
+                                ->helperText(_hints('indexation'))
+                                ->required(),
+                            TextInput::make('gtm')
+                                ->label(_fields('google_tag'))
+                                ->helperText(_hints('gtm'))
+                                ->string(),
+                            Fieldset::make(_fields('title'))
+                                ->schema([
+                                    TextInput::make('title.prefix')
+                                        ->label(_fields('prefix'))
+                                        ->string()
+                                        ->helperText(_hints('title_prefix')),
+                                    TextInput::make('title.suffix')
+                                        ->label(_fields('suffix'))
+                                        ->helperText(_hints('title_suffix'))
+                                        ->string(),
+                                ]),
+                            Fieldset::make(_fields('description'))
+                                ->schema([
+                                    TextInput::make('description.prefix')
+                                        ->label(_fields('prefix'))
+                                        ->string()
+                                        ->helperText(_hints('description_prefix')),
+                                    TextInput::make('description.suffix')
+                                        ->label(_fields('suffix'))
+                                        ->helperText(_hints('description_suffix'))
+                                        ->string(),
+                                ]),
+                            Schema::getRepeater('meta')
+                                ->label(_fields('custom_meta'))
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label(_fields('name'))
+                                        ->string(),
+                                    TextInput::make('description')
+                                        ->label(_fields('description'))
+                                        ->string(),
+                                    Textarea::make('meta_tags')
+                                        ->label(_fields('meta_tags')),
+                                ])
+                                ->default([]),
+                            Schema::getRepeater('scripts')
+                                ->label(_fields('custom_scripts'))
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label(_fields('name'))
+                                        ->string(),
+                                    TextInput::make('description')
+                                        ->label(_fields('description'))
+                                        ->string(),
+                                    Textarea::make('scripts')
+                                        ->label(_fields('scripts')),
+                                ])
+                                ->default([]),
+                    ])
                 ]),
         ];
     }
