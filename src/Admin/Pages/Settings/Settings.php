@@ -3,17 +3,24 @@
 namespace SmartCms\Core\Admin\Pages\Settings;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action as ActionsAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Models\Language;
+use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -51,6 +58,45 @@ class Settings extends BaseSettings
                         TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
                         Select::make(sconfig('template'))
                             ->label(_fields('template'))
+                            ->suffixAction(
+                                ActionsAction::make(_actions('theme'))
+                                    ->label(_actions('theme'))
+                                    ->slideOver()
+                                    ->icon('heroicon-o-cog')
+                                    ->fillForm(function (): array {
+                                        return [
+                                            'theme' => _settings('theme', []),
+                                        ];
+                                    })
+                                    ->action(function (array $data): void {
+                                        setting([
+                                            sconfig('theme') => $data['theme'],
+                                        ]);
+                                    })
+                                    ->hidden(function () {
+                                        if (template() == '') {
+                                            return true;
+                                        }
+                                        $config = scms_template_config();
+
+                                        return ! isset($config['theme']);
+                                    })
+                                    ->form(function ($form) {
+                                        $config = scms_template_config();
+                                        $theme = $config['theme'] ?? [];
+                                        $schema = [];
+                                        foreach ($theme as $key => $value) {
+                                            $schema[] = ColorPicker::make('theme.' . $key)
+                                                ->label(ucfirst($key))
+                                                ->default($value);
+                                        }
+
+                                        return $form
+                                            ->schema([
+                                                Section::make('')->schema($schema),
+                                            ]);
+                                    }),
+                            )
                             ->options(Helper::getTemplates())
                             ->native(false)
                             ->searchable(),
@@ -177,6 +223,50 @@ class Settings extends BaseSettings
                             ->default([]),
                     ]),
                 ]),
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make(_actions('update'))
+                ->icon('heroicon-m-arrow-up-on-square')
+                ->label(_actions('update'))
+                ->requiresConfirmation()->action(function () {
+                    $res = Artisan::call('scms:update');
+                    if ($res == 0) {
+                        Notification::make()
+                            ->title(_actions('success_update'))
+                            ->success()
+                            ->send();
+                    } else {
+                        Notification::make()
+                            ->title(_actions('error_update'))
+                            ->error()
+                            ->send();
+                    }
+                }),
+            Action::make(_actions('clear_cache'))
+                ->icon('heroicon-m-arrow-path')
+                ->label(_actions('clear_cache'))
+                ->requiresConfirmation()->action(function () {
+                    $command = 'optimize';
+                    if (config('app.env') != 'production') {
+                        $command = 'optimize:clear';
+                    }
+                    $res = Artisan::call($command);
+                    if ($res == 0) {
+                        Notification::make()
+                            ->title(_actions('clear_cache_success'))
+                            ->success()
+                            ->send();
+                    } else {
+                        Notification::make()
+                            ->title(_actions('clear_cache_error'))
+                            ->error()
+                            ->send();
+                    }
+                }),
         ];
     }
 }

@@ -20,7 +20,6 @@ class Form extends Component
     public function render()
     {
         return <<<'blade'
-          <script src="https://unpkg.com/htmx.org@1.9.2"></script>
             <form id="{{$form->html_id ?? $form->code}}" name="{{$form->code}}" hx-get="{{route('smartcms.form.submit')}}" hx-target="#{{$form->html_id ?? $form->code}}" hx-swap="outerHTML" hx-trigger="submit" hx-on="htmx:afterRequest: document.dispatchEvent(new CustomEvent('{{$form->id}}-success'))" {{$attributes}}>
                <input type="hidden" name="form" value="{{$form->code}}" />
                 <input type="hidden" name="form_attributes" value="{{ json_encode($attributes) }}">

@@ -15,4 +15,10 @@ return [
     'default_variables' => 'Default variables',
     'edit_page' => 'Edit page',
     'create' => 'Create',
+    'update' => 'Update SCMS',
+    'success_update' => 'SCMS was updated!',
+    'error_update' => 'Error while updating SCMS!',
+    'clear_cache' => 'Clear cache',
+    'clear_cache_success' => 'Cache was cleared!',
+    'clear_cache_error' => 'Error while clearing cache!',
 ];

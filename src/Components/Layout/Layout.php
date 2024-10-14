@@ -18,15 +18,14 @@ class Layout extends Component
 
     public string $script;
 
-    public ?string $templateCss;
-
     public string $favicon;
 
     public array $theme;
 
+    public array $assets;
+
     public function __construct()
     {
-        $styles = _settings('styles', []);
         $scripts = _settings('custom_scripts', []);
         if (! is_array($scripts)) {
             $scripts = [];
@@ -35,7 +34,6 @@ class Layout extends Component
         if (! is_array($meta_tags)) {
             $meta_tags = [];
         }
-        $this->templateCss = File::exists(base_path('template/css/app.css')) ? 'template/css/app.css' : null;
         $this->scripts = $scripts;
         $this->meta_tags = $meta_tags;
         $theme = _settings('theme', []);
@@ -57,6 +55,9 @@ class Layout extends Component
                 return '';
             }
         });
+        $this->assets = [
+            'smart_cms_core/js/app.js'
+        ];
         $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
     }
 
@@ -76,6 +77,9 @@ class Layout extends Component
                         <meta name="robots" content="index, follow">
                         <link rel="robots" href="{{route('robots')}}">
                         <link rel="sitemap" type="application/xml" title="Sitemap" href="{{route('sitemap')}}">
+                        @foreach($assets as $asset)
+                        <script src="{{asset($asset)}}" async></script>
+                        @endforeach
                         @foreach($meta_tags as $tag)
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
@@ -97,8 +101,6 @@ class Layout extends Component
                     @if($style)
                     @vite($style)
                     @endif
-                    @vite($templateCss)
-                    @vite('resources/js/app.js')
                     <body class="antialiased">
                             <x-s::layout.header />
                             <main class="min-h-80">

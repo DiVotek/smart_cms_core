@@ -3,16 +3,19 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Artisan;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Helper;
@@ -75,7 +78,7 @@ class TemplateSectionResource extends Resource
                         ->label(_fields('design'))
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn (Radio $component) => $component
+                        ->afterStateUpdated(fn(Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
@@ -103,9 +106,6 @@ class TemplateSectionResource extends Resource
                 TableSchema::getUpdatedAt(),
             ])
             ->filters([])
-            ->headerActions([
-                Schema::helpAction('TemplateSection help'),
-            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -116,43 +116,7 @@ class TemplateSectionResource extends Resource
                 ]),
             ])
             ->headerActions([
-                Tables\Actions\Action::make(_actions('theme'))
-                    ->label(_actions('theme'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'theme' => _settings('theme', []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            sconfig('theme') => $data['theme'],
-                        ]);
-                    })
-                    ->hidden(function () {
-                        if (template() == '') {
-                            return true;
-                        }
-                        $config = scms_template_config();
-
-                        return ! isset($config['theme']);
-                    })
-                    ->form(function ($form) {
-                        $config = scms_template_config();
-                        $theme = $config['theme'] ?? [];
-                        $schema = [];
-                        foreach ($theme as $key => $value) {
-                            $schema[] = Forms\Components\ColorPicker::make('theme.'.$key)
-                                ->label(ucfirst($key))
-                                ->default($value);
-                        }
-
-                        return $form
-                            ->schema([
-                                Section::make('')->schema($schema),
-                            ]);
-                    }),
+                Schema::helpAction('TemplateSection help'),
                 Tables\Actions\Action::make(_actions('header_footer'))
                     ->label(_actions('header_footer'))
                     ->slideOver()
@@ -177,7 +141,7 @@ class TemplateSectionResource extends Resource
                         $theme = $config['theme'] ?? [];
                         $schema = [];
                         foreach ($theme as $key => $value) {
-                            $schema[] = Forms\Components\ColorPicker::make('theme.'.$key)
+                            $schema[] = ColorPicker::make('theme.' . $key)
                                 ->label(ucfirst($key))
                                 ->default($value);
                         }
