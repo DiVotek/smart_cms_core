@@ -29,7 +29,7 @@ class StaticPageResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery()->withoutGlobalScopes();
-        $menuSections = MenuSection::query()->pluck('id')->toArray();
+        $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
         $query->whereNotIn('id', $menuSections);
 
         return $query;
