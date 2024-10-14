@@ -31,7 +31,7 @@ class ListStaticPages extends ListRecords
         $activeTab = request('activeTab');
         foreach (MenuSection::all() as $section) {
             if ($section->is_categories) {
-                if ($section->name._nav('categories') == $activeTab) {
+                if ($section->name . _nav('categories') == $activeTab) {
                     $this->menuSection = $section;
                     break;
                 } else {
@@ -48,9 +48,9 @@ class ListStaticPages extends ListRecords
             }
         }
         $actionName = request('activeTab') ?? 'Static Page';
-        $actionName = 'Create '.$actionName;
+        $actionName = _actions('create') . ' ' . $actionName;
         if (! str_contains($actionName, _nav('categories'))) {
-            $actionName = $actionName.' '._nav('item');
+            $actionName = $actionName . ' ' . _nav('item');
         }
         $this->actionName = $actionName;
         $this->isCategories = $this->menuSection && $this->menuSection->is_categories && ! str_contains($actionName, _nav('categories'));
@@ -60,6 +60,7 @@ class ListStaticPages extends ListRecords
     {
         return [
             Actions\Action::make($this->actionName)
+            ->label($this->actionName)
                 ->form(function ($form) {
                     if ($this->menuSection) {
                         if ($this->isCategories) {
@@ -89,19 +90,19 @@ class ListStaticPages extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('All')->modifyQueryUsing(fn (Builder $query) => $query->whereNull('parent_id')),
+            'all' => Tab::make('All')->modifyQueryUsing(fn(Builder $query) => $query->whereNull('parent_id')),
         ];
         foreach (MenuSection::query()->get() as $section) {
             if ($section->is_categories) {
-                $name = $section->name._nav('categories');
+                $name = $section->name . _nav('categories');
                 $tabs[$name] = Tab::make($name)
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
                 $categories = Page::query()->where('parent_id', $section->parent_id)->pluck('id')->toArray();
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('parent_id', $categories));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('parent_id', $categories));
             } else {
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
             }
         }
         // foreach (Page::query()->where('is_nav', true)->get() as $page) {

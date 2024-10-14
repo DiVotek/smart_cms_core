@@ -14,4 +14,5 @@ return [
     'header_footer' => 'Header/Footer',
     'default_variables' => 'Default variables',
     'edit_page' => 'Edit page',
+    'create' => 'Create',
 ];

@@ -70,4 +70,5 @@ return [
     'email' => 'Email',
     'menu' => 'Menu',
     'icon' => 'Icon',
+    'is_categories' => 'Enable categories',
 ];

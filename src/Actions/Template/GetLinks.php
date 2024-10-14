@@ -15,11 +15,26 @@ class GetLinks
             if (isset($link['entity_type']) && isset($link['entity_id'])) {
                 $entity = $link['entity_type']::find($link['entity_id']);
                 if ($entity) {
-                    $links[$entity->name()] = $entity->route();
+                    $newLink = [
+                        'name' => $entity->name(),
+                        'slug' => $entity->route(),
+                        'children' => [],
+                    ];
+                    if (isset($link['children'])) {
+                        foreach ($link['children'] as $child) {
+                            $childEntity = $child['entity_type']::find($child['entity_id']);
+                            if ($childEntity) {
+                                $newLink['children'][] = [
+                                    'name' => $childEntity->name(),
+                                    'slug' => $childEntity->route(),
+                                ];
+                            }
+                        }
+                    }
+                    $links[] = $newLink;
                 }
             }
         }
-
         return $links;
     }
 }

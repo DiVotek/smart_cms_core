@@ -49,6 +49,7 @@ class MenuSectionResource extends Resource
                         Schema::getName(),
                         Schema::getSorting(),
                         IconPicker::make('icon')->columns(6)
+                            ->cacheable(false)
                             ->label(_fields('icon')),
                         Toggle::make('is_categories')
                             ->label(_fields('is_categories'))
@@ -80,11 +81,11 @@ class MenuSectionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\EditAction::make('Page')
-                    ->label(_actions('edit_page'))
-                    ->url(function ($record) {
-                        return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
-                    }),
+                // Tables\Actions\EditAction::make('Page')
+                //     ->label(_actions('edit_page'))
+                //     ->url(function ($record) {
+                //         return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
+                //     }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->reorderable('sorting')
