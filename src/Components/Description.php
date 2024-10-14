@@ -14,7 +14,7 @@ class Description extends Component
 
     public function __construct(array $options = [], $tag = 'div')
     {
-        $description = $options[current_lang()]['description'] ?? '';
+        $description = $options['description'] ?? '';
         if (isset($options['use_page_description']) && $options['use_page_description']) {
             $description = $options['entity']->seo->content ?? '';
         }

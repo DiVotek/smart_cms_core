@@ -16,7 +16,7 @@ class Heading extends Component
 
     public function __construct(array $options = [])
     {
-        $title = $options[main_lang()]['title'] ?? '';
+        $title = $options['title'] ?? '';
         if (isset($options['use_page_heading']) && $options['use_page_heading']) {
             $title = $options['entity']->seo->heading ?? $options['entity']->name();
         }

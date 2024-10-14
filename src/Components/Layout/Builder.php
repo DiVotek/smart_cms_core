@@ -101,10 +101,22 @@ class Builder extends Component
                         }, $socials);
                         break;
                     case VariableTypes::HEADING->value:
-                        $variables[$field['name']] = GetTitle::run($options);
+                        $variables[$field['name']] = [
+                            'use_page_heading' => $options['use_page_heading'] ?? false,
+                            'use_page_name' => $options['use_page_name'] ?? false,
+                            'heading_type' => $options['heading_type'] ?? 'none',
+                            'title' => $options[current_lang()]['title'],
+                            'entity' => $options['entity'] ?? new Page,
+                        ];
                         break;
                     case VariableTypes::DESCRIPTION->value:
                         $variables[$field['name']] = GetDescription::run($options);
+                        $variables[$field['name']] = [
+                            'use_page_description' => $options['use_page_description'] ?? false,
+                            'use_page_summary' => $options['use_page_summary'] ?? false,
+                            'description' => $options[current_lang()]['description'],
+                            'entity' => $options['entity'] ?? new Page,
+                        ];
                         break;
                     case VariableTypes::LINKS->value:
                         $menu = $options[current_lang()][$field['name']];
