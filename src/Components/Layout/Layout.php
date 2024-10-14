@@ -56,7 +56,7 @@ class Layout extends Component
             }
         });
         $this->assets = [
-            'smart_cms_core/js/app.js'
+            'smart_cms_core/js/app.js',
         ];
         $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
     }

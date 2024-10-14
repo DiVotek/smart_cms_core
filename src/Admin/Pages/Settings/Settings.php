@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Models\Language;
-use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -86,7 +85,7 @@ class Settings extends BaseSettings
                                         $theme = $config['theme'] ?? [];
                                         $schema = [];
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.' . $key)
+                                            $schema[] = ColorPicker::make('theme.'.$key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }

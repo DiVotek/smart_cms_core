@@ -10,12 +10,10 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Artisan;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Helper;
@@ -78,7 +76,7 @@ class TemplateSectionResource extends Resource
                         ->label(_fields('design'))
                         ->options($components)
                         ->required()
-                        ->afterStateUpdated(fn(Radio $component) => $component
+                        ->afterStateUpdated(fn (Radio $component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
@@ -141,7 +139,7 @@ class TemplateSectionResource extends Resource
                         $theme = $config['theme'] ?? [];
                         $schema = [];
                         foreach ($theme as $key => $value) {
-                            $schema[] = ColorPicker::make('theme.' . $key)
+                            $schema[] = ColorPicker::make('theme.'.$key)
                                 ->label(ucfirst($key))
                                 ->default($value);
                         }
