@@ -8,7 +8,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\GetDescription;
 use SmartCms\Core\Actions\Template\GetLinks;
-use SmartCms\Core\Actions\Template\GetTitle;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\VariableTypes;
