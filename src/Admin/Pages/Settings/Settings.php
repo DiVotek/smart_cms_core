@@ -61,8 +61,8 @@ class Settings extends BaseSettings
                             ->label(_fields('additional_languages'))
                             ->options(Language::query()->pluck('name', 'id')->toArray())
                             ->multiple()
-                            ->required()->hidden(function($get){
-                                return !$get(sconfig('is_multi_lang'));
+                            ->required()->hidden(function ($get) {
+                                return ! $get(sconfig('is_multi_lang'));
                             }),
                         TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
                         Select::make(sconfig('template'))
@@ -95,7 +95,7 @@ class Settings extends BaseSettings
                                         $theme = $config['theme'] ?? [];
                                         $schema = [];
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.' . $key)
+                                            $schema[] = ColorPicker::make('theme.'.$key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }
