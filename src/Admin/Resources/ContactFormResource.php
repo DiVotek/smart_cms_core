@@ -46,7 +46,7 @@ class ContactFormResource extends Resource
                 Section::make('')->schema([
                     Select::make('status')
                         ->label(_fields('status'))
-                        ->options(fn() => ContactForm::getStatuses()),
+                        ->options(fn () => ContactForm::getStatuses()),
                     KeyValue::make('data')->addable(false)->deletable(false)->label(null)->editableKeys(false),
                 ]),
             ]);
@@ -59,7 +59,7 @@ class ContactFormResource extends Resource
                 TextColumn::make('form.name')->label(_columns('form')),
                 IconColumn::make('status')
                     ->label(_columns('status'))
-                    ->icon(fn(int $state): string => match ($state) {
+                    ->icon(fn (int $state): string => match ($state) {
                         ContactForm::STATUS_NEW => 'heroicon-o-bell-alert',
                         ContactForm::STATUS_VIEWED => 'heroicon-o-eye',
                         ContactForm::STATUS_CLOSED => 'heroicon-o-x',
@@ -75,8 +75,9 @@ class ContactFormResource extends Resource
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\EditAction::make()->beforeFormFilled(function ($record) {
                     $record->data = array_filter($record->data, function ($key) {
-                        return !in_array($key, ['form_attributes', '_token', 'form']);
+                        return ! in_array($key, ['form_attributes', '_token', 'form']);
                     }, ARRAY_FILTER_USE_KEY);
+
                     return $record;
                 }),
             ])
