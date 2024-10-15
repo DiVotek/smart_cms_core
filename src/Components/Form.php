@@ -14,7 +14,7 @@ class Form extends Component
     public function __construct($form)
     {
         $this->form = ModelsForm::find($form);
-        $this->button = 'templates::' . template() . '.forms.' . $this->form->style . '.button';
+        $this->button = 'templates::'.template().'.forms.'.$this->form->style.'.button';
     }
 
     public function render()
