@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use SmartCms\Core\Components\Form as ComponentsForm;
+use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Form;
 
 class GetForm
@@ -19,8 +20,10 @@ class GetForm
         }
         $validation = [];
         foreach ($form->fields as $field) {
-            if ($field['required']) {
-                $validation[strtolower($field['name'])] = 'required';
+            foreach ($field['fields'] as $f) {
+                if ($f['required']) {
+                    $validation[strtolower($f['name'])] = 'required';
+                }
             }
         }
         $validator = Validator::make($request->all(), $validation);
@@ -30,6 +33,11 @@ class GetForm
             return response()->json([
                 'errors' => $validator->errors(),
             ], 422);
+        } else {
+            ContactForm::query()->create([
+                'form_id' => $form->id,
+                'data' => $request->all(),
+            ]);
         }
         $attributes = json_decode($request->input('form_attributes'), true);
 

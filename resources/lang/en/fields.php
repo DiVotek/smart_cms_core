@@ -73,4 +73,5 @@ return [
     'is_categories' => 'Enable categories',
     'is_multi_lang' => 'Enable multi language',
     'additional_languages' => 'Additional languages',
+    'group_fields' => 'Group fields',
 ];

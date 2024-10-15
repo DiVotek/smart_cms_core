@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -47,36 +48,43 @@ class FormResource extends Resource
                 Section::make('')->schema([
                     Schema::getName(true)->maxLength(255),
                     Repeater::make('fields')
+                        ->label(_fields('group_fields'))
                         ->schema([
-                            Forms\Components\Select::make('type')
-                                ->label(_fields('field_type'))
-                                ->options([
-                                    'text' => 'Text',
-                                    'textarea' => 'Textarea',
-                                    'select' => 'Select',
-                                    'radio' => 'Radio',
-                                    'checkbox' => 'Checkbox',
-                                    'file' => 'File',
-                                    'date' => 'Date',
-                                    'email' => 'Email',
-                                    'number' => 'Number',
-                                    'tel' => 'Tel',
-                                    'url' => 'Url',
-                                ])->required()->native(false)->searchable(true)->live(debounce: 250),
-                            Textarea::make('options')
-                                ->nullable()
-                                ->rows(3)->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
-                            Schema::getName(true)->maxLength(255),
-                            // Forms\Components\TextInput::make('label')
-                            //     ->required()
-                            //     ->maxLength(255),
-                            Forms\Components\Toggle::make('required')
-                                ->label(_fields('required'))
-                                ->default(false),
-                            // Forms\Components\TextInput::make('placeholder')
-                            //     ->required()
-                            //     ->maxLength(255),
-
+                            Repeater::make('fields')
+                                ->schema([
+                                    Forms\Components\Select::make('type')
+                                        ->label(_fields('field_type'))
+                                        ->options([
+                                            'text' => 'Text',
+                                            'textarea' => 'Textarea',
+                                            'select' => 'Select',
+                                            'radio' => 'Radio',
+                                            'checkbox' => 'Checkbox',
+                                            'file' => 'File',
+                                            'date' => 'Date',
+                                            'email' => 'Email',
+                                            'number' => 'Number',
+                                            'tel' => 'Tel',
+                                            'url' => 'Url',
+                                        ])->required()->native(false)->searchable(true)->live(debounce: 250),
+                                    Textarea::make('options')
+                                        ->nullable()
+                                        ->rows(3)->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                                    Schema::getName(true)->maxLength(255),
+                                    Forms\Components\Toggle::make('required')
+                                        ->label(_fields('required'))
+                                        ->default(false),
+                                    // Forms\Components\TextInput::make('label')
+                                    //     ->required()
+                                    //     ->maxLength(255),
+                                    // Forms\Components\TextInput::make('placeholder')
+                                    //     ->required()
+                                    //     ->maxLength(255),
+                                ]),
+                            TextInput::make('class')
+                                ->label(_fields('html_class'))
+                                ->default('')
+                                ->maxLength(255),
                         ]),
                 ]),
                 Section::make(_fields('additional'))->schema([
