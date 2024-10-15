@@ -17,6 +17,7 @@ class Update extends Command
         $this->call('vendor:publish', [
             '--provider' => "SmartCms\Core\SmartCmsServiceProvider",
             '--tag' => 'public',
+            '--force' => true,
         ]);
         $this->call('vendor:publish', [
             '--provider' => "SmartCms\Core\SmartCmsServiceProvider",

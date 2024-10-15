@@ -62,13 +62,11 @@ class SmartCmsServiceProvider extends ServiceProvider // extends PackageServiceP
 
         $this->publishes([
             __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__.'/../public/' => public_path('smart_cms_core'),
         ], 'public');
         $this->publishes([
             __DIR__.'/../resources/templates' => scms_templates_path(),
         ], 'templates');
-        $this->publishes([
-            __DIR__.'/../public/' => public_path('smart_cms_core'),
-        ], 'public');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
