@@ -160,44 +160,6 @@ class TemplateSectionResource extends Resource
                                 ]),
                             ]);
                     }),
-                Tables\Actions\Action::make(_actions('default_variables'))
-                    ->label(_actions('default_variables'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'default_variables' => _settings('default_variables', []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            sconfig('default_variables') => $data['default_variables'] ?? [],
-                        ]);
-                    })
-                    ->hidden(function () {
-                        if (template() == '') {
-                            return true;
-                        }
-                        if (! isset(scms_template_config()['defaultVariables'])) {
-                            return true;
-                        }
-                        if (empty(scms_template_config()['defaultVariables'])) {
-                            return true;
-                        }
-
-                        return false;
-                    })
-                    ->form(function ($form) {
-                        $config = scms_template_config();
-                        $variables = $config['defaultVariables'] ?? [];
-                        if (empty($variables)) {
-                            $schema = [];
-                        } else {
-                            $schema = Helper::parseSchema($variables, 'default_variables.');
-                        }
-
-                        return $form->schema($schema);
-                    }),
             ]);
     }
 
