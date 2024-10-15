@@ -13,7 +13,7 @@ class Update extends Command
     public function handle()
     {
         $this->info('Updating Smart CMS...');
-        exec('composer update smartcms/core');
+        exec('composer update smart-cms/core');
         $this->call('vendor:publish', [
             '--provider' => "SmartCms\Core\SmartCmsServiceProvider",
             '--tag' => 'public',
