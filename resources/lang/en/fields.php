@@ -71,4 +71,6 @@ return [
     'menu' => 'Menu',
     'icon' => 'Icon',
     'is_categories' => 'Enable categories',
+    'is_multi_lang' => 'Enable multi language',
+    'additional_languages' => 'Additional languages',
 ];

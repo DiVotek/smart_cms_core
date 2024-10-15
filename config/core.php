@@ -7,6 +7,7 @@ return [
 
     'main_language' => $prefix.'main_lang',
     'is_multi_lang' => $prefix.'is_multi_lang',
+    'additional_languages' => $prefix.'additional_langs',
 
     'template' => $prefix.'template',
 

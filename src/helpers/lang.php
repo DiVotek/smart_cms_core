@@ -7,42 +7,42 @@ use SmartCms\Core\Models\Language;
 if (! function_exists('_actions')) {
     function _actions(string $key): string
     {
-        return __('smart_cms::actions.'.$key);
+        return __('smart_cms::actions.' . $key);
     }
 }
 
 if (! function_exists('strans')) {
     function strans(string $key): string
     {
-        return __('smart_cms::'.$key);
+        return __('smart_cms::' . $key);
     }
 }
 
 if (! function_exists('_columns')) {
     function _columns(string $key): string
     {
-        return __('smart_cms::columns.'.$key);
+        return __('smart_cms::columns.' . $key);
     }
 }
 
 if (! function_exists('_fields')) {
     function _fields(string $key): string
     {
-        return __('smart_cms::fields.'.$key);
+        return __('smart_cms::fields.' . $key);
     }
 }
 
 if (! function_exists('_hints')) {
     function _hints(string $key): string
     {
-        return __('smart_cms::hints.'.$key);
+        return __('smart_cms::hints.' . $key);
     }
 }
 
 if (! function_exists('_nav')) {
     function _nav(string $key): string
     {
-        return __('smart_cms::navigation.'.$key);
+        return __('smart_cms::navigation.' . $key);
     }
 }
 
@@ -91,13 +91,16 @@ if (! function_exists('main_lang_id')) {
 if (! function_exists('get_active_languages')) {
     function get_active_languages(): Collection
     {
-        return Language::query()->get();
+        $ids = [main_lang_id()];
+        if (is_multi_lang()) {
+            $ids = array_merge($ids, _settings('additional_languages', []));
+        }
+        return Language::query()->whereIn('id', $ids)->get();
     }
 }
 if (! function_exists('is_multi_lang')) {
     function is_multi_lang(): bool
     {
-        return false;
         try {
             return _settings('is_multi_lang', false);
         } catch (Exception $exception) {
