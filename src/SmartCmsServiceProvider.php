@@ -11,11 +11,9 @@ use Illuminate\Support\ServiceProvider;
 use SmartCms\Core\Commands\Install;
 use SmartCms\Core\Commands\Update;
 use SmartCms\Core\Models\Translation;
-use SmartCms\Core\Services\Config;
 
 class SmartCmsServiceProvider extends ServiceProvider
 {
-
     public function register()
     {
         $this->commands([
@@ -24,25 +22,25 @@ class SmartCmsServiceProvider extends ServiceProvider
         ]);
         $this->mergeAuthConfig();
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/auth.php',
+            __DIR__.'/../config/auth.php',
             'auth-2'
         );
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/settings.php',
+            __DIR__.'/../config/settings.php',
             'settings'
         );
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
 
         $this->publishes([
-            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
-            __DIR__ . '/../public/' => public_path('smart_cms_core'),
+            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__.'/../public/' => public_path('smart_cms_core'),
         ], 'public');
         $this->publishes([
-            __DIR__ . '/../resources/templates' => scms_templates_path(),
+            __DIR__.'/../resources/templates' => scms_templates_path(),
         ], 'templates');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }
@@ -53,7 +51,7 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     protected function mergeAuthConfig()
     {
-        $packageAuth = require __DIR__ . '/../config/auth.php';
+        $packageAuth = require __DIR__.'/../config/auth.php';
         $appAuth = config('auth', []);
         if (isset($packageAuth['guards'])) {
             $appAuth['guards'] = array_merge(

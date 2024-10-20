@@ -13,7 +13,7 @@ class StaticPage extends PageComponent
         $defaultTemplate = _settings('static_page_template', []);
         if ($entity->parent_id) {
             $section = MenuSection::query()->where('parent_id', $entity->parent_id)->first();
-            if ($section && $section->template && !empty($section->template)) {
+            if ($section && $section->template && ! empty($section->template)) {
                 $defaultTemplate = $section->template;
             }
         }

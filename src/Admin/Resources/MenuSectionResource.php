@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -47,6 +46,7 @@ class MenuSectionResource extends Resource
             return $field['name'] ?? '';
         }, $customFields);
         $customFields = array_filter($customFields);
+
         return $form
             ->schema([
                 Section::make()

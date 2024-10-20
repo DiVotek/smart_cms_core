@@ -50,16 +50,16 @@ class StaticPageResource extends Resource
     {
         $parent = $form->getRecord()->parent_id;
         $customFields = [];
-        if(MenuSection::query()->where('parent_id', $parent)->exists()) {
+        if (MenuSection::query()->where('parent_id', $parent)->exists()) {
             $parent = MenuSection::query()->where('parent_id', $parent)->first();
             $fields_id = (int) $parent->custom_fields ?? null;
-            if($fields_id !== null && $fields_id != ''){
+            if ($fields_id !== null && $fields_id != '') {
                 $fieldSchema = _config()->getCustomFields()[$fields_id];
-                if(is_array($fieldSchema) && isset($fieldSchema['schema'])) {
+                if (is_array($fieldSchema) && isset($fieldSchema['schema'])) {
                     $fields = $fieldSchema['schema'];
-                    foreach($fields as &$field) {
+                    foreach ($fields as &$field) {
                         $newVar = Helper::getVariableSchema($field);
-                        $customFields = array_merge($customFields, Helper::parseVariableByType($newVar,'custom.'));
+                        $customFields = array_merge($customFields, Helper::parseVariableByType($newVar, 'custom.'));
                     }
                 }
             }
@@ -68,6 +68,7 @@ class StaticPageResource extends Resource
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
+
         return $form
             ->schema([
                 Section::make()

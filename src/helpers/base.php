@@ -53,9 +53,9 @@ if (! function_exists('scms_template_config')) {
         return $templateConfig;
     }
 }
-if(!function_exists('_config')){
+if (! function_exists('_config')) {
     function _config(): Config
     {
-        return new Config();
+        return new Config;
     }
 }

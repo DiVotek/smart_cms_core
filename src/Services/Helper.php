@@ -10,7 +10,7 @@ class Helper
     public static function getComponents(): array
     {
         $sections = [];
-        $directoryPath = scms_template_path(template() . '/sections');
+        $directoryPath = scms_template_path(template().'/sections');
         if (! File::exists($directoryPath)) {
             return [];
         }
@@ -33,7 +33,7 @@ class Helper
         foreach ($directories as $directory) {
             foreach (File::files($directory) as $file) {
                 $lastDir = basename($directory);
-                $files[$lastDir . '/' . basename($file)] = ucfirst($lastDir) . ' - ' . ucfirst(basename($file, '.blade.php'));
+                $files[$lastDir.'/'.basename($file)] = ucfirst($lastDir).' - '.ucfirst(basename($file, '.blade.php'));
             }
         }
 
@@ -55,13 +55,13 @@ class Helper
                     $schema = $section['schema'];
                     $isSchema = true;
                 } else {
-                    $file = scms_template_path(template()) . 'sections/' . $section['file'] . '.blade.php';
+                    $file = scms_template_path(template()).'sections/'.$section['file'].'.blade.php';
                 }
             }
         }
         if (! $isSchema) {
             if (! $file) {
-                $file = scms_template_path(template()) . 'sections/' . strtolower($component) . '.blade.php';
+                $file = scms_template_path(template()).'sections/'.strtolower($component).'.blade.php';
             }
             if (! File::exists($file)) {
                 return [];
@@ -148,13 +148,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -207,7 +207,7 @@ class Helper
 
     public static function getFormTemplates()
     {
-        $path = scms_template_path(template() . '/forms');
+        $path = scms_template_path(template().'/forms');
         if (File::exists($path) && File::isDirectory($path)) {
             $dirs = File::directories($path);
             $data = [];
@@ -229,46 +229,47 @@ class Helper
         ];
         if (str_contains('heading', $var)) {
             $variable['type'] = VariableTypes::HEADING->value;
-        } else if (str_contains('description', $var)) {
+        } elseif (str_contains('description', $var)) {
             $variable['type'] = VariableTypes::DESCRIPTION->value;
-        } else if (str_contains('image', $var)) {
+        } elseif (str_contains('image', $var)) {
             $variable['type'] = VariableTypes::IMAGE->value;
-        } else if (str_contains('status', $var)) {
+        } elseif (str_contains('status', $var)) {
             $variable['type'] = VariableTypes::BOOLEAN->value;
-        } else if (str_contains('links', $var)) {
+        } elseif (str_contains('links', $var)) {
             $variable['type'] = VariableTypes::LINKS->value;
-        } else if (str_contains($var, 'phones')) {
+        } elseif (str_contains($var, 'phones')) {
             $variable['type'] = VariableTypes::PHONES->value;
-        } else if (str_contains($var, 'phone')) {
+        } elseif (str_contains($var, 'phone')) {
             $variable['type'] = VariableTypes::PHONE->value;
-        } else if (str_contains($var, 'email')) {
+        } elseif (str_contains($var, 'email')) {
             $variable['type'] = VariableTypes::EMAIL->value;
-        } else  if (str_contains($var, 'addresses')) {
+        } elseif (str_contains($var, 'addresses')) {
             $variable['type'] = VariableTypes::ADDRESSES->value;
-        } else if (str_contains($var, 'address')) {
+        } elseif (str_contains($var, 'address')) {
             $variable['type'] = VariableTypes::ADDRESS->value;
-        } else if (str_contains($var, 'schedules')) {
+        } elseif (str_contains($var, 'schedules')) {
             $variable['type'] = VariableTypes::SCHEDULES->value;
-        } else if (str_contains($var, 'schedule')) {
+        } elseif (str_contains($var, 'schedule')) {
             $variable['type'] = VariableTypes::SCHEDULE->value;
-        } else if (str_contains($var, 'socials')) {
+        } elseif (str_contains($var, 'socials')) {
             $variable['type'] = VariableTypes::SOCIALS->value;
-        } else if (str_contains($var, 'pages')) {
+        } elseif (str_contains($var, 'pages')) {
             $variable['type'] = VariableTypes::PAGES->value;
-        } else if (str_contains($var, 'page')) {
+        } elseif (str_contains($var, 'page')) {
             $variable['type'] = VariableTypes::PAGE->value;
-        } else if (str_contains($var, 'form')) {
+        } elseif (str_contains($var, 'form')) {
             $variable['type'] = VariableTypes::FORM->value;
         }
-        if (!isset($variable['type'])) {
+        if (! isset($variable['type'])) {
             $variable['type'] = VariableTypes::TEXT->value;
         }
+
         return $variable;
     }
 
     public static function parseVariable(array|string $var, string $prefix = ''): array
     {
-        if (!is_array($var) || !isset($var['type'])) {
+        if (! is_array($var) || ! isset($var['type'])) {
             $var = self::getVariableSchema($var, $prefix);
         }
 

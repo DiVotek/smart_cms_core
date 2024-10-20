@@ -51,7 +51,7 @@ class Builder extends Component
         return $reference;
     }
 
-    public function parseSchema(array $schema, array $options,mixed $entity): array
+    public function parseSchema(array $schema, array $options, mixed $entity): array
     {
         if (empty($schema)) {
             return [];
@@ -127,7 +127,7 @@ class Builder extends Component
                         break;
                     case VariableTypes::PAGES->value:
                         $pages = $options[current_lang()][$field['name']] ?? [];
-                        if(!is_array($pages)){
+                        if (! is_array($pages)) {
                             $variables[$field['name']] = [];
                         }
                         $order = $pages['order'] ?? 'created_at';
@@ -138,7 +138,7 @@ class Builder extends Component
                         } elseif (isset($pages['parent']) && $pages['parent']) {
                             $query = Page::query()->where('parent_id', $pages['parent']);
                         }
-                        if($order == 'random'){
+                        if ($order == 'random') {
                             $query = $query->inRandomOrder();
                         } else {
                             $query = $query->orderBy($order, $orderSort);

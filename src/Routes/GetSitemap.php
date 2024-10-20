@@ -23,8 +23,10 @@ class GetSitemap
             'links' => $links,
             'is_sitemap' => true,
         ]);
+
         return response($content)->header('Content-Type', 'text/xml');
     }
+
     public function getBladeContent(): string
     {
         return <<<'blade'

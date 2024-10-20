@@ -80,6 +80,7 @@ class Settings extends BaseSettings
                                                 sconfig('theme') => _config()->getTheme(),
                                             ]);
                                         }
+
                                         return [
                                             'theme' => _settings('theme', []),
                                         ];
@@ -95,7 +96,7 @@ class Settings extends BaseSettings
                                     ->form(function ($form) {
                                         $theme = _config()->getTheme();
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.' . $key)
+                                            $schema[] = ColorPicker::make('theme.'.$key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }
@@ -109,7 +110,7 @@ class Settings extends BaseSettings
                             ->options(Helper::getTemplates())
                             ->native(false)
                             ->searchable(),
-                                ]),
+                    ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
                             Schema::getImage(sconfig('branding.logo'))
@@ -231,7 +232,7 @@ class Settings extends BaseSettings
                             ])
                             ->default([]),
                     ]),
-            ]),
+                ]),
         ];
     }
 

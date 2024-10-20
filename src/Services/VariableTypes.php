@@ -56,76 +56,78 @@ enum VariableTypes: string
         } else {
             $label = Helper::getLabelFromField($name);
         }
-        $name = $prefix . main_lang() . '.' . $name;
+        $name = $prefix.main_lang().'.'.$name;
         if ($var['type'] == self::ARRAY->value && isset($var['schema'])) {
             $fields = [];
             foreach ($var['schema'] as $key => $variable) {
                 $fields = array_merge($fields, Helper::parseVariable($variable, ''));
             }
 
-            return [Repeater::make($prefix . $var['name'])->label($label)->schema($fields)->default([])];
+            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])];
         }
         if ($var['type'] == self::PAGES->value) {
             $pages = Page::query()->pluck('name', 'id')->toArray();
+
             return [
-                Select::make($name . '.ids')->label($label)
-                ->helperText(_hints('pages'))
-                ->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->suffixAction(
-                    Action::make(_actions('settings'))
-                        ->label(_actions('settings'))
-                        ->slideOver()
-                        ->icon('heroicon-o-cog')
-                        ->mountUsing(function ($form) use ($name) {
-                            if ($form->model instanceof TemplateSection) {
-                                $keys = explode('.', $name);
-                                $data = $form->model;
-                                foreach ($keys as $key) {
-                                    if (isset($data[$key])) {
-                                        $data = $data[$key];
-                                    } else {
-                                        $data = null;
-                                        break;
+                Select::make($name.'.ids')->label($label)
+                    ->helperText(_hints('pages'))
+                    ->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->suffixAction(
+                        Action::make(_actions('settings'))
+                            ->label(_actions('settings'))
+                            ->slideOver()
+                            ->icon('heroicon-o-cog')
+                            ->mountUsing(function ($form) use ($name) {
+                                if ($form->model instanceof TemplateSection) {
+                                    $keys = explode('.', $name);
+                                    $data = $form->model;
+                                    foreach ($keys as $key) {
+                                        if (isset($data[$key])) {
+                                            $data = $data[$key];
+                                        } else {
+                                            $data = null;
+                                            break;
+                                        }
                                     }
+                                    $form->fill([
+                                        'all_children' => $data['all_children'],
+                                        'parent' => $data['parent'],
+                                        'order' => $data['order'],
+                                        'limit' => $data['limit'],
+                                    ]);
                                 }
-                                $form->fill([
-                                    'all_children' => $data['all_children'],
-                                    'parent' => $data['parent'],
-                                    'order' => $data['order'],
-                                    'limit' => $data['limit'],
+                            })
+                            ->form(function ($form) use ($pages) {
+                                return $form->schema([
+                                    Toggle::make('all_children')->label(_fields('all_children'))->helperText(_hints('all_children'))->live()->afterStateUpdated(function ($set, $get) {
+                                        if ($get('all_children')) {
+                                            $set('parent', null);
+                                        }
+                                    }),
+                                    Select::make('parent')->label(_fields('all_childrens_of_page'))->options($pages)->helperText(_hints('all_childrens_of_page'))->live()->afterStateUpdated(function ($set, $get) {
+                                        if ($get('parent')) {
+                                            $set('all_children', false);
+                                        }
+                                    }),
+                                    Select::make('order')->label(_fields('order'))->options([
+                                        'created_at' => _fields('created_at'),
+                                        'popularity' => _fields('popularity'),
+                                        'random' => _fields('random'),
+                                    ])->default('created_at')->required(),
+                                    TextInput::make('limit')->label(_fields('limit'))->numeric()->default(5),
                                 ]);
-                            }
-                        })
-                        ->form(function ($form) use ($pages) {
-                            return $form->schema([
-                                Toggle::make('all_children')->label(_fields('all_children'))->helperText(_hints('all_children'))->live()->afterStateUpdated(function ($set, $get) {
-                                    if ($get('all_children')) {
-                                        $set('parent', null);
-                                    }
-                                }),
-                                Select::make('parent')->label(_fields('all_childrens_of_page'))->options($pages)->helperText(_hints('all_childrens_of_page'))->live()->afterStateUpdated(function ($set, $get) {
-                                    if ($get('parent')) {
-                                        $set('all_children', false);
-                                    }
-                                }),
-                                Select::make('order')->label(_fields('order'))->options([
-                                    'created_at' => _fields('created_at'),
-                                    'popularity' => _fields('popularity'),
-                                    'random' => _fields('random'),
-                                ])->default('created_at')->required(),
-                                TextInput::make('limit')->label(_fields('limit'))->numeric()->default(5),
-                            ]);
-                        })->action(function (array $data, $set, $get, $component) use ($name) {
-                            $set($name . '.ids', []);
-                            foreach ($data as $key => $value) {
-                                $set($name . '.' . $key, $value);
-                            }
-                        })
-                ),
-                Hidden::make($name . '.order'),
-                Hidden::make($name . '.limit'),
-                Hidden::make($name . '.parent'),
-                Hidden::make($name . '.all_children'),
+                            })->action(function (array $data, $set, $get, $component) use ($name) {
+                                $set($name.'.ids', []);
+                                foreach ($data as $key => $value) {
+                                    $set($name.'.'.$key, $value);
+                                }
+                            })
+                    ),
+                Hidden::make($name.'.order'),
+                Hidden::make($name.'.limit'),
+                Hidden::make($name.'.parent'),
+                Hidden::make($name.'.all_children'),
             ];
+
             return $fields;
         }
         $fields[] = match ($this) {
@@ -159,8 +161,8 @@ enum VariableTypes: string
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $var['label'] = $label . ' ' . $lang->name;
-                $fields = array_merge($fields, self::toFilamentField($var, $prefix . $lang->slug . '.', true));
+                $var['label'] = $label.' '.$lang->name;
+                $fields = array_merge($fields, self::toFilamentField($var, $prefix.$lang->slug.'.', true));
             }
         }
 
