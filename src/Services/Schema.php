@@ -179,7 +179,7 @@ class Schema
         $options = TemplateSection::query()->pluck('name', 'id')->toArray();
 
         return self::getRepeater($name)
-            ->hiddenLabel(true)
+        ->label(_fields('template'))
             ->helperText(_hints('template'))
             ->schema([
                 self::getSelect('template_section_id', $options),

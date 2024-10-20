@@ -42,6 +42,11 @@ class MenuSectionResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $customFields = _config()->getCustomFields();
+        $customFields = array_map(function ($field) {
+            return $field['name'] ?? '';
+        }, $customFields);
+        $customFields = array_filter($customFields);
         return $form
             ->schema([
                 Section::make()
@@ -54,13 +59,7 @@ class MenuSectionResource extends Resource
                         Toggle::make('is_categories')
                             ->label(_fields('is_categories'))
                             ->default(false),
-                        Schema::getRepeater('custom_fields')->schema([])->default([]),
-                        // Select::make('parent_id')
-                        //     ->label(_fields('parent'))
-                        //     ->options(function (): array {
-                        //         return Page::query()->pluck('name', 'id')->toArray();
-                        //     })
-                        //     ->required(),
+                        Schema::getSelect('custom_fields')->label(_fields('custom_fields'))->options($customFields)->default([]),
                         Schema::getTemplateBuilder('template'),
 
                     ]),

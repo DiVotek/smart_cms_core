@@ -73,6 +73,13 @@ class Settings extends BaseSettings
                                     ->slideOver()
                                     ->icon('heroicon-o-cog')
                                     ->fillForm(function (): array {
+                                        $theme = _settings('theme', []);
+                                        if (empty($theme)) {
+                                            $theme = _config()->getTheme();
+                                            setting([
+                                                sconfig('theme') => _config()->getTheme(),
+                                            ]);
+                                        }
                                         return [
                                             'theme' => _settings('theme', []),
                                         ];
@@ -83,19 +90,12 @@ class Settings extends BaseSettings
                                         ]);
                                     })
                                     ->hidden(function () {
-                                        if (template() == '') {
-                                            return true;
-                                        }
-                                        $config = scms_template_config();
-
-                                        return ! isset($config['theme']);
+                                        return empty(_config()->getTheme());
                                     })
                                     ->form(function ($form) {
-                                        $config = scms_template_config();
-                                        $theme = $config['theme'] ?? [];
-                                        $schema = [];
+                                        $theme = _config()->getTheme();
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.'.$key)
+                                            $schema[] = ColorPicker::make('theme.' . $key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }
@@ -109,7 +109,7 @@ class Settings extends BaseSettings
                             ->options(Helper::getTemplates())
                             ->native(false)
                             ->searchable(),
-                    ]),
+                                ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
                             Schema::getImage(sconfig('branding.logo'))
@@ -231,7 +231,7 @@ class Settings extends BaseSettings
                             ])
                             ->default([]),
                     ]),
-                ]),
+            ]),
         ];
     }
 

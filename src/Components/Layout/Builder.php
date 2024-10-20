@@ -45,13 +45,13 @@ class Builder extends Component
             'breadcrumbs' => $options['breadcrumbs'] ?? [],
         ];
         if (isset($field['schema'])) {
-            $reference = array_merge($reference, $this->parseSchema($field['schema'], $options));
+            $reference = array_merge($reference, $this->parseSchema($field['schema'], $options, $reference['entity']));
         }
 
         return $reference;
     }
 
-    public function parseSchema(array $schema, array $options): array
+    public function parseSchema(array $schema, array $options,mixed $entity): array
     {
         if (empty($schema)) {
             return [];
@@ -126,8 +126,25 @@ class Builder extends Component
                         $variables[$field['name']] = $options[current_lang()][$field['name']];
                         break;
                     case VariableTypes::PAGES->value:
-                        $pages = $options[current_lang()][$field['name']];
-                        $variables[$field['name']] = Page::query()->whereIn('id', $pages)->get();
+                        $pages = $options[current_lang()][$field['name']] ?? [];
+                        if(!is_array($pages)){
+                            $variables[$field['name']] = [];
+                        }
+                        $order = $pages['order'] ?? 'created_at';
+                        $orderSort = 'desc';
+                        $query = Page::query();
+                        if (isset($pages['all_children']) && $pages['all_children']) {
+                            $query = $entity->children();
+                        } elseif (isset($pages['parent']) && $pages['parent']) {
+                            $query = Page::query()->where('parent_id', $pages['parent']);
+                        }
+                        if($order == 'random'){
+                            $query = $query->inRandomOrder();
+                        } else {
+                            $query = $query->orderBy($order, $orderSort);
+                        }
+                        $result = $query->limit($pages['limit'] ?? 5)->get();
+                        $variables[$field['name']] = $result;
                         break;
                     case VariableTypes::PAGE->value:
                         $variables[$field['name']] = Page::find($options[current_lang()][$field['name']]);

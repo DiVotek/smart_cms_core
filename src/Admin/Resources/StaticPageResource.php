@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
 
@@ -47,33 +48,26 @@ class StaticPageResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $parent = $form->getRecord()->parent_id ?? request('parent') ?? null;
-        $parentFields = Page::query()->where('id', $parent)->first()->nav_settings ?? [];
-        $currentFields = [];
-        if ($form->getRecord() && $form->getRecord()->custom) {
-            $currentFields = $form->getRecord()->custom;
-        }
-        if (isset($parentFields['fields'])) {
-            $parentFields = $parentFields['fields'];
-        } else {
-            $parentFields = [];
-        }
-        foreach ($parentFields as $field) {
-            if (! isset($currentFields[$field['name']])) {
-                $currentFields[] = [
-                    'name' => $field['name'],
-                    'value' => $field['value'] ?? '',
-                ];
+        $parent = $form->getRecord()->parent_id;
+        $customFields = [];
+        if(MenuSection::query()->where('parent_id', $parent)->exists()) {
+            $parent = MenuSection::query()->where('parent_id', $parent)->first();
+            $fields_id = (int) $parent->custom_fields ?? null;
+            if($fields_id !== null && $fields_id != ''){
+                $fieldSchema = _config()->getCustomFields()[$fields_id];
+                if(is_array($fieldSchema) && isset($fieldSchema['schema'])) {
+                    $fields = $fieldSchema['schema'];
+                    foreach($fields as &$field) {
+                        $newVar = Helper::getVariableSchema($field);
+                        $customFields = array_merge($customFields, Helper::parseVariableByType($newVar,'custom.'));
+                    }
+                }
             }
         }
         $isRequired = true;
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
-
-        // $form->fill([
-        //     'custom' => $currentFields ?? [],
-        // ]);
         return $form
             ->schema([
                 Section::make()
@@ -88,10 +82,11 @@ class StaticPageResource extends Resource
                             ->relationship('parent', 'name')->nullable()->default(function () {
                                 return request('parent') ?? null;
                             })->hidden((bool) request('parent'))->live(),
-                        Schema::getRepeater('nav_settings.fields')->schema([
-                            TextInput::make('name')->label(_fields('name'))->required(),
-                            TextInput::make('value')->label(_fields('value'))->required(),
-                        ])->default([]),
+                        // Schema::getRepeater('nav_settings.fields')->schema([
+                        //     TextInput::make('name')->label(_fields('name'))->required(),
+                        //     TextInput::make('value')->label(_fields('value'))->required(),
+                        // ])->default([]),
+                        ...$customFields,
                     ]),
             ]);
     }

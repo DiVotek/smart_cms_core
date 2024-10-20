@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use SmartCms\Core\Services\Config;
 
 if (! function_exists('scms_templates_path')) {
     function scms_templates_path(): string
@@ -50,5 +51,11 @@ if (! function_exists('scms_template_config')) {
         }
 
         return $templateConfig;
+    }
+}
+if(!function_exists('_config')){
+    function _config(): Config
+    {
+        return new Config();
     }
 }

@@ -10,4 +10,10 @@ return [
     'description_prefix' => 'Enter your description prefix',
     'description_suffix' => 'Enter your description suffix',
     'template' => 'Select template',
+    'all_children' => 'Select all children of current page',
+    'all_childrens_of_page' => 'Select all children of selected page',
+    'is_popular' => 'Order by views',
+    'is_latest' => 'Order by created date',
+    'is_random' => 'Order by random',
+    'pages' => 'Select pages which will be displayed',
 ];

@@ -20,4 +20,5 @@ return [
     'key' => 'Key',
     'value' => 'Value',
     'form' => 'Form',
+    'form_name' => 'Form Name',
 ];
