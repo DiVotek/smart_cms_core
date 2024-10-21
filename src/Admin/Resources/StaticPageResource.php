@@ -27,8 +27,6 @@ class StaticPageResource extends Resource
         return _nav('pages');
     }
 
-
-
     // public static function getEloquentQuery(): Builder
     // {
     //     $query = parent::getEloquentQuery()->withoutGlobalScopes();

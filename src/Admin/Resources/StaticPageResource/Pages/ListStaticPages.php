@@ -108,5 +108,4 @@ class ListStaticPages extends ListRecords
 
         return $tabs;
     }
-
 }
