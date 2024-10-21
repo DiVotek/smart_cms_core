@@ -80,11 +80,11 @@ class MenuSectionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                // Tables\Actions\EditAction::make('Page')
-                //     ->label(_actions('edit_page'))
-                //     ->url(function ($record) {
-                //         return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
-                //     }),
+                Tables\Actions\EditAction::make('Page')
+                    ->label(_actions('edit_page'))
+                    ->url(function ($record) {
+                        return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->reorderable('sorting')

@@ -27,14 +27,16 @@ class StaticPageResource extends Resource
         return _nav('pages');
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        $query = parent::getEloquentQuery()->withoutGlobalScopes();
-        $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
-        $query->whereNotIn('id', $menuSections);
 
-        return $query;
-    }
+
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     $query = parent::getEloquentQuery()->withoutGlobalScopes();
+    //     $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
+    //     // $query->whereNotIn('id', $menuSections);
+
+    //     return $query;
+    // }
 
     public static function getModelLabel(): string
     {
@@ -95,6 +97,10 @@ class StaticPageResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
+                $query->withoutGlobalScopes()->whereNotIn('id', $menuSections);
+            })
             ->columns([
                 TableSchema::getName(),
                 TableSchema::getStatus(),

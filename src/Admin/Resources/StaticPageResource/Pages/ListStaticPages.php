@@ -105,11 +105,8 @@ class ListStaticPages extends ListRecords
                     ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
             }
         }
-        // foreach (Page::query()->where('is_nav', true)->get() as $page) {
-        //     $tabs[$page->name()] = Tab::make($page->name())
-        //         ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $page->id));
-        // }
 
         return $tabs;
     }
+
 }
