@@ -10,7 +10,6 @@ use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
-use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
