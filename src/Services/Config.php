@@ -78,4 +78,9 @@ class Config
     {
         return $this->config['custom_fields'] ?? [];
     }
+
+    public function getEmailTemplates(): array
+    {
+        return $this->config['email_templates'] ?? [];
+    }
 }

@@ -29,6 +29,10 @@ class SmartCmsServiceProvider extends ServiceProvider
             __DIR__.'/../config/settings.php',
             'settings'
         );
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/shared.php',
+            'shared'
+        );
         $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
 
         $this->publishes([

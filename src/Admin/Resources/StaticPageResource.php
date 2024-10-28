@@ -20,21 +20,15 @@ use SmartCms\Core\Services\TableSchema;
 
 class StaticPageResource extends Resource
 {
-    protected static ?string $model = Page::class;
-
     public static function getNavigationGroup(): ?string
     {
         return _nav('pages');
     }
 
-    // public static function getEloquentQuery(): Builder
-    // {
-    //     $query = parent::getEloquentQuery()->withoutGlobalScopes();
-    //     $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
-    //     // $query->whereNotIn('id', $menuSections);
-
-    //     return $query;
-    // }
+    public static function getModel(): string
+    {
+        return config('shared.page_model', Page::class);
+    }
 
     public static function getModelLabel(): string
     {
@@ -83,10 +77,6 @@ class StaticPageResource extends Resource
                             ->relationship('parent', 'name')->nullable()->default(function () {
                                 return request('parent') ?? null;
                             })->hidden((bool) request('parent'))->live(),
-                        // Schema::getRepeater('nav_settings.fields')->schema([
-                        //     TextInput::make('name')->label(_fields('name'))->required(),
-                        //     TextInput::make('value')->label(_fields('value'))->required(),
-                        // ])->default([]),
                         ...$customFields,
                     ]),
             ]);
@@ -116,7 +106,7 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/'.$record->slug;
+                        return $record->route();
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')
@@ -159,7 +149,10 @@ class StaticPageResource extends Resource
 
     public static function getRelations(): array
     {
-        return [Schema::getSeoAndTemplateRelationGroup()];
+        return [
+            Schema::getSeoAndTemplateRelationGroup(),
+            ...config('shared.admin.page_relations', []),
+        ];
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -171,8 +164,6 @@ class StaticPageResource extends Resource
     {
         return [
             'index' => Pages\ListStaticPages::route('/'),
-            // 'create' => Pages\CreateStaticPage::route('/create'),
-            // 'create-page' => Pages\CreateStaticPage::route('/create'),
             'edit' => Pages\EditStaticPage::route('/{record}/edit'),
         ];
     }

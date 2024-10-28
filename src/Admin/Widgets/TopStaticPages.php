@@ -20,7 +20,7 @@ class TopStaticPages extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $currentModel = Page::class;
+        $currentModel = config('shared.admin.page_model', Page::class);
 
         return $table
             ->searchable(false)

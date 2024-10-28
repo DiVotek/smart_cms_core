@@ -7,42 +7,48 @@ use SmartCms\Core\Models\Language;
 if (! function_exists('_actions')) {
     function _actions(string $key): string
     {
-        return __('smart_cms::actions.'.$key);
+        return strans('actions.' . $key);
     }
 }
 
 if (! function_exists('strans')) {
     function strans(string $key): string
     {
-        return __('smart_cms::'.$key);
+        $translation = trans('smart_cms_store::' . $key);
+        if ($translation === 'smart_cms_store::' . $key) {
+            $translation = trans('smart_cms::' . $key);
+        }
+
+        return $translation;
+        // return __('smart_cms::' . $key);
     }
 }
 
 if (! function_exists('_columns')) {
     function _columns(string $key): string
     {
-        return __('smart_cms::columns.'.$key);
+        return strans('columns.' . $key);
     }
 }
 
 if (! function_exists('_fields')) {
     function _fields(string $key): string
     {
-        return __('smart_cms::fields.'.$key);
+        return strans('fields.' . $key);
     }
 }
 
 if (! function_exists('_hints')) {
     function _hints(string $key): string
     {
-        return __('smart_cms::hints.'.$key);
+        return strans('hints.' . $key);
     }
 }
 
 if (! function_exists('_nav')) {
     function _nav(string $key): string
     {
-        return __('smart_cms::navigation.'.$key);
+        return strans('navigation.' . $key);
     }
 }
 

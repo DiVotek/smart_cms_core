@@ -86,4 +86,7 @@ return [
     'popularity' => 'Popularity',
     'order' => 'Order by',
     'custom_fields' => 'Custom fields',
+    'subject' => 'Subject',
+    'content' => 'Content',
+    'is_sent' => 'Is sent',
 ];
