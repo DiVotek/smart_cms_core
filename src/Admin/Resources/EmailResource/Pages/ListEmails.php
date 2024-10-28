@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\EmailResource\Pages;
 
-
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Admin\Resources\EmailResource;
