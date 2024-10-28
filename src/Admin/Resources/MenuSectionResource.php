@@ -27,6 +27,7 @@ class MenuSectionResource extends Resource
     {
         return _nav('pages');
     }
+
     public static function getModelLabel(): string
     {
         return _nav('model_menu_section');

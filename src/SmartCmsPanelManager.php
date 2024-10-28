@@ -14,7 +14,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -28,7 +27,6 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 use SmartCms\Core\Admin\Pages\Auth\Login;
 use SmartCms\Core\Admin\Pages\Auth\Profile;
-use SmartCms\Core\Admin\Resources\MenuSectionResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
 use SmartCms\Core\Models\MenuSection;
@@ -125,7 +123,7 @@ class SmartCmsPanelManager extends PanelProvider
                     }),
             ];
             foreach ($menuSections as $section) {
-                $items[] = NavigationItem::make($section->name . ' ' . _nav('items'))
+                $items[] = NavigationItem::make($section->name.' '._nav('items'))
                     ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name]))
                     ->sort($section->sorting + 1)
                     ->group($section->name)
@@ -133,12 +131,12 @@ class SmartCmsPanelManager extends PanelProvider
                         return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == $section->name);
                     });
                 if ($section->is_categories) {
-                    $items[] = NavigationItem::make($section->name . ' ' . _nav('categories'))
-                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                    $items[] = NavigationItem::make($section->name.' '._nav('categories'))
+                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 2)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
             }
@@ -158,7 +156,7 @@ class SmartCmsPanelManager extends PanelProvider
         $reference = [];
         $groups = config('shared.admin.navigation_groups', []);
         foreach ($groups as $group) {
-            if (!isset($group['name'])) {
+            if (! isset($group['name'])) {
                 continue;
             }
             if ($group['name'] == 'menu_sections') {
@@ -172,6 +170,7 @@ class SmartCmsPanelManager extends PanelProvider
                 $reference[] = NavigationGroup::make(_nav($group['name']))->icon($icon);
             }
         }
+
         return $reference;
         $groups = [
             \Filament\Navigation\NavigationGroup::make(_nav('catalog'))->icon('heroicon-m-shopping-bag'),
