@@ -104,14 +104,21 @@ class Layout extends Component
                     @endif
                     <body class="antialiased">
                             <x-s::layout.header />
-                            <main class="min-h-80">
+                            <main>
                                 @yield('content')
                             </main>
                             <x-s::layout.footer/>
-                            <x-s::misc.gtm />
+                            <div x-data="dialog" x-show="isShow" x-cloak
+                                @open-modal.window="openModal($event.detail.element, $event.detail.label, $event.detail.description, $event.detail.time, $event.detail.backdrop)"
+                                @keyup.escape="closeModal()" @click.self="closeModal()" x-trap.inert.noscroll="isShow" :data-open="isShow"
+                                id="dialog" role="dialog" :aria-label="label" :aria-description="description" class="dialog":style="`position: fixed; inset: 0; z-index: 50; ${isBackdrop ? 'background-color: #00000080; backdrop-filter: blur(4px);' : ''}`"
+                                x-transition:enter="ease-out duration-200"
+                                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-out duration-200"
+                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
                             @foreach($scripts as $script)
                                 {!! $script['scripts'] !!}
                             @endforeach
+                            <x-s::misc.gtm />
                     </body>
                     </html>
         blade;
