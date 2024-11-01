@@ -4,6 +4,7 @@ import intersect from '@alpinejs/intersect';
 import mask from '@alpinejs/mask';
 import Alpine from 'alpinejs';
 import htmx from 'htmx.org';
+import { dialog,dropdown,tooltip } from './component';
 window.Alpine = Alpine
 Alpine.plugin(mask)
 Alpine.plugin(focus)
