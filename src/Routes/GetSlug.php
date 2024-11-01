@@ -68,7 +68,7 @@ class GetSlug
         $uuid = Session::getId();
         $uuid = substr($uuid, 0, 36);
 
-        if (!Cookie::get('uuid')) {
+        if (! Cookie::get('uuid')) {
             Cookie::queue('uuid', $uuid, 60 * 24 * 365);
         }
     }
