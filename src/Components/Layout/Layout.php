@@ -71,6 +71,7 @@ class Layout extends Component
                         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                         <link rel="canonical" href="{{ url()->current() }}" />
                         <link rel="icon" type="image/x-icon" href="{{$favicon}}">
+                        <link rel="preload" href="{{asset('/storage'.logo())}}" as="image" type="image/webp">
                         <title>@yield('title')</title>
                         <meta name="description" content="@yield('description')" />
                         <meta name="csrf-token" content="{{ csrf_token() }}">
