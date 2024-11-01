@@ -26,11 +26,16 @@ class GetSlug
             return abort(404);
         }
         $page = $this->findPage($segments);
-        if (! $page) {
-            abort(404);
+        if ($page) {
+            return Blade::renderComponent(new StaticPage($page));
         }
-
-        return Blade::renderComponent(new StaticPage($page));
+        foreach (config('shared.routes.slug') as $invokable) {
+            $res = app($invokable)->__invoke($segments);
+            if ($res) {
+                return $res;
+            }
+        }
+        abort(404);
     }
 
     protected function findPage(array $segments, $parentId = null)

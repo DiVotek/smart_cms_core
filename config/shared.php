@@ -20,6 +20,7 @@ use SmartCms\Core\Routes\GetSlug;
 return [
     'page_model' => \SmartCms\Core\Models\Page::class,
     'routes' => [
+        'slug' => [], //invokes after main getSlug page
         'route_handler' => GetSlug::class,
         'form_handler' => GetForm::class,
         'sitemap_handler' => GetSitemap::class,

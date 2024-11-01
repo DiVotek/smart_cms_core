@@ -137,6 +137,8 @@ class Builder extends Component
                             $query = $entity->children();
                         } elseif (isset($pages['parent']) && $pages['parent']) {
                             $query = Page::query()->where('parent_id', $pages['parent']);
+                        } else {
+                            $query = Page::query()->whereIn('id',$pages['ids']);
                         }
                         if ($order == 'random') {
                             $query = $query->inRandomOrder();
@@ -154,6 +156,9 @@ class Builder extends Component
                         $variables[$field['name']] = array_map(function ($item) {
                             return $item[current_lang()] ?? [];
                         }, $array);
+                        break;
+                    case VariableTypes::PRODUCTS->value:
+                        $variables[$field['name']] = \SmartCms\Store\Models\Product::find($options[current_lang()][$field['name']]);
                         break;
                     default:
                         $variables[$field['name']] = $options[current_lang()][$field['name']];

@@ -46,6 +46,8 @@ enum VariableTypes: string
     case BOOLEAN = 'boolean';
     case ARRAY = 'array';
     case SELECT = 'select';
+    case PRODUCT = 'product';
+    case PRODUCTS = 'products';
 
     public function toFilamentField(array $var, string $prefix = '', $is_lang = false): array
     {
@@ -63,7 +65,7 @@ enum VariableTypes: string
                 $fields = array_merge($fields, Helper::parseVariable($variable, ''));
             }
 
-            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])];
+            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])->cloneable()];
         }
         if ($var['type'] == self::PAGES->value) {
             $pages = Page::query()->pluck('name', 'id')->toArray();
@@ -154,6 +156,8 @@ enum VariableTypes: string
             self::SELECT => Select::make($name)->label($label)->options($var['options'] ?? [])->required($var['required'] ?? true),
             self::PAGES => Select::make($name)->label($label)->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->required($var['required'] ?? true),
             self::PAGE => Select::make($name)->label($label)->options(Page::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),
+            self::PRODUCT => Select::make($name)->label($label)->options(\SmartCms\Store\Models\Product::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),
+            self::PRODUCTS => Select::make($name)->label($label)->options(\SmartCms\Store\Models\Product::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true)->multiple(),
             default => TextInput::make($name)->label($label)->required($var['required'] ?? true),
         };
         if (is_multi_lang() && ! $is_lang) {

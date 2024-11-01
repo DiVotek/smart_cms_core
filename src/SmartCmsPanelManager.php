@@ -172,20 +172,20 @@ class SmartCmsPanelManager extends PanelProvider
         }
 
         return $reference;
-        $groups = [
-            \Filament\Navigation\NavigationGroup::make(_nav('catalog'))->icon('heroicon-m-shopping-bag'),
-            \Filament\Navigation\NavigationGroup::make(_nav('communication'))->icon('heroicon-m-megaphone'),
-            \Filament\Navigation\NavigationGroup::make(_nav('pages'))->icon('heroicon-m-book-open'),
-        ];
-        $menuSections = MenuSection::query()->get();
+        // $groups = [
+        //     \Filament\Navigation\NavigationGroup::make(_nav('catalog'))->icon('heroicon-m-shopping-bag'),
+        //     \Filament\Navigation\NavigationGroup::make(_nav('communication'))->icon('heroicon-m-megaphone'),
+        //     \Filament\Navigation\NavigationGroup::make(_nav('pages'))->icon('heroicon-m-book-open'),
+        // ];
+        // $menuSections = MenuSection::query()->get();
 
-        foreach ($menuSections as $section) {
-            $groups[] = \Filament\Navigation\NavigationGroup::make($section->name)->icon($section->icon ?? 'heroicon-m-book-open');
-        }
-        $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('design-template'))->icon('heroicon-m-light-bulb');
-        $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('system'))->icon('heroicon-m-cog-6-tooth');
+        // foreach ($menuSections as $section) {
+        //     $groups[] = \Filament\Navigation\NavigationGroup::make($section->name)->icon($section->icon ?? 'heroicon-m-book-open');
+        // }
+        // $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('design-template'))->icon('heroicon-m-light-bulb');
+        // $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('system'))->icon('heroicon-m-cog-6-tooth');
 
-        return $groups;
+        // return $groups;
     }
 
     public function registerBranding()
