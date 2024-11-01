@@ -37,7 +37,7 @@ class Builder extends Component
         $options = $field['options'];
         $host = Page::first();
         $reference = [
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
