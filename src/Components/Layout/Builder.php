@@ -138,7 +138,9 @@ class Builder extends Component
                         } elseif (isset($pages['parent']) && $pages['parent']) {
                             $query = Page::query()->where('parent_id', $pages['parent']);
                         } else {
-                            $query = Page::query()->whereIn('id', $pages['ids']);
+                            if(isset($pages['ids'])) {
+                                $query = Page::query()->whereIn('id', $pages['ids']);
+                            }
                         }
                         if ($order == 'random') {
                             $query = $query->inRandomOrder();
