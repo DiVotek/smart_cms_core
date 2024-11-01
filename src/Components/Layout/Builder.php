@@ -37,7 +37,7 @@ class Builder extends Component
         $options = $field['options'];
         $host = Page::first();
         $reference = [
-            'logo' => asset('/storage'.logo()),
+            'logo' => asset('/storage' . logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -137,6 +137,8 @@ class Builder extends Component
                             $query = $entity->children();
                         } elseif (isset($pages['parent']) && $pages['parent']) {
                             $query = Page::query()->where('parent_id', $pages['parent']);
+                        } else {
+                            $query = Page::query()->whereIn('id', $pages['ids']);
                         }
                         if ($order == 'random') {
                             $query = $query->inRandomOrder();
