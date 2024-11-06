@@ -3,8 +3,7 @@ import focus from '@alpinejs/focus';
 import intersect from '@alpinejs/intersect';
 import mask from '@alpinejs/mask';
 import Alpine from 'alpinejs';
-import htmx from 'htmx.org';
-import { dialog,dropdown,tooltip } from './component';
+import { dialog, dropdown, tooltip } from './component';
 window.Alpine = Alpine
 Alpine.plugin(mask)
 Alpine.plugin(focus)
@@ -16,5 +15,3 @@ Alpine.data('dropdown', dropdown);
 Alpine.data('tooltip', tooltip);
 
 Alpine.start()
-window.htmx = htmx
-

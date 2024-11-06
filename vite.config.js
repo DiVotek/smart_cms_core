@@ -11,12 +11,15 @@ export default defineConfig({
    ],
    build: {
       outDir: 'public',
+      external: ['htmx.org', 'lazysizes'],
       rollupOptions: {
          input: {
             app: 'resources/js/app.js',
+            htmx: 'resources/js/htmx.js',
+            lazy: 'resources/js/lazy.js',
          },
          output: {
-            entryFileNames: 'js/app.js',
+            entryFileNames: 'js/[name].js',
          }
       },
    },
