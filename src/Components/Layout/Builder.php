@@ -8,7 +8,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\GetDescription;
 use SmartCms\Core\Actions\Template\GetLinks;
-use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\VariableTypes;
 
@@ -47,6 +46,7 @@ class Builder extends Component
         if (isset($field['schema'])) {
             $reference = array_merge($reference, $this->parseSchema($field['schema'], $options, $reference['entity']));
         }
+
         return $reference;
     }
 

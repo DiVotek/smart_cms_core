@@ -3,33 +3,32 @@
 namespace SmartCms\Core\Services\Singletone;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Outerweb\Settings\Models\Setting;
 use SmartCms\Core\Models\Language;
 
 class Languages
 {
-   public mixed $languages;
-   public Language $defaultLanguage;
+    public mixed $languages;
 
-   public function __construct()
-   {
-      $this->languages = Language::all();
-      $this->defaultLanguage = $this->get(_settings('main_language'));
-   }
+    public Language $defaultLanguage;
 
-   public function get(int $id): Language
-   {
-      return $this->languages->where('id', $id)->first();
-   }
+    public function __construct()
+    {
+        $this->languages = Language::all();
+        $this->defaultLanguage = $this->get(_settings('main_language'));
+    }
 
-   public function getMulti(array $ids): Collection
-   {
-      return $this->languages->whereIn('id', $ids);
-   }
+    public function get(int $id): Language
+    {
+        return $this->languages->where('id', $id)->first();
+    }
 
-   public function getDefault(): Language
-   {
-      return $this->defaultLanguage;
-   }
+    public function getMulti(array $ids): Collection
+    {
+        return $this->languages->whereIn('id', $ids);
+    }
+
+    public function getDefault(): Language
+    {
+        return $this->defaultLanguage;
+    }
 }

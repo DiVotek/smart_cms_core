@@ -70,6 +70,7 @@ if (! function_exists('main_lang')) {
     function main_lang(): string
     {
         return app('_lang')->getDefault()->slug;
+
         return Language::query()->find(_settings('main_language', 1))->slug ?? 'en';
 
         return setting(config('settings.main_language'), 'en');
@@ -102,6 +103,7 @@ if (! function_exists('get_active_languages')) {
         if (is_multi_lang()) {
             $ids = array_merge($ids, _settings('additional_languages', []));
         }
+
         return app('_lang')->getMulti($ids);
         // return Language::query()->whereIn('id', $ids)->get();
     }
