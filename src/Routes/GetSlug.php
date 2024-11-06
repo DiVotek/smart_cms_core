@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use SmartCms\Core\Components\Pages\StaticPage;
-use SmartCms\Core\Models\Page;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class GetSlug
@@ -44,7 +43,7 @@ class GetSlug
     protected function findPage(array $segments, $parentId = null)
     {
         $slug = array_shift($segments);
-        $page =config('shared.page_model')::query()->where('slug', $slug ?? '')
+        $page = config('shared.page_model')::query()->where('slug', $slug ?? '')
             ->where('parent_id', $parentId)
             ->first();
         if (! $page) {

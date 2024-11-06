@@ -14,4 +14,3 @@ Route::get('/{slug?}/{second_slug?}/{third_slug?}', config('shared.routes.route_
     ->name('smart_cms_page');
 
 Route::get('/api/form', config('shared.routes.form_handler'))->name('smartcms.form.submit');
-
