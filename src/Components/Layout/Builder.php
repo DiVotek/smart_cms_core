@@ -35,7 +35,7 @@ class Builder extends Component
     public function parse_options(array $field): array
     {
         $options = $field['options'];
-        $host = Page::first();
+        $host = app('_page')->first();
         $reference = [
             'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
@@ -47,7 +47,6 @@ class Builder extends Component
         if (isset($field['schema'])) {
             $reference = array_merge($reference, $this->parseSchema($field['schema'], $options, $reference['entity']));
         }
-
         return $reference;
     }
 
@@ -119,8 +118,7 @@ class Builder extends Component
                         break;
                     case VariableTypes::LINKS->value:
                         $menu = $options[current_lang()][$field['name']];
-                        $menu = Menu::query()->find($menu);
-                        $variables[$field['name']] = GetLinks::run($menu->value ?? []);
+                        $variables[$field['name']] = GetLinks::run($menu);
                         break;
                     case VariableTypes::FORM->value:
                         $variables[$field['name']] = $options[current_lang()][$field['name']];
@@ -132,24 +130,24 @@ class Builder extends Component
                         }
                         $order = $pages['order'] ?? 'created_at';
                         $orderSort = 'desc';
-                        $query = Page::query();
+                        $query = app('_page')->all();
                         if (isset($pages['all_children']) && $pages['all_children']) {
-                            $query = $entity->children();
+                            $query = $query->where('parent_id', $entity->id);
                         } elseif (isset($pages['parent']) && $pages['parent']) {
-                            $query = Page::query()->where('parent_id', $pages['parent']);
+                            $query = $query->where('parent_id', $pages['parent']);
                         } else {
-                            $query = Page::query()->whereIn('id', $pages['ids']);
+                            $query = $query->whereIn('id', $pages['ids']);
                         }
                         if ($order == 'random') {
                             $query = $query->inRandomOrder();
                         } else {
-                            $query = $query->orderBy($order, $orderSort);
+                            $query = $query->sortByDesc($order);
                         }
-                        $result = $query->limit($pages['limit'] ?? 5)->get();
+                        $result = $query->slice($pages['limit'] ?? 5);
                         $variables[$field['name']] = $result;
                         break;
                     case VariableTypes::PAGE->value:
-                        $variables[$field['name']] = Page::find($options[current_lang()][$field['name']]);
+                        $variables[$field['name']] = app('_page')->get($options[current_lang()][$field['name']]);
                         break;
                     case VariableTypes::ARRAY->value:
                         $array = $options[$field['name']];

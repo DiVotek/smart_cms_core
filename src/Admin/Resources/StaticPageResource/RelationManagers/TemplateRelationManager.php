@@ -88,7 +88,6 @@ class TemplateRelationManager extends RelationManager
                             ->where('entity_type', $this->ownerRecord->getMorphClass())
                             ->max('sorting') ?? 0;
                         if (isset($data['sections'])) {
-
                             foreach ($data['sections'] as $section) {
                                 $sorting++;
                                 $newSection = $this->ownerRecord->template()->create([

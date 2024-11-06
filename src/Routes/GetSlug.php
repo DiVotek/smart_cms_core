@@ -44,7 +44,7 @@ class GetSlug
     protected function findPage(array $segments, $parentId = null)
     {
         $slug = array_shift($segments);
-        $page = Page::query()->where('slug', $slug ?? '')
+        $page =config('shared.page_model')::query()->where('slug', $slug ?? '')
             ->where('parent_id', $parentId)
             ->first();
         if (! $page) {
@@ -66,8 +66,7 @@ class GetSlug
     private function bindUser()
     {
         $uuid = Session::getId();
-        $uuid = substr($uuid, 0, 36);
-
+        $uuid = substr($uuid, 0, 30);
         if (! Cookie::get('uuid')) {
             Cookie::queue('uuid', $uuid, 60 * 24 * 365);
         }
