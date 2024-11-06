@@ -10,9 +10,12 @@ class Link extends Component
 {
     public string $title;
 
-    public function __construct(string $title = '')
+    public string $activeClasses;
+
+    public function __construct(string $title = '', string $activeClass = '')
     {
         $this->title = $title;
+        $this->activeClasses = $activeClass;
     }
 
     public function render(): View|Closure|string
@@ -31,7 +34,7 @@ class Link extends Component
                 if (! isset($data['attributes']['class'])) {
                     $data['attributes']['class'] = '';
                 }
-                $data['attributes']['class'] .= ' active';
+                $data['attributes']['class'] .= ' active '.$this->activeClasses;
                 unset($data['attributes']['title']);
                 unset($data['attributes']['href']);
 

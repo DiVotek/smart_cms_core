@@ -47,7 +47,7 @@ class StaticPageResource extends Resource
             $parent = MenuSection::query()->where('parent_id', $parent)->first();
             $fields_id = (int) $parent->custom_fields ?? null;
             if ($fields_id !== null && $fields_id != '') {
-                $fieldSchema = _config()->getCustomFields()[$fields_id];
+                $fieldSchema = _config()->getCustomFields()[$fields_id] ?? [];
                 if (is_array($fieldSchema) && isset($fieldSchema['schema'])) {
                     $fields = $fieldSchema['schema'];
                     foreach ($fields as &$field) {
