@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use SmartCms\Core\Admin\Resources\MenuSectionResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
+use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
 
@@ -84,7 +85,14 @@ class MenuSectionResource extends Resource
                     ->url(function ($record) {
                         return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->action(function ($record) {
+                    $record->delete();
+                    $pageParent = Page::query()->where('id', $record->parent_id)->first();
+                    Page::query()->where('parent_id', $pageParent->id)->update([
+                        'parent_id' => null,
+                    ]);
+                    $pageParent->delete();
+                }),
             ])
             ->reorderable('sorting')
             ->headerActions([
