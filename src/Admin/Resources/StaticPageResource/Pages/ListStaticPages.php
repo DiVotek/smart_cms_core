@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\MenuSection;
@@ -48,12 +49,20 @@ class ListStaticPages extends ListRecords
             }
         }
         $actionName = request('activeTab') ?? 'Static Page';
+        $buttonName = _actions('create');
         $actionName = _actions('create').' '.$actionName;
         if (! str_contains($actionName, _nav('categories'))) {
-            $actionName = $actionName.' '._nav('item');
+            $buttonName .= ' '._nav('item');
+        } else {
+            $buttonName .= ' '._nav('category');
         }
-        $this->actionName = $actionName;
+        $this->actionName = $buttonName;
         $this->isCategories = $this->menuSection && $this->menuSection->is_categories && ! str_contains($actionName, _nav('categories'));
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return $this->menuSection ? $this->menuSection->name : 'Static Pages';
     }
 
     protected function getHeaderActions(): array
