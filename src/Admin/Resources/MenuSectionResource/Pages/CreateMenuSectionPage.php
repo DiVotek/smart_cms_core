@@ -14,12 +14,19 @@ class CreateMenuSectionPage extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $record = parent::handleRecordCreation($data);
-        $page = Page::query()->create([
-            'name' => $record->name,
-            'slug' => \Illuminate\Support\Str::slug($record->name),
-        ]);
+        $slug = \Illuminate\Support\Str::slug($record->name);
+        $parent_id = null;
+        if(Page::query()->where('slug', $slug)->exists()) {
+            $parent_id = Page::query()->where('slug', $slug)->first()->id;
+        } else {
+            $page = Page::query()->create([
+                'name' => $record->name,
+                'slug' => \Illuminate\Support\Str::slug($record->name),
+            ]);
+            $parent_id = $page->id;
+        }
         $record->update([
-            'parent_id' => $page->id,
+            'parent_id' => $parent_id,
         ]);
 
         return $record;
