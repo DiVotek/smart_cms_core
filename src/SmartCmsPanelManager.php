@@ -3,6 +3,7 @@
 namespace SmartCms\Core;
 
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
 use Filament\Http\Middleware\Authenticate;
@@ -137,7 +138,7 @@ class SmartCmsPanelManager extends PanelProvider
             foreach ($menuSections as $section) {
                 $items[] = NavigationItem::make($section->name.' '._nav('items'))
                     ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name]))
-                    ->sort($section->sorting + 1)
+                    ->sort($section->sorting + 2)
                     ->group($section->name)
                     ->isActiveWhen(function () use ($section) {
                         return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == $section->name);
@@ -145,7 +146,7 @@ class SmartCmsPanelManager extends PanelProvider
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make($section->name.' '._nav('categories'))
                         ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
-                        ->sort($section->sorting + 2)
+                        ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
                             return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');

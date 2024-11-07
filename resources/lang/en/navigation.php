@@ -30,6 +30,7 @@ return [
     'info_pages' => 'Info Pages',
     'model_menu' => 'Menu',
     'model_menus' => 'Menus',
+    'category' => 'Category',
     'email' => 'Email',
     'emails' => 'Emails',
     'users' => 'Users',
