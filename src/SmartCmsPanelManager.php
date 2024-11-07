@@ -3,7 +3,6 @@
 namespace SmartCms\Core;
 
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
 use Filament\Http\Middleware\Authenticate;
