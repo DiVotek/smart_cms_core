@@ -16,7 +16,7 @@ class CreateMenuSectionPage extends CreateRecord
         $record = parent::handleRecordCreation($data);
         $slug = \Illuminate\Support\Str::slug($record->name);
         $parent_id = null;
-        if(Page::query()->where('slug', $slug)->exists()) {
+        if (Page::query()->where('slug', $slug)->exists()) {
             $parent_id = Page::query()->where('slug', $slug)->first()->id;
         } else {
             $page = Page::query()->create([
