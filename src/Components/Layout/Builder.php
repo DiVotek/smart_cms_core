@@ -160,7 +160,7 @@ class Builder extends Component
                         }, $array);
                         foreach ($vars as &$var) {
                             if (isset($var['page'])) {
-                                $var['page'] = app('_page')->get($var['page']);
+                                $var['page'] = Page::find($var['page']);
                             }
                         }
                         $variables[$field['name']] = $vars;
