@@ -151,9 +151,15 @@ class Builder extends Component
                         break;
                     case VariableTypes::ARRAY->value:
                         $array = $options[$field['name']];
-                        $variables[$field['name']] = array_map(function ($item) {
+                        $vars = array_map(function ($item) {
                             return $item[current_lang()] ?? [];
                         }, $array);
+                        foreach($vars as &$var){
+                            if(isset($var['page'])){
+                                $var['page'] = app('_page')->get($var['page']);
+                            }
+                        }
+                        $variables[$field['name']] = $vars;
                         break;
                     case VariableTypes::PRODUCTS->value:
                         $variables[$field['name']] = \SmartCms\Store\Models\Product::find($options[current_lang()][$field['name']]);
