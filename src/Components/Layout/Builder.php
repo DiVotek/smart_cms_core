@@ -154,8 +154,8 @@ class Builder extends Component
                         $vars = array_map(function ($item) {
                             return $item[current_lang()] ?? [];
                         }, $array);
-                        foreach($vars as &$var){
-                            if(isset($var['page'])){
+                        foreach ($vars as &$var) {
+                            if (isset($var['page'])) {
                                 $var['page'] = app('_page')->get($var['page']);
                             }
                         }
