@@ -37,7 +37,7 @@ class Builder extends Component
         $options = $field['options'];
         $host = Page::first();
         $reference = [
-            'logo' => asset('/storage'.logo()),
+            'logo' => asset('/storage' . logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -155,9 +155,15 @@ class Builder extends Component
                         break;
                     case VariableTypes::ARRAY->value:
                         $array = $options[$field['name']];
-                        $variables[$field['name']] = array_map(function ($item) {
+                        $vars = array_map(function ($item) {
                             return $item[current_lang()] ?? [];
                         }, $array);
+                        foreach ($vars as &$var) {
+                            if (isset($var['page'])) {
+                                $var['page'] = app('_page')->get($var['page']);
+                            }
+                        }
+                        $variables[$field['name']] = $vars;
                         break;
                     default:
                         $variables[$field['name']] = $options[current_lang()][$field['name']];
