@@ -86,9 +86,9 @@ class Schema
             });
     }
 
-    public static function getImage(string $name = 'image', bool $isMultiple = false): FileUpload
+    public static function getImage(string $name = 'image', bool $isMultiple = false, string $path = '',string $filaname = ''): FileUpload
     {
-        return FileUpload::make($name)
+        $upload = FileUpload::make($name)
             ->image()
             ->imageEditor()
             ->helperText(__('Upload the image of the record'))
@@ -98,10 +98,15 @@ class Schema
                 '1:1',
             ])
             ->reorderable()
+            ->directory($path ?? 'images')
             ->openable()
             ->optimize('webp')
             ->disk('public')
             ->multiple($isMultiple);
+        if ($filaname) {
+            $upload->fileName($filaname);
+        }
+        return $upload;
     }
 
     public static function getSorting(): TextInput

@@ -32,7 +32,7 @@ return [
             MenuSectionResource::class,
             ContactFormResource::class,
             FormResource::class,
-            TranslationResource::class,
+            // TranslationResource::class,
             TemplateSectionResource::class,
             MenuResource::class,
             EmailResource::class,

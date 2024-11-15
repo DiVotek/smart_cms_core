@@ -5,9 +5,11 @@ namespace SmartCms\Core\Admin\Resources;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
@@ -61,7 +63,6 @@ class StaticPageResource extends Resource
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
-
         return $form
             ->schema([
                 Section::make()
@@ -70,7 +71,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
                             ->relationship('parent', 'name')->nullable()->default(function () {
@@ -89,7 +90,13 @@ class StaticPageResource extends Resource
                 $query->withoutGlobalScopes()->whereNotIn('id', $menuSections);
             })
             ->columns([
-                TableSchema::getName(),
+                TableSchema::getName()->limit(50)->tooltip(function (TextColumn $column): ?string {
+                    $state = $column->getState();
+                    if (strlen($state) <= $column->getCharacterLimit()) {
+                        return null;
+                    }
+                    return $state;
+                }),
                 TableSchema::getStatus(),
                 TableSchema::getSorting(),
                 TableSchema::getViews(),
@@ -110,34 +117,9 @@ class StaticPageResource extends Resource
             ])
             ->reorderable('sorting')
             ->headerActions([
-                Schema::helpAction('Static page help text')->hidden(function () {
-                    return (bool) request('parent');
-                }),
-                Tables\Actions\Action::make('Template')
-                    ->label(_actions('template'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'template' => _settings('static_page_template', []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            sconfig('static_page_template') => $data['template'],
-                        ]);
-                    })
-                    ->hidden(function () {
-                        return (bool) request('parent');
-                    })
-                    ->form(function ($form) {
-                        return $form
-                            ->schema([
-                                Section::make('')->schema([
-                                    Schema::getTemplateBuilder()->label(_fields('template')),
-                                ]),
-                            ]);
-                    }),
+                // Schema::helpAction('Static page help text')->hidden(function () {
+                //     return (bool) request('parent');
+                // }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -149,7 +131,7 @@ class StaticPageResource extends Resource
     public static function getRelations(): array
     {
         return [
-            Schema::getSeoAndTemplateRelationGroup(),
+            // Schema::getSeoAndTemplateRelationGroup(),
             ...config('shared.admin.page_relations', []),
         ];
     }
@@ -164,6 +146,21 @@ class StaticPageResource extends Resource
         return [
             'index' => Pages\ListStaticPages::route('/'),
             'edit' => Pages\EditStaticPage::route('/{record}/edit'),
+            'translates' => Pages\EditTranslates::route('/{record}/translates'),
+            'seo' => Pages\EditSeo::route('/{record}/seo'),
+            'template' => Pages\EditTemplate::route('/{record}/template'),
         ];
     }
+
+    public static function getRecordSubNavigation($page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\EditStaticPage::class,
+            Pages\EditTranslates::class,
+            Pages\EditSeo::class,
+            Pages\EditTemplate::class,
+        ]);
+    }
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 }

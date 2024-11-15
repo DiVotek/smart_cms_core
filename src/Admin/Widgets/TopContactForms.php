@@ -25,6 +25,7 @@ class TopContactForms extends BaseWidget
         $currentModel = ContactForm::class;
 
         return $table
+            ->recordUrl(fn() => ContactFormResource::getUrl('index'))
             ->searchable(false)
             ->query(function () use ($currentModel) {
                 return $currentModel::query()->orderBy('created_at', 'desc')->take(5);
@@ -32,15 +33,9 @@ class TopContactForms extends BaseWidget
             ->columns([
                 TextColumn::make('form.name')
                     ->label(_columns('form_name')),
-                TableSchema::getCreatedAt(),
-            ])->actions([
-                Action::make('View')
-                    ->label(__('View'))
-                    ->icon('heroicon-o-eye')
-                    ->url(function ($record) {
-                        return ContactFormResource::getUrl('index');
-                    }),
-            ])
-            ->paginated(false)->defaultPaginationPageOption(5);
+                TextColumn::make('created_at')
+                    ->label(_columns('created_at'))
+                    ->since(),
+            ])->defaultPaginationPageOption(5);
     }
 }

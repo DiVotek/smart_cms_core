@@ -81,6 +81,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->emailVerification()
             ->authGuard('admin')
             ->profile(Profile::class)
+            ->spa()
             ->font('Roboto')
             ->darkMode(false)
             ->brandName(company_name() ?? 'SmartCms')
@@ -90,6 +91,8 @@ class SmartCmsPanelManager extends PanelProvider
                 \Filament\Pages\Dashboard::class,
             ])
             ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('17rem')
+            // ->breadcrumbs(false)
             ->widgets(config('shared.admin.widgets', []))
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->navigationGroups(

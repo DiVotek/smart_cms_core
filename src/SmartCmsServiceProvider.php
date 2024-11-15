@@ -45,6 +45,7 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }
