@@ -9,11 +9,11 @@ use SmartCms\Core\Routes\GetSlug;
 Route::get('robots.txt', GetRobots::class)->name('robots');
 Route::get('sitemap.xml', GetSitemap::class)->name('sitemap');
 Route::get('/{lang?}/{slug?}/{second_slug?}/{third_slug?}', GetSlug::class)
-    ->where('slug', '^(?!admin|api|login|register|dashboard|glide).*$')
+    ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')
     ->name('smart_cms_page.lang');
 Route::get('/{slug?}/{second_slug?}/{third_slug?}', GetSlug::class)
-    ->where('slug', '^(?!admin|api|login|register|dashboard|glide).*$')
+    ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')
     ->name('smart_cms_page');
 
