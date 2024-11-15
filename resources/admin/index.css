@@ -7,7 +7,10 @@ fi-sidebar-item-button {
     padding-bottom: 5px;
 }
 
-.fi-page.fi-resource-list-records-page.fi-resource-static-pages
-    nav[role="tablist"] {
+.fi-page.fi-resource-list-records-page.fi-resource-static-pages nav[role="tablist"] {
     display: none;
+}
+
+.fi-page-sub-navigation-sidebar-ctn {
+    width: 13rem !important;
 }
