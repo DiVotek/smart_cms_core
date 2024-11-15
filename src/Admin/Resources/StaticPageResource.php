@@ -63,6 +63,7 @@ class StaticPageResource extends Resource
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
+
         return $form
             ->schema([
                 Section::make()
@@ -71,7 +72,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
                             ->relationship('parent', 'name')->nullable()->default(function () {
@@ -95,6 +96,7 @@ class StaticPageResource extends Resource
                     if (strlen($state) <= $column->getCharacterLimit()) {
                         return null;
                     }
+
                     return $state;
                 }),
                 TableSchema::getStatus(),

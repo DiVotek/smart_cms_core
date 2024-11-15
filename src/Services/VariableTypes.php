@@ -60,9 +60,9 @@ enum VariableTypes: string
             $label = Helper::getLabelFromField($name);
         }
         if ($is_lang) {
-            $name = $prefix . $name;
+            $name = $prefix.$name;
         } else {
-            $name = $prefix . main_lang() . '.' . $name;
+            $name = $prefix.main_lang().'.'.$name;
         }
         if ($var['type'] == self::ARRAY->value && isset($var['schema'])) {
             $fields = [];
@@ -70,7 +70,7 @@ enum VariableTypes: string
                 $fields = array_merge($fields, Helper::parseVariable($variable, ''));
             }
 
-            return [Repeater::make($prefix . $var['name'])->label($label)->schema($fields)->default([])->cloneable()];
+            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])->cloneable()];
         }
         // if ($var['type'] == self::PAGES->value) {
         //     $pages = Page::query()->pluck('name', 'id')->toArray();
@@ -113,8 +113,8 @@ enum VariableTypes: string
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $var['label'] = $label . ' ' . $lang->name;
-                $fields = array_merge($fields, self::toFilamentField($var, $prefix . $lang->slug . '.', true));
+                $var['label'] = $label.' '.$lang->name;
+                $fields = array_merge($fields, self::toFilamentField($var, $prefix.$lang->slug.'.', true));
             }
         }
 
@@ -135,7 +135,7 @@ enum VariableTypes: string
     public function getPages(string $name, string $label, array $var)
     {
         return Section::make('')->schema([
-            Select::make($name . '.ids')->label($label)
+            Select::make($name.'.ids')->label($label)
                 ->helperText(_hints('pages'))
                 ->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->suffixAction(
                     Action::make(_actions('settings'))
@@ -164,6 +164,7 @@ enum VariableTypes: string
                         })
                         ->form(function ($form) {
                             $pages = Page::query()->pluck('name', 'id')->toArray();
+
                             return $form->schema([
                                 Toggle::make('all_children')->label(_fields('all_children'))->helperText(_hints('all_children'))->live()->afterStateUpdated(function ($set, $get) {
                                     if ($get('all_children')) {
@@ -183,16 +184,16 @@ enum VariableTypes: string
                                 TextInput::make('limit')->label(_fields('limit'))->numeric()->default(5),
                             ]);
                         })->action(function (array $data, $set, $get, $component) use ($name) {
-                            $set($name . '.ids', []);
+                            $set($name.'.ids', []);
                             foreach ($data as $key => $value) {
-                                $set($name . '.' . $key, $value);
+                                $set($name.'.'.$key, $value);
                             }
                         })
                 ),
-            Hidden::make($name . '.order'),
-            Hidden::make($name . '.limit'),
-            Hidden::make($name . '.parent'),
-            Hidden::make($name . '.all_children'),
+            Hidden::make($name.'.order'),
+            Hidden::make($name.'.limit'),
+            Hidden::make($name.'.parent'),
+            Hidden::make($name.'.all_children'),
         ]);
     }
 }

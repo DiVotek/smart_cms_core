@@ -143,7 +143,7 @@ class Builder extends Component
                         } else {
                             $query = $query->sortByDesc($order);
                         }
-                        $result = $query->slice(0,$pages['limit'] ?? 5);
+                        $result = $query->slice(0, $pages['limit'] ?? 5);
                         $variables[$field['name']] = $result;
                         break;
                     case VariableTypes::PAGE->value:

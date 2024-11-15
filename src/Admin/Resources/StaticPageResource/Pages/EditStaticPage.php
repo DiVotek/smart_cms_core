@@ -14,12 +14,12 @@ class EditStaticPage extends EditRecord
 
     public static function getNavigationLabel(): string
     {
-       return _nav('general');
+        return _nav('general');
     }
 
     public static function getNavigationIcon(): string|Htmlable|null
     {
-       return 'heroicon-o-cog';
+        return 'heroicon-o-cog';
     }
 
     protected function getHeaderActions(): array

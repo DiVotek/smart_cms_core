@@ -86,7 +86,7 @@ class Schema
             });
     }
 
-    public static function getImage(string $name = 'image', bool $isMultiple = false, string $path = '',string $filaname = ''): FileUpload
+    public static function getImage(string $name = 'image', bool $isMultiple = false, string $path = '', string $filaname = ''): FileUpload
     {
         $upload = FileUpload::make($name)
             ->image()
@@ -106,6 +106,7 @@ class Schema
         if ($filaname) {
             $upload->fileName($filaname);
         }
+
         return $upload;
     }
 

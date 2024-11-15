@@ -2,14 +2,12 @@
 
 namespace SmartCms\Core\Admin\Widgets;
 
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use SmartCms\Core\Admin\Resources\ContactFormResource;
 use SmartCms\Core\Models\ContactForm;
-use SmartCms\Core\Services\TableSchema;
 
 class TopContactForms extends BaseWidget
 {
@@ -25,7 +23,7 @@ class TopContactForms extends BaseWidget
         $currentModel = ContactForm::class;
 
         return $table
-            ->recordUrl(fn() => ContactFormResource::getUrl('index'))
+            ->recordUrl(fn () => ContactFormResource::getUrl('index'))
             ->searchable(false)
             ->query(function () use ($currentModel) {
                 return $currentModel::query()->orderBy('created_at', 'desc')->take(5);
