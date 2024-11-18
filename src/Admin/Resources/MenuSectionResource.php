@@ -62,7 +62,7 @@ class MenuSectionResource extends Resource
                         Schema::getSelect('custom_fields')->label(_fields('custom_fields'))->options($customFields)->default([]),
                         Schema::getTemplateBuilder('template'),
                         Schema::getTemplateBuilder('categories_template')->label(_fields('categories_template'))->hidden(function ($get) {
-                            return !$get('is_categories');
+                            return ! $get('is_categories');
                         }),
 
                     ]),

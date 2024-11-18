@@ -66,7 +66,7 @@ class Page extends BaseModel
             [
                 'name' => $this->name() ?? '',
                 'slug' => $this->slug,
-            ]
+            ],
         ];
         if ($this->parent_id) {
             $parent = $this->parent;
@@ -74,6 +74,7 @@ class Page extends BaseModel
                 $breadcrumbs = array_merge($parent->getBreadcrumbs(), $breadcrumbs);
             }
         }
+
         return $breadcrumbs;
     }
 

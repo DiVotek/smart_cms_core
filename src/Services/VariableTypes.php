@@ -108,7 +108,7 @@ enum VariableTypes: string
             self::PRODUCTS => Select::make($name)->label($label)->options(\SmartCms\Store\Models\Product::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true)->multiple(),
             default => TextInput::make($name)->label($label)->required($var['required'] ?? true),
         };
-        if($var['type'] == self::HEADING->value || $var['type'] == self::DESCRIPTION->value) {
+        if ($var['type'] == self::HEADING->value || $var['type'] == self::DESCRIPTION->value) {
             return $fields;
         }
         if (is_multi_lang() && ! $is_lang) {

@@ -32,7 +32,7 @@ class BuildLayoutTemplate
                 'component' => $sectionComponent,
                 'schema' => $section->schema ?? [],
                 'file' => $section->design,
-                'options' => array_merge($value,[
+                'options' => array_merge($value, [
                     'entity' => Context::get('entity'),
                 ]),
             ];

@@ -11,9 +11,10 @@ class Form extends Component
     public ?ModelsForm $form;
 
     public string $button;
+
     public $errors;
 
-    public function __construct($form,?ViewErrorBag $errors = null)
+    public function __construct($form, ?ViewErrorBag $errors = null)
     {
         $this->form = ModelsForm::find($form);
         $this->button = 'templates::'.template().'.forms.'.$this->form->style.'.button';
