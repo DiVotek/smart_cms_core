@@ -70,10 +70,6 @@ if (! function_exists('main_lang')) {
     function main_lang(): string
     {
         return app('_lang')->getDefault()->slug;
-
-        return Language::query()->find(_settings('main_language', 1))->slug ?? 'en';
-
-        return setting(config('settings.main_language'), 'en');
     }
 }
 if (! function_exists('current_lang')) {
