@@ -62,10 +62,19 @@ class Page extends BaseModel
 
     public function getBreadcrumbs(): array
     {
-        return [
-            'name' => $this->name,
-            'slug' => $this->slug,
+        $breadcrumbs = [
+            [
+                'name' => $this->name() ?? '',
+                'slug' => $this->slug,
+            ]
         ];
+        if ($this->parent_id) {
+            $parent = $this->parent;
+            if ($parent) {
+                $breadcrumbs = array_merge($parent->getBreadcrumbs(), $breadcrumbs);
+            }
+        }
+        return $breadcrumbs;
     }
 
     public function route(): string

@@ -89,4 +89,5 @@ return [
     'subject' => 'Subject',
     'content' => 'Content',
     'is_sent' => 'Is sent',
+    'categories_template' => 'Categories template',
 ];

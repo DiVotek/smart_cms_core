@@ -34,4 +34,7 @@ return [
     'email' => 'Email',
     'emails' => 'Emails',
     'users' => 'Users',
+    'general' => 'General',
+    'translates' => 'Translates',
+    'template' => 'Template',
 ];

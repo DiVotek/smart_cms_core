@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Components\Pages;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildTemplate;
 use SmartCms\Core\Models\Seo;
@@ -34,6 +35,7 @@ class PageComponent extends Component
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $this->template = BuildTemplate::run($entity, $component, $defaultTemplate);
         $this->microdata = $microdata;
+        Context::add('entity', $entity);
         if (method_exists($entity, 'view')) {
             $entity->view();
         }

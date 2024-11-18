@@ -14,7 +14,7 @@ class Languages
     public function __construct()
     {
         $this->languages = Language::all();
-        $this->defaultLanguage = $this->get(_settings('main_language'), 1);
+        $this->defaultLanguage = $this->get(_settings('main_language',1));
     }
 
     public function get(int $id): Language

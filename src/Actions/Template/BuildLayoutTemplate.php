@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Actions\Template;
 
+use Illuminate\Support\Facades\Context;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\TemplateSection;
 
@@ -31,7 +32,9 @@ class BuildLayoutTemplate
                 'component' => $sectionComponent,
                 'schema' => $section->schema ?? [],
                 'file' => $section->design,
-                'options' => $value,
+                'options' => array_merge($value,[
+                    'entity' => Context::get('entity'),
+                ]),
             ];
         }
 

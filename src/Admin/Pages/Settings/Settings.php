@@ -113,11 +113,11 @@ class Settings extends BaseSettings
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
-                            Schema::getImage(sconfig('branding.logo'))
+                            Schema::getImage(sconfig('branding.logo'),path:'branding')
                                 ->label(_fields('logo'))
                                 ->required(),
                             // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
-                            Schema::getImage(name: sconfig('favicon'))->label(_fields('favicon')),
+                            Schema::getImage(name: sconfig('favicon'),path:'branding')->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))
                                 ->schema([
                                     TextInput::make('name')
@@ -128,7 +128,7 @@ class Settings extends BaseSettings
                                         ->label(strans('admin.url'))
                                         ->string()
                                         ->required(),
-                                    Schema::getImage('icon')
+                                    Schema::getImage('icon',path:'branding')
                                         ->label(strans('admin.icon'))->default(''),
                                 ])
                                 ->default([]),

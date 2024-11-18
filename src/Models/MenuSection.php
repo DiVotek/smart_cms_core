@@ -20,6 +20,7 @@ class MenuSection extends BaseModel
         'template',
         'parent_id',
         'icon',
+        'categories_template',
     ];
 
     protected $guarded = [];
@@ -30,6 +31,7 @@ class MenuSection extends BaseModel
         'is_categories' => 'boolean',
         'custom_fields' => 'array',
         'template' => 'array',
+        'categories_template' => 'array',
     ];
 
     public function page()

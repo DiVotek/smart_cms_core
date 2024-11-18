@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Components;
 
+use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Form as ModelsForm;
 
@@ -10,11 +11,13 @@ class Form extends Component
     public ?ModelsForm $form;
 
     public string $button;
+    public $errors;
 
-    public function __construct($form)
+    public function __construct($form,?ViewErrorBag $errors = null)
     {
         $this->form = ModelsForm::find($form);
         $this->button = 'templates::'.template().'.forms.'.$this->form->style.'.button';
+        $this->errors = $errors ?? new ViewErrorBag([]);
     }
 
     public function render()
