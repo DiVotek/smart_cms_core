@@ -1,5 +1,6 @@
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
    plugins: [
@@ -8,6 +9,14 @@ export default defineConfig({
          publicDirectory: 'public',
          buildDirectory: 'public',
       }),
+      viteStaticCopy({
+         targets: [
+           {
+             src: 'node_modules/htmx.org/dist/htmx.min.js',
+             dest: 'js',
+           },
+         ],
+       }),
    ],
    build: {
       outDir: 'public',

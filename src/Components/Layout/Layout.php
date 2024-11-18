@@ -40,20 +40,20 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'css/app.css')) {
-                return 'scms/templates/'.template().'/css/app.css';
+            if (File::exists(scms_template_path(template()) . 'css/app.css')) {
+                return 'scms/templates/' . template() . '/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'js/app.js')) {
-                return 'scms/templates/'.template().'/js/app.js';
+            if (File::exists(scms_template_path(template()) . 'js/app.js')) {
+                return 'scms/templates/' . template() . '/js/app.js';
             } else {
                 return '';
             }
         });
-        $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
+        $this->favicon = asset('/storage' . _settings('favicon', '/favicon.ico'));
     }
 
     public function render(): View|Closure|string
@@ -88,7 +88,7 @@ class Layout extends Component
                             :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
                         </style>
                         <script src="{{asset('smart_cms_core/js/lazy.js')}}" defer></script>
-                        <script src="{{asset('smart_cms_core/js/htmx.js')}}" defer></script>
+                        <script src="{{asset('smart_cms_core/js/htmx.min.js')}}" defer></script>
                         <script src="{{asset('smart_cms_core/js/app.js')}}" defer></script>
                          @if($script)
                             @vite($script)
