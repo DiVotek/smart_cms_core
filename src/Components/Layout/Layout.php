@@ -87,7 +87,7 @@ class Layout extends Component
                         <style>
                             :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
                         </style>
-                        <script src="{{asset('smart_cms_core/js/lazy.js')}}" async></script>
+                        <script src="{{asset('smart_cms_core/js/lazy.js')}}" defer></script>
                         <script src="{{asset('smart_cms_core/js/htmx.js')}}" defer></script>
                         <script src="{{asset('smart_cms_core/js/app.js')}}" defer></script>
                          @if($script)
