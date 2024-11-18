@@ -22,8 +22,6 @@ class Layout extends Component
 
     public array $theme;
 
-    public array $assets;
-
     public function __construct()
     {
         $scripts = _settings('custom_scripts', []);
@@ -55,9 +53,6 @@ class Layout extends Component
                 return '';
             }
         });
-        $this->assets = [
-            'smart_cms_core/js/app.js',
-        ];
         $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
     }
 
@@ -78,9 +73,6 @@ class Layout extends Component
                         <meta name="robots" content="index, follow">
                         <link rel="robots" href="{{route('robots')}}">
                         <link rel="sitemap" type="application/xml" title="Sitemap" href="{{route('sitemap')}}">
-                        @foreach($assets as $asset)
-                        <script src="{{asset($asset)}}" async></script>
-                        @endforeach
                         @foreach($meta_tags as $tag)
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
@@ -95,13 +87,16 @@ class Layout extends Component
                         <style>
                             :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
                         </style>
+                        <script src="{{asset('smart_cms_core/js/lazy.js')}}" async></script>
+                        <script src="{{asset('smart_cms_core/js/htmx.js')}}" defer></script>
+                        <script src="{{asset('smart_cms_core/js/app.js')}}" defer></script>
+                         @if($script)
+                            @vite($script)
+                         @endif
+                         @if($style)
+                            @vite($style)
+                         @endif
                     </head>
-                    @if($script)
-                    @vite($script)
-                    @endif
-                    @if($style)
-                    @vite($style)
-                    @endif
                     <body class="antialiased">
                             <x-s::layout.header />
                             <main>

@@ -1,33 +1,57 @@
 <?php
 
-namespace SmartCms\Core\Admin\Resources\StaticPageResource\RelationManagers;
+namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\TableSchema;
 
-class TemplateRelationManager extends RelationManager
+class EditTemplate extends ManageRelatedRecords
 {
+    protected static string $resource = StaticPageResource::class;
+
     protected static string $relationship = 'template';
+
+    public static function getNavigationLabel(): string
+    {
+        return _nav('template');
+    }
+
+    public static function getNavigationIcon(): string|Htmlable|null
+    {
+        return 'heroicon-m-light-bulb';
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        $recordTitle = $this->getRecordTitle();
+
+        $recordTitle = $recordTitle instanceof Htmlable ? $recordTitle->toHtml() : $recordTitle;
+
+        return _nav('edit')." {$recordTitle} ".$this->record->name;
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Section::make(_fields('component_settings'))
-                    ->schema(function (Get $get, Set $set): array {
+                    ->schema(function (Get $get): array {
                         $fields = [];
                         $sectionId = $get('template_section_id') ?? 0;
                         $section = TemplateSection::find($sectionId);
@@ -84,13 +108,13 @@ class TemplateRelationManager extends RelationManager
                 ])
                     ->using(function (array $data, string $model): Model {
                         $newSection = null;
-                        $sorting = $model::query()->where('entity_id', $this->ownerRecord->getKey())
-                            ->where('entity_type', $this->ownerRecord->getMorphClass())
+                        $sorting = $model::query()->where('entity_id', $this->record->getKey())
+                            ->where('entity_type', $this->record->getMorphClass())
                             ->max('sorting') ?? 0;
                         if (isset($data['sections'])) {
                             foreach ($data['sections'] as $section) {
                                 $sorting++;
-                                $newSection = $this->ownerRecord->template()->create([
+                                $newSection = $this->record->template()->create([
                                     'template_section_id' => (int) $section,
                                     'sorting' => $sorting,
                                 ]);
@@ -101,16 +125,16 @@ class TemplateRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data): array {
-                    $section = TemplateSection::find($data['template_section_id']);
-                    if ($data['value'] == null) {
-                        $data['value'] = $section->value ?? [];
-                    }
+              Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data): array {
+                  $section = TemplateSection::find($data['template_section_id']);
+                  if ($data['value'] == null) {
+                      $data['value'] = $section->value ?? [];
+                  }
 
-                    return $data;
-                }),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make(__('Clone'))
+                  return $data;
+              }),
+              Tables\Actions\DeleteAction::make(),
+              Tables\Actions\Action::make(__('Clone'))
                     ->icon('heroicon-o-document-duplicate')
                     ->hidden(function ($record) {
                         return $record->value == null;
@@ -134,11 +158,22 @@ class TemplateRelationManager extends RelationManager
                             ->success()
                             ->send();
                     }),
-            ])
+          ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])->paginated(false);
+              Tables\Actions\BulkActionGroup::make([
+                     Tables\Actions\DeleteBulkAction::make(),
+              ]),
+          ])->paginated(false);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make()->icon('heroicon-o-x-circle'),
+            ViewAction::make()
+                ->url(fn ($record) => $record->route())
+                ->icon('heroicon-o-arrow-right-end-on-rectangle')
+                ->openUrlInNewTab(true),
+        ];
     }
 }

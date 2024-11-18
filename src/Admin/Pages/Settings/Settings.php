@@ -117,7 +117,7 @@ class Settings extends BaseSettings
                                 ->label(_fields('logo'))
                                 ->required(),
                             // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
-                            Schema::getImage(sconfig('favicon'))->label(_fields('favicon')),
+                            Schema::getImage(name: sconfig('favicon'))->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))
                                 ->schema([
                                     TextInput::make('name')

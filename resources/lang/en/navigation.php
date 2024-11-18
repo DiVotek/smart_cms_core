@@ -31,4 +31,7 @@ return [
     'model_menu' => 'Menu',
     'model_menus' => 'Menus',
     'category' => 'Category',
+    'email' => 'Email',
+    'emails' => 'Emails',
+    'users' => 'Users',
 ];

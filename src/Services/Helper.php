@@ -16,6 +16,7 @@ class Helper
         }
         $files = File::files($directoryPath);
         $configSections = _config()->getSections();
+        dd($configSections);
         foreach ($configSections as $section) {
             if (isset($section['name']) && isset($section['file'])) {
                 $fileName = $section['file'];

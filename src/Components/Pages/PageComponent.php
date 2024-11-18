@@ -5,6 +5,7 @@ namespace SmartCms\Core\Components\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildTemplate;
+use SmartCms\Core\Models\Seo;
 
 class PageComponent extends Component
 {
@@ -26,9 +27,10 @@ class PageComponent extends Component
     {
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
-        $this->title = ($titleMod->prefix ?? '').($entity?->seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($entity?->seo->description ?? '').($descriptionMod->suffix ?? '');
-        $this->meta_keywords = $entity?->seo->meta_keywords ?? '';
+        $seo = $entity?->seo ?? new Seo;
+        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $this->template = BuildTemplate::run($entity, $component, $defaultTemplate);
         $this->microdata = $microdata;

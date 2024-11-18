@@ -3,11 +3,9 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -61,7 +59,7 @@ class TemplateSectionResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $components = Helper::getComponents();
+        $components = _config()->getSections();
 
         return $form
             ->schema([
@@ -72,15 +70,22 @@ class TemplateSectionResource extends Resource
                     //     Forms\Components\Toggle::make('locked')
                     //         ->required(),
                     // ])->columns(2),
-                    Radio::make('design')
+                    ViewField::make('design')
                         ->label(_fields('design'))
-                        ->options($components)
+                        ->view('smart_cms::admin.design')
+                        ->viewData([
+                            'options' => $components,
+                        ])
                         ->required()
-                        ->afterStateUpdated(fn (Radio $component) => $component
+                        ->afterStateUpdated(fn ($component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
-                            ->fill())->live(),
+                            ->fill())->live()
+                        ->columnSpanFull(),
+                    // Radio::make('design')
+                    //     ->label(_fields('design'))
+                    //     ->options($components),
                     Section::make(_fields('component_settings'))
                         ->schema(function (Get $get): array {
                             $class = $get('design');
@@ -112,54 +117,6 @@ class TemplateSectionResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->headerActions([
-                Schema::helpAction('TemplateSection help'),
-                Tables\Actions\Action::make(_actions('header_footer'))
-                    ->label(_actions('header_footer'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'header' => _settings('header', []),
-                            'footer' => _settings('footer', []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            sconfig('header') => $data['header'],
-                            sconfig('footer') => $data['footer'],
-                        ]);
-                    })
-                    ->hidden(function () {
-                        template() == '';
-                    })
-                    ->form(function ($form) {
-                        $config = scms_template_config();
-                        $theme = $config['theme'] ?? [];
-                        $schema = [];
-                        foreach ($theme as $key => $value) {
-                            $schema[] = ColorPicker::make('theme.'.$key)
-                                ->label(ucfirst($key))
-                                ->default($value);
-                        }
-
-                        return $form
-                            ->schema([
-                                Section::make('')->schema([
-                                    Repeater::make('header')->schema([
-                                        Select::make('template_section_id')->options(
-                                            TemplateSection::query()->where('design', 'like', '%layout%')->pluck('name', 'id')->toArray()
-                                        )->label(_fields('template_section')),
-                                    ]),
-                                    Repeater::make('footer')->schema([
-                                        Select::make('template_section_id')->options(
-                                            TemplateSection::query()->where('design', 'like', '%layout%')->pluck('name', 'id')->toArray()
-                                        )->label(_fields('template_section')),
-                                    ]),
-                                ]),
-                            ]);
-                    }),
             ]);
     }
 

@@ -4,11 +4,12 @@ namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
@@ -20,21 +21,15 @@ use SmartCms\Core\Services\TableSchema;
 
 class StaticPageResource extends Resource
 {
-    protected static ?string $model = Page::class;
-
     public static function getNavigationGroup(): ?string
     {
         return _nav('pages');
     }
 
-    // public static function getEloquentQuery(): Builder
-    // {
-    //     $query = parent::getEloquentQuery()->withoutGlobalScopes();
-    //     $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
-    //     // $query->whereNotIn('id', $menuSections);
-
-    //     return $query;
-    // }
+    public static function getModel(): string
+    {
+        return config('shared.page_model', Page::class);
+    }
 
     public static function getModelLabel(): string
     {
@@ -77,16 +72,12 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
                             ->relationship('parent', 'name')->nullable()->default(function () {
                                 return request('parent') ?? null;
                             })->hidden((bool) request('parent'))->live(),
-                        // Schema::getRepeater('nav_settings.fields')->schema([
-                        //     TextInput::make('name')->label(_fields('name'))->required(),
-                        //     TextInput::make('value')->label(_fields('value'))->required(),
-                        // ])->default([]),
                         ...$customFields,
                     ]),
             ]);
@@ -100,7 +91,14 @@ class StaticPageResource extends Resource
                 $query->withoutGlobalScopes()->whereNotIn('id', $menuSections);
             })
             ->columns([
-                TableSchema::getName(),
+                TableSchema::getName()->limit(50)->tooltip(function (TextColumn $column): ?string {
+                    $state = $column->getState();
+                    if (strlen($state) <= $column->getCharacterLimit()) {
+                        return null;
+                    }
+
+                    return $state;
+                }),
                 TableSchema::getStatus(),
                 TableSchema::getSorting(),
                 TableSchema::getViews(),
@@ -116,39 +114,14 @@ class StaticPageResource extends Resource
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
                     ->url(function ($record) {
-                        return '/'.$record->slug;
+                        return $record->route();
                     })->openUrlInNewTab(),
             ])
             ->reorderable('sorting')
             ->headerActions([
-                Schema::helpAction('Static page help text')->hidden(function () {
-                    return (bool) request('parent');
-                }),
-                Tables\Actions\Action::make('Template')
-                    ->label(_actions('template'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'template' => _settings('static_page_template', []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            sconfig('static_page_template') => $data['template'],
-                        ]);
-                    })
-                    ->hidden(function () {
-                        return (bool) request('parent');
-                    })
-                    ->form(function ($form) {
-                        return $form
-                            ->schema([
-                                Section::make('')->schema([
-                                    Schema::getTemplateBuilder()->label(_fields('template')),
-                                ]),
-                            ]);
-                    }),
+                // Schema::helpAction('Static page help text')->hidden(function () {
+                //     return (bool) request('parent');
+                // }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -159,7 +132,10 @@ class StaticPageResource extends Resource
 
     public static function getRelations(): array
     {
-        return [Schema::getSeoAndTemplateRelationGroup()];
+        return [
+            // Schema::getSeoAndTemplateRelationGroup(),
+            ...config('shared.admin.page_relations', []),
+        ];
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -171,9 +147,22 @@ class StaticPageResource extends Resource
     {
         return [
             'index' => Pages\ListStaticPages::route('/'),
-            // 'create' => Pages\CreateStaticPage::route('/create'),
-            // 'create-page' => Pages\CreateStaticPage::route('/create'),
             'edit' => Pages\EditStaticPage::route('/{record}/edit'),
+            'translates' => Pages\EditTranslates::route('/{record}/translates'),
+            'seo' => Pages\EditSeo::route('/{record}/seo'),
+            'template' => Pages\EditTemplate::route('/{record}/template'),
         ];
     }
+
+    public static function getRecordSubNavigation($page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\EditStaticPage::class,
+            Pages\EditTranslates::class,
+            Pages\EditSeo::class,
+            Pages\EditTemplate::class,
+        ]);
+    }
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 }

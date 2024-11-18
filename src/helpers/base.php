@@ -25,7 +25,8 @@ if (! function_exists('sconfig')) {
 if (! function_exists('_settings')) {
     function _settings(string $key, mixed $default = ''): mixed
     {
-        return setting(sconfig($key), $default);
+        // return setting(sconfig($key), $default);
+        return app('_settings')->get(sconfig($key)) ?? $default;
     }
 }
 if (! function_exists('scms_template_config')) {

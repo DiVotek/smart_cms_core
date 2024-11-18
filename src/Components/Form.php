@@ -26,7 +26,7 @@ class Form extends Component
                @foreach ($form->fields as $f)
                 <div class="form-group {{$f['class'] ?? ''}}">
                     @foreach ($f['fields'] as $field)
-                        <x-s::field wire:model="formData.{{$field['name']}}" :style="$form->style" :field="$field" name="{{$field['name']}}"/>
+                        <x-s::field :style="$form->style" :field="$field" name="{{$field['name']}}"/>
                     @endforeach
                 </div>
                @endforeach

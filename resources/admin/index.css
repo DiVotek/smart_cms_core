@@ -1,12 +1,16 @@
 fi-sidebar-item {
-   padding: .1rem;
+    padding: 0.1rem;
 }
 
 fi-sidebar-item-button {
-   padding-top: 5px;
-   padding-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
-nav.fi-tabs {
-   display: none !important;
+.fi-page.fi-resource-list-records-page.fi-resource-static-pages nav[role="tablist"] {
+    display: none;
+}
+
+.fi-page-sub-navigation-sidebar-ctn {
+    width: 13rem !important;
 }

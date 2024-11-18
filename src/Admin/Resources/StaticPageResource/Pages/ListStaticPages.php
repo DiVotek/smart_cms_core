@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
@@ -68,6 +69,36 @@ class ListStaticPages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make(_actions('help'))
+                ->iconButton()
+                ->icon('heroicon-o-question-mark-circle')
+                ->modalDescription(_hints('help.page'))
+                ->modalFooterActions([]),
+            Actions\Action::make('Template')
+                ->label(_actions('template'))
+                ->slideOver()
+                ->icon('heroicon-o-cog')
+                ->fillForm(function (): array {
+                    return [
+                        'template' => _settings('static_page_template', []),
+                    ];
+                })
+                ->action(function (array $data): void {
+                    setting([
+                        sconfig('static_page_template') => $data['template'],
+                    ]);
+                })
+                ->hidden(function () {
+                    return (bool) request('parent');
+                })
+                ->form(function ($form) {
+                    return $form
+                        ->schema([
+                            Section::make('')->schema([
+                                Schema::getTemplateBuilder()->label(_fields('template')),
+                            ]),
+                        ]);
+                }),
             Actions\Action::make($this->actionName)
                 ->label($this->actionName)
                 ->form(function ($form) {

@@ -4,5 +4,17 @@
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
+  },
+  "resources/js/htmx.js": {
+    "file": "js/htmx.js",
+    "name": "htmx",
+    "src": "resources/js/htmx.js",
+    "isEntry": true
+  },
+  "resources/js/lazy.js": {
+    "file": "js/lazy.js",
+    "name": "lazy",
+    "src": "resources/js/lazy.js",
+    "isEntry": true
   }
 }

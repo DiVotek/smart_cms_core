@@ -26,6 +26,11 @@ class FormResource extends Resource
         return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return _nav('communication');

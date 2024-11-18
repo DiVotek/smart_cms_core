@@ -29,7 +29,7 @@ trait HasImages
     protected function image(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn () => $this->images[0] ?? 'https://via.placeholder.com/150',
+            get: fn () => $this->images[0] ?? '',
         );
     }
 }

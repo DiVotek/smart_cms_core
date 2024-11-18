@@ -21,4 +21,5 @@ return [
     'clear_cache' => 'Clear cache',
     'clear_cache_success' => 'Cache was cleared!',
     'clear_cache_error' => 'Error while clearing cache!',
+    'edit' => 'Edit',
 ];

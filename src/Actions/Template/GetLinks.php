@@ -2,13 +2,34 @@
 
 namespace SmartCms\Core\Actions\Template;
 
+use Illuminate\Support\Facades\Cache;
 use Lorisleiva\Actions\Concerns\AsAction;
+use SmartCms\Core\Models\Menu;
 
 class GetLinks
 {
     use AsAction;
 
-    public function handle(array $reference): array
+    public function handle(?int $id): array
+    {
+        if (! $id) {
+            return [];
+        }
+
+        return Cache::get('menu_links_'.$id, function () use ($id) {
+            $menu = Menu::query()->find($id);
+            if ($menu) {
+                $links = $this->parseLinks($menu->value);
+                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
+
+                return $links;
+            }
+
+            return [];
+        });
+    }
+
+    public function parseLinks(array $reference)
     {
         $links = [];
         foreach ($reference as $link) {

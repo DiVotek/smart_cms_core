@@ -29,6 +29,10 @@ class SmartCmsServiceProvider extends ServiceProvider
             __DIR__.'/../config/settings.php',
             'settings'
         );
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/shared.php',
+            'shared'
+        );
         $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
 
         $this->publishes([
@@ -41,6 +45,7 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }

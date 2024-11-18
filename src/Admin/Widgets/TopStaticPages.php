@@ -2,7 +2,7 @@
 
 namespace SmartCms\Core\Admin\Widgets;
 
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
@@ -20,24 +20,20 @@ class TopStaticPages extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $currentModel = Page::class;
+        $currentModel = config('shared.admin.page_model', Page::class);
 
         return $table
+            ->recordUrl(fn ($record) => $record->route())
             ->searchable(false)
             ->query(function () use ($currentModel) {
                 return $currentModel::query()->orderBy('views', 'desc')->take(5);
             })
             ->columns([
                 TableSchema::getName(),
-                TableSchema::getViews(),
-            ])->actions([
-                Action::make('View')
-                    ->label(__('View'))
-                    ->icon('heroicon-o-eye')
-                    ->url(function ($record) {
-                        return $record->route();
-                    }),
+                TextColumn::make('views')
+                    ->label(_columns('views'))
+                    ->badge()->numeric(),
             ])
-            ->paginated(false)->defaultPaginationPageOption(5);
+            ->defaultPaginationPageOption(5);
     }
 }
