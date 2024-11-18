@@ -83,7 +83,7 @@ class EditTranslates extends ManageRelatedRecords
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-          ])
+            ])
             ->paginated(false);
     }
 

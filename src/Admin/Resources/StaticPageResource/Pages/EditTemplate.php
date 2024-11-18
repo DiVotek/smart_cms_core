@@ -125,16 +125,16 @@ class EditTemplate extends ManageRelatedRecords
                     }),
             ])
             ->actions([
-              Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data): array {
-                  $section = TemplateSection::find($data['template_section_id']);
-                  if ($data['value'] == null) {
-                      $data['value'] = $section->value ?? [];
-                  }
+                Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data): array {
+                    $section = TemplateSection::find($data['template_section_id']);
+                    if ($data['value'] == null) {
+                        $data['value'] = $section->value ?? [];
+                    }
 
-                  return $data;
-              }),
-              Tables\Actions\DeleteAction::make(),
-              Tables\Actions\Action::make(__('Clone'))
+                    return $data;
+                }),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make(__('Clone'))
                     ->icon('heroicon-o-document-duplicate')
                     ->hidden(function ($record) {
                         return $record->value == null;
@@ -158,12 +158,12 @@ class EditTemplate extends ManageRelatedRecords
                             ->success()
                             ->send();
                     }),
-          ])
+            ])
             ->bulkActions([
-              Tables\Actions\BulkActionGroup::make([
-                     Tables\Actions\DeleteBulkAction::make(),
-              ]),
-          ])->paginated(false);
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])->paginated(false);
     }
 
     protected function getHeaderActions(): array
