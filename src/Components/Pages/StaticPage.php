@@ -15,16 +15,16 @@ class StaticPage extends PageComponent
         $parent = $entity->parent;
 
         if ($entity->parent_id) {
-            if($parent && $parent->parent_id && $parent->parent) {
+            if ($parent && $parent->parent_id && $parent->parent) {
                 $menu_section_parent = $parent->parent->id;
             } else {
                 $menu_section_parent = $parent->id;
             }
         }
         $section = MenuSection::query()->where('parent_id', $menu_section_parent)->first();
-        if($section){
-            if($parent){
-                if($parent->parent_id){
+        if ($section) {
+            if ($parent) {
+                if ($parent->parent_id) {
                     $defaultTemplate = $section->template ?? $defaultTemplate;
                 } else {
                     $defaultTemplate = $section->categories_template ?? $defaultTemplate;

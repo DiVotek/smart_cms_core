@@ -26,7 +26,7 @@ class PageComponent extends Component
 
     public array $dataLayer = [];
 
-    public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [],array $dataLayer = [])
+    public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [], array $dataLayer = [])
     {
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
