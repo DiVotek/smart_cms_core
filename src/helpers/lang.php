@@ -56,6 +56,7 @@ if (! function_exists('_t')) {
     function _t(string $key): string
     {
         return $key;
+
         return app('translations')->where('key', $key)->where('language_id', current_lang_id())->first()?->value ?? $key;
     }
 }
