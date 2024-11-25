@@ -11,10 +11,24 @@ class StaticPage extends PageComponent
     {
         $componentKey = 'static-page-component';
         $defaultTemplate = _settings('static_page_template', []);
+        $menu_section_parent = $entity->id;
+        $parent = $entity->parent;
+
         if ($entity->parent_id) {
-            $section = MenuSection::query()->where('parent_id', $entity->parent_id)->first();
-            if ($section && $section->template && ! empty($section->template)) {
-                $defaultTemplate = $section->template;
+            if($parent && $parent->parent_id && $parent->parent) {
+                $menu_section_parent = $parent->parent->id;
+            } else {
+                $menu_section_parent = $parent->id;
+            }
+        }
+        $section = MenuSection::query()->where('parent_id', $menu_section_parent)->first();
+        if($section){
+            if($parent){
+                if($parent->parent_id){
+                    $defaultTemplate = $section->template ?? $defaultTemplate;
+                } else {
+                    $defaultTemplate = $section->categories_template ?? $defaultTemplate;
+                }
             }
         }
         parent::__construct($entity, $componentKey, [], $defaultTemplate);

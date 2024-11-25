@@ -93,6 +93,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('17rem')
             // ->breadcrumbs(false)
+            ->databaseNotifications()
             ->widgets(config('shared.admin.widgets', []))
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->navigationGroups(

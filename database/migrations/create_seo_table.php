@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('keywords')->nullable();
             $table->morphs('seoable');
             $table->unsignedBigInteger('language_id')->nullable();
+            $table->string('keyword_phrase')->nullable();
+
             $table->timestamps();
         });
     }

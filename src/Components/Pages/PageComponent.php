@@ -24,7 +24,9 @@ class PageComponent extends Component
 
     public mixed $entity;
 
-    public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [])
+    public array $dataLayer = [];
+
+    public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [],array $dataLayer = [])
     {
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
@@ -40,6 +42,7 @@ class PageComponent extends Component
             $entity->view();
         }
         $this->entity = $entity;
+        $this->dataLayer = $dataLayer;
     }
 
     public function render()
@@ -53,6 +56,12 @@ class PageComponent extends Component
                 @section('meta-image',asset($entity->image ?? logo()))
                 <x-s::layout.builder :data="$template" />
                 @endsection
+                @if(count($dataLayer) > 0)
+                <script>
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push(@json($dataLayer));
+                </script>
+                @endif
             </x-s::layout.layout>
         blade;
     }
