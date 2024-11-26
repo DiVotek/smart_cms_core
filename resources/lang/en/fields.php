@@ -90,4 +90,7 @@ return [
     'content' => 'Content',
     'is_sent' => 'Is sent',
     'categories_template' => 'Categories template',
+    'label' => 'Label',
+    'options' => 'Options',
+    'placeholder' => 'Placeholder',
 ];

@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use SmartCms\Core\Admin\Resources\FormResource\Pages;
+use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form as ModelForm;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
@@ -57,34 +58,9 @@ class FormResource extends Resource
                         ->schema([
                             Repeater::make('fields')
                                 ->schema([
-                                    Forms\Components\Select::make('type')
+                                    Forms\Components\Select::make('field')
                                         ->label(_fields('field_type'))
-                                        ->options([
-                                            'text' => 'Text',
-                                            'textarea' => 'Textarea',
-                                            'select' => 'Select',
-                                            'radio' => 'Radio',
-                                            'checkbox' => 'Checkbox',
-                                            'file' => 'File',
-                                            'date' => 'Date',
-                                            'email' => 'Email',
-                                            'number' => 'Number',
-                                            'tel' => 'Tel',
-                                            'url' => 'Url',
-                                        ])->required()->native(false)->searchable(true)->live(debounce: 250),
-                                    Textarea::make('options')
-                                        ->nullable()
-                                        ->rows(3)->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
-                                    Schema::getName(true)->maxLength(255),
-                                    Forms\Components\Toggle::make('required')
-                                        ->label(_fields('required'))
-                                        ->default(false),
-                                    // Forms\Components\TextInput::make('label')
-                                    //     ->required()
-                                    //     ->maxLength(255),
-                                    // Forms\Components\TextInput::make('placeholder')
-                                    //     ->required()
-                                    //     ->maxLength(255),
+                                        ->options(Field::query()->pluck('name', 'id')->toArray())->required()->native(false)->searchable(true)->live(debounce: 250),
                                 ]),
                             TextInput::make('class')
                                 ->label(_fields('html_class'))
@@ -104,8 +80,7 @@ class FormResource extends Resource
                     Forms\Components\Select::make('style')
                         ->label(_fields('style'))
                         ->options(Helper::getFormTemplates())
-                        ->default(1)
-                        ->required(),
+                        ->default(1)->hidden(),
                 ])->collapsed(),
             ]);
     }

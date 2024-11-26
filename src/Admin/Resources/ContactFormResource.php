@@ -55,6 +55,7 @@ class ContactFormResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('form.name')->label(_columns('form')),
                 IconColumn::make('status')

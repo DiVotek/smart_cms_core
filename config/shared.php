@@ -4,6 +4,7 @@ use Filament\Support\Colors\Color;
 use SmartCms\Core\Admin\Resources\AdminResource;
 use SmartCms\Core\Admin\Resources\ContactFormResource;
 use SmartCms\Core\Admin\Resources\EmailResource;
+use SmartCms\Core\Admin\Resources\FieldResource;
 use SmartCms\Core\Admin\Resources\FormResource;
 use SmartCms\Core\Admin\Resources\MenuResource;
 use SmartCms\Core\Admin\Resources\MenuSectionResource;
@@ -36,6 +37,7 @@ return [
             TemplateSectionResource::class,
             MenuResource::class,
             EmailResource::class,
+            FieldResource::class,
         ],
         'page_resource' => StaticPageResource::class,
         'page_relations' => [],

@@ -21,4 +21,5 @@ return [
     'value' => 'Value',
     'form' => 'Form',
     'form_name' => 'Form Name',
+    'required' => 'Required',
 ];

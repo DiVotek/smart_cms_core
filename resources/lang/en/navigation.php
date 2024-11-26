@@ -37,4 +37,6 @@ return [
     'general' => 'General',
     'translates' => 'Translates',
     'template' => 'Template',
+    'field' => 'Field',
+    'fields' => 'Fields',
 ];

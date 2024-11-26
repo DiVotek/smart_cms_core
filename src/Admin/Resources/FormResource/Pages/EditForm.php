@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Resources\FormResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\FormResource;
 
 class EditForm extends EditRecord
