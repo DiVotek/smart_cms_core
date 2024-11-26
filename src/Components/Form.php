@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Components;
 
-use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form as ModelsForm;
@@ -10,6 +9,7 @@ use SmartCms\Core\Models\Form as ModelsForm;
 class Form extends Component
 {
     public ?ModelsForm $form;
+
     public array $fields;
 
     public function __construct($form, array $values = [], array $errors = [])
@@ -21,7 +21,7 @@ class Form extends Component
             $newGroup = ['class' => $group['class'] ?? '', 'fields' => []];
             foreach ($group['fields'] as &$field) {
                 $field = Field::find($field['field']);
-                if (!$field) {
+                if (! $field) {
                     continue;
                 }
                 $name = strtolower($field->name);

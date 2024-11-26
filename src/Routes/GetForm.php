@@ -37,7 +37,9 @@ class GetForm
         $validator = Validator::make($request->all(), $validation);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
+
             return Blade::renderComponent((new ComponentsForm($form->id, request()->all(), $errors))->withAttributes($attributes));
+
             return response()->json([
                 'errors' => $validator->errors(),
             ], 422);
@@ -49,7 +51,7 @@ class GetForm
             foreach (Admin::all() as $recipient) {
                 $recipient->notifyNow(Notification::make()
                     ->success()
-                    ->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->toDatabase());
+                    ->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->toDatabase());
             }
         }
 

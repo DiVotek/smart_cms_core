@@ -8,12 +8,12 @@ use SmartCms\Core\Admin\Resources\FieldResource;
 
 class ListFields extends ListRecords
 {
-   protected static string $resource = FieldResource::class;
+    protected static string $resource = FieldResource::class;
 
-   protected function getHeaderActions(): array
-   {
-      return [
-         Actions\CreateAction::make(),
-      ];
-   }
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
 }

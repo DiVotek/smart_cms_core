@@ -8,37 +8,44 @@ use SmartCms\Core\Models\Field as ModelsField;
 
 class Field extends Component
 {
-   public $field;
-   public string $id;
-   public ?string $placeholder;
-   public string $label;
-   public ?string $description;
-   public array $options = [];
-   public bool $required;
+    public $field;
 
-   public function __construct(ModelsField $field)
-   {
-      $this->field = $field;
-      $this->id  = $field->html_id ?? $field->id;
-      $this->placeholder = $field->placeholder[current_lang()] ?? null;
-      $this->label = $field->label[current_lang()] ?? '';
-      $this->description = $field->description[current_lang()] ?? null;
-      $this->options = $field->options[current_lang()] ?? [];
-      if(!empty($field->options)){
-         $this->options = array_map(function($option){
-            return $option[current_lang()];
-         }, $field->options);
-      }
-      $this->required = $field->required;
-   }
+    public string $id;
 
-   public function render()
-   {
-      // return Cache::rememberForever('scms_form_field_component', function () {
-      if (view()->exists('templates::' . template() . '.form.field')) {
-         return view('templates::' . template() . '.form.field');
-      }
-      return <<<'blade'
+    public ?string $placeholder;
+
+    public string $label;
+
+    public ?string $description;
+
+    public array $options = [];
+
+    public bool $required;
+
+    public function __construct(ModelsField $field)
+    {
+        $this->field = $field;
+        $this->id = $field->html_id ?? $field->id;
+        $this->placeholder = $field->placeholder[current_lang()] ?? null;
+        $this->label = $field->label[current_lang()] ?? '';
+        $this->description = $field->description[current_lang()] ?? null;
+        $this->options = $field->options[current_lang()] ?? [];
+        if (! empty($field->options)) {
+            $this->options = array_map(function ($option) {
+                return $option[current_lang()];
+            }, $field->options);
+        }
+        $this->required = $field->required;
+    }
+
+    public function render()
+    {
+        // return Cache::rememberForever('scms_form_field_component', function () {
+        if (view()->exists('templates::'.template().'.form.field')) {
+            return view('templates::'.template().'.form.field');
+        }
+
+        return <<<'blade'
             <div class="flex flex-col mb-4">
                <label for="{{ $id }}">{{ $label }}</label>
                @if ($field->type == 'textarea')
@@ -58,6 +65,6 @@ class Field extends Component
                @endisset
             </div>
          blade;
-      // });
-   }
+        // });
+    }
 }
