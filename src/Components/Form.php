@@ -11,6 +11,7 @@ class Form extends Component
     public ?ModelsForm $form;
 
     public array $fields;
+
     public string $button;
 
     public function __construct($form, array $values = [], array $errors = [])

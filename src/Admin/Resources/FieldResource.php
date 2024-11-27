@@ -103,7 +103,7 @@ class FieldResource extends Resource
                         ->label(_fields('style')),
                     Forms\Components\TextInput::make('validation')
                         ->label(_fields('validation')),
-              ])->collapsed(),
+                ])->collapsed(),
             ]);
     }
 
