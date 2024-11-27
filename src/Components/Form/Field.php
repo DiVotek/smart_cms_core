@@ -46,23 +46,34 @@ class Field extends Component
         }
 
         return <<<'blade'
-            <div class="flex flex-col mb-4">
-               <label for="{{ $id }}">{{ $label }}</label>
-               @if ($field->type == 'textarea')
-                  <textarea placeholder="{{ $field->placeholder }}" id="{{ $id }}" class="px-3 py-2"
-                        {{ $attributes }} />
-               @elseif($field->type == 'select')
-                  <select id="{{ $id }}" class="px-3 py-2" {{ $attributes }}>
-                        @foreach ($options as $option)
-                           <option value="{{ $option }}">{{ $option }}</option>
-                        @endforeach
-                  </select>
-               @else
-                  <input id="{{ $id }}" type="{{ $field->type }}" class="px-3 py-2 border" {{ $attributes }}>
-               @endif
-               @isset($field->error)
-                  <span id="{{ $id }}-error" class="mt-2 text-xs text-red-500">{{ $field->error[0] ?? '' }}</span>
-               @endisset
+            <div class="form-group">
+                @if(isset($slot) && !$slot->isEmpty())
+                {{ $slot }}
+                @else
+                <div class="form-top">
+                    <label for="{{ $id }}">{{ $label }}</label>
+                    <div class="form-input">
+                    @if ($field->type == 'textarea')
+                        <textarea {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }} />
+                    @elseif($field->type == 'select')
+                        <select {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }}>
+                                @foreach ($options as $option)
+                                <option value="{{ $option }}">{{ $option }}</option>
+                                @endforeach
+                        </select>
+                    @else
+                        <input {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,'type' => $field->type]) }} >
+                    @endif
+                    @if($field->image)
+                        <img src="{{ $field->image }}" alt="{{ $label }}" />
+                    @endif
+                    </div>
+                </div>
+                @isset($field->error)
+                  <span id="{{ $id }}-error" class="form-error">{{ $field->error[0] ?? '' }}</span>
+                @endisset
+                <p class="form-description"></p>
+                @endif
             </div>
          blade;
         // });
