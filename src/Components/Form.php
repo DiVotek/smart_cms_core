@@ -42,8 +42,9 @@ class Form extends Component
     {
         return <<<'blade'
             <form id="{{$form->html_id ?? $form->code}}" name="{{$form->code}}" hx-get="{{route('smartcms.form.submit')}}" hx-target="#{{$form->html_id ?? $form->code}}" hx-swap="outerHTML" hx-trigger="submit" hx-on="htmx:afterRequest: document.dispatchEvent(new CustomEvent('{{$form->id}}-success'))" {{$attributes->merge(['class' => $form->class ?? ''])}}>
-               <input type="hidden" name="form" value="{{$form->code}}" />
+                <input type="hidden" name="form" value="{{$form->code}}" />
                 <input type="hidden" name="form_attributes" value="{{ json_encode($attributes) }}">
+                @csrf
                 @foreach($fields as $group)
                     <x-s::form.group class="form-group {{$group['class'] ?? ''}}">
                         @foreach($group['fields'] as $field)

@@ -7,10 +7,12 @@ Route::get('sitemap.xml', config('shared.routes.sitemap_handler'))->name('sitema
 Route::get('/{lang?}/{slug?}/{second_slug?}/{third_slug?}', config('shared.routes.route_handler'))
     ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')
-    ->name('smart_cms_page.lang');
+    ->name('smart_cms_page.lang')
+    ->middleware('web');
 Route::get('/{slug?}/{second_slug?}/{third_slug?}', config('shared.routes.route_handler'))
     ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')
+    ->middleware('web')
     ->name('smart_cms_page');
 
-Route::get('/api/form', config('shared.routes.form_handler'))->name('smartcms.form.submit');
+Route::get('/api/form', config('shared.routes.form_handler'))->name('smartcms.form.submit')->middleware('web');
