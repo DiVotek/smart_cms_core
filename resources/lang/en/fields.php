@@ -93,4 +93,5 @@ return [
     'label' => 'Label',
     'options' => 'Options',
     'placeholder' => 'Placeholder',
+    'button' => 'Button',
 ];

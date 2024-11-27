@@ -11,6 +11,7 @@ class Form extends Component
     public ?ModelsForm $form;
 
     public array $fields;
+    public string $button;
 
     public function __construct($form, array $values = [], array $errors = [])
     {
@@ -33,6 +34,7 @@ class Form extends Component
         }
         $this->form = $form;
         $this->fields = $newFields;
+        $this->button = $form->button[current_lang()] ?? 'Submit';
     }
 
     public function render()
@@ -48,7 +50,8 @@ class Form extends Component
                         @endforeach
                     </x-s::form.group>
                 @endforeach
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">{{$button}}</button>
+            </form>
          blade;
     }
 }

@@ -24,5 +24,6 @@ class Form extends BaseModel
 
     protected $casts = [
         'fields' => 'array',
+        'button' => 'array',
     ];
 }

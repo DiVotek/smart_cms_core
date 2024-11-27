@@ -48,6 +48,10 @@ class FormResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $button = [];
+        foreach(get_active_languages() as $lang){
+            $button[] = TextInput::make('button.' . $lang->slug)->label(_fields('button') . ' (' . $lang->name . ')')->default('Submit')->maxLength(255);
+        }
         return $form
             ->schema([
                 Section::make('')->schema([
@@ -66,6 +70,7 @@ class FormResource extends Resource
                                 ->default('')
                                 ->maxLength(255),
                         ]),
+                    ...$button,
                 ]),
                 Section::make(_fields('additional'))->schema([
                     Forms\Components\TextInput::make('html_id')
