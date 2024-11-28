@@ -46,7 +46,7 @@ class Form extends Component
                 <input type="hidden" name="form_attributes" value="{{ json_encode($attributes) }}">
                 @csrf
                 @foreach($fields as $group)
-                    <x-s::form.group class="form-group {{$group['class'] ?? ''}}">
+                    <x-s::form.group class="form-section {{$group['class'] ?? ''}}">
                         @foreach($group['fields'] as $field)
                             <x-s::form.field :field="$field" :name="strtolower($field->name)" value="{{$field->value ?? ''}}"  />
                         @endforeach
