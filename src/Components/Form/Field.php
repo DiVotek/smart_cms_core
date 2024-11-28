@@ -54,7 +54,7 @@ class Field extends Component
                     <label for="{{ $id }}">{{ $label }}</label>
                     <div class="form-input">
                     @if ($field->type == 'textarea')
-                        <textarea {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }} />
+                        <textarea {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }} ></textarea>
                     @elseif($field->type == 'select')
                         <select {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }}>
                                 @foreach ($options as $option)
