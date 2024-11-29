@@ -5,7 +5,6 @@ namespace SmartCms\Core\Components\Form;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Field as ModelsField;
-use Illuminate\View\ComponentAttributeBag;
 
 class Field extends Component
 {
@@ -40,10 +39,10 @@ class Field extends Component
         }
         $this->required = $field->required;
         $type = $field->type;
-        $attributes = ['class' => 'field', 'required' => !!$field->required, 'value' => $field->value ?? '', 'name' => $field->html_id, 'placeholder' => $this->placeholder, 'id' => $this->id];
+        $attributes = ['class' => 'field', 'required' => (bool) $field->required, 'value' => $field->value ?? '', 'name' => $field->html_id, 'placeholder' => $this->placeholder, 'id' => $this->id];
         if ($type == 'checkbox' || $type == 'radio') {
             // dd($field);
-            $attributes['checked'] = !!$field->value;
+            $attributes['checked'] = (bool) $field->value;
         }
         if ($type == 'checkbox') {
             $attributes['value'] = 1;
@@ -61,8 +60,8 @@ class Field extends Component
     public function render()
     {
         // return Cache::rememberForever('scms_form_field_component', function () {
-        if (view()->exists('templates::' . template() . '.form.field')) {
-            return view('templates::' . template() . '.form.field');
+        if (view()->exists('templates::'.template().'.form.field')) {
+            return view('templates::'.template().'.form.field');
         }
 
         return <<<'blade'

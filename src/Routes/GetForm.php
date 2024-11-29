@@ -41,7 +41,7 @@ class GetForm
             return Blade::renderComponent((new ComponentsForm($form->id, request()->all(), $errors))->withAttributes($attributes));
         } else {
             $data = [];
-            foreach($request->except(['_token', 'form', 'form_attributes']) as $key => $value) {
+            foreach ($request->except(['_token', 'form', 'form_attributes']) as $key => $value) {
                 $field = Field::query()->where('html_id', $key)->first();
                 if ($field) {
                     $data[$field->name] = $value;
