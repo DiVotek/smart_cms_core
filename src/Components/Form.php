@@ -48,7 +48,7 @@ class Form extends Component
                 @foreach($fields as $group)
                     <x-s::form.group class="form-section {{$group['class'] ?? ''}}">
                         @foreach($group['fields'] as $field)
-                            <x-s::form.field :field="$field" :name="strtolower($field->name)" value="{{$field->value ?? ''}}"  />
+                            <x-s::form.field :field="$field" :name="strtolower($field->html_id)" value="{{$field->value ?? ''}}"  />
                         @endforeach
                     </x-s::form.group>
                 @endforeach

@@ -5,6 +5,7 @@ namespace SmartCms\Core\Components\Form;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Field as ModelsField;
+use Illuminate\View\ComponentAttributeBag;
 
 class Field extends Component
 {
@@ -22,6 +23,8 @@ class Field extends Component
 
     public bool $required;
 
+    public $fieldAttributes = [];
+
     public function __construct(ModelsField $field)
     {
         $this->field = $field;
@@ -36,13 +39,30 @@ class Field extends Component
             }, $field->options);
         }
         $this->required = $field->required;
+        $type = $field->type;
+        $attributes = ['class' => 'field', 'required' => !!$field->required, 'value' => $field->value ?? '', 'name' => $field->html_id, 'placeholder' => $this->placeholder, 'id' => $this->id];
+        if ($type == 'checkbox' || $type == 'radio') {
+            // dd($field);
+            $attributes['checked'] = !!$field->value;
+        }
+        if ($type == 'checkbox') {
+            $attributes['value'] = 1;
+        }
+        if ($type != 'select' && $type != 'textarea') {
+            $attributes['type'] = $type;
+        }
+        if ($type == 'textarea') {
+            unset($attributes['type'], $attributes['value']);
+        }
+        $this->fieldAttributes = $attributes;
+        // $this->attributes = $this->attributes->merge($attributes);
     }
 
     public function render()
     {
         // return Cache::rememberForever('scms_form_field_component', function () {
-        if (view()->exists('templates::'.template().'.form.field')) {
-            return view('templates::'.template().'.form.field');
+        if (view()->exists('templates::' . template() . '.form.field')) {
+            return view('templates::' . template() . '.form.field');
         }
 
         return <<<'blade'
@@ -54,15 +74,15 @@ class Field extends Component
                     <label for="{{ $id }}">{{ $label }}</label>
                     <div class="form-input">
                     @if ($field->type == 'textarea')
-                        <textarea {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }} ></textarea>
+                        <textarea {{ $attributes->merge($fieldAttributes) }} >@if($field->value){{ trim($field->value) }}@endif</textarea>
                     @elseif($field->type == 'select')
-                        <select {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,]) }}>
-                                @foreach ($options as $option)
-                                <option value="{{ $option }}">{{ $option }}</option>
-                                @endforeach
+                        <select {{ $attributes->merge($fieldAttributes) }}>
+                            @foreach ($options as $option)
+                            <option value="{{ $option }}">{{ $option }}</option>
+                            @endforeach
                         </select>
                     @else
-                        <input {{ $attributes->merge(['class' => 'field', 'required' => !!$field->required,'value' => $field->value ?? '','name' => $field->name,'placeholder' => $placeholder,'id' => $id,'type' => $field->type]) }} >
+                        <input {{ $attributes->merge($fieldAttributes) }} >
                     @endif
                     @if($field->image)
                         <img src="{{ $field->image }}" alt="{{ $label }}" />

@@ -27,10 +27,10 @@ class GetForm
             foreach ($field['fields'] as $f) {
                 $f = Field::query()->find($f['field']);
                 if ($f->required) {
-                    $validation[strtolower($f->name)] = 'required';
+                    $validation[strtolower($f->html_id)] = 'required';
                 }
                 if ($f->validation) {
-                    $validation[strtolower($f->name)] = $f->validation;
+                    $validation[strtolower($f->html_id)] = $f->validation;
                 }
             }
         }
@@ -40,9 +40,16 @@ class GetForm
 
             return Blade::renderComponent((new ComponentsForm($form->id, request()->all(), $errors))->withAttributes($attributes));
         } else {
+            $data = [];
+            foreach($request->except(['_token', 'form', 'form_attributes']) as $key => $value) {
+                $field = Field::query()->where('html_id', $key)->first();
+                if ($field) {
+                    $data[$field->name] = $value;
+                }
+            }
             ContactForm::query()->create([
                 'form_id' => $form->id,
-                'data' => $request->except(['_token', 'form', 'form_attributes']),
+                'data' => $data,
             ]);
             foreach (Admin::all() as $recipient) {
                 $recipient->notifyNow(Notification::make()
