@@ -65,10 +65,13 @@ class UserNotification
 
    public function send(): void
    {
-      Session::push('notifications', [
+      $notifications = Session::get('notifications', []);
+      $notifications[] = [
          'title' => $this->title,
          'message' => $this->message,
          'type' => $this->type,
-      ]);
+         'id' => uniqid()
+      ];
+      Session::put('notifications', $notifications);
    }
 }

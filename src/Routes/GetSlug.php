@@ -52,7 +52,6 @@ class GetSlug
         if (count($segments) > 0) {
             return $this->findPage($segments, $page->id);
         }
-
         return $page;
     }
 
@@ -60,6 +59,7 @@ class GetSlug
     {
         app()->setLocale($lang);
         Context::add('current_lang', $lang);
+
     }
 
     private function bindUser()
