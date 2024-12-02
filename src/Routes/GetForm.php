@@ -2,12 +2,10 @@
 
 namespace SmartCms\Core\Routes;
 
-use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use SmartCms\Core\Components\Form as ComponentsForm;
-use SmartCms\Core\Models\Admin;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form;
@@ -57,10 +55,10 @@ class GetForm
                 'data' => $data,
             ]);
             UserNotification::make()
-                ->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))
+                ->title(_nav('form').' '.$form->name.' '._actions('was_sent'))
                 ->success()
                 ->send();
-            AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
+            AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
         }
 
         return Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes));

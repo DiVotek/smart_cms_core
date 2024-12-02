@@ -78,7 +78,7 @@ class FormResource extends Resource
                                 ->maxLength(255),
                         ]),
                     ...$button,
-                    ...$notification
+                    ...$notification,
                 ]),
                 Section::make(_fields('additional'))->schema([
                     Forms\Components\TextInput::make('html_id')
@@ -97,7 +97,7 @@ class FormResource extends Resource
                         Forms\Components\Toggle::make('is_send_email')
                             ->label(_fields('send_email'))
                             ->default(false),
-                            ...$emailText,
+                        ...$emailText,
                         Forms\Components\Select::make('email_template')
                             ->label(_fields('email_template'))
                             // ->options(Helper::getEmailTemplates())
