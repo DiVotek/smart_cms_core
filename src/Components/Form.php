@@ -26,7 +26,7 @@ class Form extends Component
                 if (! $field) {
                     continue;
                 }
-                $name = strtolower($field->name);
+                $name = strtolower($field->html_id);
                 $field->value = $values[$name] ?? null;
                 $field->error = $errors[$name] ?? null;
                 $newGroup['fields'][] = $field;

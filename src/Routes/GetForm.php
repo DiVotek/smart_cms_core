@@ -11,6 +11,8 @@ use SmartCms\Core\Models\Admin;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form;
+use SmartCms\Core\Services\AdminNotification;
+use SmartCms\Core\Services\UserNotification;
 
 class GetForm
 {
@@ -23,6 +25,7 @@ class GetForm
         }
         $validation = [];
         $attributes = json_decode($request->input('form_attributes'), true);
+        $customAttributes = [];
         foreach ($form->fields as $field) {
             foreach ($field['fields'] as $f) {
                 $f = Field::query()->find($f['field']);
@@ -32,9 +35,11 @@ class GetForm
                 if ($f->validation) {
                     $validation[strtolower($f->html_id)] = $f->validation;
                 }
+                $customAttributes[strtolower($f->html_id)] = $f->label[current_lang()];
             }
         }
         $validator = Validator::make($request->all(), $validation);
+        $validator->setAttributeNames($customAttributes);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
 
@@ -51,11 +56,11 @@ class GetForm
                 'form_id' => $form->id,
                 'data' => $data,
             ]);
-            foreach (Admin::all() as $recipient) {
-                $recipient->notifyNow(Notification::make()
-                    ->success()
-                    ->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->toDatabase());
-            }
+            UserNotification::make()
+                ->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))
+                ->success()
+                ->send();
+            AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
         }
 
         return Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes));

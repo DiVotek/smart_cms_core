@@ -53,6 +53,13 @@ class Field extends Component
         if ($type == 'textarea') {
             unset($attributes['type'], $attributes['value']);
         }
+        if($field->mask && in_array($type,['text','email','tel','number','url'])){
+            $mask = $field->mask[current_lang()] ?? null;
+            if($mask){
+                $attributes['x-mask'] = $mask;
+                $attributes['x-data'] = "";
+            }
+        }
         $this->fieldAttributes = $attributes;
         // $this->attributes = $this->attributes->merge($attributes);
     }

@@ -94,4 +94,10 @@ return [
     'options' => 'Options',
     'placeholder' => 'Placeholder',
     'button' => 'Button',
+    'notification' => 'Notification',
+    'email_text' => 'Email text',
+    'send_email' => 'Send email',
+    'mask' => 'Mask',
+    'validation' => 'Validation',
+    'class' => 'Class',
 ];

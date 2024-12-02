@@ -3,8 +3,10 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -49,8 +51,12 @@ class FormResource extends Resource
     public static function form(Form $form): Form
     {
         $button = [];
+        $notification = [];
+        $emailText = [];
         foreach (get_active_languages() as $lang) {
             $button[] = TextInput::make('button.'.$lang->slug)->label(_fields('button').' ('.$lang->name.')')->default('Submit')->maxLength(255);
+            $notification[] = TextInput::make('notification.'.$lang->slug)->label(_fields('notification').' ('.$lang->name.')')->default('Form submitted successfully')->maxLength(255);
+            $emailText[] = Textarea::make('email_text.'.$lang->slug)->label(_fields('email_text').' ('.$lang->name.')')->default('Form submitted successfully')->maxLength(255);
         }
 
         return $form
@@ -72,6 +78,7 @@ class FormResource extends Resource
                                 ->maxLength(255),
                         ]),
                     ...$button,
+                    ...$notification
                 ]),
                 Section::make(_fields('additional'))->schema([
                     Forms\Components\TextInput::make('html_id')
@@ -86,6 +93,16 @@ class FormResource extends Resource
                         ->label(_fields('style'))
                         ->options(Helper::getFormTemplates())
                         ->default(1)->hidden(),
+                    Fieldset::make(_fields('email'))->schema([
+                        Forms\Components\Toggle::make('is_send_email')
+                            ->label(_fields('send_email'))
+                            ->default(false),
+                            ...$emailText,
+                        Forms\Components\Select::make('email_template')
+                            ->label(_fields('email_template'))
+                            // ->options(Helper::getEmailTemplates())
+                            ->default(1)->hidden(),
+                    ])->columns(1),
                 ])->collapsed(),
             ]);
     }

@@ -26,7 +26,7 @@ class Pages
 
     public function first(): Page
     {
-        return $this->pages->first();
+        return $this->pages->where('id',1)->first() ?? $this->pages->where('slug',"")->first() ?? $this->pages->first();
     }
 
     public function all(): Collection

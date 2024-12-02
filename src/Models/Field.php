@@ -11,5 +11,6 @@ class Field extends BaseModel
         'options' => 'array',
         'label' => 'array',
         'description' => 'array',
+        'mask' => 'array',
     ];
 }
