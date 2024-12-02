@@ -52,6 +52,7 @@ class GetSlug
         if (count($segments) > 0) {
             return $this->findPage($segments, $page->id);
         }
+
         return $page;
     }
 

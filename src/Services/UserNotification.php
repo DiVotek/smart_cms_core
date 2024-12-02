@@ -74,15 +74,15 @@ class UserNotification
         return $this;
     }
 
-   public function send(): void
-   {
-      $notifications = Session::get('notifications', []);
-      $notifications[] = [
-         'title' => $this->title,
-         'message' => $this->message,
-         'type' => $this->type,
-         'id' => uniqid()
-      ];
-      Session::put('notifications', $notifications);
-   }
+    public function send(): void
+    {
+        $notifications = Session::get('notifications', []);
+        $notifications[] = [
+            'title' => $this->title,
+            'message' => $this->message,
+            'type' => $this->type,
+            'id' => uniqid(),
+        ];
+        Session::put('notifications', $notifications);
+    }
 }
