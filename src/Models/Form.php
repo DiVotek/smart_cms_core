@@ -26,6 +26,6 @@ class Form extends BaseModel
         'fields' => 'array',
         'button' => 'array',
         'notification' => 'array',
-        'email_text' => 'array'
+        'email_text' => 'array',
     ];
 }
