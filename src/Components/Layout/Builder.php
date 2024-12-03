@@ -129,8 +129,8 @@ class Builder extends Component
                             $variables[$field['name']] = [];
                         }
                         $order = $pages['order'] ?? 'created_at';
-                        $orderSort = 'desc';
-                        $query = app('_page')->all();
+                        $query = config('shared.page_model')::query();
+                        // $query = app('_page')->all();
                         if (isset($pages['all_children']) && $pages['all_children']) {
                             $query = $query->where('parent_id', $entity->id);
                         } elseif (isset($pages['parent']) && $pages['parent']) {
@@ -141,9 +141,11 @@ class Builder extends Component
                         if ($order == 'random') {
                             $query = $query->inRandomOrder();
                         } else {
-                            $query = $query->sortByDesc($order);
+                            $query = $query->orderByDesc($order);
+                            // $query = $query->sortByDesc($order);
                         }
-                        $result = $query->slice(0, $pages['limit'] ?? 5);
+                        $result = $query->paginate($pages['limit'] ?? 5);
+                        // $result = $query->slice(0, $pages['limit'] ?? 5);
                         $variables[$field['name']] = $result;
                         break;
                     case VariableTypes::PAGE->value:

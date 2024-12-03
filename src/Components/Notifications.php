@@ -21,7 +21,7 @@ class Notifications extends Component
     public function render(): View|Closure|string
     {
         return <<<'blade'
-         <div hx-trigger="new-notification from:body" hx-swap="outerHTML" hx-get="{{route('notifications.list')}}" {{$attributes}}>
+         <div hx-trigger="new-notification from:body" hx-swap="innerHTML" hx-get="{{route('notifications.list')}}" {{$attributes}}>
             @if($viewTemplate)
                @include($viewTemplate, ['notifications' => $notifications])
             @endif
