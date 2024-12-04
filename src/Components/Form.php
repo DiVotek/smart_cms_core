@@ -41,7 +41,14 @@ class Form extends Component
     public function render()
     {
         return <<<'blade'
-            <form id="{{$form->html_id ?? $form->code}}" name="{{$form->code}}" hx-get="{{route('smartcms.form.submit')}}" hx-target="#{{$form->html_id ?? $form->code}}" hx-swap="outerHTML" hx-trigger="submit" hx-on="htmx:afterRequest: document.body.dispatchEvent(new Event('new-notification'))" {{$attributes->merge(['class' => $form->class ?? ''])}}>
+            <form id="{{$form->html_id ?? $form->code}}"
+                name="{{$form->code}}"
+                hx-get="{{route('smartcms.form.submit')}}"
+                hx-target="#{{$form->html_id ?? $form->code}}" x-init="htmx.process($el);document.body.dispatchEvent(new Event('new-notification'));"
+                hx-swap="outerHTML"
+                hx-trigger="submit"
+                hx-on:htmx:after-swap="document.body.dispatchEvent(new Event('new-notification'));"
+                {{$attributes->merge(['class' => $form->class ?? ''])}}>
                 <input type="hidden" name="form" value="{{$form->code}}" />
                 <input type="hidden" name="form_attributes" value="{{ json_encode($attributes) }}">
                 @csrf
