@@ -63,6 +63,10 @@ class StaticPageResource extends Resource
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
+        $custom_fields = config('shared.page_custom_fields', []);
+        if($custom_fields){
+            $custom_fields = (new $custom_fields())->__invoke();
+        }
 
         return $form
             ->schema([
@@ -79,6 +83,7 @@ class StaticPageResource extends Resource
                                 return request('parent') ?? null;
                             })->hidden((bool) request('parent'))->live(),
                         ...$customFields,
+                        ...$custom_fields,
                     ]),
             ]);
     }
