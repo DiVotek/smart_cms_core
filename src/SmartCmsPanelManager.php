@@ -81,7 +81,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->emailVerification()
             ->authGuard('admin')
             ->profile(Profile::class)
-            ->spa()
+            ->spa(config('app.spa',false))
             ->font('Roboto')
             ->darkMode(false)
             ->brandName(company_name() ?? 'SmartCms')
