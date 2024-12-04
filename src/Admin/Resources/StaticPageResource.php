@@ -64,8 +64,8 @@ class StaticPageResource extends Resource
             $isRequired = false;
         }
         $custom_fields = config('shared.page_custom_fields', []);
-        if($custom_fields){
-            $custom_fields = (new $custom_fields())->__invoke();
+        if ($custom_fields) {
+            $custom_fields = (new $custom_fields)->__invoke();
         }
 
         return $form
