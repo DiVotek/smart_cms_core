@@ -39,5 +39,4 @@ class Seo extends BaseModel
     {
         return $this->belongsTo(Language::class);
     }
-
 }
