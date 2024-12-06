@@ -3,6 +3,7 @@
 return [
     'username' => 'Username',
     'password' => 'Password',
+    'seo_keyword_phrase' => 'Keyword phrase',
     'seo_title' => 'Title',
     'seo_heading' => 'Heading',
     'seo_description' => 'Meta description',
