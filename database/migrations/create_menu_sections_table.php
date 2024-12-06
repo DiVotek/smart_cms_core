@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('parent_id')->nullable();
             $table->json('custom_fields')->nullable();
             $table->json('template')->nullable();
+            $table->json('categories_template')->nullable();
             $table->timestamps();
         });
     }

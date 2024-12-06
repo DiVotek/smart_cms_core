@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->string('html_id');
+            $table->json('mask')->nullable();
             $table->string('class')->nullable();
             $table->string('style')->nullable();
             $table->json('label')->nullable();
