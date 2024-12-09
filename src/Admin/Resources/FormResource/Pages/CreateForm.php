@@ -12,7 +12,7 @@ class CreateForm extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['code'] = uniqid('form_');
-        $data['style']  = 1;
+        $data['style'] = 1;
 
         return $data;
     }
