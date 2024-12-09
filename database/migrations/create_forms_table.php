@@ -18,6 +18,11 @@ return new class extends Migration
             $table->string('class')->nullable();
             $table->string('style');
             $table->json('fields');
+            $table->json('notification')->nullable();
+            $table->boolean('is_send_email')->default(false);
+            $table->json('email_text')->nullable();
+            $table->string('email_template')->nullable();
+            $table->json('button')->nullable();
             $table->timestamps();
         });
     }
