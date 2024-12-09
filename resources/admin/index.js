@@ -16,6 +16,16 @@ document.addEventListener("DOMContentLoaded", function () {
             Alpine.store('sidebar').collapseGroup(group)
          }
       })
+      if (nav.querySelector('div').querySelector('button')) {
+         nav.querySelector('div').querySelector('button').addEventListener('click', function () {
+            for (let group of groups) {
+               if (group == nav.getAttribute('data-group-label')) {
+                  continue
+               }
+               Alpine.store('sidebar').collapseGroup(group)
+            }
+         })
+      }
    }
 
 })

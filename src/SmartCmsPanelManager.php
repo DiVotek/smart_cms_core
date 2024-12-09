@@ -148,11 +148,11 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
             }
@@ -228,5 +228,20 @@ class SmartCmsPanelManager extends PanelProvider
             HTML;
             }
         );
+        // Filament::registerRenderHook(
+        //     PanelsRenderHook::SIDEBAR_NAV_END,
+        //     function (): string {
+        //         return <<<'HTML'
+        //     <div class="flex justify-center gap-2">
+        //     <a href="/" target="_blank" class="flex items-center justify-center p-2 font-semibold rounded-lg h-9 text-primary-600 bg-primary-500/10">
+        //         Docs
+        //     </a>
+        //     <a href="/" target="_blank" class="relative flex items-center justify-center px-2 py-2 transition duration-75 bg-gray-100 rounded-lg outline-none fi-sidebar-item-button gap-x-3 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 dark:bg-white/5">
+        //         Website
+        //     </a>
+        //     </div>
+        //     HTML;
+        //     }
+        // );
     }
 }

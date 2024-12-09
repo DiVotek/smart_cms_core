@@ -71,7 +71,7 @@ return [
         'settings_pages' => [
             \SmartCms\Core\Admin\Pages\Settings\Settings::class,
         ],
-        'locales' => ['en', 'ru', 'uk'],
+        'locales' => ['en', 'uk'],
         'colors' => [
             'primary' => '#28a0e7',
             'danger' => Color::Rose,

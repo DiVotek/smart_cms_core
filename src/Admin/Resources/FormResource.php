@@ -89,10 +89,6 @@ class FormResource extends Resource
                         ->label(_fields('html_class'))
                         ->default('')
                         ->maxLength(255),
-                    Forms\Components\Select::make('style')
-                        ->label(_fields('style'))
-                        ->options(Helper::getFormTemplates())
-                        ->default(1)->hidden(),
                     Fieldset::make(_fields('email'))->schema([
                         Forms\Components\Toggle::make('is_send_email')
                             ->label(_fields('send_email'))
