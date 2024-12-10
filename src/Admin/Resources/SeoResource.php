@@ -114,7 +114,7 @@ class SeoResource extends Resource
                         ->translatable()
                         ->live()
                         ->rules('string'),
-                ])->afterStateUpdated(fn($component) => $component
+                ])->afterStateUpdated(fn ($component) => $component
                     ->getContainer()
                     ->getComponent('keyWordCheck')
                     ->getChildComponentContainer()
@@ -146,7 +146,7 @@ class SeoResource extends Resource
                                 ->disabled(),
                             TextInput::make('content_check_result')
                                 ->label('Content Check Result')
-                                ->disabled()
+                                ->disabled(),
                         ];
                         $keyword = $get('keyword_phrase');
                         $title = $get('title');
@@ -160,6 +160,7 @@ class SeoResource extends Resource
                         $set('description_check_result', $checkKeyword($description, $keyword));
                         $set('summary_check_result', $checkKeyword($summary, $keyword));
                         $set('content_check_result', $checkKeyword($content, $keyword));
+
                         return $fields;
                     })
                     ->live()
