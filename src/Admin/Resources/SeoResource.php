@@ -49,13 +49,6 @@ class SeoResource extends Resource
         return _nav('seo_models');
     }
 
-    public static function checkKeywordPhrase(?string $keyword, ?string $text): string
-    {
-        return str_contains(strtolower($text ?? ''), strtolower($keyword ?? ''))
-            ? 'Keyword phrase found.'
-            : 'Keyword phrase not found.';
-    }
-
     public static function form(Form $form): Form
     {
         $language = Hidden::make('language_id');
