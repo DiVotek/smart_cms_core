@@ -56,7 +56,6 @@ class SeoResource extends Resource
             : 'Keyword phrase not found.';
     }
 
-
     public static function form(Form $form): Form
     {
         $language = Hidden::make('language_id');
@@ -122,7 +121,7 @@ class SeoResource extends Resource
                         ->translatable()
                         ->live()
                         ->rules('string'),
-                ])->afterStateUpdated(fn($component) => $component
+                ])->afterStateUpdated(fn ($component) => $component
                     ->getcontainer()
                     ->getComponent('keyWordCheck')
                     ->getChildComponentContainer()
@@ -131,10 +130,11 @@ class SeoResource extends Resource
                 Section::make('Keyword Phrase Check Results')
                     ->schema(function (Get $get): array {
                         $checkKeyword = function (?string $text, ?string $keyword): string {
-                            if (!$text || !$keyword) {
+                            if (! $text || ! $keyword) {
                                 return 'No keyword or text provided.';
                             }
                             $count = substr_count(strtolower($text), strtolower($keyword));
+
                             return $count > 0 ? "Keyword found $count times." : 'Keyword not found.';
                         };
 
@@ -194,7 +194,6 @@ class SeoResource extends Resource
             ])
             ->columns(1);
     }
-
 
     public static function table(Table $table): Table
     {
