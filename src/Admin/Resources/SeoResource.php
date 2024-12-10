@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -48,20 +49,16 @@ class SeoResource extends Resource
         return _nav('seo_models');
     }
 
+    public static function checkKeywordPhrase(?string $keyword, ?string $text): string
+    {
+        return str_contains(strtolower($text ?? ''), strtolower($keyword ?? ''))
+            ? 'Keyword phrase found.'
+            : 'Keyword phrase not found.';
+    }
+
+
     public static function form(Form $form): Form
     {
-        $keywordPhrase = '';
-        $fieldResults = [
-            'title' => false,
-            'heading' => false,
-            'description' => false,
-            'summary' => false,
-            'content' => false,
-        ];
-        $checkKeywordPhrase = function ($fieldValue, $keywordPhrase) {
-            return strpos($fieldValue, $keywordPhrase) !== false;
-        };
-
         $language = Hidden::make('language_id');
         if (is_multi_lang()) {
             $language = Schema::getSelect('language_id')->relationship('language', 'name');
@@ -73,51 +70,43 @@ class SeoResource extends Resource
                 Section::make('')->schema([
                     $language,
                     TextInput::make('keyword_phrase')
-                        ->label(_fields('seo_keyword_phrase'))
-                        ->translatable()
-                        ->rules('string', 'max:255')
-                        ->maxLength(255)
-                        ->afterStateUpdated(function ($state) use ($checkKeywordPhrase, &$fieldResults, $keywordPhrase) {
-                            $fieldResults['title'] = $checkKeywordPhrase($state, $keywordPhrase);
-                            $fieldResults['heading'] = $checkKeywordPhrase($state, $keywordPhrase);
-                            $fieldResults['description'] = $checkKeywordPhrase($state, $keywordPhrase);
-                            $fieldResults['summary'] = $checkKeywordPhrase($state, $keywordPhrase);
-                            $fieldResults['content'] = $checkKeywordPhrase($state, $keywordPhrase);
-                        }),
+                        ->label('Keyword Phrase')
+                        ->live()
+                        ->rules('string', 'max:255'),
+
                     TextInput::make('title')
                         ->label(_fields('seo_title'))
                         ->required()
                         ->translatable()
+                        ->live()
                         ->rules('string', 'max:255')
                         ->characterLimit(255)
-                        ->maxLength(255)
-                        ->afterStateUpdated(function ($state) use ($checkKeywordPhrase, &$fieldResults, $keywordPhrase) {
-                            $fieldResults['title'] = $checkKeywordPhrase($state, $keywordPhrase);
-                        }),
+                        ->maxLength(255),
+
                     TextInput::make('heading')
                         ->label(_fields('seo_heading'))
                         ->translatable()
                         ->rules('string', 'max:255')
                         ->characterLimit(255)
-                        ->maxLength(255)
-                        ->afterStateUpdated(function ($state) use ($checkKeywordPhrase, &$fieldResults, $keywordPhrase) {
-                            $fieldResults['heading'] = $checkKeywordPhrase($state, $keywordPhrase);
-                        }),
+                        ->live()
+                        ->maxLength(255),
+
                     Textarea::make('description')
                         ->label(_fields('seo_description'))
                         ->required()
                         ->rules('string', 'max:255')
                         ->translatable()
                         ->characterLimit(255)
-                        ->maxLength(255)
-                        ->afterStateUpdated(function ($state) use ($checkKeywordPhrase, &$fieldResults, $keywordPhrase) {
-                            $fieldResults['description'] = $checkKeywordPhrase($state, $keywordPhrase);
-                        }),
+                        ->live()
+                        ->maxLength(255),
+
                     RichEditor::make('summary')
                         ->label(_fields('seo_summary'))
                         ->translatable()
+                        ->live()
                         ->rules('string', 'max:500')
-                        ->maxLength(500)->toolbarButtons([
+                        ->maxLength(500)
+                        ->toolbarButtons([
                             'blockquote',
                             'bold',
                             'italic',
@@ -126,57 +115,86 @@ class SeoResource extends Resource
                             'underline',
                             'undo',
                             'codeBlock',
-                        ])
-                        ->afterStateUpdated(function ($state) use ($checkKeywordPhrase, &$fieldResults, $keywordPhrase) {
-                            $fieldResults['summary'] = $checkKeywordPhrase($state, $keywordPhrase);
-                        }),
+                        ]),
+
                     RichEditor::make('content')
                         ->label(_fields('seo_content'))
                         ->translatable()
-                        ->rules('string')
-                        ->afterStateUpdated(function ($state) use ($checkKeywordPhrase, &$fieldResults, $keywordPhrase) {
-                            $fieldResults['content'] = $checkKeywordPhrase($state, $keywordPhrase);
-                        }),
-                ]),
-                Section::make('Keyword Phrase Check Results')->schema([
-                    TextInput::make('title_check_result')
-                        ->label('Title Check Result')
-                        ->getStateUsing(function () use ($fieldResults) {
-                            return $fieldResults['title'] ? 'Keyword phrase found.' : 'Keyword phrase not found.';
-                        })
-                        ->disabled(),
+                        ->live()
+                        ->rules('string'),
+                ])->afterStateUpdated(fn($component) => $component
+                    ->getcontainer()
+                    ->getComponent('keyWordCheck')
+                    ->getChildComponentContainer()
+                    ->fill())->live(),
 
-                    TextInput::make('heading_check_result')
-                        ->label('Heading Check Result')
-                        ->getStateUsing(function () use ($fieldResults) {
-                            return $fieldResults['heading'] ? 'Keyword phrase found.' : 'Keyword phrase not found.';
-                        })
-                        ->disabled(),
+                Section::make('Keyword Phrase Check Results')
+                    ->schema(function (Get $get): array {
+                        $checkKeyword = function (?string $text, ?string $keyword): string {
+                            if (!$text || !$keyword) {
+                                return 'No keyword or text provided.';
+                            }
+                            $count = substr_count(strtolower($text), strtolower($keyword));
+                            return $count > 0 ? "Keyword found $count times." : 'Keyword not found.';
+                        };
 
-                    TextInput::make('description_check_result')
-                        ->label('Description Check Result')
-                        ->getStateUsing(function () use ($fieldResults) {
-                            return $fieldResults['description'] ? 'Keyword phrase found.' : 'Keyword phrase not found.';
-                        })
-                        ->disabled(),
+                        $fields = [];
+                        $keyword = $get('keyword_phrase');
+                        $title = $get('title');
+                        $heading = $get('heading');
+                        $description = $get('description');
+                        $summary = $get('summary');
+                        $content = $get('content');
 
-                    TextInput::make('summary_check_result')
-                        ->label('Summary Check Result')
-                        ->getStateUsing(function () use ($fieldResults) {
-                            return $fieldResults['summary'] ? 'Keyword phrase found.' : 'Keyword phrase not found.';
-                        })
-                        ->disabled(),
+                        if ($title) {
+                            $fields[] = TextInput::make('title_check_result')
+                                ->label('Title Check Result')
+                                ->disabled()
+                                ->default($checkKeyword($title, $keyword))
+                                ->reactive();
+                        }
 
-                    TextInput::make('content_check_result')
-                        ->label('Content Check Result')
-                        ->getStateUsing(function () use ($fieldResults) {
-                            return $fieldResults['content'] ? 'Keyword phrase found.' : 'Keyword phrase not found.';
-                        })
-                        ->disabled(),
-                ])->collapsible(),
+                        if ($heading) {
+                            $fields[] = TextInput::make('heading_check_result')
+                                ->label('Heading Check Result')
+                                ->disabled()
+                                ->default($checkKeyword($heading, $keyword))
+                                ->reactive();
+                        }
+
+                        if ($description) {
+                            $fields[] = TextInput::make('description_check_result')
+                                ->label('Description Check Result')
+                                ->disabled()
+                                ->default($checkKeyword($description, $keyword))
+                                ->reactive();
+                        }
+
+                        if ($summary) {
+                            $fields[] = TextInput::make('summary_check_result')
+                                ->label('Summary Check Result')
+                                ->disabled()
+                                ->default($checkKeyword($summary, $keyword))
+                                ->reactive();
+                        }
+
+                        if ($content) {
+                            $fields[] = TextInput::make('content_check_result')
+                                ->label('Content Check Result')
+                                ->disabled()
+                                ->default($checkKeyword($content, $keyword))
+                                ->reactive();
+                        }
+
+                        return $fields;
+                    })
+                    ->live()
+                    ->columnSpanFull()
+                    ->key('keyWordCheck'),
             ])
             ->columns(1);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -310,14 +328,5 @@ class SeoResource extends Resource
             'create' => Pages\CreateSeo::route('/create'),
             'edit' => Pages\EditSeo::route('/{record}/edit'),
         ];
-    }
-
-    protected static function checkKeywordPhrase($text, $keywordPhrase)
-    {
-        if (stripos($text, $keywordPhrase) !== false) {
-            return true;
-        }
-
-        return false;
     }
 }
