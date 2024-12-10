@@ -121,14 +121,14 @@ class SeoResource extends Resource
                         ->translatable()
                         ->live()
                         ->rules('string'),
-                ])->afterStateUpdated(fn ($component) => $component
-                    ->getcontainer()
+                ])->afterStateUpdated(fn($component) => $component
+                    ->getContainer()
                     ->getComponent('keyWordCheck')
                     ->getChildComponentContainer()
                     ->fill())->live(),
 
                 Section::make('Keyword Phrase Check Results')
-                    ->schema(function (Get $get): array {
+                    ->schema(function (Get $get, $set): array {
                         $checkKeyword = function (?string $text, ?string $keyword): string {
                             if (! $text || ! $keyword) {
                                 return 'No keyword or text provided.';
@@ -138,7 +138,23 @@ class SeoResource extends Resource
                             return $count > 0 ? "Keyword found $count times." : 'Keyword not found.';
                         };
 
-                        $fields = [];
+                        $fields = [
+                            TextInput::make('title_check_result')
+                                ->label('Title Check Result')
+                                ->disabled(),
+                            TextInput::make('heading_check_result')
+                                ->label('Heading Check Result')
+                                ->disabled(),
+                            TextInput::make('description_check_result')
+                                ->label('Description Check Result')
+                                ->disabled(),
+                            TextInput::make('summary_check_result')
+                                ->label('Summary Check Result')
+                                ->disabled(),
+                            TextInput::make('content_check_result')
+                                ->label('Content Check Result')
+                                ->disabled()
+                        ];
                         $keyword = $get('keyword_phrase');
                         $title = $get('title');
                         $heading = $get('heading');
@@ -146,46 +162,11 @@ class SeoResource extends Resource
                         $summary = $get('summary');
                         $content = $get('content');
 
-                        if ($title) {
-                            $fields[] = TextInput::make('title_check_result')
-                                ->label('Title Check Result')
-                                ->disabled()
-                                ->default($checkKeyword($title, $keyword))
-                                ->reactive();
-                        }
-
-                        if ($heading) {
-                            $fields[] = TextInput::make('heading_check_result')
-                                ->label('Heading Check Result')
-                                ->disabled()
-                                ->default($checkKeyword($heading, $keyword))
-                                ->reactive();
-                        }
-
-                        if ($description) {
-                            $fields[] = TextInput::make('description_check_result')
-                                ->label('Description Check Result')
-                                ->disabled()
-                                ->default($checkKeyword($description, $keyword))
-                                ->reactive();
-                        }
-
-                        if ($summary) {
-                            $fields[] = TextInput::make('summary_check_result')
-                                ->label('Summary Check Result')
-                                ->disabled()
-                                ->default($checkKeyword($summary, $keyword))
-                                ->reactive();
-                        }
-
-                        if ($content) {
-                            $fields[] = TextInput::make('content_check_result')
-                                ->label('Content Check Result')
-                                ->disabled()
-                                ->default($checkKeyword($content, $keyword))
-                                ->reactive();
-                        }
-
+                        $set('title_check_result', $checkKeyword($title, $keyword));
+                        $set('heading_check_result', $checkKeyword($heading, $keyword));
+                        $set('description_check_result', $checkKeyword($description, $keyword));
+                        $set('summary_check_result', $checkKeyword($summary, $keyword));
+                        $set('content_check_result', $checkKeyword($content, $keyword));
                         return $fields;
                     })
                     ->live()
