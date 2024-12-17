@@ -16,23 +16,11 @@ Alpine.data('tooltip', tooltip);
 
 Alpine.start()
 
-document.addEventListener("htmx:afterRequest", function (event) {
-   const xhr = event.detail.xhr;
-   if (xhr.status == 200) {
-      try {
-         const response = JSON.parse(xhr.responseText);
-         if (response.dataLayer) {
-            const dataLayer = window.dataLayer || [];
-            dataLayer.push(response.dataLayer);
-         }
-      } catch (e) {
-         console.error(e);
-      }
+document.addEventListener('new-datalayer', (event) => {
+   const dataLayer = window.dataLayer || [];
+   const data = event.detail.dataLayer || {};
+   console.log(data);
+   if (data) {
+      dataLayer.push(data);
    }
-   if (xhr.status >= 300 && xhr.status < 400) {
-      const location = xhr.getResponseHeader("Location");
-      if (location) {
-         window.location.href = location;
-      }
-   }
-});
+})
