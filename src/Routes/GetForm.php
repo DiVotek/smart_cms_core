@@ -41,6 +41,7 @@ class GetForm
         $validator->setAttributeNames($customAttributes);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
+
             return with(new HtmxResponse(Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes))))
                 ->addTrigger('form-error');
         } else {
@@ -63,8 +64,9 @@ class GetForm
                     ->success()
                     ->send();
             }
-            AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
+            AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
         }
+
         return with(new HtmxResponse(Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes))))
             ->addTrigger('close-modal')
             ->addTrigger('new-notification')
