@@ -8,6 +8,9 @@ export function dialog() {
       animationTime: 0,
       init() {
          this.root = this.$el;
+         document.addEventListener('close-modal', () => {
+            this.closeModal();
+         })
       },
       openModal(element, label = '', description = '', animationTime = 200, isBackdrop = true) {
          this.root.appendChild(element.content.cloneNode(true));

@@ -5,6 +5,7 @@ namespace SmartCms\Core\Routes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
+use Mauricius\LaravelHtmx\Http\HtmxResponse;
 use SmartCms\Core\Components\Form as ComponentsForm;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Field;
@@ -40,8 +41,8 @@ class GetForm
         $validator->setAttributeNames($customAttributes);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
-
-            return Blade::renderComponent((new ComponentsForm($form->id, request()->all(), $errors))->withAttributes($attributes));
+            return with(new HtmxResponse(Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes))))
+                ->addTrigger('form-error');
         } else {
             $data = [];
             foreach ($request->except(['_token', 'form', 'form_attributes']) as $key => $value) {
@@ -62,14 +63,11 @@ class GetForm
                     ->success()
                     ->send();
             }
-            AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
+            AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
         }
-
-        return Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes));
-
-        return response()->json([
-            'success' => true,
-            'data' => $request->input(),
-        ]);
+        return with(new HtmxResponse(Blade::renderComponent((new ComponentsForm($form->id))->withAttributes($attributes))))
+            ->addTrigger('close-modal')
+            ->addTrigger('new-notification')
+            ->addTrigger('form-success');
     }
 }
