@@ -73,4 +73,7 @@ return [
     'header' => $prefix.'header',
     'footer' => $prefix.'footer',
     'default_variables' => $prefix.'default_variables',
+
+    'og_type' => $prefix.'og_type',
+    'og_image' => $prefix.'og_image',
 ];

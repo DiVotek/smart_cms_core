@@ -12,6 +12,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
@@ -76,7 +77,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
                             ->relationship('parent', 'name')->nullable()->default(function () {
@@ -141,6 +142,11 @@ class StaticPageResource extends Resource
             // Schema::getSeoAndTemplateRelationGroup(),
             ...config('shared.admin.page_relations', []),
         ];
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return $record->slug && strlen($record->slug) > 0;
     }
 
     public static function shouldRegisterNavigation(): bool

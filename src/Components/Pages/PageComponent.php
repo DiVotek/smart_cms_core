@@ -26,13 +26,15 @@ class PageComponent extends Component
 
     public array $dataLayer = [];
 
+    public string $og_image;
+
     public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [], array $dataLayer = [])
     {
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity?->seo ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $this->template = BuildTemplate::run($entity, $component, $defaultTemplate);
@@ -43,6 +45,7 @@ class PageComponent extends Component
         }
         $this->entity = $entity;
         $this->dataLayer = $dataLayer;
+        $this->og_image = _settings('og_image', logo());
     }
 
     public function render()
@@ -53,7 +56,7 @@ class PageComponent extends Component
                 @section('description', $meta_description)
                 @section('keywords', $meta_keywords)
                 @section("content")
-                @section('meta-image',asset($entity->image ?? logo()))
+                @section('meta-image',asset($entity->image ?? $og_image))
                 <x-s::layout.builder :data="$template" />
                 @endsection
                 @if(count($dataLayer) > 0)

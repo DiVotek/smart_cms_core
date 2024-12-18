@@ -100,4 +100,5 @@ return [
     'mask' => 'Mask',
     'validation' => 'Validation',
     'class' => 'Class',
+    'user_data' => 'User data',
 ];

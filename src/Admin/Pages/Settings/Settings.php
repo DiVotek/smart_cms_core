@@ -282,6 +282,10 @@ class Settings extends BaseSettings
                                     ->label(_fields('scripts')),
                             ])
                             ->default([]),
+                        TextInput::make('og_type')
+                            ->label(_fields('og_type')),
+                        Schema::getImage('og_image')
+                            ->label(_fields('og_image')),
                         Actions::make([
                             Actions\Action::make('save_tab_5')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
                                 $keys = [
@@ -291,6 +295,8 @@ class Settings extends BaseSettings
                                     'description' => $get('description'),
                                     'meta' => $get('meta'),
                                     'scripts' => $get('scripts'),
+                                    'og_type' => $get('og_type'),
+                                    'og_image' => $get('og_image'),
                                 ];
                                 setting($keys);
                                 $this->getSavedNotification()?->send();

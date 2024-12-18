@@ -39,4 +39,5 @@ return [
     'template' => 'Template',
     'field' => 'Field',
     'fields' => 'Fields',
+    'edit' => 'Edit',
 ];

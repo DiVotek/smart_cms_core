@@ -22,6 +22,8 @@ class Layout extends Component
 
     public array $theme;
 
+    public string $og_type;
+
     public function __construct()
     {
         $scripts = _settings('custom_scripts', []);
@@ -40,20 +42,21 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'css/app.css')) {
-                return 'scms/templates/'.template().'/css/app.css';
+            if (File::exists(scms_template_path(template()) . 'css/app.css')) {
+                return 'scms/templates/' . template() . '/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'js/app.js')) {
-                return 'scms/templates/'.template().'/js/app.js';
+            if (File::exists(scms_template_path(template()) . 'js/app.js')) {
+                return 'scms/templates/' . template() . '/js/app.js';
             } else {
                 return '';
             }
         });
-        $this->favicon = asset('/storage'._settings('favicon', '/favicon.ico'));
+        $this->favicon = asset('/storage' . _settings('favicon', '/favicon.ico'));
+        $this->og_type = _settings('og_type', 'website');
     }
 
     public function render(): View|Closure|string
@@ -77,7 +80,7 @@ class Layout extends Component
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
                         <x-s::microdata.organization />
-                        <meta property="og:type" content="website" />
+                        <meta property="og:type" content="{{$og_type}}" />
                         <meta property="og:title" content="@yield('title')" />
                         <meta property="og:description" content="@yield('description')" />
                         <meta property="og:url" content="{{ url()->current() }}" />

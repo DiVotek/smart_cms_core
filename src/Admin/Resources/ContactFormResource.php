@@ -9,10 +9,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use SmartCms\Core\Admin\Resources\ContactFormResource\Pages;
 use SmartCms\Core\Models\ContactForm;
+use SmartCms\Core\Models\Field;
+use SmartCms\Core\Models\Form as ModelsForm;
 use SmartCms\Core\Services\TableSchema;
 
 class ContactFormResource extends Resource
@@ -44,32 +49,42 @@ class ContactFormResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
+                    KeyValue::make('data')
+                        ->label(_fields('user_data'))
+                        ->addable(false)->deletable(false)->label(null)->editableKeys(false),
                     Select::make('status')
                         ->label(_fields('status'))
-                        ->options(fn () => ContactForm::getStatuses()),
-                    KeyValue::make('data')->addable(false)->deletable(false)->label(null)->editableKeys(false),
+                        ->options(fn() => ContactForm::getStatuses()),
+                    Textarea::make('comment')->label(_fields('comment'))->maxLength(255),
                 ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+        $fields = Field::query()->pluck('name', 'id')->toArray();
+        $columns = [];
+        foreach ($fields as $field) {
+            $columns[] = Tables\Columns\TextColumn::make('data.' . $field)->label($field)->toggleable()->toggledHiddenByDefault()->sortable()->copyable();
+        }
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('form.name')->label(_columns('form')),
-                IconColumn::make('status')
+                SelectColumn::make('status')
                     ->label(_columns('status'))
-                    ->icon(fn (int $state): string => match ($state) {
-                        ContactForm::STATUS_NEW => 'heroicon-o-bell-alert',
-                        ContactForm::STATUS_VIEWED => 'heroicon-o-eye',
-                        ContactForm::STATUS_CLOSED => 'heroicon-o-x',
-                        default => 'heroicon-o-check-circle',
-                    }),
+                    ->options(fn() => ContactForm::getStatuses()),
+                ...$columns,
                 TableSchema::getUpdatedAt(),
                 TableSchema::getCreatedAt(),
             ])
             ->filters([
+                SelectFilter::make('status')
+                    ->label(_columns('status'))
+                    ->options(fn() => ContactForm::getStatuses()),
+                SelectFilter::make('form_id')
+                    ->label(_columns('form'))
+                    ->options(fn() => ModelsForm::query()->pluck('name', 'id')->toArray()),
                 //
             ])
             ->actions([
