@@ -54,9 +54,9 @@ class FormResource extends Resource
         $notification = [];
         $emailText = [];
         foreach (get_active_languages() as $lang) {
-            $button[] = TextInput::make('button.' . $lang->slug)->label(_fields('button') . ' (' . $lang->name . ')')->default('Submit')->maxLength(255);
-            $notification[] = TextInput::make('notification.' . $lang->slug)->label(_fields('notification') . ' (' . $lang->name . ')')->default('Form submitted successfully')->maxLength(255);
-            $emailText[] = Textarea::make('email_text.' . $lang->slug)->label(_fields('email_text') . ' (' . $lang->name . ')')->default('Form submitted successfully')->maxLength(255);
+            $button[] = TextInput::make('button.'.$lang->slug)->label(_fields('button').' ('.$lang->name.')')->default('Submit')->maxLength(255);
+            $notification[] = TextInput::make('notification.'.$lang->slug)->label(_fields('notification').' ('.$lang->name.')')->default('Form submitted successfully')->maxLength(255);
+            $emailText[] = Textarea::make('email_text.'.$lang->slug)->label(_fields('email_text').' ('.$lang->name.')')->default('Form submitted successfully')->maxLength(255);
         }
 
         return $form

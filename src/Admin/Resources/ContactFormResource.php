@@ -8,7 +8,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -54,7 +53,7 @@ class ContactFormResource extends Resource
                         ->addable(false)->deletable(false)->label(null)->editableKeys(false),
                     Select::make('status')
                         ->label(_fields('status'))
-                        ->options(fn() => ContactForm::getStatuses()),
+                        ->options(fn () => ContactForm::getStatuses()),
                     Textarea::make('comment')->label(_fields('comment'))->maxLength(255),
                 ]),
             ]);
@@ -65,15 +64,16 @@ class ContactFormResource extends Resource
         $fields = Field::query()->pluck('name', 'id')->toArray();
         $columns = [];
         foreach ($fields as $field) {
-            $columns[] = Tables\Columns\TextColumn::make('data.' . $field)->label($field)->toggleable()->toggledHiddenByDefault()->sortable()->copyable();
+            $columns[] = Tables\Columns\TextColumn::make('data.'.$field)->label($field)->toggleable()->toggledHiddenByDefault()->sortable()->copyable();
         }
+
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('form.name')->label(_columns('form')),
                 SelectColumn::make('status')
                     ->label(_columns('status'))
-                    ->options(fn() => ContactForm::getStatuses()),
+                    ->options(fn () => ContactForm::getStatuses()),
                 ...$columns,
                 TableSchema::getUpdatedAt(),
                 TableSchema::getCreatedAt(),
@@ -81,10 +81,10 @@ class ContactFormResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->label(_columns('status'))
-                    ->options(fn() => ContactForm::getStatuses()),
+                    ->options(fn () => ContactForm::getStatuses()),
                 SelectFilter::make('form_id')
                     ->label(_columns('form'))
-                    ->options(fn() => ModelsForm::query()->pluck('name', 'id')->toArray()),
+                    ->options(fn () => ModelsForm::query()->pluck('name', 'id')->toArray()),
                 //
             ])
             ->actions([

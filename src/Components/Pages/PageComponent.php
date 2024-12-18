@@ -33,8 +33,8 @@ class PageComponent extends Component
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity?->seo ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $this->template = BuildTemplate::run($entity, $component, $defaultTemplate);
