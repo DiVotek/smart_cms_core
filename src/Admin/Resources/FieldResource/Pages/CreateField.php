@@ -20,8 +20,8 @@ class CreateField extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        if (!isset($data['html_id'])) {
-            $data['html_id'] =  \Illuminate\Support\Str::slug($data['name']) . '-' . \Illuminate\Support\Str::random(5);
+        if (! isset($data['html_id'])) {
+            $data['html_id'] = \Illuminate\Support\Str::slug($data['name']).'-'.\Illuminate\Support\Str::random(5);
         }
 
         return parent::handleRecordCreation($data);

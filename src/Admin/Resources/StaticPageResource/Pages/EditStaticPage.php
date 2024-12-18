@@ -27,7 +27,7 @@ class EditStaticPage extends EditRecord
         return [
             DeleteAction::make()->icon('heroicon-o-x-circle'),
             ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

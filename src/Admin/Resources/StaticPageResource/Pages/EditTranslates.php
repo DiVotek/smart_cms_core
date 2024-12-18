@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
-use Filament\Actions;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -37,7 +36,7 @@ class EditTranslates extends ManageRelatedRecords
 
         $recordTitle = $recordTitle instanceof Htmlable ? $recordTitle->toHtml() : $recordTitle;
 
-        return _nav('edit') . " {$recordTitle} " . $this->record->name;
+        return _nav('edit')." {$recordTitle} ".$this->record->name;
     }
 
     public function form(Form $form): Form
@@ -94,7 +93,7 @@ class EditTranslates extends ManageRelatedRecords
         return [
             DeleteAction::make()->icon('heroicon-o-x-circle'),
             ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

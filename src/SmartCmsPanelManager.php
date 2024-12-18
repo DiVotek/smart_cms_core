@@ -72,7 +72,7 @@ class SmartCmsPanelManager extends PanelProvider
             JS::make('custom-script', asset('/smart_cms_core/index.js')),
         ]);
         $brandName = company_name();
-        if(strlen($brandName) == 0){
+        if (strlen($brandName) == 0) {
             $brandName = 'SmartCms';
         }
 
