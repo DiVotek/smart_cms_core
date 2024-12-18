@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Pages\Settings;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
@@ -64,52 +66,65 @@ class Settings extends BaseSettings
                             ->required()->hidden(function ($get) {
                                 return ! $get(sconfig('is_multi_lang'));
                             }),
-                        TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
-                        Select::make(sconfig('template'))
-                            ->label(_fields('template'))
-                            ->suffixAction(
-                                ActionsAction::make(_actions('theme'))
-                                    ->label(_actions('theme'))
-                                    ->slideOver()
-                                    ->icon('heroicon-o-cog')
-                                    ->fillForm(function (): array {
-                                        $theme = _settings('theme', []);
-                                        if (empty($theme)) {
-                                            $theme = _config()->getTheme();
-                                            setting([
-                                                sconfig('theme') => _config()->getTheme(),
-                                            ]);
-                                        }
+                        // TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
+                        // Select::make(sconfig('template'))
+                        //     ->label(_fields('template'))
+                        //     ->suffixAction(
+                        //         ActionsAction::make(_actions('theme'))
+                        //             ->label(_actions('theme'))
+                        //             ->slideOver()
+                        //             ->icon('heroicon-o-cog')
+                        //             ->fillForm(function (): array {
+                        //                 $theme = _settings('theme', []);
+                        //                 if (empty($theme)) {
+                        //                     $theme = _config()->getTheme();
+                        //                     setting([
+                        //                         sconfig('theme') => _config()->getTheme(),
+                        //                     ]);
+                        //                 }
 
-                                        return [
-                                            'theme' => _settings('theme', []),
-                                        ];
-                                    })
-                                    ->action(function (array $data): void {
-                                        setting([
-                                            sconfig('theme') => $data['theme'],
-                                        ]);
-                                    })
-                                    ->hidden(function () {
-                                        return empty(_config()->getTheme());
-                                    })
-                                    ->form(function ($form) {
-                                        $theme = _config()->getTheme();
-                                        foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.'.$key)
-                                                ->label(ucfirst($key))
-                                                ->default($value);
-                                        }
+                        //                 return [
+                        //                     'theme' => _settings('theme', []),
+                        //                 ];
+                        //             })
+                        //             ->action(function (array $data): void {
+                        //                 setting([
+                        //                     sconfig('theme') => $data['theme'],
+                        //                 ]);
+                        //             })
+                        //             ->hidden(function () {
+                        //                 return empty(_config()->getTheme());
+                        //             })
+                        //             ->form(function ($form) {
+                        //                 $theme = _config()->getTheme();
+                        //                 foreach ($theme as $key => $value) {
+                        //                     $schema[] = ColorPicker::make('theme.' . $key)
+                        //                         ->label(ucfirst($key))
+                        //                         ->default($value);
+                        //                 }
 
-                                        return $form
-                                            ->schema([
-                                                Section::make('')->schema($schema),
-                                            ]);
-                                    }),
-                            )
-                            ->options(Helper::getTemplates())
-                            ->native(false)
-                            ->searchable(),
+                        //                 return $form
+                        //                     ->schema([
+                        //                         Section::make('')->schema($schema),
+                        //                     ]);
+                        //             }),
+                        //     )
+                        //     ->options(Helper::getTemplates())
+                        //     ->native(false)
+                        //     ->searchable(),
+                        Actions::make([
+                            Actions\Action::make('save')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
+                                $keys = [
+                                    sconfig('company_name') => $get(sconfig('company_name')),
+                                    sconfig('main_language') => $get(sconfig('main_language')),
+                                    sconfig('is_multi_lang') => $get(sconfig('is_multi_lang')),
+                                    sconfig('additional_languages') => $get(sconfig('additional_languages')),
+                                ];
+                                setting($keys);
+                                $this->getSavedNotification()?->send();
+                                // $this->save();
+                            }),
+                        ])->alignEnd(),
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
@@ -132,6 +147,17 @@ class Settings extends BaseSettings
                                         ->label(strans('admin.icon'))->default(''),
                                 ])
                                 ->default([]),
+                            Actions::make([
+                                Actions\Action::make('save_tab_2')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
+                                    $keys = [
+                                        sconfig('branding.logo') => $get(sconfig('branding.logo')),
+                                        sconfig('favicon') => $get(sconfig('favicon')),
+                                        sconfig('socials') => $get(sconfig('socials')),
+                                    ];
+                                    setting($keys);
+                                    $this->getSavedNotification()?->send();
+                                }),
+                            ])->alignEnd(),
                         ]),
                     Tabs\Tab::make(strans('admin.company_info'))
                         ->schema([
@@ -144,7 +170,8 @@ class Settings extends BaseSettings
                                         ->required(),
                                     TextInput::make('coordinates'),
                                     TextInput::make('city'),
-                                    TextInput::make('schedule')->required(),
+                                    TextInput::make('country'),
+                                    TextInput::make('schedule'),
                                     TextInput::make('email')->required(),
                                     Schema::getRepeater('phones')->schema([
                                         PhoneInput::make('value')
@@ -153,6 +180,15 @@ class Settings extends BaseSettings
                                             ->required(),
                                     ]),
                                 ]),
+                            Actions::make([
+                                Actions\Action::make('save_tab_3')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
+                                    $keys = [
+                                        sconfig('company_info') => $get(sconfig('company_info')),
+                                    ];
+                                    setting($keys);
+                                    $this->getSavedNotification()?->send();
+                                }),
+                            ])->alignEnd(),
                         ]),
                     Tabs\Tab::make(strans('admin.mail'))
                         ->schema([
@@ -173,6 +209,22 @@ class Settings extends BaseSettings
                                     TextInput::make(sconfig('mail.from'))->label(strans('admin.from')),
                                     TextInput::make(sconfig('mail.name'))->label(strans('admin.name')),
                                 ]),
+                            Actions::make([
+                                Actions\Action::make('save_tab_4')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
+                                    $keys = [
+                                        sconfig('admin_mails') => $get('admin_mails'),
+                                        sconfig('mail.host') => $get(sconfig('mail.host')),
+                                        sconfig('mail.port') => $get(sconfig('mail.port')),
+                                        sconfig('mail.username') => $get(sconfig('mail.username')),
+                                        sconfig('mail.password') => $get(sconfig('mail.password')),
+                                        sconfig('mail.encryption') => $get(sconfig('mail.encryption')),
+                                        sconfig('mail.from') => $get(sconfig('mail.from')),
+                                        sconfig('mail.name') => $get(sconfig('mail.name')),
+                                    ];
+                                    setting($keys);
+                                    $this->getSavedNotification()?->send();
+                                }),
+                            ])->alignEnd(),
                         ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
                         Toggle::make('indexation')
@@ -231,6 +283,20 @@ class Settings extends BaseSettings
                                     ->label(_fields('scripts')),
                             ])
                             ->default([]),
+                        Actions::make([
+                            Actions\Action::make('save_tab_5')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
+                                $keys = [
+                                    'indexation' => $get('indexation'),
+                                    'gtm' => $get('gtm'),
+                                    'title' => $get('title'),
+                                    'description' => $get('description'),
+                                    'meta' => $get('meta'),
+                                    'scripts' => $get('scripts'),
+                                ];
+                                setting($keys);
+                                $this->getSavedNotification()?->send();
+                            }),
+                        ])->alignEnd(),
                     ]),
                 ]),
         ];

@@ -111,9 +111,9 @@ class FormResource extends Resource
                 Tables\Columns\TextColumn::make('code')
                     ->label(_columns('code'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('style')
-                    ->label(_columns('style'))
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('style')
+                //     ->label(_columns('style'))
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(_columns('updated_at'))
                     ->dateTime()

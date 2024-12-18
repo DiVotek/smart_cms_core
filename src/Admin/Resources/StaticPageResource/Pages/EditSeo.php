@@ -34,7 +34,7 @@ class EditSeo extends ManageRelatedRecords
 
         $recordTitle = $recordTitle instanceof Htmlable ? $recordTitle->toHtml() : $recordTitle;
 
-        return _nav('edit')." {$recordTitle} ".$this->record->name;
+        return _nav('edit') . " {$recordTitle} " . $this->record->name;
     }
 
     public function form(Form $form): Form
@@ -66,7 +66,7 @@ class EditSeo extends ManageRelatedRecords
         return [
             DeleteAction::make()->icon('heroicon-o-x-circle'),
             ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

@@ -24,6 +24,7 @@ class Install extends Command
             '--provider' => "SmartCms\Core\SmartCmsServiceProvider",
             '--tag' => 'templates',
         ]);
+        $this->call('filament-phone-input:install');
         $this->info('Installing admin panel...');
         $this->call('filament:install');
         $this->info('Publishing newer livewire...');

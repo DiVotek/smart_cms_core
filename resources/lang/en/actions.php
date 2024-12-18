@@ -23,4 +23,5 @@ return [
     'clear_cache_error' => 'Error while clearing cache!',
     'edit' => 'Edit',
     'was_sent' => 'was sent!',
+    'save' => 'Save',
 ];

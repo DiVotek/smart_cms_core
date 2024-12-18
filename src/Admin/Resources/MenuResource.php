@@ -21,7 +21,7 @@ class MenuResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return _nav('system');
+        return _nav('design-template');
     }
 
     public static function getModelLabel(): string

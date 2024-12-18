@@ -71,6 +71,10 @@ class SmartCmsPanelManager extends PanelProvider
             Css::make('custom-stylesheet', asset('/smart_cms_core/index.css')),
             JS::make('custom-script', asset('/smart_cms_core/index.js')),
         ]);
+        $brandName = company_name();
+        if(strlen($brandName) == 0){
+            $brandName = 'SmartCms';
+        }
 
         return $panel
             ->default()
@@ -84,7 +88,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->spa(config('app.spa', false))
             ->font('Roboto')
             ->darkMode(false)
-            ->brandName(company_name() ?? 'SmartCms')
+            ->brandName($brandName)
             ->resources($this->getResources())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->pages([
@@ -211,11 +215,9 @@ class SmartCmsPanelManager extends PanelProvider
             function (): string {
                 return <<<'HTML'
                 <div class="text-xs text-center text-gray-500">
-                    <p>Powered by <a href="https://smartcms.com" target="_blank" class="hover:text-gray-700">SmartCms</a></p>
+                    <p>Powered by <a href="https://s-cms.dev" target="_blank" class="hover:text-gray-700">SmartCms</a></p>
                 </div>
                 HTML;
-
-                return view('filament.components.footer-branding')->render();
             }
         );
         Filament::registerRenderHook(

@@ -25,8 +25,11 @@ class EditStaticPage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
-            ViewAction::make(_actions('view'))->url($this->record->route())->openUrlInNewTab(),
+            DeleteAction::make()->icon('heroicon-o-x-circle'),
+            ViewAction::make()
+                ->url(fn($record) => $record->route())
+                ->icon('heroicon-o-arrow-right-end-on-rectangle')
+                ->openUrlInNewTab(true),
         ];
     }
 
