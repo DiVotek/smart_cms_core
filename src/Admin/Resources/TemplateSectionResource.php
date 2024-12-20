@@ -80,7 +80,7 @@ class TemplateSectionResource extends Resource
                             ->required()
                             ->live()
                             ->columnSpanFull(),
-                    ])->afterStateUpdated(fn($component) => $component
+                    ])->afterStateUpdated(fn ($component) => $component
                         ->getContainer()
                         // ->getContainer()
                         ->getComponent('dynamicTypeFields')

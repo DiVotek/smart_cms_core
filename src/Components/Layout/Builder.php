@@ -36,7 +36,7 @@ class Builder extends Component
         $options = $field['options'];
         $host = app('_page')->first();
         $reference = [
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -139,7 +139,7 @@ class Builder extends Component
                             $query = $query->whereIn('id', $pages['ids']);
                         }
                         if ($order == 'default') {
-                        } else if ($order == 'random') {
+                        } elseif ($order == 'random') {
                             $query = $query->inRandomOrder();
                         } else {
                             $query = $query->orderByDesc($order);

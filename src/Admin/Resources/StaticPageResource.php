@@ -79,49 +79,53 @@ class StaticPageResource extends Resource
                     ->schema([
                         Schema::getReactiveName()->suffixActions([
                             ActionsAction::make(_fields('translates'))
-                            ->hidden(function(){
-                                return !is_multi_lang();
-                            })
-                            ->icon(function($record){
-                                if($record->translatable()->count() > 0){
-                                    return 'heroicon-o-check-circle';
-                                }
-                                return 'heroicon-o-exclamation-circle';
-                            })->form(function ($form) {
-                                $fields = [];
-                                $languages = get_active_languages();
-                                foreach ($languages as $language) {
-                                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
-                                }
-                                return $form->schema($fields);
-                            })->fillForm(function ($record) {
-                                $translates = [];
-                                $languages = get_active_languages();
-                                foreach ($languages as $language) {
-                                    $translates[$language->slug] = [
-                                        'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
-                                    ];
-                                }
-                                return $translates;
-                            })->action(function ($record, $data) {
-                                foreach (get_active_languages() as $lang) {
-                                    $name = $data[$lang->slug]['name'] ?? '';
-                                    if($name == ""){
-                                        Translate::query()->where([
+                                ->hidden(function () {
+                                    return ! is_multi_lang();
+                                })
+                                ->icon(function ($record) {
+                                    if ($record->translatable()->count() > 0) {
+                                        return 'heroicon-o-check-circle';
+                                    }
+
+                                    return 'heroicon-o-exclamation-circle';
+                                })->form(function ($form) {
+                                    $fields = [];
+                                    $languages = get_active_languages();
+                                    foreach ($languages as $language) {
+                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                    }
+
+                                    return $form->schema($fields);
+                                })->fillForm(function ($record) {
+                                    $translates = [];
+                                    $languages = get_active_languages();
+                                    foreach ($languages as $language) {
+                                        $translates[$language->slug] = [
+                                            'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
+                                        ];
+                                    }
+
+                                    return $translates;
+                                })->action(function ($record, $data) {
+                                    foreach (get_active_languages() as $lang) {
+                                        $name = $data[$lang->slug]['name'] ?? '';
+                                        if ($name == '') {
+                                            Translate::query()->where([
+                                                'language_id' => $lang->id,
+                                                'entity_id' => $record->id,
+                                                'entity_type' => config('shared.page_model', Page::class),
+                                            ])->delete();
+
+                                            continue;
+                                        }
+                                        Translate::query()->updateOrCreate([
                                             'language_id' => $lang->id,
                                             'entity_id' => $record->id,
                                             'entity_type' => config('shared.page_model', Page::class),
-                                        ])->delete();
-                                        continue;
+                                        ], ['value' => $name]);
                                     }
-                                    Translate::query()->updateOrCreate([
-                                        'language_id' => $lang->id,
-                                        'entity_id' => $record->id,
-                                        'entity_type' => config('shared.page_model', Page::class),
-                                    ], ['value' => $name]);
-                                }
-                                Notification::make()->success()->title(_actions('saved'))->send();
-                            })
+                                    Notification::make()->success()->title(_actions('saved'))->send();
+                                }),
                         ]),
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
