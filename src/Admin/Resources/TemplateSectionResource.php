@@ -70,19 +70,26 @@ class TemplateSectionResource extends Resource
                     //     Forms\Components\Toggle::make('locked')
                     //         ->required(),
                     // ])->columns(2),
-                    ViewField::make('design')
-                        ->label(_fields('design'))
-                        ->view('smart_cms::admin.design')
-                        ->viewData([
-                            'options' => $components,
-                        ])
-                        ->required()
-                        ->afterStateUpdated(fn ($component) => $component
-                            ->getContainer()
-                            ->getComponent('dynamicTypeFields')
-                            ->getChildComponentContainer()
-                            ->fill())->live()
-                        ->columnSpanFull(),
+                    Section::make(_fields('design_wrap'))->schema([
+                        ViewField::make('design')
+                            ->label(_fields('design'))
+                            ->view('smart_cms::admin.design')
+                            ->viewData([
+                                'options' => $components,
+                            ])
+                            ->required()
+                            ->live()
+                            ->columnSpanFull(),
+                    ])->afterStateUpdated(fn($component) => $component
+                        ->getContainer()
+                        // ->getContainer()
+                        ->getComponent('dynamicTypeFields')
+                        ->getChildComponentContainer()
+                        ->fill())
+                        ->collapsible()
+                        ->collapsed(function ($operation) {
+                            return $operation === 'edit';
+                        }),
                     // Radio::make('design')
                     //     ->label(_fields('design'))
                     //     ->options($components),

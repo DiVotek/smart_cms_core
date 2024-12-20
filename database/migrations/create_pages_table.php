@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('views')->default(0);
             $table->boolean('is_nav')->default(0);
             $table->json('nav_settings')->nullable();
+            $table->boolean('is_index')->default(true);
             $table->json('custom')->nullable();
             $table->timestamps();
         });

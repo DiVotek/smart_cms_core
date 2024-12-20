@@ -24,4 +24,5 @@ return [
     'edit' => 'Edit',
     'was_sent' => 'was sent!',
     'save' => 'Save',
+    'saved' => 'Saved!',
 ];

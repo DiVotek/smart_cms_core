@@ -101,4 +101,9 @@ return [
     'validation' => 'Validation',
     'class' => 'Class',
     'user_data' => 'User data',
+    'og_type' => 'Open Graph type',
+    'og_image' => 'Open Graph image',
+    'translates' => 'Translates',
+    'default' => 'Default',
+    'design_wrap' => 'Design',
 ];

@@ -2,9 +2,12 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
+use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -16,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Models\Translate;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
@@ -73,7 +77,52 @@ class StaticPageResource extends Resource
             ->schema([
                 Section::make()
                     ->schema([
-                        Schema::getReactiveName(),
+                        Schema::getReactiveName()->suffixActions([
+                            ActionsAction::make(_fields('translates'))
+                            ->hidden(function(){
+                                return !is_multi_lang();
+                            })
+                            ->icon(function($record){
+                                if($record->translatable()->count() > 0){
+                                    return 'heroicon-o-check-circle';
+                                }
+                                return 'heroicon-o-exclamation-circle';
+                            })->form(function ($form) {
+                                $fields = [];
+                                $languages = get_active_languages();
+                                foreach ($languages as $language) {
+                                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                }
+                                return $form->schema($fields);
+                            })->fillForm(function ($record) {
+                                $translates = [];
+                                $languages = get_active_languages();
+                                foreach ($languages as $language) {
+                                    $translates[$language->slug] = [
+                                        'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
+                                    ];
+                                }
+                                return $translates;
+                            })->action(function ($record, $data) {
+                                foreach (get_active_languages() as $lang) {
+                                    $name = $data[$lang->slug]['name'] ?? '';
+                                    if($name == ""){
+                                        Translate::query()->where([
+                                            'language_id' => $lang->id,
+                                            'entity_id' => $record->id,
+                                            'entity_type' => config('shared.page_model', Page::class),
+                                        ])->delete();
+                                        continue;
+                                    }
+                                    Translate::query()->updateOrCreate([
+                                        'language_id' => $lang->id,
+                                        'entity_id' => $record->id,
+                                        'entity_type' => config('shared.page_model', Page::class),
+                                    ], ['value' => $name]);
+                                }
+                                Notification::make()->success()->title(_actions('saved'))->send();
+                            })
+                        ]),
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
@@ -159,7 +208,7 @@ class StaticPageResource extends Resource
         return [
             'index' => Pages\ListStaticPages::route('/'),
             'edit' => Pages\EditStaticPage::route('/{record}/edit'),
-            'translates' => Pages\EditTranslates::route('/{record}/translates'),
+            // 'translates' => Pages\EditTranslates::route('/{record}/translates'),
             'seo' => Pages\EditSeo::route('/{record}/seo'),
             'template' => Pages\EditTemplate::route('/{record}/template'),
         ];
@@ -169,7 +218,7 @@ class StaticPageResource extends Resource
     {
         return $page->generateNavigationItems([
             Pages\EditStaticPage::class,
-            Pages\EditTranslates::class,
+            // Pages\EditTranslates::class,
             Pages\EditSeo::class,
             Pages\EditTemplate::class,
         ]);

@@ -36,7 +36,7 @@ class Builder extends Component
         $options = $field['options'];
         $host = app('_page')->first();
         $reference = [
-            'logo' => asset('/storage'.logo()),
+            'logo' => asset('/storage' . logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -108,7 +108,7 @@ class Builder extends Component
                         ];
                         break;
                     case VariableTypes::DESCRIPTION->value:
-                        $variables[$field['name']] = GetDescription::run($options);
+                        // $variables[$field['name']] = GetDescription::run($options);
                         $variables[$field['name']] = [
                             'use_page_description' => $options['use_page_description'] ?? false,
                             'use_page_summary' => $options['use_page_summary'] ?? false,
@@ -138,7 +138,8 @@ class Builder extends Component
                         } else {
                             $query = $query->whereIn('id', $pages['ids']);
                         }
-                        if ($order == 'random') {
+                        if ($order == 'default') {
+                        } else if ($order == 'random') {
                             $query = $query->inRandomOrder();
                         } else {
                             $query = $query->orderByDesc($order);
@@ -171,6 +172,7 @@ class Builder extends Component
                         break;
                 }
             } catch (Exception $exception) {
+
                 dd($field, $exception, $options, $schema);
             }
         }
