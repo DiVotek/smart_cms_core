@@ -357,7 +357,7 @@ class Settings extends BaseSettings
                             ->send();
                     }
                 }),
-                Action::make('save_2')
+            Action::make('save_2')
                 ->label(_actions('save'))
                 ->icon('heroicon-o-check-circle')
                 ->action(function () {
