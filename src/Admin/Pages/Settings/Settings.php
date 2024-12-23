@@ -16,6 +16,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
+use Filament\Pages\Dashboard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
@@ -40,6 +41,14 @@ class Settings extends BaseSettings
     public static function getNavigationIcon(): string|Htmlable|null
     {
         return null;
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            Dashboard::getUrl() => _nav('dashboard'),
+            _nav('settings'),
+        ];
     }
 
     public function schema(): array|Closure
@@ -347,6 +356,12 @@ class Settings extends BaseSettings
                             ->error()
                             ->send();
                     }
+                }),
+                Action::make('save_2')
+                ->label(_actions('save'))
+                ->icon('heroicon-o-check-circle')
+                ->action(function () {
+                    $this->save();
                 }),
         ];
     }
