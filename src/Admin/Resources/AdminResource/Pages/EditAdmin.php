@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\AdminResource\Pages;
 
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use SmartCms\Core\Admin\Resources\AdminResource;
 
@@ -14,7 +13,7 @@ class EditAdmin extends EditRecord
     {
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
-                \Filament\Actions\Action::make(_actions('save_close'))
+            \Filament\Actions\Action::make(_actions('save_close'))
                 ->label('Save & Close')
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')

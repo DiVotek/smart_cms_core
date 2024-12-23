@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 use SmartCms\Core\Services\Helper;

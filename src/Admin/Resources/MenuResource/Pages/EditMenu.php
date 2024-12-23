@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\MenuResource\Pages;
 
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use SmartCms\Core\Admin\Resources\MenuResource;
 

@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use Filament\Forms;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
@@ -75,16 +73,16 @@ class TemplateSectionResource extends Resource
                         ->required()
                         ->live()
                         ->columnSpanFull()
-                        ->afterStateUpdated(fn($component) => $component
+                        ->afterStateUpdated(fn ($component) => $component
                             ->getContainer()
                             ->getComponent('dynamicTypeFields')
                             ->getChildComponentContainer()
                             ->fill())
-                        // ->collapsible()
-                        // ->collapsed(function ($operation) {
-                        //     return $operation === 'edit';
-                        // })
-                        ,
+                    // ->collapsible()
+                    // ->collapsed(function ($operation) {
+                    //     return $operation === 'edit';
+                    // })
+                    ,
                     // ])->live()
                     Section::make(_fields('component_settings'))
                         ->schema(function (Get $get): array {

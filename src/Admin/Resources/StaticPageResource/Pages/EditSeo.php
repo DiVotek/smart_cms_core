@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
@@ -62,7 +60,7 @@ class EditSeo extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -71,6 +69,7 @@ class EditSeo extends ManageRelatedRecords
                 ->formId('form')
                 ->action(function ($record, $data) {
                     $this->getOwnerRecord()->touch();
+
                     return redirect()->to(ListStaticPages::getUrl());
                 }),
             \Filament\Actions\Action::make(_actions('save'))
