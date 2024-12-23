@@ -28,13 +28,9 @@ class EditSeo extends ManageRelatedRecords
         return 'heroicon-o-globe-alt';
     }
 
-    public function getTitle(): string|Htmlable
+    public function getBreadcrumb(): string
     {
-        $recordTitle = $this->getRecordTitle();
-
-        $recordTitle = $recordTitle instanceof Htmlable ? $recordTitle->toHtml() : $recordTitle;
-
-        return _nav('edit')." {$recordTitle} ".$this->record->name;
+        return $this->record->name;
     }
 
     public function form(Form $form): Form
@@ -64,11 +60,26 @@ class EditSeo extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()->icon('heroicon-o-x-circle'),
-            ViewAction::make()
-                ->url(fn ($record) => $record->route())
+            \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
+            \Filament\Actions\ViewAction::make()
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
+            \Filament\Actions\Action::make(_actions('save_close'))
+                ->label('Save & Close')
+                ->icon('heroicon-o-check-badge')
+                ->formId('form')
+                ->action(function ($record, $data) {
+                    $this->getOwnerRecord()->touch();
+                    return redirect()->to(ListStaticPages::getUrl());
+                }),
+            \Filament\Actions\Action::make(_actions('save'))
+                ->label(_actions('save'))
+                ->icon('heroicon-o-check-circle')
+                ->action(function () {
+                    $this->getOwnerRecord()->touch();
+                })
+                ->formId('form'),
         ];
     }
 }

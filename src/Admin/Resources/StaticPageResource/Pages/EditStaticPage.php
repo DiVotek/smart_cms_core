@@ -22,14 +22,38 @@ class EditStaticPage extends EditRecord
         return 'heroicon-o-cog';
     }
 
+    public function getBreadcrumb(): string
+    {
+        return $this->record->name;
+    }
+
+
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()->icon('heroicon-o-x-circle'),
-            ViewAction::make()
-                ->url(fn ($record) => $record->route())
+            \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
+            \Filament\Actions\ViewAction::make()
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
+            \Filament\Actions\Action::make(_actions('save_close'))
+                ->label('Save & Close')
+                ->icon('heroicon-o-check-badge')
+                ->formId('form')
+                ->action(function () {
+                    $this->save(true, true);
+                    $this->record->touch();
+
+                    return redirect()->to(ListStaticPages::getUrl());
+                }),
+            $this->getSaveFormAction()
+                ->label(_actions('save'))
+                ->icon('heroicon-o-check-circle')
+                ->action(function () {
+                    $this->save();
+                    $this->record->touch();
+                })
+                ->formId('form'),
         ];
     }
 

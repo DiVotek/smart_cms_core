@@ -65,34 +65,27 @@ class TemplateSectionResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Schema::getName(true)->maxLength(255),
-                    // Fieldset::make()->schema([
-                    //     Schema::getStatus(),
-                    //     Forms\Components\Toggle::make('locked')
-                    //         ->required(),
-                    // ])->columns(2),
-                    Section::make(_fields('design_wrap'))->schema([
-                        ViewField::make('design')
-                            ->label(_fields('design'))
-                            ->view('smart_cms::admin.design')
-                            ->viewData([
-                                'options' => $components,
-                            ])
-                            ->required()
-                            ->live()
-                            ->columnSpanFull(),
-                    ])->afterStateUpdated(fn ($component) => $component
-                        ->getContainer()
-                        // ->getContainer()
-                        ->getComponent('dynamicTypeFields')
-                        ->getChildComponentContainer()
-                        ->fill())
-                        ->collapsible()
-                        ->collapsed(function ($operation) {
-                            return $operation === 'edit';
-                        }),
-                    // Radio::make('design')
-                    //     ->label(_fields('design'))
-                    //     ->options($components),
+                    // Section::make(_fields('design_wrap'))->schema([
+                    ViewField::make('design')
+                        ->label(_fields('design'))
+                        ->view('smart_cms::admin.design')
+                        ->viewData([
+                            'options' => $components,
+                        ])
+                        ->required()
+                        ->live()
+                        ->columnSpanFull()
+                        ->afterStateUpdated(fn($component) => $component
+                            ->getContainer()
+                            ->getComponent('dynamicTypeFields')
+                            ->getChildComponentContainer()
+                            ->fill())
+                        // ->collapsible()
+                        // ->collapsed(function ($operation) {
+                        //     return $operation === 'edit';
+                        // })
+                        ,
+                    // ])->live()
                     Section::make(_fields('component_settings'))
                         ->schema(function (Get $get): array {
                             $class = $get('design');

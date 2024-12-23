@@ -27,6 +27,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 use SmartCms\Core\Admin\Pages\Auth\Login;
 use SmartCms\Core\Admin\Pages\Auth\Profile;
+use SmartCms\Core\Admin\Pages\TemplatePage;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
 use SmartCms\Core\Models\MenuSection;
@@ -93,6 +94,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->pages([
                 \Filament\Pages\Dashboard::class,
+                TemplatePage::class,
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('17rem')
@@ -148,7 +150,7 @@ class SmartCmsPanelManager extends PanelProvider
                     ->sort($section->sorting + 2)
                     ->group($section->name)
                     ->isActiveWhen(function () use ($section) {
-                        return request()->route()->getName() === ListStaticPages::getRouteName() && (! request('activeTab') || request('activeTab') == $section->name);
+                        return request()->route()->getName() === ListStaticPages::getRouteName() && (request('activeTab') == $section->name);
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
