@@ -24,7 +24,16 @@ class Languages
 
     public function getMulti(array $ids): Collection
     {
-        return $this->languages->whereIn('id', $ids);
+        return $this->languages->whereIn('id', $ids)->sort(function ($a, $b) {
+            $main_lang = main_lang_id();
+            if ($a->id === $main_lang && $b->id !== $main_lang) {
+                return -1;
+            }
+            if ($b->id === $main_lang && $a->id !== $main_lang) {
+                return 1;
+            }
+            return $a->id <=> $b->id;
+        })->values();
     }
 
     public function getDefault(): Language

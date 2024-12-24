@@ -105,16 +105,6 @@ class TranslationResource extends Resource
                     ->relationship('language', 'name')->hidden(! is_multi_lang()),
             ])
             ->actions([])
-            ->headerActions([
-                Schema::helpAction('Translation help'),
-                Tables\Actions\Action::make(_actions('clear_cache'))->action(function () {
-                    cache()->forget('translations');
-                    Notification::make()
-                        ->title(_actions('cleared_tranlations'))
-                        ->success()
-                        ->send();
-                }),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
             ]);

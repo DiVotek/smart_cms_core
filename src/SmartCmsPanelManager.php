@@ -35,6 +35,7 @@ use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Singletone\Languages;
 use SmartCms\Core\Services\Singletone\Pages;
 use SmartCms\Core\Services\Singletone\Settings;
+use SmartCms\Core\Services\Singletone\Translates;
 
 class SmartCmsPanelManager extends PanelProvider
 {
@@ -48,6 +49,9 @@ class SmartCmsPanelManager extends PanelProvider
         });
         $this->app->singleton('_page', function () {
             return new Pages;
+        });
+        $this->app->singleton('_trans', function () {
+            return new Translates;
         });
         if (! FacadesSchema::hasTable('settings')) {
             return $panel->default()
