@@ -68,6 +68,7 @@ class StaticPageResource extends Resource
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
+
         return $form
             ->schema([
                 Section::make()
@@ -128,7 +129,7 @@ class StaticPageResource extends Resource
                         Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
-                            ->relationship('parent', 'name',function ($query) use ($form) {
+                            ->relationship('parent', 'name', function ($query) use ($form) {
                                 $query->where('id', '!=', $form->getRecord()?->id);
                             })
                             ->nullable()->default(function () {
