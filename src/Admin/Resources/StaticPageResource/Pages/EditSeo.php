@@ -61,8 +61,9 @@ class EditSeo extends ManageRelatedRecords
             IconColumn::make('description')->label(_fields('seo_description'))->boolean()->toggleable()->default(false),
             IconColumn::make('summary')->label(_fields('seo_summary'))->toggleable()->boolean(),
             IconColumn::make('content')->label(_fields('seo_content'))->boolean()->toggleable(),
-            TableSchema::getUpdatedAt()
+            TableSchema::getUpdatedAt(),
         ];
+
         return SeoResource::table($table)
             ->modifyQueryUsing(function ($query) {
                 if (! is_multi_lang()) {
@@ -86,7 +87,7 @@ class EditSeo extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -107,13 +108,15 @@ class EditSeo extends ManageRelatedRecords
                 ->formId('form'),
         ];
     }
+
     public function getIconForColumn(string $state): string
     {
         $state = strip_tags($state);
         $state = str_replace(' ', '', $state);
-        if($state && strlen($state) > 0) {
+        if ($state && strlen($state) > 0) {
             return 'heroicon-o-check-circle';
         }
+
         return 'heroicon-o-x-circle';
     }
 }

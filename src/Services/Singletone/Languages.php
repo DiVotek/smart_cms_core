@@ -32,6 +32,7 @@ class Languages
             if ($b->id === $main_lang && $a->id !== $main_lang) {
                 return 1;
             }
+
             return $a->id <=> $b->id;
         })->values();
     }

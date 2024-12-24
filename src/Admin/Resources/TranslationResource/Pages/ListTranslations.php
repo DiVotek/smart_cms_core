@@ -6,7 +6,6 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Admin\Resources\TranslationResource;
-use SmartCms\Core\Services\Schema;
 
 class ListTranslations extends ListRecords
 {
@@ -16,10 +15,10 @@ class ListTranslations extends ListRecords
     {
         return [
             Actions\Action::make(_hints('help'))
-            ->iconButton()
-            ->icon('heroicon-o-question-mark-circle')
-            ->modalDescription(_actions('translations_help'))
-            ->modalFooterActions([]),
+                ->iconButton()
+                ->icon('heroicon-o-question-mark-circle')
+                ->modalDescription(_actions('translations_help'))
+                ->modalFooterActions([]),
             Actions\Action::make(_actions('clear_cache'))->action(function () {
                 cache()->forget('translations');
                 Notification::make()

@@ -16,10 +16,10 @@ class Translates
     public function get(string $key): string
     {
         $translate = $this->translates->where('key', $key)->first();
-        if(!$translate){
+        if (! $translate) {
             return $key;
         }
+
         return $translate->value ?? $key;
     }
-
 }
