@@ -68,11 +68,6 @@ class StaticPageResource extends Resource
         if (! Page::query()->where('slug', '')->exists() || $form->getRecord() && $form->getRecord()->slug === '') {
             $isRequired = false;
         }
-        $custom_fields = config('shared.page_custom_fields', []);
-        if ($custom_fields) {
-            $custom_fields = (new $custom_fields)->__invoke();
-        }
-
         return $form
             ->schema([
                 Section::make()
@@ -133,11 +128,13 @@ class StaticPageResource extends Resource
                         Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
-                            ->relationship('parent', 'name')->nullable()->default(function () {
+                            ->relationship('parent', 'name',function ($query) use ($form) {
+                                $query->where('id', '!=', $form->getRecord()?->id);
+                            })
+                            ->nullable()->default(function () {
                                 return request('parent') ?? null;
                             })->hidden((bool) request('parent'))->live(),
                         ...$customFields,
-                        ...$custom_fields,
                     ]),
             ]);
     }
