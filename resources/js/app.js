@@ -19,7 +19,6 @@ Alpine.start()
 document.addEventListener('new-datalayer', (event) => {
    const dataLayer = window.dataLayer || [];
    const data = event.detail.dataLayer || {};
-   console.log(data);
    if (data) {
       dataLayer.push(data);
    }
