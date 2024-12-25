@@ -154,6 +154,9 @@ class Schema
     public static function getLinkBuilder(string $name): AdjacencyList
     {
         $links = Page::query()->pluck('name', 'slug')->toArray();
+        if(class_exists('\SmartCms\Store\Models\Category')){
+            $links = array_merge($links, \SmartCms\Store\Models\Category::query()->pluck('name', 'slug')->toArray());
+        }
 
         return AdjacencyList::make($name)->columnSpanFull()
             ->maxDepth(1)

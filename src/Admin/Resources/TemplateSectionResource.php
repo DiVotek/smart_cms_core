@@ -60,10 +60,10 @@ class TemplateSectionResource extends Resource
     public static function form(Form $form): Form
     {
         $components = _config()->getSections();
-
         return $form
             ->schema([
                 Section::make('')->schema([
+                    // Hidden::make('changedDesign')->default(false),
                     Schema::getName(true)->maxLength(255)->suffixAction(Action::make('design')
                         ->label(_fields('design'))->icon('heroicon-o-cog')
                         ->mountUsing(function ($form, $get) {
@@ -81,7 +81,10 @@ class TemplateSectionResource extends Resource
                                     ->live()
                                     ->columnSpanFull(),
                             ]);
-                        })->action(function ($record, $data, $set, $component) {
+                        })->action(function ($record, $data, $set,$get, $component) {
+                            // if($get('design') !== $data['design']) {
+                            //     $set('changedDesign', true);
+                            // }
                             $set('design', $data['design']);
                             $component->getContainer()->getComponent('dynamicTypeFields')->getChildComponentContainer()->fill();
                         })),
@@ -92,7 +95,11 @@ class TemplateSectionResource extends Resource
                             if (! $class) {
                                 return [];
                             }
-                            $set('value', $record->value ?? '');
+                            // if($get('changedDesign')){
+                            //     // dd(123);
+                            //     $set('value', $record->value ?? '');
+                            //     $set('changedDesign', false);
+                            // }
 
                             return Helper::getComponentClass($class);
                         })->live()
