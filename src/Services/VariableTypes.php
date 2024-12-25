@@ -4,9 +4,11 @@ namespace SmartCms\Core\Services;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -62,9 +64,9 @@ enum VariableTypes: string
             $label = Helper::getLabelFromField($name);
         }
         if ($is_lang) {
-            $name = $prefix.$name;
+            $name = $prefix . $name;
         } else {
-            $name = $prefix.main_lang().'.'.$name;
+            $name = $prefix . main_lang() . '.' . $name;
         }
         if ($var['type'] == self::ARRAY->value && isset($var['schema'])) {
             $fields = [];
@@ -72,7 +74,7 @@ enum VariableTypes: string
                 $fields = array_merge($fields, Helper::parseVariable($variable, ''));
             }
 
-            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])->cloneable()];
+            return [Repeater::make($prefix . $var['name'])->label($label)->schema($fields)->default([])->cloneable()];
         }
         // if ($var['type'] == self::PAGES->value) {
         //     $pages = Page::query()->pluck('name', 'id')->toArray();
@@ -91,8 +93,8 @@ enum VariableTypes: string
             self::SCHEDULES => $this->getSchedules($name, $label, $var),
             self::SOCIALS => $this->getSocials($name, $label, $var),
             self::LINKS => $this->getLinks($name, $label, $var),
-            self::HEADING => ModuleTitleSchema::run()[0],
-            self::DESCRIPTION => ModuleDescriptionSchema::run()[0],
+            self::HEADING => $this->getTitle($name, $label, $var),
+            self::DESCRIPTION => $this->getDescription($name, $label, $var),
             self::FORM => $this->getForm($name, $label, $var),
             self::TEXT => $this->getText($name, $label, $var),
             self::TEXTAREA => $this->getTextarea($name, $label, $var),
@@ -119,8 +121,8 @@ enum VariableTypes: string
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $var['label'] = $label.' '.$lang->name;
-                $fields = array_merge($fields, [Hidden::make($prefix.$lang->slug.'.'.$var['name'])]);
+                $var['label'] = $label . ' ' . $lang->name;
+                $fields = array_merge($fields, [Hidden::make($prefix . $lang->slug . '.' . $var['name'])]);
                 // $fields = array_merge($fields, self::toFilamentField($var, $prefix . $lang->slug . '.', true));
             }
         }
@@ -143,30 +145,30 @@ enum VariableTypes: string
     {
         if ($is_multiple) {
             return Section::make('')->schema([
-                Toggle::make($name.'.auto')->label($label)
+                Toggle::make($name . '.auto')->label($label)
                     ->helperText(_hints('pages.auto'))
                     ->live()->afterStateUpdated(function ($set, $get) {}),
-                Select::make($name.'.ids')->label($label)
+                Select::make($name . '.ids')->label($label)
                     ->hidden(function ($get) use ($name) {
-                        return $get($name.'.auto') == true;
+                        return $get($name . '.auto') == true;
                     })
                     ->helperText(_hints('pages'))
                     ->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->required($var['required'] ?? true),
-                Toggle::make($name.'.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
-                    return $get($name.'.auto') == false;
+                Toggle::make($name . '.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
+                    return $get($name . '.auto') == false;
                 })->helperText(_hints('pages.all_children')),
-                Select::make($name.'.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
-                    return $get($name.'.auto') == false || $get($name.'.all_children') == true;
+                Select::make($name . '.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
+                    return $get($name . '.auto') == false || $get($name . '.all_children') == true;
                 })->native(false)->selectablePlaceholder(false)
                     ->options(Page::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),
                 Group::make([
-                    Select::make($name.'.order')->label(_fields('order'))->options([
+                    Select::make($name . '.order')->label(_fields('order'))->options([
                         'default' => _fields('default'),
                         'created_at' => _fields('created_at'),
                         'popularity' => _fields('popularity'),
                         'random' => _fields('random'),
                     ])->default('default')->required()->native(false)->selectablePlaceholder(false),
-                    TextInput::make($name.'.limit')->label(_fields('limit'))->numeric()->required($var['required'] ?? true)->default(5),
+                    TextInput::make($name . '.limit')->label(_fields('limit'))->numeric()->required($var['required'] ?? true)->default(5),
                 ])->columns(2),
             ]);
         } else {
@@ -401,5 +403,75 @@ enum VariableTypes: string
         // ->suffixAction(
         //     $this->getTranslateAction($fields, $name),
         // )
+    }
+
+    public function getTitle(string $name, string $label, array $var)
+    {
+        $fields = [];
+        $hidden = [];
+        foreach ($this->getLanguages() as $lang) {
+            $fields[] = TextInput::make($lang->slug)->label($lang->name)
+                ->required($var['required'] ?? true);
+            $hidden[] = Hidden::make('value.' . $lang->slug . '.title');
+        }
+        return Fieldset::make(_fields('Heading'))->schema([
+            ...$hidden,
+            TextInput::make('value.' . main_lang() . '.title')->label($label)->required($var['required'] ?? true)->suffixAction($this->getTranslateAction($fields, 'value.' . main_lang() . '.title')),
+            Group::make([
+                Toggle::make('value.use_page_heading')->label(_fields('use_page_heading'))->default(true)->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $set('value.use_page_name', false);
+                    }
+                }),
+                Toggle::make('value.use_page_name')->label(_fields('use_page_name'))->default(false)->reactive()->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $set('value.use_page_heading', false);
+                    }
+                }),
+            ])->columns(2),
+            Group::make([
+                Radio::make('value.heading_type')
+                    ->options([
+                        'h1' => 'H1',
+                        'h2' => 'H2',
+                        'h3' => 'H3',
+                        'none' => 'None',
+                    ])
+                    ->required()
+                    ->default('h2')->inline(),
+            ])->columns(2),
+        ])->columns(1);
+        return;
+    }
+
+    public function getDescription(string $name, string $label, array $var)
+    {
+        $fields = [];
+        $hidden = [];
+        foreach ($this->getLanguages() as $lang) {
+            $fields[] = Textarea::make($lang->slug)->label($lang->name)
+                ->required($var['required'] ?? true);
+            $hidden[] = Hidden::make('value.' . $lang->slug . '.description');
+        }
+        return Fieldset::make(_fields('Description'))->schema([
+            ...$hidden,
+            Textarea::make('value.' . main_lang() . '.description')->label(_fields('description'))->required()->hintAction($this->getTranslateAction($fields, 'value.' . main_lang() . '.description')),
+            Group::make([
+                Toggle::make('value.use_page_description')
+                    ->label(_fields('use_page_description'))->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state) {
+                            $set('value.is_summary', false);
+                        }
+                    }),
+                Toggle::make('value.use_page_summary')
+                    ->label(_fields('use_page_summary'))->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state) {
+                            $set('value.is_description', false);
+                        }
+                    }),
+            ])->columns(2),
+        ])->columns(1);
     }
 }

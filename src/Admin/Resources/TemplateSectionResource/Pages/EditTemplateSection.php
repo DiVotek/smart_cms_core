@@ -39,7 +39,6 @@ class EditTemplateSection extends EditRecord
     {
         $schema = Helper::getComponentSchema($data['design']);
         $data['schema'] = $schema;
-
         return $data;
     }
 }
