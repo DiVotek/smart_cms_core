@@ -16,8 +16,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use SmartCms\Core\Actions\Schema\ModuleDescriptionSchema;
-use SmartCms\Core\Actions\Schema\ModuleTitleSchema;
 use SmartCms\Core\Models\Form;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
@@ -64,9 +62,9 @@ enum VariableTypes: string
             $label = Helper::getLabelFromField($name);
         }
         if ($is_lang) {
-            $name = $prefix . $name;
+            $name = $prefix.$name;
         } else {
-            $name = $prefix . main_lang() . '.' . $name;
+            $name = $prefix.main_lang().'.'.$name;
         }
         if ($var['type'] == self::ARRAY->value && isset($var['schema'])) {
             $fields = [];
@@ -74,7 +72,7 @@ enum VariableTypes: string
                 $fields = array_merge($fields, Helper::parseVariable($variable, ''));
             }
 
-            return [Repeater::make($prefix . $var['name'])->label($label)->schema($fields)->default([])->cloneable()];
+            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])->cloneable()];
         }
         // if ($var['type'] == self::PAGES->value) {
         //     $pages = Page::query()->pluck('name', 'id')->toArray();
@@ -121,8 +119,8 @@ enum VariableTypes: string
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $var['label'] = $label . ' ' . $lang->name;
-                $fields = array_merge($fields, [Hidden::make($prefix . $lang->slug . '.' . $var['name'])]);
+                $var['label'] = $label.' '.$lang->name;
+                $fields = array_merge($fields, [Hidden::make($prefix.$lang->slug.'.'.$var['name'])]);
                 // $fields = array_merge($fields, self::toFilamentField($var, $prefix . $lang->slug . '.', true));
             }
         }
@@ -145,30 +143,30 @@ enum VariableTypes: string
     {
         if ($is_multiple) {
             return Section::make('')->schema([
-                Toggle::make($name . '.auto')->label($label)
+                Toggle::make($name.'.auto')->label($label)
                     ->helperText(_hints('pages.auto'))
                     ->live()->afterStateUpdated(function ($set, $get) {}),
-                Select::make($name . '.ids')->label($label)
+                Select::make($name.'.ids')->label($label)
                     ->hidden(function ($get) use ($name) {
-                        return $get($name . '.auto') == true;
+                        return $get($name.'.auto') == true;
                     })
                     ->helperText(_hints('pages'))
                     ->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->required($var['required'] ?? true),
-                Toggle::make($name . '.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
-                    return $get($name . '.auto') == false;
+                Toggle::make($name.'.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
+                    return $get($name.'.auto') == false;
                 })->helperText(_hints('pages.all_children')),
-                Select::make($name . '.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
-                    return $get($name . '.auto') == false || $get($name . '.all_children') == true;
+                Select::make($name.'.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
+                    return $get($name.'.auto') == false || $get($name.'.all_children') == true;
                 })->native(false)->selectablePlaceholder(false)
                     ->options(Page::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),
                 Group::make([
-                    Select::make($name . '.order')->label(_fields('order'))->options([
+                    Select::make($name.'.order')->label(_fields('order'))->options([
                         'default' => _fields('default'),
                         'created_at' => _fields('created_at'),
                         'popularity' => _fields('popularity'),
                         'random' => _fields('random'),
                     ])->default('default')->required()->native(false)->selectablePlaceholder(false),
-                    TextInput::make($name . '.limit')->label(_fields('limit'))->numeric()->required($var['required'] ?? true)->default(5),
+                    TextInput::make($name.'.limit')->label(_fields('limit'))->numeric()->required($var['required'] ?? true)->default(5),
                 ])->columns(2),
             ]);
         } else {
@@ -412,11 +410,12 @@ enum VariableTypes: string
         foreach ($this->getLanguages() as $lang) {
             $fields[] = TextInput::make($lang->slug)->label($lang->name)
                 ->required($var['required'] ?? true);
-            $hidden[] = Hidden::make('value.' . $lang->slug . '.title');
+            $hidden[] = Hidden::make('value.'.$lang->slug.'.title');
         }
+
         return Fieldset::make(_fields('Heading'))->schema([
             ...$hidden,
-            TextInput::make('value.' . main_lang() . '.title')->label($label)->required($var['required'] ?? true)->suffixAction($this->getTranslateAction($fields, 'value.' . main_lang() . '.title')),
+            TextInput::make('value.'.main_lang().'.title')->label($label)->required($var['required'] ?? true)->suffixAction($this->getTranslateAction($fields, 'value.'.main_lang().'.title')),
             Group::make([
                 Toggle::make('value.use_page_heading')->label(_fields('use_page_heading'))->default(true)->afterStateUpdated(function ($state, callable $set) {
                     if ($state) {
@@ -441,7 +440,7 @@ enum VariableTypes: string
                     ->default('h2')->inline(),
             ])->columns(2),
         ])->columns(1);
-        return;
+
     }
 
     public function getDescription(string $name, string $label, array $var)
@@ -451,11 +450,12 @@ enum VariableTypes: string
         foreach ($this->getLanguages() as $lang) {
             $fields[] = Textarea::make($lang->slug)->label($lang->name)
                 ->required($var['required'] ?? true);
-            $hidden[] = Hidden::make('value.' . $lang->slug . '.description');
+            $hidden[] = Hidden::make('value.'.$lang->slug.'.description');
         }
+
         return Fieldset::make(_fields('Description'))->schema([
             ...$hidden,
-            Textarea::make('value.' . main_lang() . '.description')->label(_fields('description'))->required()->hintAction($this->getTranslateAction($fields, 'value.' . main_lang() . '.description')),
+            Textarea::make('value.'.main_lang().'.description')->label(_fields('description'))->required()->hintAction($this->getTranslateAction($fields, 'value.'.main_lang().'.description')),
             Group::make([
                 Toggle::make('value.use_page_description')
                     ->label(_fields('use_page_description'))->reactive()

@@ -30,12 +30,12 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'templates::' . template() . '.sections';
+            $sectionComponent = 'templates::'.template().'.sections';
             $design = $section->design;
             $design = explode('\\', $design);
             $design = $design[count($design) - 1];
             $design = preg_replace('/([a-z])([A-Z])/', '$1-$2', $design);
-            $sectionComponent .= '.' . strtolower($design);
+            $sectionComponent .= '.'.strtolower($design);
             $value = empty($d['value']) ? $section->value : $d['value'];
             if (! is_array($value)) {
                 $value = [$value];
@@ -44,6 +44,7 @@ class BuildTemplate
                 $vars = $this->parseSection($section->schema, $value, $entity);
             } catch (Exception $e) {
                 dd($e->getMessage(), $section->schema, $value, $entity);
+
                 continue;
             }
             $template[] = [
@@ -51,15 +52,17 @@ class BuildTemplate
                 'options' => array_merge($vars, $defaultVariables, ['entity' => $entity]),
             ];
         }
+
         return $template;
     }
 
     public function getDefaultVariables(): array
     {
         $host = app('_page')->first();
-        $entity = Context::get('entity', new Page());
+        $entity = Context::get('entity', new Page);
+
         return [
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -173,10 +176,11 @@ class BuildTemplate
                             if (strlen($key) == 2) {
                                 continue;
                             }
-                            if (!isset($rep[$key])) {
+                            if (! isset($rep[$key])) {
                                 $rep[$key] = $value;
                             }
                         }
+
                         return $rep;
                     }, $array);
                     foreach ($vars as &$var) {
@@ -200,6 +204,7 @@ class BuildTemplate
                     break;
             }
         }
+
         return $variables;
     }
 }
