@@ -6,6 +6,10 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Admin\Resources\TranslationResource;
+use SmartCms\Core\Models\Translate;
+use SmartCms\Core\Models\Translation;
+use SmartCms\Core\Services\Config;
+use SmartCms\Core\Services\Schema;
 
 class ListTranslations extends ListRecords
 {
@@ -26,7 +30,17 @@ class ListTranslations extends ListRecords
                     ->success()
                     ->send();
             }),
-            Actions\CreateAction::make(),
+            Actions\Action::make('create_from_tpl')->label(_actions('create_from_tpl'))->action(function(){
+                $config = new Config();
+                $config->initTranslates();
+            }),
+            Actions\Action::make('clear')->label(_actions('clear'))->action(function(){
+                $translations = Translation::query()->get();
+                foreach ($translations as $translation) {
+                    $translation->update(['value' => $translation->key]);
+                }
+            }),
+            // Actions\CreateAction::make(),
         ];
     }
 }

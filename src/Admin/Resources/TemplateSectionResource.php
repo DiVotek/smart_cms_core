@@ -2,6 +2,8 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
@@ -62,35 +64,35 @@ class TemplateSectionResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
-                    Schema::getName(true)->maxLength(255),
-                    // Section::make(_fields('design_wrap'))->schema([
-                    ViewField::make('design')
-                        ->label(_fields('design'))
-                        ->view('smart_cms::admin.design')
-                        ->viewData([
-                            'options' => $components,
-                        ])
-                        ->required()
-                        ->live()
-                        ->columnSpanFull()
-                        ->afterStateUpdated(fn ($component) => $component
-                            ->getContainer()
-                            ->getComponent('dynamicTypeFields')
-                            ->getChildComponentContainer()
-                            ->fill())
-                    // ->collapsible()
-                    // ->collapsed(function ($operation) {
-                    //     return $operation === 'edit';
-                    // })
-                    ,
-                    // ])->live()
+                    Schema::getName(true)->maxLength(255)->suffixAction(Action::make('design')
+                    ->label(_fields('design'))->icon('heroicon-o-cog')
+                        ->mountUsing(function ($form, $get) {
+                            $form->fill(['design' => $get('design')]);
+                        })
+                        ->form(function ($form) use ($components) {
+                            return $form->schema([
+                                ViewField::make('design')
+                                    ->label(_fields('design'))
+                                    ->view('smart_cms::admin.design')
+                                    ->viewData([
+                                        'options' => $components,
+                                    ])
+                                    ->required()
+                                    ->live()
+                                    ->columnSpanFull()
+                            ]);
+                        })->action(function ($record, $data, $set, $component) {
+                            $set('design', $data['design']);
+                            $component->getContainer()->getComponent('dynamicTypeFields')->getChildComponentContainer()->fill();
+                        })),
+                    Hidden::make('design'),
                     Section::make(_fields('component_settings'))
-                        ->schema(function (Get $get): array {
+                        ->schema(function (Get $get, $set,$record): array {
                             $class = $get('design');
                             if (! $class) {
                                 return [];
                             }
-
+                            $set('value', $record->value ?? '');
                             return Helper::getComponentClass($class);
                         })->live()
                         ->columnSpanFull()->key('dynamicTypeFields'),
