@@ -19,7 +19,6 @@ use SmartCms\Core\Actions\Schema\ModuleTitleSchema;
 use SmartCms\Core\Models\Form;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\TemplateSection;
 
 enum VariableTypes: string
 {
@@ -61,9 +60,9 @@ enum VariableTypes: string
             $label = Helper::getLabelFromField($name);
         }
         if ($is_lang) {
-            $name = $prefix . $name;
+            $name = $prefix.$name;
         } else {
-            $name = $prefix . main_lang() . '.' . $name;
+            $name = $prefix.main_lang().'.'.$name;
         }
         if ($var['type'] == self::ARRAY->value && isset($var['schema'])) {
             $fields = [];
@@ -71,7 +70,7 @@ enum VariableTypes: string
                 $fields = array_merge($fields, Helper::parseVariable($variable, ''));
             }
 
-            return [Repeater::make($prefix . $var['name'])->label($label)->schema($fields)->default([])->cloneable()];
+            return [Repeater::make($prefix.$var['name'])->label($label)->schema($fields)->default([])->cloneable()];
         }
         // if ($var['type'] == self::PAGES->value) {
         //     $pages = Page::query()->pluck('name', 'id')->toArray();
@@ -116,8 +115,8 @@ enum VariableTypes: string
                 if ($lang->id == main_lang_id()) {
                     continue;
                 }
-                $var['label'] = $label . ' ' . $lang->name;
-                $fields = array_merge($fields, [Hidden::make($prefix . $lang->slug . '.' . $var['name'])]);
+                $var['label'] = $label.' '.$lang->name;
+                $fields = array_merge($fields, [Hidden::make($prefix.$lang->slug.'.'.$var['name'])]);
                 // $fields = array_merge($fields, self::toFilamentField($var, $prefix . $lang->slug . '.', true));
             }
         }
@@ -140,39 +139,40 @@ enum VariableTypes: string
     {
         if ($is_multiple) {
             return Section::make('')->schema([
-                Toggle::make($name . '.auto')->label($label)
+                Toggle::make($name.'.auto')->label($label)
                     ->helperText(_hints('pages.auto'))
                     ->live()->afterStateUpdated(function ($set, $get) {}),
-                Select::make($name . '.ids')->label($label)
+                Select::make($name.'.ids')->label($label)
                     ->hidden(function ($get) use ($name) {
-                        return $get($name . '.auto') == true;
+                        return $get($name.'.auto') == true;
                     })
                     ->helperText(_hints('pages'))
                     ->options(Page::query()->pluck('name', 'id')->toArray())->multiple()->required($var['required'] ?? true),
-                Toggle::make($name . '.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
-                    return $get($name . '.auto') == false;
+                Toggle::make($name.'.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
+                    return $get($name.'.auto') == false;
                 })->helperText(_hints('pages.all_children')),
-                Select::make($name . '.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
-                    return $get($name . '.auto') == false || $get($name . '.all_children') == true;
+                Select::make($name.'.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
+                    return $get($name.'.auto') == false || $get($name.'.all_children') == true;
                 })->native(false)->selectablePlaceholder(false)
                     ->options(Page::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),
                 Group::make([
-                    Select::make($name . '.order')->label(_fields('order'))->options([
+                    Select::make($name.'.order')->label(_fields('order'))->options([
                         'default' => _fields('default'),
                         'created_at' => _fields('created_at'),
                         'popularity' => _fields('popularity'),
                         'random' => _fields('random'),
                     ])->default('default')->required()->native(false)->selectablePlaceholder(false),
-                    TextInput::make($name . '.limit')->label(_fields('limit'))->numeric()->required($var['required'] ?? true)->default(5),
-                ])->columns(2)
+                    TextInput::make($name.'.limit')->label(_fields('limit'))->numeric()->required($var['required'] ?? true)->default(5),
+                ])->columns(2),
             ]);
         } else {
             $fields = [];
             foreach ($this->getLanguages() as $lang) {
-                $fields[] =  Select::make($lang->slug)->label($lang->name)
+                $fields[] = Select::make($lang->slug)->label($lang->name)
                     ->options(Page::query()->pluck('name', 'id')->toArray())
                     ->required($var['required'] ?? true);
             }
+
             return Select::make($name)->label($label)
                 ->options(Page::query()->pluck('name', 'id')->toArray())
                 ->required($var['required'] ?? true)->suffixAction(
@@ -183,12 +183,12 @@ enum VariableTypes: string
 
     public function getLanguages()
     {
-        return  get_active_languages()->where('id', '!=', main_lang_id());
+        return get_active_languages()->where('id', '!=', main_lang_id());
     }
 
     public function getTranslateAction(array $schema, string $name): Action
     {
-        return  Action::make(_actions('translate'))
+        return Action::make(_actions('translate'))
             ->icon('heroicon-m-language')
             ->form($schema)
             ->mountUsing(function ($form, $get) use ($name) {
@@ -214,11 +214,12 @@ enum VariableTypes: string
     {
         $fields = [];
         foreach ($this->getLanguages() as $lang) {
-            $fields[] =  Select::make($lang->slug)->label($lang->name)
+            $fields[] = Select::make($lang->slug)->label($lang->name)
                 ->options(phones())
                 ->multiple($is_multiple)
                 ->required($var['required'] ?? true);
         }
+
         return Select::make($name)->label($label)
             ->options(phones())
             ->required($var['required'] ?? true)
@@ -235,15 +236,17 @@ enum VariableTypes: string
             if ($lang->id == main_lang_id()) {
                 continue;
             }
-            $fields[] =  TextInput::make($lang->slug)->label($lang->name)
+            $fields[] = TextInput::make($lang->slug)->label($lang->name)
                 ->required($var['required'] ?? true);
         }
+
         return TextInput::make($name)->label($label)
             ->required($var['required'] ?? true)
             ->suffixAction(
                 $this->getTranslateAction($fields, $name)
             );
     }
+
     public function getLinks(string $name, string $label, array $var)
     {
         return Schema::getSelect($name)->label($label)->options(Menu::query()->pluck('name', 'id')->toArray());
@@ -257,6 +260,7 @@ enum VariableTypes: string
                 ->options(Form::query()->pluck('name', 'id')->toArray())
                 ->required($var['required'] ?? true);
         }
+
         return Select::make($name)->label($label)->options(Form::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true)->suffixAction(
             $this->getTranslateAction($fields, $name),
         );
@@ -268,6 +272,7 @@ enum VariableTypes: string
         foreach ($this->getLanguages() as $lang) {
             $fields[] = Select::make($lang->slug)->label($lang->name)->options(emails())->required($var['required'] ?? true);
         }
+
         return Select::make($name)->label($label)->options(emails())->required($var['required'] ?? true)
             ->suffixAction(
                 $this->getTranslateAction($fields, $name)
@@ -283,6 +288,7 @@ enum VariableTypes: string
                 ->multiple($is_multiple)
                 ->required($var['required'] ?? true);
         }
+
         return Select::make($name)->label($label)
             ->options(addresses())
             ->required($var['required'] ?? true)
@@ -301,6 +307,7 @@ enum VariableTypes: string
                 ->multiple($is_multiple)
                 ->required($var['required'] ?? true);
         }
+
         return Select::make($name)->label($label)
             ->options(schedules())
             ->required($var['required'] ?? true)
@@ -319,7 +326,7 @@ enum VariableTypes: string
     {
         $fields = [];
         foreach ($this->getLanguages() as $lang) {
-            $fields[] =  Textarea::make($lang->slug)->label($lang->name)
+            $fields[] = Textarea::make($lang->slug)->label($lang->name)
                 ->required($var['required'] ?? true);
         }
 
@@ -330,8 +337,9 @@ enum VariableTypes: string
     {
         $fields = [];
         foreach ($this->getLanguages() as $lang) {
-            $fields[] =  Schema::getImage($lang->slug)->label($lang->name)->required($var['required'] ?? true);
+            $fields[] = Schema::getImage($lang->slug)->label($lang->name)->required($var['required'] ?? true);
         }
+
         return Schema::getImage($name)->label($label)->required($var['required'] ?? true)->hintAction($this->getTranslateAction($fields, $name));
     }
 
@@ -339,9 +347,10 @@ enum VariableTypes: string
     {
         $fields = [];
         foreach ($this->getLanguages() as $lang) {
-            $fields[] =  RichEditor::make($lang->slug)->label($lang->name)
+            $fields[] = RichEditor::make($lang->slug)->label($lang->name)
                 ->required($var['required'] ?? true);
         }
+
         return RichEditor::make($name)->label($label)->required($var['required'] ?? true)->hintAction($this->getTranslateAction($fields, $name));
     }
 
@@ -349,12 +358,13 @@ enum VariableTypes: string
     {
         $fields = [];
         foreach ($this->getLanguages() as $lang) {
-            $fields[] =  Select::make($lang->slug)->label($lang->name)
+            $fields[] = Select::make($lang->slug)->label($lang->name)
                 ->options(\SmartCms\Store\Models\Product::query()->pluck('name', 'id')->toArray())
                 ->preload()
                 ->multiple($is_multiple)
                 ->required($var['required'] ?? true);
         }
+
         return Select::make($name)->label($label)
             ->options(\SmartCms\Store\Models\Product::query()->pluck('name', 'id')->toArray())
             ->required($var['required'] ?? true)

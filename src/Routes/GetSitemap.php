@@ -18,8 +18,8 @@ class GetSitemap
         foreach (Page::query()->get() as $page) {
             $links[] = $page->route();
         }
-        $class =config('shared.custom_sitemap',null);
-        if($class){
+        $class = config('shared.custom_sitemap', null);
+        if ($class) {
             $links = array_merge($links, (new $class)->__invoke());
         }
         $content = $this->getBladeContent();

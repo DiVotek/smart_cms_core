@@ -65,7 +65,7 @@ class TemplateSectionResource extends Resource
             ->schema([
                 Section::make('')->schema([
                     Schema::getName(true)->maxLength(255)->suffixAction(Action::make('design')
-                    ->label(_fields('design'))->icon('heroicon-o-cog')
+                        ->label(_fields('design'))->icon('heroicon-o-cog')
                         ->mountUsing(function ($form, $get) {
                             $form->fill(['design' => $get('design')]);
                         })
@@ -79,7 +79,7 @@ class TemplateSectionResource extends Resource
                                     ])
                                     ->required()
                                     ->live()
-                                    ->columnSpanFull()
+                                    ->columnSpanFull(),
                             ]);
                         })->action(function ($record, $data, $set, $component) {
                             $set('design', $data['design']);
@@ -87,12 +87,13 @@ class TemplateSectionResource extends Resource
                         })),
                     Hidden::make('design'),
                     Section::make(_fields('component_settings'))
-                        ->schema(function (Get $get, $set,$record): array {
+                        ->schema(function (Get $get, $set, $record): array {
                             $class = $get('design');
                             if (! $class) {
                                 return [];
                             }
                             $set('value', $record->value ?? '');
+
                             return Helper::getComponentClass($class);
                         })->live()
                         ->columnSpanFull()->key('dynamicTypeFields'),
