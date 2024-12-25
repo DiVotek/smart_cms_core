@@ -60,6 +60,7 @@ class TemplateSectionResource extends Resource
     public static function form(Form $form): Form
     {
         $components = _config()->getSections();
+
         return $form
             ->schema([
                 Section::make('')->schema([
@@ -81,7 +82,7 @@ class TemplateSectionResource extends Resource
                                     ->live()
                                     ->columnSpanFull(),
                             ]);
-                        })->action(function ($record, $data, $set,$get, $component) {
+                        })->action(function ($record, $data, $set, $get, $component) {
                             // if($get('design') !== $data['design']) {
                             //     $set('changedDesign', true);
                             // }
