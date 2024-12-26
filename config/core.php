@@ -76,4 +76,5 @@ return [
 
     'og_type' => $prefix.'og_type',
     'og_image' => $prefix.'og_image',
+    'version' => $prefix.'version',
 ];

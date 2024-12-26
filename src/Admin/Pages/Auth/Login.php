@@ -9,7 +9,9 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as AuthLogin;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use SmartCms\Core\Services\AdminNotification;
 
 class Login extends AuthLogin
 {
@@ -42,7 +44,7 @@ class Login extends AuthLogin
                 'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
             ]);
         }
-
+        $this->checkVersion();
         $user = Filament::auth()->user();
 
         if (
@@ -77,5 +79,25 @@ class Login extends AuthLogin
             ),
 
         ];
+    }
+
+    protected function checkVersion()
+    {
+        $url = "https://api.github.com/repos/DiVotek/smart_cms_core/releases/latest";
+        $response = Http::get($url);
+
+        if ($response->successful()) {
+            $release = $response->json();
+            $version = $release['tag_name'];
+            if ($version > _settings('version', 0)) {
+                setting([
+                    sconfig('version') => $version,
+                ]);
+                AdminNotification::make()
+                    ->title('New version of Smart CMS is available. Please update your system.')
+                    ->info()
+                    ->sendToAll();
+            }
+        }
     }
 }
