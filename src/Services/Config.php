@@ -37,11 +37,11 @@ class Config
         $config = [];
         $template = template();
         $templateConfigPath = scms_template_path($template);
-        $yamlConfig = $templateConfigPath . '/config.yaml';
+        $yamlConfig = $templateConfigPath.'/config.yaml';
         if (File::exists($yamlConfig)) {
             $config = Yaml::parse(File::get($yamlConfig));
         } else {
-            $jsonConfig = $templateConfigPath . '/config.json';
+            $jsonConfig = $templateConfigPath.'/config.json';
             if (File::exists($jsonConfig)) {
                 $config = json_decode(File::get($jsonConfig), true);
             }
@@ -59,7 +59,7 @@ class Config
         $required = ['name', 'description', 'author', 'version', 'sections'];
         foreach ($required as $key) {
             if (! array_key_exists($key, $config)) {
-                throw new Exception('Config file is missing required key: ' . $key);
+                throw new Exception('Config file is missing required key: '.$key);
             }
         }
     }
