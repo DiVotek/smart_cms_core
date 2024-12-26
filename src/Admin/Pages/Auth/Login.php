@@ -83,7 +83,7 @@ class Login extends AuthLogin
 
     protected function checkVersion()
     {
-        $url = "https://api.github.com/repos/DiVotek/smart_cms_core/releases/latest";
+        $url = 'https://api.github.com/repos/DiVotek/smart_cms_core/releases/latest';
         $response = Http::get($url);
 
         if ($response->successful()) {
