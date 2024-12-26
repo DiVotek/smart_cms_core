@@ -169,7 +169,7 @@ class Schema
                     }
                     if ($state !== null) {
                         $page = Page::query()->where('slug', $state)->first();
-                        if(!$page){
+                        if (! $page) {
                             $page = \SmartCms\Store\Models\Category::query()->where('slug', $state)->first();
                         }
                         if ($page) {
