@@ -58,6 +58,7 @@ class MenuSectionResource extends Resource
                             ->label(_fields('icon')),
                         Toggle::make('is_categories')
                             ->label(_fields('is_categories'))
+                            ->live()
                             ->default(false),
                         Schema::getSelect('custom_fields')->label(_fields('custom_fields'))->options($customFields)->default([]),
                         Schema::getTemplateBuilder('template'),
