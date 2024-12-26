@@ -169,10 +169,13 @@ class Schema
                     }
                     if ($state !== null) {
                         $page = Page::query()->where('slug', $state)->first();
+                        if(!$page){
+                            $page = \SmartCms\Store\Models\Category::query()->where('slug', $state)->first();
+                        }
                         if ($page) {
                             $set('name', $page->name);
                             $set('entity_id', $page->id);
-                            $set('entity_type', Page::class);
+                            $set('entity_type', get_class($page));
                         }
                     } else {
                         $set('name', null);
