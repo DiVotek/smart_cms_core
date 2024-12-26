@@ -43,7 +43,7 @@ class BuildTemplate
             try {
                 $vars = $this->parseSection($section->schema, $value, $entity);
             } catch (Exception $e) {
-                dd($e->getMessage(), $section->schema, $value, $entity);
+                // dd($e->getMessage(), $section->schema, $value, $entity);
 
                 continue;
             }
