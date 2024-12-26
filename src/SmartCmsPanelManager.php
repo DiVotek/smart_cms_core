@@ -160,11 +160,11 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
             }
@@ -254,13 +254,14 @@ class SmartCmsPanelManager extends PanelProvider
         //     }
         // );
     }
+
     public function addMacro()
     {
         Table::configureUsing(function (Table $table): void {
             $table
                 ->persistFiltersInSession()
                 ->persistSortInSession()
-                ->paginationPageOptions([10,25, 50, 100, 'all'])->defaultPaginationPageOption(25);
+                ->paginationPageOptions([10, 25, 50, 100, 'all'])->defaultPaginationPageOption(25);
         });
     }
 }
