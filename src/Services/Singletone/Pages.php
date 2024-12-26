@@ -16,7 +16,7 @@ class Pages
 
     public function get(int $id): Page
     {
-        return $this->pages->where('id', $id)->first() ?? new Page();
+        return $this->pages->where('id', $id)->first() ?? new Page;
     }
 
     public function getMulti(array $ids): Collection

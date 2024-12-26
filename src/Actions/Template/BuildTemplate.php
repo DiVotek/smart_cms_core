@@ -187,7 +187,7 @@ class BuildTemplate
                         if (isset($var['page'])) {
                             $var['page'] = app('_page')->get($var['page']);
                         }
-                        if(isset($var['category'])) {
+                        if (isset($var['category'])) {
                             $var['category'] = \SmartCms\Store\Models\Category::find($var['category']);
                         }
                     }
