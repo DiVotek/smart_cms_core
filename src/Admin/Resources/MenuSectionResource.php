@@ -89,12 +89,15 @@ class MenuSectionResource extends Resource
                         return StaticPageResource::getUrl('edit', ['record' => $record->parent_id]);
                     }),
                 Tables\Actions\DeleteAction::make()->action(function ($record) {
-                    $record->delete();
                     $pageParent = Page::query()->where('id', $record->parent_id)->first();
-                    Page::query()->where('parent_id', $pageParent->id)->update([
-                        'parent_id' => null,
-                    ]);
-                    $pageParent->delete();
+                    if ($pageParent) {
+                        Page::query()->where('parent_id', $pageParent->id)->update([
+                            'parent_id' => null,
+                            'status' => 0,
+                        ]);
+                        $pageParent->delete();
+                    }
+                    $record->delete();
                 }),
             ])
             ->reorderable('sorting')
