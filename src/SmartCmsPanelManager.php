@@ -259,8 +259,8 @@ class SmartCmsPanelManager extends PanelProvider
     {
         Table::configureUsing(function (Table $table): void {
             $table
-                ->persistFiltersInSession()
-                ->persistSortInSession()
+                // ->persistFiltersInSession()
+                // ->persistSortInSession()
                 ->paginationPageOptions([10, 25, 50, 100, 'all'])->defaultPaginationPageOption(25);
         });
     }

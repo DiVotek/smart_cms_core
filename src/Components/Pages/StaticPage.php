@@ -13,7 +13,6 @@ class StaticPage extends PageComponent
         $defaultTemplate = _settings('static_page_template', []);
         $menu_section_parent = $entity->id;
         $parent = $entity->parent;
-
         if ($entity->parent_id) {
             if ($parent && $parent->parent_id && $parent->parent) {
                 $menu_section_parent = $parent->parent->id;
@@ -27,7 +26,11 @@ class StaticPage extends PageComponent
                 if ($parent->parent_id) {
                     $defaultTemplate = $section->template ?? $defaultTemplate;
                 } else {
-                    $defaultTemplate = $section->categories_template ?? $defaultTemplate;
+                    if($section->is_categories){
+                        $defaultTemplate = $section->categories_template ?? $defaultTemplate;
+                    } else {
+                        $defaultTemplate = $section->template ?? $defaultTemplate;
+                    }
                 }
             }
         }
