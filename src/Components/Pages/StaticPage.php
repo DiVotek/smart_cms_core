@@ -26,7 +26,7 @@ class StaticPage extends PageComponent
                 if ($parent->parent_id) {
                     $defaultTemplate = $section->template ?? $defaultTemplate;
                 } else {
-                    if($section->is_categories){
+                    if ($section->is_categories) {
                         $defaultTemplate = $section->categories_template ?? $defaultTemplate;
                     } else {
                         $defaultTemplate = $section->template ?? $defaultTemplate;

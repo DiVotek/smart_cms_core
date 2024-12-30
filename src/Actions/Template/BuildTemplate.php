@@ -30,12 +30,12 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'templates::' . template() . '.sections';
+            $sectionComponent = 'templates::'.template().'.sections';
             $design = $section->design;
             $design = explode('\\', $design);
             $design = $design[count($design) - 1];
             $design = preg_replace('/([a-z])([A-Z])/', '$1-$2', $design);
-            $sectionComponent .= '.' . strtolower($design);
+            $sectionComponent .= '.'.strtolower($design);
             $value = empty($d['value']) ? $section->value : $d['value'];
             if (! is_array($value)) {
                 $value = [$value];
@@ -46,6 +46,7 @@ class BuildTemplate
                 if (config('app.debug')) {
                     dd($e->getMessage(), $section->schema, $value, $entity, $e->getTrace());
                 }
+
                 continue;
             }
             $template[] = [
@@ -63,7 +64,7 @@ class BuildTemplate
         $entity = Context::get('entity', new Page);
 
         return [
-            'logo' => asset('/storage' . logo()),
+            'logo' => asset('/storage'.logo()),
             'host' => $host->route() ?? '',
             'hostname' => $host->name() ?? '',
             'company_name' => company_name(),
@@ -155,7 +156,7 @@ class BuildTemplate
                     } elseif (isset($pages['parent']) && $pages['parent']) {
                         $query = $query->where('parent_id', $pages['parent']);
                     } else {
-                        if (!isset($pages['ids'])) {
+                        if (! isset($pages['ids'])) {
                             $pages['ids'] = [];
                         }
                         $query = $query->whereIn('id', $pages['ids']);
@@ -204,12 +205,12 @@ class BuildTemplate
                     $variables[$field['name']] = \SmartCms\Store\Models\Category::find($val);
                     break;
                 case VariableTypes::CATEGORIES->value:
-                    if (!is_array($val)) {
+                    if (! is_array($val)) {
                         $val = [];
                     }
                     $ids = [];
                     foreach ($val as $v) {
-                        if (!is_numeric($v)) {
+                        if (! is_numeric($v)) {
                             continue;
                         }
                         $ids[] = $v;
