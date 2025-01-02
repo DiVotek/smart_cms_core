@@ -97,8 +97,8 @@ enum VariableTypes: string
             self::TEXT => $this->getText($name, $label, $var),
             self::TEXTAREA => $this->getTextarea($name, $label, $var),
             self::IMAGE => $this->getImage($name, $label, $var),
-            self::FILE => FileUpload::make($name)->label($label)->required($var['required'] ?? true), //todo
-            self::DATE => DatePicker::make($name)->label($label)->required($var['required'] ?? true), //todo
+            self::FILE => FileUpload::make($name)->label($label)->required($var['required'] ?? true), // todo
+            self::DATE => DatePicker::make($name)->label($label)->required($var['required'] ?? true), // todo
             self::HTML => $this->getHtml($name, $label, $var),
             self::NUMBER => TextInput::make($name)->label($label)->numeric()->required($var['required'] ?? true),
             self::BOOLEAN => Toggle::make($name)->label($label)->required($var['required'] ?? true),

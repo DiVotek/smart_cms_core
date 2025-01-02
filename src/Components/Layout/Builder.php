@@ -81,7 +81,7 @@ class Builder extends Component
                         return addresses()[$address];
                     }, $addresses);
                     break;
-                case VariableTypes::SCHEDULE->value:  //ref
+                case VariableTypes::SCHEDULE->value:  // ref
                     $variables[$field['name']] = schedules()[$options[current_lang()][$field['name']]];
                     break;
                 case VariableTypes::SCHEDULES->value:
