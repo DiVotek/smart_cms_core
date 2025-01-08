@@ -16,9 +16,10 @@ class MakeLayout extends Command
     {
         $name = $this->argument('name');
         $templatePath = scms_template_path(template());
-        $path = $templatePath . '/layouts/' . $name;
+        $path = $templatePath.'/layouts/'.$name;
         if (File::exists($path)) {
             $this->error('Layout already exists');
+
             return;
         }
         File::makeDirectory($path, 0755, true);
@@ -27,7 +28,7 @@ class MakeLayout extends Command
             'schema' => [],
         ];
         $yamlConfig = Yaml::dump($defaultConfig, 2);
-        File::put($path . '/' . $name . '.yaml', $yamlConfig);
-        File::put($path . '/' . $name . '.blade.php', '');
+        File::put($path.'/'.$name.'.yaml', $yamlConfig);
+        File::put($path.'/'.$name.'.blade.php', '');
     }
 }

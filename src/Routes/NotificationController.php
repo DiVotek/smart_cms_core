@@ -8,7 +8,7 @@ class NotificationController
 {
     public function index()
     {
-        $templ = 'templates::' . template() . '.notifications';
+        $templ = 'templates::'.template().'.notifications';
         if (view()->exists($templ)) {
             return view($templ, ['notifications' => session('notifications', [])]);
         }

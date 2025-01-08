@@ -4,10 +4,8 @@ namespace SmartCms\Core\Actions\Template;
 
 use Exception;
 use Lorisleiva\Actions\Concerns\AsAction;
-use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Schema\SchemaParser;
-use SmartCms\Core\Services\VariableTypes;
 
 class BuildTemplate
 {
@@ -22,17 +20,17 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'templates::' . template() . '.sections';
+            $sectionComponent = 'templates::'.template().'.sections';
             $design = $section->design;
             $design = explode('\\', $design);
             $design = $design[count($design) - 1];
             $design = preg_replace('/([a-z])([A-Z])/', '$1-$2', $design);
             $design = str_replace('/', '.', $design);
-            $sectionComponent .= '.' . strtolower($design);
-            if (!empty($d['value'])) {
+            $sectionComponent .= '.'.strtolower($design);
+            if (! empty($d['value'])) {
                 $section->value = $d['value'];
             }
-            if (!is_array($section->value)) {
+            if (! is_array($section->value)) {
                 $section->value = [$section->value];
             }
             try {
@@ -45,9 +43,11 @@ class BuildTemplate
                 if (config('app.debug')) {
                     dd($e->getMessage(), $e->getTrace(), $section, $d, $template);
                 }
+
                 continue;
             }
         }
+
         return $this->result;
     }
 }

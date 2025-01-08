@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Services\Singletone;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Outerweb\Settings\Models\Setting;
 

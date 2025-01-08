@@ -20,16 +20,18 @@ class Description extends Component
         $isCustom = $options['is_custom'] ?? false;
         if ($isCustom) {
             $this->description = $options['description'] ?? '';
+
             return;
         }
         $entity = Context::get('entity');
-        if (!$entity) {
-            $entity = new Page();
+        if (! $entity) {
+            $entity = new Page;
         }
         $seo = $entity?->seo;
         $isDescription = $options['is_description'] ?? false;
         if ($isDescription) {
             $this->description = $seo->content ?? '';
+
             return;
         }
         $this->description = $seo->summary ?? '';

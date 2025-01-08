@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources\MenuResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\MenuResource;
 
 class EditMenu extends EditRecord
@@ -35,5 +34,4 @@ class EditMenu extends EditRecord
 
         ];
     }
-
 }

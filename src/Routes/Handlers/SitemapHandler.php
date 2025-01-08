@@ -10,32 +10,32 @@ use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class SitemapHandler
 {
-   use AsAction;
+    use AsAction;
 
-   #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
-   public function handle()
-   {
-      $links = [];
-      foreach (Page::query()->get() as $page) {
-         $links[] = [
-            'link' => $page->route(),
-            'priority' => 0.7,
-            'changefreq' => 'weekly',
-            'lastmod' => $page->updated_at,
-         ];
-      }
-      Event::dispatch('cms.sitemap.generate', [&$links]);
-      $content = $this->getBladeContent();
-      $content = Blade::render($content, [
-         'links' => $links,
-      ]);
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    public function handle()
+    {
+        $links = [];
+        foreach (Page::query()->get() as $page) {
+            $links[] = [
+                'link' => $page->route(),
+                'priority' => 0.7,
+                'changefreq' => 'weekly',
+                'lastmod' => $page->updated_at,
+            ];
+        }
+        Event::dispatch('cms.sitemap.generate', [&$links]);
+        $content = $this->getBladeContent();
+        $content = Blade::render($content, [
+            'links' => $links,
+        ]);
 
-      return response($content)->header('Content-Type', 'text/xml');
-   }
+        return response($content)->header('Content-Type', 'text/xml');
+    }
 
-   public function getBladeContent(): string
-   {
-      return <<<'blade'
+    public function getBladeContent(): string
+    {
+        return <<<'blade'
                     <?php
             header('content-type: text/xml');
             echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
@@ -55,5 +55,5 @@ class SitemapHandler
                @endforeach
             </urlset>
         blade;
-   }
+    }
 }

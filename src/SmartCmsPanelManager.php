@@ -32,7 +32,6 @@ use SmartCms\Core\Admin\Pages\Auth\Profile;
 use SmartCms\Core\Admin\Pages\TemplatePage;
 use SmartCms\Core\Admin\Resources\AdminResource;
 use SmartCms\Core\Admin\Resources\ContactFormResource;
-use SmartCms\Core\Admin\Resources\EmailResource;
 use SmartCms\Core\Admin\Resources\FieldResource;
 use SmartCms\Core\Admin\Resources\FormResource;
 use SmartCms\Core\Admin\Resources\LayoutResource;
@@ -153,11 +152,11 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
             }
@@ -180,6 +179,7 @@ class SmartCmsPanelManager extends PanelProvider
             LayoutResource::class,
         ];
         Event::dispatch('cms.admin.navigation.resources', [&$resources]);
+
         return $resources;
     }
 
@@ -273,6 +273,7 @@ class SmartCmsPanelManager extends PanelProvider
         if (strlen($brandName) == 0) {
             $brandName = 'SmartCms';
         }
+
         return $brandName;
     }
 
@@ -289,6 +290,7 @@ class SmartCmsPanelManager extends PanelProvider
                 return $this->hint('Translatable')
                     ->hintIcon('heroicon-m-language');
             }
+
             return $this;
         });
     }
@@ -300,6 +302,7 @@ class SmartCmsPanelManager extends PanelProvider
             TemplatePage::class,
         ];
         Event::dispatch('cms.admin.navigation.pages', [&$pages]);
+
         return $pages;
     }
 
@@ -309,6 +312,7 @@ class SmartCmsPanelManager extends PanelProvider
             \SmartCms\Core\Admin\Pages\Settings\Settings::class,
         ];
         Event::dispatch('cms.admin.navigation.settings_pages', [&$pages]);
+
         return $pages;
     }
 
@@ -319,6 +323,7 @@ class SmartCmsPanelManager extends PanelProvider
             TopContactForms::class,
         ];
         Event::dispatch('cms.admin.widgets', [&$widgets]);
+
         return $widgets;
     }
 }

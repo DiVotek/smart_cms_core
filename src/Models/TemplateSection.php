@@ -49,6 +49,7 @@ class TemplateSection extends BaseModel
             $componentField = Builder::make($field);
             $fields = array_merge($fields, $componentField);
         }
+
         return $fields;
     }
 }

@@ -4,5 +4,5 @@ namespace SmartCms\Core\Repositories;
 
 interface DtoInterface
 {
-   public function toArray(): array;
+    public function toArray(): array;
 }

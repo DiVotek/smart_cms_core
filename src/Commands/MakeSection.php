@@ -16,9 +16,10 @@ class MakeSection extends Command
     {
         $name = $this->argument('name');
         $templatePath = scms_template_path(template());
-        $sectionPath = $templatePath . '/sections/' . $name;
+        $sectionPath = $templatePath.'/sections/'.$name;
         if (File::exists($sectionPath)) {
             $this->error('Section already exists');
+
             return;
         }
         File::makeDirectory($sectionPath, 0755, true);
@@ -29,8 +30,8 @@ class MakeSection extends Command
             'schema' => [],
         ];
         $yamlConfig = Yaml::dump($defaultConfig, 2);
-        $sectionConfigPath = $sectionPath . '/' . $name . '.yaml';
+        $sectionConfigPath = $sectionPath.'/'.$name.'.yaml';
         File::put($sectionConfigPath, $yamlConfig);
-        File::put($sectionPath . '/' . $name . '.blade.php', '');
+        File::put($sectionPath.'/'.$name.'.blade.php', '');
     }
 }

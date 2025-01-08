@@ -6,7 +6,7 @@ use SmartCms\Core\Models\Page;
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/' . _settings('branding.logo', '');
+        return '/'._settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
@@ -14,17 +14,18 @@ if (! function_exists('phones')) {
     {
         $setting = _settings('company_info', []);
         $phones = [];
-        foreach($setting as $branch){
-            if(!isset($branch['phones'])){
+        foreach ($setting as $branch) {
+            if (! isset($branch['phones'])) {
                 continue;
             }
-            foreach($branch['phones'] as $phone){
-                if(!isset($phone['value'])){
+            foreach ($branch['phones'] as $phone) {
+                if (! isset($phone['value'])) {
                     continue;
                 }
                 $phones[] = $phone['value'];
             }
         }
+
         return $phones;
     }
 }
@@ -120,6 +121,7 @@ if (! function_exists('schedules')) {
     function schedules(): array
     {
         $setting = _settings('company_info', []);
+
         return array_filter(array_map(function ($item) {
             return $item['schedule'] ?? '';
         }, $setting));

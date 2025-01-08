@@ -42,15 +42,15 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()) . 'css/app.css')) {
-                return 'scms/templates/' . template() . '/css/app.css';
+            if (File::exists(scms_template_path(template()).'css/app.css')) {
+                return 'scms/templates/'.template().'/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()) . 'js/app.js')) {
-                return 'scms/templates/' . template() . '/js/app.js';
+            if (File::exists(scms_template_path(template()).'js/app.js')) {
+                return 'scms/templates/'.template().'/js/app.js';
             } else {
                 return '';
             }
@@ -59,7 +59,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/' . $fav);
+        $this->favicon = asset('/storage/'.$fav);
         $this->og_type = _settings('og_type', 'website');
     }
 

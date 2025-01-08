@@ -14,11 +14,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 use SmartCms\Core\Models\TemplateSection;
-use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
-use SmartCms\Core\Services\SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
 
 class TemplateSectionResource extends Resource
@@ -108,6 +106,7 @@ class TemplateSectionResource extends Resource
                                 $componentField = Builder::make($field);
                                 $fields = array_merge($fields, $componentField);
                             }
+
                             return $fields;
                         })->live()
                         ->columnSpanFull()->key('dynamicTypeFields'),

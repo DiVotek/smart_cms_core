@@ -107,7 +107,7 @@ class Settings extends BaseSettings
                                     ->form(function ($form) {
                                         $theme = _config()->getTheme();
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.' . $key)
+                                            $schema[] = ColorPicker::make('theme.'.$key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }
@@ -123,7 +123,7 @@ class Settings extends BaseSettings
                             ->searchable(),
                         Actions::make([
                             Actions\Action::make('setup')->label(_actions('setup'))->icon('heroicon-o-wrench')->action(function ($get) {
-                                $config = new Config();
+                                $config = new Config;
                                 $config->initTranslates();
                                 $config->initMenuSections();
                                 $config->initLayouts();

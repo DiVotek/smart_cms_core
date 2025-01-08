@@ -3,12 +3,8 @@
 namespace SmartCms\Core\Components\Layout;
 
 use Closure;
-use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use SmartCms\Core\Actions\Template\GetLinks;
-use SmartCms\Core\Models\Page;
-use SmartCms\Core\Services\VariableTypes;
 
 class Builder extends Component
 {
@@ -29,5 +25,4 @@ class Builder extends Component
             </div>
         blade;
     }
-
 }

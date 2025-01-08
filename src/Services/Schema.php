@@ -157,9 +157,10 @@ class Schema
         $links = Page::query()->pluck('name', 'id')->toArray();
         $reference = [];
         foreach ($links as $key => $link) {
-            $reference[$key . '_' . Page::class] = $link;
+            $reference[$key.'_'.Page::class] = $link;
         }
         Event::dispatch('cms.admin.menu.building', [&$links]);
+
         return AdjacencyList::make($name)->columnSpanFull()
             ->maxDepth(2)
             ->labelKey('name')
@@ -175,6 +176,7 @@ class Schema
                     $data['entity_id'] = $arr[0];
                     $data['entity_type'] = $arr[1];
                     $data['name'] = $data['entity_type']::query()->where('id', $data['entity_id'])->first()->name ?? '';
+
                     return $data;
                 });
             });

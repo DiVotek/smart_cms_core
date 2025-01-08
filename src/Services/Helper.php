@@ -4,17 +4,15 @@ namespace SmartCms\Core\Services;
 
 use Exception;
 use Illuminate\Support\Facades\File;
-use SmartCms\Core\Components\Layout\Builder;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
-use SmartCms\Core\Services\Schema\FieldSchema;
 
 class Helper
 {
     public static function getComponents(): array
     {
         $sections = [];
-        $directoryPath = scms_template_path(template() . '/sections');
+        $directoryPath = scms_template_path(template().'/sections');
         if (! File::exists($directoryPath)) {
             return [];
         }
@@ -38,7 +36,7 @@ class Helper
         foreach ($directories as $directory) {
             foreach (File::files($directory) as $file) {
                 $lastDir = basename($directory);
-                $files[$lastDir . '/' . basename($file)] = ucfirst($lastDir) . ' - ' . ucfirst(basename($file, '.blade.php'));
+                $files[$lastDir.'/'.basename($file)] = ucfirst($lastDir).' - '.ucfirst(basename($file, '.blade.php'));
             }
         }
 
@@ -53,6 +51,7 @@ class Helper
                 return $component['schema'];
             }
         }
+
         return [];
     }
 
@@ -63,7 +62,7 @@ class Helper
         foreach ($schema as $value) {
             $field = ArrayToField::make('value.', $value);
             $componentField = SchemaBuilder::make($field);
-            if($componentField){
+            if ($componentField) {
                 $fields[] = $componentField;
             }
             // dd($field);
@@ -122,13 +121,13 @@ class Helper
             // Remove singular variables from global variables list
             $variables = array_diff($variables, [$singularVar]);
             // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*' . preg_quote($singularVar) . '\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
+            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
             foreach ($matches4[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
 
             // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$' . preg_quote($singularVar) . '\[' . '\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
+            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
             foreach ($matches5[1] as $property) {
                 $arrayProperties[$arrayVar][] = $property;
             }
@@ -181,7 +180,7 @@ class Helper
 
     public static function getFormTemplates()
     {
-        $path = scms_template_path(template() . '/forms');
+        $path = scms_template_path(template().'/forms');
         if (File::exists($path) && File::isDirectory($path)) {
             $dirs = File::directories($path);
             $data = [];

@@ -10,18 +10,19 @@ use SmartCms\Core\Models\Layout;
 
 class MainLayout extends Component
 {
-   public Layout $layout;
-   public function __construct()
-   {
-      $layout = Layout::query()->where('path', 'main')->first();
-      if(!$layout) {
-         throw new Exception('Main layout not found, configure it first');
-      }
-      $this->layout = $layout;
-   }
+    public Layout $layout;
 
-   public function render(): View|Closure|string
-   {
-      return view('template::layouts.main', $this->layout->getVariables());
-   }
+    public function __construct()
+    {
+        $layout = Layout::query()->where('path', 'main')->first();
+        if (! $layout) {
+            throw new Exception('Main layout not found, configure it first');
+        }
+        $this->layout = $layout;
+    }
+
+    public function render(): View|Closure|string
+    {
+        return view('template::layouts.main', $this->layout->getVariables());
+    }
 }

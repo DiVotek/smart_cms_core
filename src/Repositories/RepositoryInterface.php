@@ -4,7 +4,7 @@ namespace SmartCms\Core\Repositories;
 
 interface RepositoryInterface
 {
-   public function find(int $id): object;
+    public function find(int $id): object;
 
-   public function findMultiple(array $ids): array;
+    public function findMultiple(array $ids): array;
 }

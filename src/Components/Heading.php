@@ -20,8 +20,8 @@ class Heading extends Component
     {
         $title = $options['title'] ?? '';
         $entity = Context::get('entity');
-        if (!$entity) {
-            $entity = new Page();
+        if (! $entity) {
+            $entity = new Page;
         }
         $seo = $entity?->seo;
         if (isset($options['use_page_heading']) && $options['use_page_heading']) {
