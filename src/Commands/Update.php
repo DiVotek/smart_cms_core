@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Event;
 
 class Update extends Command
 {
@@ -13,7 +14,16 @@ class Update extends Command
     public function handle()
     {
         $this->info('Updating Smart CMS...');
-        exec('composer update smart-cms/core');
+        Event::dispatch('cms.admin.update', $this);
+        $process = new \Symfony\Component\Process\Process(['composer', 'update', 'smart-cms/core']);
+        $process->setTimeout(120);
+        $process->run();
+        if (!$process->isSuccessful()) {
+            $this->error('Update process failed.');
+            $this->error($process->getErrorOutput());
+        } else {
+            $this->info('Update process was successful.');
+        }
         $this->call('vendor:publish', [
             '--provider' => "SmartCms\Core\SmartCmsServiceProvider",
             '--tag' => 'public',
