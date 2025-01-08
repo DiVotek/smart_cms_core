@@ -18,7 +18,7 @@ class Update extends Command
         $process = new \Symfony\Component\Process\Process(['composer', 'update', 'smart-cms/core']);
         $process->setTimeout(120);
         $process->run();
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             $this->error('Update process failed.');
             $this->error($process->getErrorOutput());
         } else {

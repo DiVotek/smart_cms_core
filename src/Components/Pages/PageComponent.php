@@ -39,8 +39,8 @@ class PageComponent extends Component
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity?->seo ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $temp = $entity->template()->select([
@@ -61,7 +61,7 @@ class PageComponent extends Component
         $this->entity = $entity;
         $this->og_image = _settings('og_image', logo());
         Event::dispatch('cms.page.construct', $this);
-        if (!isset($this->dto)) {
+        if (! isset($this->dto)) {
             $seo = $entity->seo ?? new Seo;
             $this->dto = PageEntityDto::factory($entity->name(), $entity->image ?? logo(), $entity->created_at, $entity->updated_at, $entity->getBreadcrumbs(), $seo->title ?? '', $seo->heading ?? '', $seo->summary ?? '', $seo->content ?? '', $entity->banner ?? '');
         }
