@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\MenuSectionResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
@@ -18,6 +19,16 @@ use SmartCms\Core\Services\TableSchema;
 class MenuSectionResource extends Resource
 {
     protected static ?string $model = MenuSection::class;
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
 
     public static function getNavigationBadge(): ?string
     {
@@ -102,36 +113,6 @@ class MenuSectionResource extends Resource
                 }),
             ])
             ->reorderable('sorting')
-            ->headerActions([
-                Schema::helpAction('Static page help text')->hidden(function () {
-                    return (bool) request('parent');
-                }),
-                Tables\Actions\Action::make('Template')
-                    ->label(_actions('template'))
-                    ->slideOver()
-                    ->icon('heroicon-o-cog')
-                    ->fillForm(function (): array {
-                        return [
-                            'template' => _settings('static_page_template', []),
-                        ];
-                    })
-                    ->action(function (array $data): void {
-                        setting([
-                            sconfig('static_page_template') => $data['template'],
-                        ]);
-                    })
-                    ->hidden(function () {
-                        return (bool) request('parent');
-                    })
-                    ->form(function ($form) {
-                        return $form
-                            ->schema([
-                                Section::make('')->schema([
-                                    Schema::getTemplateBuilder()->label(_fields('template')),
-                                ]),
-                            ]);
-                    }),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

@@ -135,6 +135,7 @@ class StaticPageResource extends Resource
                             ->nullable()->default(function () {
                                 return request('parent') ?? null;
                             })->hidden((bool) request('parent'))->live(),
+                        Select::make('layout_id')->relationship('layout', 'name')->nullable(),
                         ...$customFields,
                     ]),
             ]);

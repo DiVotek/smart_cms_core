@@ -23,14 +23,27 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema as FacadesSchema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 use SmartCms\Core\Admin\Pages\Auth\Login;
 use SmartCms\Core\Admin\Pages\Auth\Profile;
 use SmartCms\Core\Admin\Pages\TemplatePage;
+use SmartCms\Core\Admin\Resources\AdminResource;
+use SmartCms\Core\Admin\Resources\ContactFormResource;
+use SmartCms\Core\Admin\Resources\EmailResource;
+use SmartCms\Core\Admin\Resources\FieldResource;
+use SmartCms\Core\Admin\Resources\FormResource;
+use SmartCms\Core\Admin\Resources\LayoutResource;
+use SmartCms\Core\Admin\Resources\MenuResource;
+use SmartCms\Core\Admin\Resources\MenuSectionResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
+use SmartCms\Core\Admin\Resources\TemplateSectionResource;
+use SmartCms\Core\Admin\Resources\TranslationResource;
+use SmartCms\Core\Admin\Widgets\TopContactForms;
+use SmartCms\Core\Admin\Widgets\TopStaticPages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Singletone\Languages;
@@ -59,14 +72,6 @@ class SmartCmsPanelManager extends PanelProvider
                 ->id('smart_cms_admin')
                 ->path('admin');
         }
-        Field::macro('translatable', function () {
-            if (is_multi_lang()) {
-                return $this->hint('Translatable')
-                    ->hintIcon('heroicon-m-language');
-            }
-
-            return $this;
-        });
         $this->registerDynamicResources();
         $this->registerBranding();
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
@@ -77,10 +82,6 @@ class SmartCmsPanelManager extends PanelProvider
             Css::make('custom-stylesheet', asset('/smart_cms_core/index.css')),
             JS::make('custom-script', asset('/smart_cms_core/index.js')),
         ]);
-        $brandName = company_name();
-        if (strlen($brandName) == 0) {
-            $brandName = 'SmartCms';
-        }
         $this->addMacro();
 
         return $panel
@@ -95,18 +96,14 @@ class SmartCmsPanelManager extends PanelProvider
             ->spa(config('app.spa', false))
             ->font('Roboto')
             ->darkMode(false)
-            ->brandName($brandName)
+            ->brandName($this->getBrandName())
             ->resources($this->getResources())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->pages([
-                \Filament\Pages\Dashboard::class,
-                TemplatePage::class,
-            ])
+            ->pages($this->getPages())
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('17rem')
-            // ->breadcrumbs(false)
             ->databaseNotifications()
-            ->widgets(config('shared.admin.widgets', []))
+            ->widgets($this->getWidgets())
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->navigationGroups(
                 $this->getNavigationGroups()
@@ -126,21 +123,17 @@ class SmartCmsPanelManager extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                FilamentSettingsPlugin::make()
-                    ->pages(
-                        config('shared.admin.settings_pages', [])
-                    ),
+                FilamentSettingsPlugin::make()->pages($this->getSettingsPages()),
             ]);
     }
 
     public function registerDynamicResources()
     {
         Filament::serving(function () {
-            $pageResourceClass = config('shared.admin.page_resource', StaticPageResource::class);
             $menuSections = MenuSection::query()->get();
             $items = [
                 NavigationItem::make(_nav('pages'))->sort(1)
-                    ->url(config('shared.admin.page_resource')::getUrl('index'))
+                    ->url(StaticPageResource::getUrl('index'))
                     ->group(_nav('pages'))
                     ->isActiveWhen(function () {
                         return request()->route()->getName() === ListStaticPages::getRouteName() &&
@@ -152,7 +145,7 @@ class SmartCmsPanelManager extends PanelProvider
             ];
             foreach ($menuSections as $section) {
                 $items[] = NavigationItem::make(_nav('items'))
-                    ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name]))
+                    ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name]))
                     ->sort($section->sorting + 2)
                     ->group($section->name)
                     ->isActiveWhen(function () use ($section) {
@@ -160,11 +153,11 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url($pageResourceClass::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
             }
@@ -174,15 +167,48 @@ class SmartCmsPanelManager extends PanelProvider
 
     public function getResources(): array
     {
-        return array_merge(config('shared.admin.resources'), [
-            config('shared.admin.page_resource'),
-        ]);
+        $resources = [
+            StaticPageResource::class,
+            AdminResource::class,
+            MenuSectionResource::class,
+            ContactFormResource::class,
+            FormResource::class,
+            TranslationResource::class,
+            TemplateSectionResource::class,
+            MenuResource::class,
+            FieldResource::class,
+            LayoutResource::class,
+        ];
+        Event::dispatch('cms.admin.navigation.resources', [&$resources]);
+        return $resources;
     }
 
     public function getNavigationGroups(): array
     {
         $reference = [];
-        $groups = config('shared.admin.navigation_groups', []);
+        $groups = [
+            [
+                'name' => 'communication',
+                'icon' => 'heroicon-m-megaphone',
+            ],
+            [
+                'name' => 'pages',
+                'icon' => 'heroicon-m-book-open',
+            ],
+            [
+                'name' => 'menu_sections',
+                'icon' => 'heroicon-m-book-open',
+            ],
+            [
+                'name' => 'design-template',
+                'icon' => 'heroicon-m-light-bulb',
+            ],
+            [
+                'name' => 'system',
+                'icon' => 'heroicon-m-cog-6-tooth',
+            ],
+        ];
+        Event::dispatch('cms.admin.navigation.groups', [&$groups]);
         foreach ($groups as $group) {
             if (! isset($group['name'])) {
                 continue;
@@ -200,20 +226,6 @@ class SmartCmsPanelManager extends PanelProvider
         }
 
         return $reference;
-        // $groups = [
-        //     \Filament\Navigation\NavigationGroup::make(_nav('catalog'))->icon('heroicon-m-shopping-bag'),
-        //     \Filament\Navigation\NavigationGroup::make(_nav('communication'))->icon('heroicon-m-megaphone'),
-        //     \Filament\Navigation\NavigationGroup::make(_nav('pages'))->icon('heroicon-m-book-open'),
-        // ];
-        // $menuSections = MenuSection::query()->get();
-
-        // foreach ($menuSections as $section) {
-        //     $groups[] = \Filament\Navigation\NavigationGroup::make($section->name)->icon($section->icon ?? 'heroicon-m-book-open');
-        // }
-        // $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('design-template'))->icon('heroicon-m-light-bulb');
-        // $groups[] = \Filament\Navigation\NavigationGroup::make(_nav('system'))->icon('heroicon-m-cog-6-tooth');
-
-        // return $groups;
     }
 
     public function registerBranding()
@@ -255,6 +267,15 @@ class SmartCmsPanelManager extends PanelProvider
         // );
     }
 
+    public function getBrandName(): string
+    {
+        $brandName = company_name();
+        if (strlen($brandName) == 0) {
+            $brandName = 'SmartCms';
+        }
+        return $brandName;
+    }
+
     public function addMacro()
     {
         Table::configureUsing(function (Table $table): void {
@@ -263,5 +284,41 @@ class SmartCmsPanelManager extends PanelProvider
                 // ->persistSortInSession()
                 ->paginationPageOptions([10, 25, 50, 100, 'all'])->defaultPaginationPageOption(25);
         });
+        Field::macro('translatable', function () {
+            if (is_multi_lang()) {
+                return $this->hint('Translatable')
+                    ->hintIcon('heroicon-m-language');
+            }
+            return $this;
+        });
+    }
+
+    public function getPages(): array
+    {
+        $pages = [
+            \Filament\Pages\Dashboard::class,
+            TemplatePage::class,
+        ];
+        Event::dispatch('cms.admin.navigation.pages', [&$pages]);
+        return $pages;
+    }
+
+    public function getSettingsPages(): array
+    {
+        $pages = [
+            \SmartCms\Core\Admin\Pages\Settings\Settings::class,
+        ];
+        Event::dispatch('cms.admin.navigation.settings_pages', [&$pages]);
+        return $pages;
+    }
+
+    public function getWidgets(): array
+    {
+        $widgets = [
+            TopStaticPages::class,
+            TopContactForms::class,
+        ];
+        Event::dispatch('cms.admin.widgets', [&$widgets]);
+        return $widgets;
     }
 }

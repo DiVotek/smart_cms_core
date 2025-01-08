@@ -16,7 +16,7 @@ class Pages
 
     public function get(int $id): Page
     {
-        return $this->pages->where('id', $id)->first() ?? new Page;
+        return $this->pages->where('id', $id)->first() ?? new (config('shared.page_model'));
     }
 
     public function getMulti(array $ids): Collection

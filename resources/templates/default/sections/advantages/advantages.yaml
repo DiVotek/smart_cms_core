@@ -1,0 +1,11 @@
+name: "Advantages"
+description: "Advantages of website"
+preview: ""
+schema:
+  - name: "advantages"
+    type: "array"
+    schema:
+      - name: "title"
+      - name: "icon"
+        type: image
+      - name: "description"

@@ -11,15 +11,15 @@ return new class extends Migration
     {
         Schema::create(Page::getDb(), function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id')->nullable()->index();
             $table->string('name');
             $table->string('slug')->unique()->index();
             $table->integer('sorting')->default(0);
             $table->string('image')->nullable();
+            $table->string('banner')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable()->index();
+            $table->unsignedBigInteger('layout_id')->nullable()->index();
             $table->boolean('status')->default(1);
             $table->integer('views')->default(0);
-            $table->boolean('is_nav')->default(0);
-            $table->json('nav_settings')->nullable();
             $table->boolean('is_index')->default(true);
             $table->json('custom')->nullable();
             $table->timestamps();

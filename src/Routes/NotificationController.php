@@ -8,9 +8,9 @@ class NotificationController
 {
     public function index()
     {
-        $view = view()->exists('templates::'.template().'.notifications') ? 'templates::'.template().'.notifications' : '';
-        if ($view) {
-            return view($view, ['notifications' => session('notifications', [])]);
+        $templ = 'templates::' . template() . '.notifications';
+        if (view()->exists($templ)) {
+            return view($templ, ['notifications' => session('notifications', [])]);
         }
 
         return '';
@@ -23,11 +23,7 @@ class NotificationController
             return $notification['id'] != $id;
         });
         Session::put('notifications', $notifications);
-        $view = view()->exists('templates::'.template().'.notifications') ? 'templates::'.template().'.notifications' : '';
-        if ($view) {
-            return view($view, ['notifications' => $notifications]);
-        }
 
-        return '';
+        return $this->index();
     }
 }

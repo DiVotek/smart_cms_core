@@ -105,10 +105,10 @@ enum VariableTypes: string
             self::SELECT => Select::make($name)->label($label)->options($var['options'] ?? [])->required($var['required'] ?? true),
             self::PAGE => $this->getPages($name, $label, $var, false),
             self::PAGES => $this->getPages($name, $label, $var),
-            self::CATEGORY => $this->getCategories($name, $label, $var, false),
-            self::CATEGORIES => $this->getCategories($name, $label, $var),
-            self::PRODUCT => $this->getProducts($name, $label, $var, false),
-            self::PRODUCTS => $this->getProducts($name, $label, $var),
+            // self::CATEGORY => $this->getCategories($name, $label, $var, false),
+            // self::CATEGORIES => $this->getCategories($name, $label, $var),
+            // self::PRODUCT => $this->getProducts($name, $label, $var, false),
+            // self::PRODUCTS => $this->getProducts($name, $label, $var),
             default => $this->getText($name, $label, $var),
         };
         if ($var['type'] == self::HEADING->value || $var['type'] == self::DESCRIPTION->value) {
@@ -155,7 +155,7 @@ enum VariableTypes: string
                 Toggle::make($name.'.all_children')->label(_fields('all_children'))->hidden(function ($get) use ($name) {
                     return $get($name.'.auto') == false;
                 })->helperText(_hints('pages.all_children')),
-                Select::make($name.'.parent_id')->label(_fields('parent_id'))->hidden(function ($get) use ($name) {
+                Select::make($name.'.parent')->label(_fields('parent'))->hidden(function ($get) use ($name) {
                     return $get($name.'.auto') == false || $get($name.'.all_children') == true;
                 })->native(false)->selectablePlaceholder(false)
                     ->options(Page::query()->pluck('name', 'id')->toArray())->required($var['required'] ?? true),

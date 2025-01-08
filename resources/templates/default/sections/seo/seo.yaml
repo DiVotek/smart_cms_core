@@ -1,0 +1,8 @@
+name: Seo content
+description: "Returns seo content for page with heading on top"
+preview: ""
+schema:
+  - name: title
+    type: heading
+  - name: description
+    type: description

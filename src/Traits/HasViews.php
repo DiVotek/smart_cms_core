@@ -21,7 +21,7 @@ trait HasViews
 
     public function view(): int
     {
-        return $this->increment($this->getViewsColumn());
+        return $this->incrementQuietly($this->getViewsColumn());
     }
 
     /**

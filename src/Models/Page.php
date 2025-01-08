@@ -46,19 +46,23 @@ class Page extends BaseModel
         'slug',
         'sorting',
         'image',
+        'banner',
         'status',
         'views',
         'parent_id',
-        'is_nav',
-        'nav_settings',
+        'layout_id',
         'custom',
     ];
 
     protected $casts = [
-        'is_nav' => 'boolean',
-        'nav_settings' => 'array',
+        'status' => 'boolean',
         'custom' => 'array',
     ];
+
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
+    }
 
     public function getBreadcrumbs(): array
     {
@@ -88,7 +92,7 @@ class Page extends BaseModel
             $current = $current->parent;
         }
 
-        return tRoute('smart_cms_page', ['slug' => implode('/', $slugs)]);
+        return tRoute('cms.page', ['slug' => implode('/', $slugs)]);
     }
 
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo

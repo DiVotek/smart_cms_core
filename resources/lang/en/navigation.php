@@ -41,4 +41,6 @@ return [
     'field' => 'Field',
     'fields' => 'Fields',
     'edit' => 'Edit',
+    'layout' => 'Layout',
+    'layouts' => 'Layouts',
 ];

@@ -47,9 +47,8 @@
             "SmartCms\\Core\\": "src/"
         },
         "files": [
-            "src/helpers.php",
             "src/helpers/base.php",
-            "src/helpers/front.php",
+            "src/helpers/core.php",
             "src/helpers/lang.php"
         ]
     },

@@ -4,7 +4,9 @@ namespace SmartCms\Core\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
+use SmartCms\Core\Models\Page;
 
 class Description extends Component
 {
@@ -14,15 +16,23 @@ class Description extends Component
 
     public function __construct(array $options = [], $tag = 'div')
     {
-        $description = $options['description'] ?? '';
-        if (isset($options['use_page_description']) && $options['use_page_description']) {
-            $description = $options['entity']->seo->content ?? '';
-        }
-        if (isset($options['use_page_summary']) && $options['use_page_summary']) {
-            $description = $options['entity']->seo->summary ?? '';
-        }
-        $this->description = $description;
         $this->tag = $tag;
+        $isCustom = $options['is_custom'] ?? false;
+        if ($isCustom) {
+            $this->description = $options['description'] ?? '';
+            return;
+        }
+        $entity = Context::get('entity');
+        if (!$entity) {
+            $entity = new Page();
+        }
+        $seo = $entity?->seo;
+        $isDescription = $options['is_description'] ?? false;
+        if ($isDescription) {
+            $this->description = $seo->content ?? '';
+            return;
+        }
+        $this->description = $seo->summary ?? '';
     }
 
     public function render(): View|Closure|string

@@ -18,7 +18,7 @@ class EditTemplateSection extends EditRecord
                 ->label('Save & Close')
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')
-                ->action(function ($record, $data) {
+                ->action(function () {
                     $this->save(true, true);
                     $this->record->touch();
 
@@ -39,7 +39,6 @@ class EditTemplateSection extends EditRecord
     {
         $schema = Helper::getComponentSchema($data['design']);
         $data['schema'] = $schema;
-
         return $data;
     }
 }

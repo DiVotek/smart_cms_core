@@ -3,6 +3,8 @@
 namespace SmartCms\Core\Models;
 
 use SmartCms\Core\Services\Helper;
+use SmartCms\Core\Services\Schema\ArrayToField;
+use SmartCms\Core\Services\Schema\Builder;
 use SmartCms\Core\Traits\HasStatus;
 
 /**
@@ -39,6 +41,14 @@ class TemplateSection extends BaseModel
 
     public function getFields(): array
     {
-        return Helper::getComponentClass($this->design);
+        $schema = Helper::getComponentSchema($this->design);
+        $fields = [];
+        $fields = [];
+        foreach ($schema as $field) {
+            $field = ArrayToField::make($field, 'value.');
+            $componentField = Builder::make($field);
+            $fields = array_merge($fields, $componentField);
+        }
+        return $fields;
     }
 }

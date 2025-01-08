@@ -17,11 +17,11 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::get('menu_links_'.$lang.'_'.$id, function () use ($id) {
+        return Cache::get('menu_links_' . $lang . '_' . $id, function () use ($id) {
             $menu = Menu::query()->find($id);
             if ($menu) {
                 $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
+                Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
 
                 return $links;
             }
@@ -37,23 +37,11 @@ class GetLinks
             if (isset($link['entity_type']) && isset($link['entity_id'])) {
                 $entity = $link['entity_type']::find($link['entity_id']);
                 if ($entity) {
-                    $newLink = [
+                    $links[] =  (object)[
                         'name' => $entity->name(),
                         'slug' => $entity->route(),
-                        'children' => [],
+                        'children' => $this->parseLinks($link['children'] ?? []),
                     ];
-                    if (isset($link['children'])) {
-                        foreach ($link['children'] as $child) {
-                            $childEntity = $child['entity_type']::find($child['entity_id']);
-                            if ($childEntity) {
-                                $newLink['children'][] = [
-                                    'name' => $childEntity->name(),
-                                    'slug' => $childEntity->route(),
-                                ];
-                            }
-                        }
-                    }
-                    $links[] = $newLink;
                 }
             }
         }

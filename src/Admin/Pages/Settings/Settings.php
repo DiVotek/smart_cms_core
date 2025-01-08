@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Models\Language;
+use SmartCms\Core\Services\Config;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -75,52 +76,62 @@ class Settings extends BaseSettings
                                 return ! $get(sconfig('is_multi_lang'));
                             }),
                         // TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
-                        // Select::make(sconfig('template'))
-                        //     ->label(_fields('template'))
-                        //     ->suffixAction(
-                        //         ActionsAction::make(_actions('theme'))
-                        //             ->label(_actions('theme'))
-                        //             ->slideOver()
-                        //             ->icon('heroicon-o-cog')
-                        //             ->fillForm(function (): array {
-                        //                 $theme = _settings('theme', []);
-                        //                 if (empty($theme)) {
-                        //                     $theme = _config()->getTheme();
-                        //                     setting([
-                        //                         sconfig('theme') => _config()->getTheme(),
-                        //                     ]);
-                        //                 }
+                        Select::make(sconfig('template'))
+                            ->label(_fields('template'))
+                            ->suffixAction(
+                                ActionsAction::make(_actions('theme'))
+                                    ->label(_actions('theme'))
+                                    ->slideOver()
+                                    ->icon('heroicon-o-cog')
+                                    ->fillForm(function (): array {
+                                        $theme = _settings('theme', []);
+                                        if (empty($theme)) {
+                                            $theme = _config()->getTheme();
+                                            setting([
+                                                sconfig('theme') => _config()->getTheme(),
+                                            ]);
+                                        }
 
-                        //                 return [
-                        //                     'theme' => _settings('theme', []),
-                        //                 ];
-                        //             })
-                        //             ->action(function (array $data): void {
-                        //                 setting([
-                        //                     sconfig('theme') => $data['theme'],
-                        //                 ]);
-                        //             })
-                        //             ->hidden(function () {
-                        //                 return empty(_config()->getTheme());
-                        //             })
-                        //             ->form(function ($form) {
-                        //                 $theme = _config()->getTheme();
-                        //                 foreach ($theme as $key => $value) {
-                        //                     $schema[] = ColorPicker::make('theme.' . $key)
-                        //                         ->label(ucfirst($key))
-                        //                         ->default($value);
-                        //                 }
+                                        return [
+                                            'theme' => _settings('theme', []),
+                                        ];
+                                    })
+                                    ->action(function (array $data): void {
+                                        setting([
+                                            sconfig('theme') => $data['theme'],
+                                        ]);
+                                    })
+                                    ->hidden(function () {
+                                        return empty(_config()->getTheme());
+                                    })
+                                    ->form(function ($form) {
+                                        $theme = _config()->getTheme();
+                                        foreach ($theme as $key => $value) {
+                                            $schema[] = ColorPicker::make('theme.' . $key)
+                                                ->label(ucfirst($key))
+                                                ->default($value);
+                                        }
 
-                        //                 return $form
-                        //                     ->schema([
-                        //                         Section::make('')->schema($schema),
-                        //                     ]);
-                        //             }),
-                        //     )
-                        //     ->options(Helper::getTemplates())
-                        //     ->native(false)
-                        //     ->searchable(),
+                                        return $form
+                                            ->schema([
+                                                Section::make('')->schema($schema),
+                                            ]);
+                                    }),
+                            )
+                            ->options(Helper::getTemplates())
+                            ->native(false)
+                            ->searchable(),
                         Actions::make([
+                            Actions\Action::make('setup')->label(_actions('setup'))->icon('heroicon-o-wrench')->action(function ($get) {
+                                $config = new Config();
+                                $config->initTranslates();
+                                $config->initMenuSections();
+                                $config->initLayouts();
+                                Notification::make()
+                                    ->title(_actions('setup_success'))
+                                    ->success()
+                                    ->send();
+                            }),
                             Actions\Action::make('save')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
                                 $keys = [
                                     sconfig('company_name') => $get(sconfig('company_name')),
@@ -140,8 +151,8 @@ class Settings extends BaseSettings
                                 ->label(_fields('logo'))
                                 ->required(),
                             // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
-                            Schema::getImage(name: sconfig('favicon'), path: 'branding')->label(_fields('favicon')),
-                            Schema::getRepeater(sconfig('socials'))->label(_fields('socials'))
+                            Schema::getImage(name: sconfig('branding.favicon'), path: 'branding')->label(_fields('favicon')),
+                            Schema::getRepeater(sconfig('branding.socials'))->label(_fields('socials'))
                                 ->schema([
                                     TextInput::make('name')
                                         ->label(strans('admin.name'))
@@ -159,8 +170,8 @@ class Settings extends BaseSettings
                                 Actions\Action::make('save_tab_2')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
                                     $keys = [
                                         sconfig('branding.logo') => $get(sconfig('branding.logo')),
-                                        sconfig('favicon') => $get(sconfig('favicon')),
-                                        sconfig('socials') => $get(sconfig('socials')),
+                                        sconfig('branding.favicon') => $get(sconfig('branding.favicon')),
+                                        sconfig('branding.socials') => $get(sconfig('branding.socials')),
                                     ];
                                     setting($keys);
                                     $this->getSavedNotification()?->send();

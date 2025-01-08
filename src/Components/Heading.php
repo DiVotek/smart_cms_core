@@ -4,7 +4,9 @@ namespace SmartCms\Core\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
+use SmartCms\Core\Models\Page;
 
 class Heading extends Component
 {
@@ -17,11 +19,16 @@ class Heading extends Component
     public function __construct(array $options = [])
     {
         $title = $options['title'] ?? '';
+        $entity = Context::get('entity');
+        if (!$entity) {
+            $entity = new Page();
+        }
+        $seo = $entity?->seo;
         if (isset($options['use_page_heading']) && $options['use_page_heading']) {
-            $title = $options['entity']->seo->heading ?? $options['entity']->name();
+            $title = $seo->heading ?? $entity->name();
         }
         if (isset($options['use_page_name']) && $options['use_page_name']) {
-            $title = $options['entity']->name();
+            $title = $entity->name();
         }
         $size = $options['heading_size'] ?? 'text-md';
         $type = $options['heading_type'] ?? 'none';

@@ -15,6 +15,7 @@ use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Tables\Actions\Action as ActionsAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use SmartCms\Core\Admin\Resources\SeoResource\Pages\SeoRelationManager;
@@ -153,37 +154,30 @@ class Schema
 
     public static function getLinkBuilder(string $name): AdjacencyList
     {
-        $links = Page::query()->pluck('name', 'slug')->toArray();
-        if (class_exists('\SmartCms\Store\Models\Category')) {
-            $links = array_merge($links, \SmartCms\Store\Models\Category::query()->pluck('name', 'slug')->toArray());
+        $links = Page::query()->pluck('name', 'id')->toArray();
+        $reference = [];
+        foreach ($links as $key => $link) {
+            $reference[$key . '_' . Page::class] = $link;
         }
-
+        Event::dispatch('cms.admin.menu.building', [&$links]);
         return AdjacencyList::make($name)->columnSpanFull()
-            ->maxDepth(1)
+            ->maxDepth(2)
             ->labelKey('name')
-            ->modal(false)
+            ->modal(true)
             ->form([
-                Schema::getSelect('slug', $links)->live()->afterStateUpdated(function (Get $get, Set $set, $old, $state) {
-                    if ($state == null) {
-                        $state = '';
-                    }
-                    if ($state !== null) {
-                        $page = Page::query()->where('slug', $state)->first();
-                        if (! $page) {
-                            $page = \SmartCms\Store\Models\Category::query()->where('slug', $state)->first();
-                        }
-                        if ($page) {
-                            $set('name', $page->name);
-                            $set('entity_id', $page->id);
-                            $set('entity_type', get_class($page));
-                        }
-                    } else {
-                        $set('name', null);
-                        $set('entity_id', null);
-                        $set('entity_type', null);
-                    }
-                }),
-            ]);
+                Schema::getSelect('id', $reference)->live(),
+            ])
+            ->addAction(function (Action $action) {
+                $action->label(__('Add link'));
+                $action->mutateFormDataUsing(function ($data) {
+                    $id = $data['id'];
+                    $arr = explode('_', $id);
+                    $data['entity_id'] = $arr[0];
+                    $data['entity_type'] = $arr[1];
+                    $data['name'] = $data['entity_type']::query()->where('id', $data['entity_id'])->first()->name ?? '';
+                    return $data;
+                });
+            });
     }
 
     public static function getTemplateBuilder(string $name = 'template'): Repeater

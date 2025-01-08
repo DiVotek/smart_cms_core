@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildTemplate;
+use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Models\Seo;
+use SmartCms\Core\Repositories\Page\PageEntityDto;
 
 class PageComponent extends Component
 {
@@ -24,27 +26,40 @@ class PageComponent extends Component
 
     public mixed $entity;
 
-    public array $dataLayer = [];
-
     public string $og_image;
 
-    public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [], array $dataLayer = [])
+    public ?Layout $layout;
+
+    public PageEntityDto $dto;
+
+    public function __construct(Model $entity, string $component, array $microdata = [], array $defaultTemplate = [])
     {
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity?->seo ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
-        $this->template = BuildTemplate::run($entity, $component, $defaultTemplate);
+        $temp = $entity->template()->select([
+            'template_section_id',
+            'value',
+        ])->get()->toArray();
+        if (empty($temp)) {
+            $temp = $defaultTemplate;
+        }
+        $this->template = BuildTemplate::run($temp);
         $this->microdata = $microdata;
         Context::add('entity', $entity);
         if (method_exists($entity, 'view')) {
             $entity->view();
         }
+        $seo = $entity->seo ?? new Seo;
+        $this->dto = new PageEntityDto($entity->name(), $entity->image ?? logo(), $entity->created_at, $entity->updated_at, $entity->getBreadcrumbs(), $seo->title ?? '', $seo->heading ?? '', $seo->summary ?? '', $seo->content ?? '', $entity->banner ?? '');
+        $this->dto->setExtraValue('categories', 123123);
+        $layout = Layout::find($entity->layout_id);
+        $this->layout = $layout;
         $this->entity = $entity;
-        $this->dataLayer = $dataLayer;
         $this->og_image = _settings('og_image', logo());
     }
 
@@ -57,14 +72,11 @@ class PageComponent extends Component
                 @section('keywords', $meta_keywords)
                 @section("content")
                 @section('meta-image',asset($entity->image ?? $og_image))
+                @if($layout)
+                @include('template::layouts.'.$layout->path, [...$layout->getVariables(),'entity' => $dto->toObject()])
+                @endif
                 <x-s::layout.builder :data="$template" />
                 @endsection
-                @if(count($dataLayer) > 0)
-                <script>
-                    window.dataLayer = window.dataLayer || [];
-                    window.dataLayer.push(@json($dataLayer));
-                </script>
-                @endif
             </x-s::layout.layout>
         blade;
     }

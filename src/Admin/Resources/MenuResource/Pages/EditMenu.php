@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Admin\Resources\MenuResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\MenuResource;
 
 class EditMenu extends EditRecord
@@ -27,11 +28,12 @@ class EditMenu extends EditRecord
                 ->label(_actions('save'))
                 ->icon('heroicon-o-check-circle')
                 ->action(function () {
-                    $this->save();
+                    dd($this->record);
                     $this->record->touch();
                 })
                 ->formId('form'),
 
         ];
     }
+
 }

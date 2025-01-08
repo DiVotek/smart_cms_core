@@ -128,30 +128,42 @@ class EditTemplate extends ManageRelatedRecords
                     return $data;
                 }),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make(__('Clone'))
-                    ->icon('heroicon-o-document-duplicate')
-                    ->hidden(function ($record) {
-                        return $record->value == null;
-                    })
-                    ->requiresConfirmation()->form(function ($form) {
-                        return $form->schema([
-                            TextInput::make('name')->label(_fields('name'))->required(),
-                        ]);
-                    })->action(function ($record, $data) {
-                        $oldSection = TemplateSection::find($record->template_section_id);
-                        TemplateSection::query()->create([
-                            'name' => $data['name'],
-                            'status' => $oldSection->status,
-                            'locked' => $oldSection->locked,
-                            'design' => $oldSection->design,
-                            'value' => $record->value,
-                            'is_system' => $oldSection->is_system,
-                        ]);
-                        Notification::make()
-                            ->title(__('Record was saved'))
-                            ->success()
-                            ->send();
-                    }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make(__('Clone'))
+                        ->icon('heroicon-o-document-duplicate')
+                        ->hidden(function ($record) {
+                            return $record->value == null;
+                        })
+                        ->requiresConfirmation()->form(function ($form) {
+                            return $form->schema([
+                                TextInput::make('name')->label(_fields('name'))->required(),
+                            ]);
+                        })->action(function ($record, $data) {
+                            $oldSection = TemplateSection::find($record->template_section_id);
+                            TemplateSection::query()->create([
+                                'name' => $data['name'],
+                                'status' => $oldSection->status,
+                                'locked' => $oldSection->locked,
+                                'design' => $oldSection->design,
+                                'value' => $record->value,
+                                'is_system' => $oldSection->is_system,
+                            ]);
+                            Notification::make()
+                                ->title(__('Record was saved'))
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make(__('Restore'))
+                        ->icon('heroicon-o-arrow-path')
+                        ->hidden(function ($record) {
+                            return $record->value == null;
+                        })
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            $record->value = null;
+                            $record->save();
+                        })
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -165,7 +177,7 @@ class EditTemplate extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))

@@ -11,22 +11,12 @@ return [
 
     'template' => $prefix.'template',
 
-    'design' => [
-        'header' => $prefix.'header_design',
-        'footer' => $prefix.'footer_design',
-    ],
-
-    // core
     'branding' => [
         'logo' => $prefix.'branding_logo',
-        'footer_logo' => $prefix.'branding_footer_logo',
         'favicon' => $prefix.'branding_favicon',
         'socials' => $prefix.'branding_socials',
+        'company_name' => $prefix.'branding_company_name',
     ],
-
-    'header_logo' => $prefix.'header_logo',
-    'footer_logo' => $prefix.'footer_logo',
-    'favicon' => $prefix.'favicon',
 
     // contacts
     'company_name' => $prefix.'company_name',

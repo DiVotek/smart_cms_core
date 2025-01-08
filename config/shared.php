@@ -20,57 +20,7 @@ use SmartCms\Core\Routes\GetSlug;
 
 return [
     'page_model' => \SmartCms\Core\Models\Page::class,
-    'routes' => [
-        'slug' => [], // invokes after main getSlug page
-        'route_handler' => GetSlug::class,
-        'form_handler' => GetForm::class,
-        'sitemap_handler' => GetSitemap::class,
-        'robots_handler' => GetRobots::class,
-    ],
     'admin' => [
-        'resources' => [
-            AdminResource::class,
-            MenuSectionResource::class,
-            ContactFormResource::class,
-            FormResource::class,
-            // TranslationResource::class,
-            TemplateSectionResource::class,
-            MenuResource::class,
-            EmailResource::class,
-            FieldResource::class,
-        ],
-        'page_resource' => StaticPageResource::class,
-        'page_relations' => [],
-        'navigation_groups' => [
-            [
-                'name' => 'catalog',
-                'icon' => 'heroicon-m-shopping-bag',
-            ],
-            [
-                'name' => 'communication',
-                'icon' => 'heroicon-m-megaphone',
-            ],
-            [
-                'name' => 'menu_sections',
-                'icon' => 'heroicon-m-book-open',
-            ],
-            [
-                'name' => 'pages',
-                'icon' => 'heroicon-m-book-open',
-            ],
-            [
-                'name' => 'design-template',
-                'icon' => 'heroicon-m-light-bulb',
-            ],
-            [
-                'name' => 'system',
-                'icon' => 'heroicon-m-cog-6-tooth',
-            ],
-        ],
-        'navigation_items' => [],
-        'settings_pages' => [
-            \SmartCms\Core\Admin\Pages\Settings\Settings::class,
-        ],
         'locales' => ['en', 'uk'],
         'colors' => [
             'primary' => '#28a0e7',
@@ -79,10 +29,6 @@ return [
             'info' => Color::Blue,
             'success' => Color::Emerald,
             'warning' => Color::Orange,
-        ],
-        'widgets' => [
-            TopStaticPages::class,
-            TopContactForms::class,
         ],
     ],
 ];

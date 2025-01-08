@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('sorting');
             $table->string('icon')->nullable();
             $table->boolean('is_categories')->default(false);
-            $table->integer('parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->json('custom_fields')->nullable();
             $table->json('template')->nullable();
             $table->json('categories_template')->nullable();

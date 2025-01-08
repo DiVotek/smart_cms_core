@@ -6,11 +6,11 @@
     @endphp
 
     <ul role="list" class="grid gap-8 xl:grid-cols-4 lg:grid-cols-3">
-        @foreach ($options as $key => $value)
+        @foreach ($options as $value)
             <li class="overflow-hidden">
                 <label class="relative">
                     <input id="{{ $id }}-{{ $value['name'] }}" name="{{ $id }}" type="radio"
-                        value="{{ $value['file'] }}" wire:loading.attr="disabled"
+                        value="{{ $value['path'] }}" wire:loading.attr="disabled"
                         {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}" class="rb-image" />
                     <span class="img-radio-selected"></span>
                     <div class="img-radio">

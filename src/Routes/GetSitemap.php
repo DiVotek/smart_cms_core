@@ -3,11 +3,12 @@
 namespace SmartCms\Core\Routes;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\Page;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 
-class GetSitemap
+class SitemapHandler
 {
     use AsAction;
 
@@ -23,6 +24,7 @@ class GetSitemap
             $links = array_merge($links, (new $class)->__invoke());
         }
         $content = $this->getBladeContent();
+        Event::dispatch('cms.sitemap.generate', [&$links]);
         $content = Blade::render($content, [
             'links' => $links,
             'is_sitemap' => true,

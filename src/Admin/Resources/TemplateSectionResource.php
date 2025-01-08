@@ -16,6 +16,9 @@ use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
+use SmartCms\Core\Services\Schema\ArrayToField;
+use SmartCms\Core\Services\Schema\Builder;
+use SmartCms\Core\Services\SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
 
 class TemplateSectionResource extends Resource
@@ -64,7 +67,6 @@ class TemplateSectionResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
-                    // Hidden::make('changedDesign')->default(false),
                     Schema::getName(true)->maxLength(255)->suffixAction(Action::make('design')
                         ->label(_fields('design'))->icon('heroicon-o-cog')
                         ->mountUsing(function ($form, $get) {
@@ -82,27 +84,31 @@ class TemplateSectionResource extends Resource
                                     ->live()
                                     ->columnSpanFull(),
                             ]);
-                        })->action(function ($record, $data, $set, $get, $component) {
-                            // if($get('design') !== $data['design']) {
-                            //     $set('changedDesign', true);
-                            // }
+                        })->action(function ($data, $set, $component) {
                             $set('design', $data['design']);
                             $component->getContainer()->getComponent('dynamicTypeFields')->getChildComponentContainer()->fill();
                         })),
                     Hidden::make('design'),
                     Section::make(_fields('component_settings'))
-                        ->schema(function (Get $get, $set, $record): array {
-                            $class = $get('design');
-                            if (! $class) {
+                        ->schema(function (Get $get, $set, $record) use ($components): array {
+                            $path = $get('design');
+                            if (! $path) {
                                 return [];
                             }
-                            // if($get('changedDesign')){
-                            //     // dd(123);
-                            //     $set('value', $record->value ?? '');
-                            //     $set('changedDesign', false);
-                            // }
-
-                            return Helper::getComponentClass($class);
+                            $currentComponent = null;
+                            foreach ($components as $component) {
+                                if ($component['path'] == $path) {
+                                    $currentComponent = $component;
+                                    break;
+                                }
+                            }
+                            $fields = [];
+                            foreach ($currentComponent['schema'] as $field) {
+                                $field = ArrayToField::make($field, 'value.');
+                                $componentField = Builder::make($field);
+                                $fields = array_merge($fields, $componentField);
+                            }
+                            return $fields;
                         })->live()
                         ->columnSpanFull()->key('dynamicTypeFields'),
                 ]),

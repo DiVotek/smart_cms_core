@@ -42,24 +42,24 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'css/app.css')) {
-                return 'scms/templates/'.template().'/css/app.css';
+            if (File::exists(scms_template_path(template()) . 'css/app.css')) {
+                return 'scms/templates/' . template() . '/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'js/app.js')) {
-                return 'scms/templates/'.template().'/js/app.js';
+            if (File::exists(scms_template_path(template()) . 'js/app.js')) {
+                return 'scms/templates/' . template() . '/js/app.js';
             } else {
                 return '';
             }
         });
-        $fav = _settings('favicon', '/favicon.ico');
+        $fav = _settings('branding.favicon', '/favicon.ico');
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
     }
 
@@ -105,11 +105,9 @@ class Layout extends Component
                          @endif
                     </head>
                     <body class="antialiased">
-                            <x-s::layout.header />
-                            <main>
+                      <x-s::layout.main-layout>
                                 @yield('content')
-                            </main>
-                            <x-s::layout.footer/>
+                      </x-s::layout.main-layout>
                             <div x-data="dialog" x-show="isShow" x-cloak
                                 @open-modal.window="openModal($event.detail.element, $event.detail.label, $event.detail.description, $event.detail.time, $event.detail.backdrop)"
                                 @keyup.escape="closeModal()" @click.self="closeModal()" x-trap.inert.noscroll="isShow" :data-open="isShow"

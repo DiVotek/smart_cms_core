@@ -14,6 +14,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Form::class)->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(ContactForm::STATUS_NEW);
+            $table->string('comment')->nullable();
             $table->json('data')->nullable();
             $table->timestamps();
         });

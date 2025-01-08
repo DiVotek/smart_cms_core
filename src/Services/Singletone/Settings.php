@@ -2,6 +2,8 @@
 
 namespace SmartCms\Core\Services\Singletone;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Outerweb\Settings\Models\Setting;
 
 class Settings
@@ -12,11 +14,15 @@ class Settings
 
     public function __construct()
     {
-        $this->settings = Setting::all();
+        if (Schema::hasTable($this->table)) {
+            $this->settings = Setting::all();
+        } else {
+            $this->settings = collect();
+        }
     }
 
     public function get(string $key): mixed
     {
-        return $this->settings->where('key', $key)->first()?->value;
+        return $this->settings->where('key', $key)->first()?->value ?? null;
     }
 }

@@ -6,23 +6,26 @@ use SmartCms\Core\Models\Page;
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/'._settings('branding.logo', '');
+        return '/' . _settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
     function phones(): array
     {
         $setting = _settings('company_info', []);
-        $setting = $setting[0] ?? [];
-        $phones = $setting['phones'] ?? [];
-        $newPhones = [];
-        if (is_array($phones)) {
-            foreach ($phones as $phone) {
-                $newPhones[] = $phone['value'];
+        $phones = [];
+        foreach($setting as $branch){
+            if(!isset($branch['phones'])){
+                continue;
+            }
+            foreach($branch['phones'] as $phone){
+                if(!isset($phone['value'])){
+                    continue;
+                }
+                $phones[] = $phone['value'];
             }
         }
-
-        return $newPhones;
+        return $phones;
     }
 }
 if (! function_exists('email')) {
@@ -47,7 +50,7 @@ if (! function_exists('emails')) {
 if (! function_exists('socials')) {
     function socials(): array
     {
-        return _settings('socials', []);
+        return _settings('branding.socials', []);
     }
 }
 if (! function_exists('social_names')) {
@@ -55,7 +58,7 @@ if (! function_exists('social_names')) {
     {
         return array_map(function ($item) {
             return $item['name'];
-        }, _settings('socials', []));
+        }, _settings('branding.socials', []));
     }
 }
 if (! function_exists('template')) {
@@ -74,7 +77,7 @@ if (! function_exists('slogan')) {
 if (! function_exists('company_name')) {
     function company_name(): string
     {
-        return _settings('company_name', '');
+        return _settings('branding.company_name', '');
     }
 }
 if (! function_exists('home')) {
@@ -117,7 +120,6 @@ if (! function_exists('schedules')) {
     function schedules(): array
     {
         $setting = _settings('company_info', []);
-
         return array_filter(array_map(function ($item) {
             return $item['schedule'] ?? '';
         }, $setting));
