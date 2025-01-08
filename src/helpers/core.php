@@ -6,7 +6,7 @@ use SmartCms\Core\Models\Page;
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/'._settings('branding.logo', '');
+        return '/' . _settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
@@ -145,5 +145,12 @@ if (! function_exists('format_phone')) {
         }
 
         return preg_replace('/\B(?=(\d{3})+(?!\d))/', '-', substr($phone, 1));
+    }
+}
+
+if (!function_exists('no_image')) {
+    function no_image(): string
+    {
+        return '';
     }
 }

@@ -3,11 +3,13 @@
 namespace SmartCms\Core\Services\Schema;
 
 use Exception;
+use Illuminate\Support\Facades\Event;
 use SmartCms\Core\Actions\Template\GetLinks;
 use SmartCms\Core\Repositories\Page\PageRepository;
 
 class SchemaParser
 {
+
     public FieldSchema $field;
 
     public array $fields = [];
@@ -32,7 +34,11 @@ class SchemaParser
         foreach ($this->fields as $field) {
             $this->field = ArrayToField::make($field);
             try {
-                $this->parse();
+                if (in_array($this->field->type, Builder::AVAILABLE_TYPES)) {
+                    $this->parse();
+                } else {
+                    Event::dispatch('cms.admin.schema.parse', [$field, $this]);
+                }
             } catch (Exception $e) {
                 dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
             }
@@ -54,7 +60,7 @@ class SchemaParser
             case 'image':
             case 'file':
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 break;
@@ -145,6 +151,10 @@ class SchemaParser
             default:
                 $value = $fieldValue;
                 break;
+        }
+        if (is_array($value) && empty($value)) {
+            $this->variables[$this->field->name] = [];
+            return;
         }
         if ($value) {
             $this->variables[$this->field->name] = $value;

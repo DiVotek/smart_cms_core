@@ -42,15 +42,15 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'css/app.css')) {
-                return 'scms/templates/'.template().'/css/app.css';
+            if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
+                return 'scms/templates/'.template().'/assets/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'js/app.js')) {
-                return 'scms/templates/'.template().'/js/app.js';
+            if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
+                return 'scms/templates/'.template().'/assets/js/app.js';
             } else {
                 return '';
             }

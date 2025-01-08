@@ -23,8 +23,18 @@ trait AsDto
         return $date->format('d-m-Y');
     }
 
+    public static function factory(...$args): self
+    {
+        return new self(...$args);
+    }
+
     public function setExtraValue(string $key, mixed $value): void
     {
         $this->extra[$key] = $value;
+    }
+
+    public function get()
+    {
+        return $this->toObject();
     }
 }

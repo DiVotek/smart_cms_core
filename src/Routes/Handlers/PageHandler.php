@@ -33,7 +33,7 @@ class PageHandler
             return Blade::renderComponent(new StaticPage($page));
         }
         $res = Event::dispatch('cms.page.get', [$segments]);
-        if ($res && is_array($res) && count($res) > 0) {
+        if ($res && is_array($res) && count($res) > 0 && $res[0]) {
             return $res[0];
         }
         abort(404);
