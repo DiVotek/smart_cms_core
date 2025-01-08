@@ -9,7 +9,6 @@ use SmartCms\Core\Repositories\Page\PageRepository;
 
 class SchemaParser
 {
-
     public FieldSchema $field;
 
     public array $fields = [];
@@ -60,7 +59,7 @@ class SchemaParser
             case 'image':
             case 'file':
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/' . $fieldValue;
+                    $fieldValue = 'storage/'.$fieldValue;
                 }
                 $value = asset($fieldValue);
                 break;
@@ -154,6 +153,7 @@ class SchemaParser
         }
         if (is_array($value) && empty($value)) {
             $this->variables[$this->field->name] = [];
+
             return;
         }
         if ($value) {
