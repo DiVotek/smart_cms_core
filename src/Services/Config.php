@@ -38,7 +38,7 @@ class Config
         $config = [];
         $template = template();
         $templateConfigPath = scms_template_path($template);
-        $yamlConfig = $templateConfigPath . '/config.yaml';
+        $yamlConfig = $templateConfigPath.'/config.yaml';
         if (! File::exists($yamlConfig)) {
             throw TemplateConfigException::notFound($template);
         }
@@ -95,12 +95,12 @@ class Config
 
     public function validateLayouts(string $path, array $config)
     {
-        $dir = $path . 'layouts';
+        $dir = $path.'layouts';
         if (! File::exists($dir) || ! File::isDirectory($dir)) {
             throw TemplateConfigException::layoutsNotExists($config['name']);
         }
-        $mainLayout = $dir . '/main.blade.php';
-        $mainlayoutConfig = $dir . '/main.yaml';
+        $mainLayout = $dir.'/main.blade.php';
+        $mainlayoutConfig = $dir.'/main.yaml';
         if (! File::exists($mainLayout) || ! File::exists($mainlayoutConfig)) {
             throw TemplateConfigException::mainLayoutNotExists($config['name']);
         }
@@ -108,7 +108,7 @@ class Config
 
     public function validateSections(string $path, array $config)
     {
-        $dir = $path . 'sections';
+        $dir = $path.'sections';
         if (! File::exists($dir) || ! File::isDirectory($dir)) {
             throw TemplateConfigException::sectionsNotExists($config['name']);
         }
@@ -128,15 +128,15 @@ class Config
     {
         $sections = [];
         $templateConfigPath = scms_template_path(template());
-        $dir = $templateConfigPath . 'sections';
+        $dir = $templateConfigPath.'sections';
         $dirs = File::directories($dir);
         foreach ($dirs as $directory) {
             foreach (File::files($directory) as $file) {
                 if (File::extension($file) === 'yaml') {
                     $config = Yaml::parse(File::get($file));
                     $fileName = File::name($file);
-                    if (File::exists($directory . '/' . $fileName . '.blade.php')) {
-                        $config['path'] = $fileName . '/' . $fileName;
+                    if (File::exists($directory.'/'.$fileName.'.blade.php')) {
+                        $config['path'] = $fileName.'/'.$fileName;
                     } else {
                         continue;
                     }
@@ -151,9 +151,9 @@ class Config
     public function getLayouts(): array
     {
         $templateConfigPath = scms_template_path(template());
-        $dir = $templateConfigPath . 'layouts';
+        $dir = $templateConfigPath.'layouts';
         $configs = [];
-        $mainLayout = $dir . '/main.yaml';
+        $mainLayout = $dir.'/main.yaml';
         $mainLayoutConfig = Yaml::parse(File::get($mainLayout));
         $mainLayoutConfig['path'] = 'main';
         $configs[] = $mainLayoutConfig;
@@ -163,8 +163,8 @@ class Config
                 if (File::extension($file) === 'yaml') {
                     $config = Yaml::parse(File::get($file));
                     $fileName = File::name($file);
-                    if (File::exists($directory . '/' . $fileName . '.blade.php')) {
-                        $config['path'] = $fileName . '/' . $fileName;
+                    if (File::exists($directory.'/'.$fileName.'.blade.php')) {
+                        $config['path'] = $fileName.'/'.$fileName;
                     } else {
                         continue;
                     }
