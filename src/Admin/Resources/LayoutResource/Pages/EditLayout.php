@@ -18,7 +18,7 @@ class EditLayout extends EditRecord
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\Action::make('update_schema')->label('Update Schema')->icon('heroicon-o-arrow-path')->action(function () {
                 $config = new Config;
-                $config->initLayouts();
+                $config->initLayout($this->record->path);
                 Notification::make()->title(_actions('success'))->success()->send();
             }),
             \Filament\Actions\Action::make(_actions('save_close'))

@@ -36,7 +36,7 @@ class SchemaParser
                 if (in_array($this->field->type, Builder::AVAILABLE_TYPES)) {
                     $this->parse();
                 } else {
-                    Event::dispatch('cms.admin.schema.parse', [$field, $this]);
+                    Event::dispatch('cms.admin.schema.parse', $this);
                 }
             } catch (Exception $e) {
                 dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
