@@ -12,6 +12,11 @@ class EditLayout extends EditRecord
 {
     protected static string $resource = LayoutResource::class;
 
+    public function getBreadcrumb(): string
+    {
+        return $this->record->name;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

@@ -26,4 +26,5 @@ return [
     'save' => 'Save',
     'saved' => 'Saved!',
     'create_from_tpl' => 'Create from template',
+    'setup' => 'Setup',
 ];

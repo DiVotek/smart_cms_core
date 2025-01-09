@@ -159,7 +159,7 @@ class Schema
         foreach ($links as $key => $link) {
             $reference[$key.'_'.Page::class] = $link;
         }
-        Event::dispatch('cms.admin.menu.building', [&$links]);
+        Event::dispatch('cms.admin.menu.building', [&$reference]);
 
         return AdjacencyList::make($name)->columnSpanFull()
             ->maxDepth(2)

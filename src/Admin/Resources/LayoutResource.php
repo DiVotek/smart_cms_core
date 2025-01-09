@@ -52,8 +52,17 @@ class LayoutResource extends Resource
     {
         $instance = $form->getModelInstance();
         $schema = [];
-        if ($instance && is_array($instance->schema) && count($instance->schema) > 0) {
-            foreach ($instance->schema as $value) {
+        if ($instance) {
+            if (config('app.env') == 'production') {
+                $layoutSchema = $instance->schema ?? [];
+            } else {
+                $layouts = collect(_config()->getLayouts());
+                $layout_schema = $layouts->where('path', $instance->path)->first();
+                if ($layout_schema && is_array($layout_schema['schema'])) {
+                    $layoutSchema = $layout_schema['schema'];
+                }
+            }
+            foreach ($layoutSchema as $value) {
                 $field = ArrayToField::make($value, 'value.');
                 $componentField = Builder::make($field);
                 $schema = array_merge($schema, $componentField);

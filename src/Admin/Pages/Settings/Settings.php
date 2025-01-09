@@ -107,7 +107,7 @@ class Settings extends BaseSettings
                                     ->form(function ($form) {
                                         $theme = _config()->getTheme();
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.'.$key)
+                                            $schema[] = ColorPicker::make('theme.' . $key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }
@@ -158,11 +158,11 @@ class Settings extends BaseSettings
                                         ->label(strans('admin.name'))
                                         ->string()
                                         ->required(),
-                                    TextInput::make('url')
+                                    TextInput::make('link')
                                         ->label(strans('admin.url'))
                                         ->string()
                                         ->required(),
-                                    Schema::getImage('icon', path: 'branding')
+                                    Schema::getImage('image', path: 'branding')
                                         ->label(strans('admin.icon'))->default(''),
                                 ])
                                 ->default([]),
