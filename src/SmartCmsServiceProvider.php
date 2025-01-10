@@ -15,6 +15,7 @@ use SmartCms\Core\Commands\MakeLayout;
 use SmartCms\Core\Commands\MakeSection;
 use SmartCms\Core\Commands\MakeTemplate;
 use SmartCms\Core\Commands\Update;
+use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Translation;
 
 class SmartCmsServiceProvider extends ServiceProvider
@@ -106,9 +107,16 @@ class SmartCmsServiceProvider extends ServiceProvider
         }
         $this->bootBladeComponents();
         View::composer('template::*', function ($view) {
-            $host = app('_page')->first();
-            $view->with('host', $host);
-            $view->with('hostname', $host->name());
+            $host = Page::query()->where('slug', '')->first();
+            if ($host) {
+                $hostname = $host->name();
+                $hostRoute = $host->route();
+            } else {
+                $hostname = company_name();
+                $hostRoute = '/';
+            }
+            $view->with('host', $hostRoute);
+            $view->with('hostname', $hostname);
             $view->with('company_name', company_name());
             $view->with('logo', logo());
             $view->with('language', current_lang());

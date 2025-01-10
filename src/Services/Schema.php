@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Services;
 
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -12,15 +11,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\RelationManagers\RelationGroup;
-use Filament\Tables\Actions\Action as ActionsAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
-use SmartCms\Core\Admin\Resources\SeoResource\Pages\SeoRelationManager;
-use SmartCms\Core\Admin\Resources\StaticPageResource\RelationManagers\TemplateRelationManager;
-use SmartCms\Core\Admin\Resources\TranslateResource\RelationManagers\TranslatableRelationManager;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\TemplateSection;
 
@@ -144,14 +138,6 @@ class Schema
             ->native(false)->searchable(true);
     }
 
-    public static function getUpdatedAt(): DatePicker
-    {
-        return DatePicker::make('updated_at')
-            ->label(_fields('updated_at'))
-            ->default(now())
-            ->required();
-    }
-
     public static function getLinkBuilder(string $name): AdjacencyList
     {
         $links = Page::query()->pluck('name', 'id')->toArray();
@@ -193,23 +179,5 @@ class Schema
                 self::getSelect('template_section_id', $options),
                 Hidden::make('value')->default([]),
             ])->default([]);
-    }
-
-    public static function getSeoAndTemplateRelationGroup(): RelationGroup
-    {
-        return RelationGroup::make(_fields('seo_and_template'), [
-            TranslatableRelationManager::class,
-            SeoRelationManager::class,
-            TemplateRelationManager::class,
-        ]);
-    }
-
-    public static function helpAction(string $text): ActionsAction
-    {
-        return ActionsAction::make(_hints('help'))
-            ->iconButton()
-            ->icon('heroicon-o-question-mark-circle')
-            ->modalDescription(__($text))
-            ->modalFooterActions([]);
     }
 }

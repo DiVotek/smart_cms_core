@@ -55,23 +55,6 @@ class Helper
         return [];
     }
 
-    public static function getComponentClass(string $component): array
-    {
-        $schema = self::getComponentSchema($component);
-        $fields = [];
-        foreach ($schema as $value) {
-            $field = ArrayToField::make('value.', $value);
-            $componentField = SchemaBuilder::make($field);
-            if ($componentField) {
-                $fields[] = $componentField;
-            }
-            // dd($field);
-            // $fields = array_merge($fields, self::parseVariable($value, 'value.'));
-        }
-
-        return $fields;
-    }
-
     public static function getLabelFromField(string $field): string
     {
         $field = preg_replace('/(?<!^)([A-Z])/', ' $1', $field);
@@ -81,89 +64,6 @@ class Helper
         return __(ucfirst(strtolower($field)));
     }
 
-    public static function extractVariables($fileContent)
-    {
-        $variables = [];
-        $arrayProperties = [];
-
-        // Check for components like <x-heading> and <x-description>
-        if (str_contains($fileContent, '<x-heading')) {
-            $variables[] = 'heading';
-        }
-        if (str_contains($fileContent, '<x-description')) {
-            $variables[] = 'description';
-        }
-        if (str_contains($fileContent, 'form-builder')) {
-            $variables[] = 'form';
-        }
-
-        // Match {{ $variable }} and {{ $variable['key'] }}
-        preg_match_all('/\{\{\s*\$([a-zA-Z_][a-zA-Z0-9_]*)/', $fileContent, $matches1);
-        $variables = array_merge($variables, $matches1[1]);
-
-        // Match component attributes like :options="$options" or :anyVar="$anyVar"
-        preg_match_all('/:\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*"\s*\$([a-zA-Z_][a-zA-Z0-9_]*)\s*"/', $fileContent, $matches2);
-        $variables = array_merge($variables, $matches2[2]);
-
-        // Updated regex for @foreach to handle both ($key => $value) and ($value) syntax
-        preg_match_all('/@foreach\s*\(\s*\$([a-zA-Z_][a-zA-Z0-9_]*)\s+as\s*(?:\$([a-zA-Z_][a-zA-Z0-9_]*)\s*=>\s*)?\$([a-zA-Z_][a-zA-Z0-9_]*)\)/', $fileContent, $matches3);
-        $arrayVariables = $matches3[1]; // Capture plural form (e.g., $modules)
-        $singularVariables = $matches3[3]; // Capture singular form (e.g., $module)
-        foreach ($arrayVariables as $var) {
-            if ($var == 'categories' || $var == 'news' || $var == 'products' || $var = 'blogCategories' || $var = 'blogArticles') {
-                $variables[] = $var;
-            }
-        }
-        // Loop over all foreaches and handle multiple cases
-        for ($i = 0; $i < count($arrayVariables); $i++) {
-            $arrayVar = $arrayVariables[$i];
-            $singularVar = $singularVariables[$i];
-            // Remove singular variables from global variables list
-            $variables = array_diff($variables, [$singularVar]);
-            // Match $singular['key'] inside the foreach and map it to the plural form
-            preg_match_all('/\$\s*'.preg_quote($singularVar).'\[\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]/', $fileContent, $matches4);
-            foreach ($matches4[1] as $property) {
-                $arrayProperties[$arrayVar][] = $property;
-            }
-
-            // Match singular variables directly used (e.g., {{$module['subtitle']}})
-            preg_match_all('/\{\{\s*\$'.preg_quote($singularVar).'\['.'\'([a-zA-Z_][a-zA-Z0-9_]*)\'\]\s*\}\}/', $fileContent, $matches5);
-            foreach ($matches5[1] as $property) {
-                $arrayProperties[$arrayVar][] = $property;
-            }
-        }
-        // Remove duplicates from the variables
-        $variables = array_unique($variables);
-        // Combine variables and array properties
-        $result = [];
-        foreach ($variables as $variable) {
-            if (! isset($arrayProperties[$variable])) {
-                $result[] = $variable;
-            }
-        }
-
-        foreach ($arrayProperties as $key => &$value) {
-            $value = array_unique($value);
-        }
-
-        $result = array_merge($result, $arrayProperties);
-
-        // Clean up unnecessary variables
-        if (array_search('options', $result) !== false) {
-            unset($result[array_search('options', $result)]);
-        }
-        if (array_search('title', $result) !== false) {
-            unset($result[array_search('title', $result)]);
-        }
-        if (array_search('key', $result) !== false) {
-            unset($result[array_search('key', $result)]);
-        }
-        if (array_search('breadcrumbs', $result) !== false) {
-            unset($result[array_search('breadcrumbs', $result)]);
-        }
-
-        return $result;
-    }
 
     public static function getTemplates(): array
     {
@@ -176,20 +76,6 @@ class Helper
         }
 
         return $templates;
-    }
-
-    public static function getFormTemplates()
-    {
-        $path = scms_template_path(template().'/forms');
-        if (File::exists($path) && File::isDirectory($path)) {
-            $dirs = File::directories($path);
-            $data = [];
-            foreach ($dirs as $dir) {
-                $data[basename($dir)] = ucfirst(basename($dir));
-            }
-
-            return $data;
-        }
     }
 
     public static function getVariableSchema(array|string $var, string $prefix = ''): array
