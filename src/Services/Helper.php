@@ -4,8 +4,6 @@ namespace SmartCms\Core\Services;
 
 use Exception;
 use Illuminate\Support\Facades\File;
-use SmartCms\Core\Services\Schema\ArrayToField;
-use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
 
 class Helper
 {
@@ -63,7 +61,6 @@ class Helper
 
         return __(ucfirst(strtolower($field)));
     }
-
 
     public static function getTemplates(): array
     {
