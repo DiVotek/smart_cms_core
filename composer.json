@@ -40,7 +40,11 @@
     },
     "require-dev": {
         "laravel/pint": "^1.14",
-        "nunomaduro/collision": "^8.1.1||^7.10.0"
+        "nunomaduro/collision": "^8.1.1||^7.10.0",
+        "orchestra/testbench": "^9.0.0||^8.22.0",
+        "pestphp/pest": "^2.34",
+        "pestphp/pest-plugin-arch": "^2.7",
+        "pestphp/pest-plugin-laravel": "^2.3"
     },
     "autoload": {
         "psr-4": {
@@ -52,6 +56,12 @@
             "src/helpers/lang.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "SmartCms\\Core\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
     "scripts": {
         "post-autoload-dump": "",
         "build": [
@@ -62,7 +72,8 @@
             "@composer run build"
         ],
         "analyse": "vendor/bin/phpstan analyse",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "test": "vendor/bin/pest"
     },
     "config": {
         "sort-packages": true,

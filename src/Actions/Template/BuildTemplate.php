@@ -41,7 +41,7 @@ class BuildTemplate
                 ];
             } catch (Exception $e) {
                 if (config('app.debug')) {
-                    dd($e->getMessage(), $e->getTrace(), $section, $d, $template);
+                    // dd($e->getMessage(), $e->getTrace(), $section, $d, $template);
                 }
 
                 continue;

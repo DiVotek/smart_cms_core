@@ -69,34 +69,13 @@ if (! function_exists('template')) {
     }
 }
 
-if (! function_exists('slogan')) {
-    function slogan(): string
-    {
-        return _settings('company_slogan', '');
-    }
-}
 if (! function_exists('company_name')) {
     function company_name(): string
     {
         return _settings('branding.company_name', '');
     }
 }
-if (! function_exists('home')) {
-    function home(): string
-    {
-        return Cache::remember('home', 3600, function () {
-            return Page::query()->first()->route() ?? '/';
-        });
-    }
-}
-if (! function_exists('home_name')) {
-    function home_name(): string
-    {
-        return Cache::remember('home_name', 3600, function () {
-            return Page::query()->first()->name() ?? '/';
-        });
-    }
-}
+
 if (! function_exists('addresses')) {
     function addresses(): array
     {

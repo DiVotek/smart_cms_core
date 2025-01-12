@@ -27,7 +27,6 @@ class EditMenu extends EditRecord
                 ->label(_actions('save'))
                 ->icon('heroicon-o-check-circle')
                 ->action(function () {
-                    dd($this->record);
                     $this->record->touch();
                 })
                 ->formId('form'),

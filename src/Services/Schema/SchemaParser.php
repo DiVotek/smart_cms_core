@@ -5,6 +5,7 @@ namespace SmartCms\Core\Services\Schema;
 use Exception;
 use Illuminate\Support\Facades\Event;
 use SmartCms\Core\Actions\Template\GetLinks;
+use SmartCms\Core\Models\Page;
 use SmartCms\Core\Repositories\Page\PageRepository;
 
 class SchemaParser
@@ -39,7 +40,9 @@ class SchemaParser
                     Event::dispatch('cms.admin.schema.parse', $this);
                 }
             } catch (Exception $e) {
-                dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                if (config('app.debug')) {
+                    // dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                }
             }
         }
 
@@ -51,85 +54,199 @@ class SchemaParser
         $fieldValue = $this->values[current_lang()][$this->field->name] ?? $this->values[$this->field->name];
         switch ($this->field->type) {
             case 'number':
+                $value = (int) $fieldValue ?? 0;
+                break;
             case 'bool':
+                $value = (bool) $fieldValue;
+                break;
             case 'text':
-            case 'form':
+                if (!is_string($fieldValue)) {
+                    $value = '';
+                    break;
+                }
                 $value = $fieldValue;
+                break;
+            case 'form':
+                if (!is_string($fieldValue)) {
+                    $value = 0;
+                    break;
+                }
+                $value = (int) $fieldValue;
                 break;
             case 'image':
             case 'file':
+                if (!is_string($fieldValue)) {
+                    $fieldValue = '';
+                }
+                if (!$fieldValue) {
+                    $value = no_image();
+                    break;
+                }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
+                $value = preg_replace('#(?<!:)//+#', '/', $value);
                 break;
             case 'heading':
+                if (!is_array($fieldValue) || !isset($fieldValue['heading_type']) || !isset($fieldValue['use_page_heading']) || !isset($fieldValue['use_page_name']) || !isset($fieldValue['use_custom'])) {
+                    $fieldValue = [
+                        'heading_type' => 'h1',
+                        'use_page_heading' => true,
+                        'use_page_name' => false,
+                        'use_custom' => false,
+                    ];
+                }
                 $value = $fieldValue;
                 break;
             case 'description':
+                if(!is_array($fieldValue) || !isset($fieldValue['heading_type']) || !isset($fieldValue['is_description']) || !isset($fieldValue['is_summary']) || !isset($fieldValue['is_custom'])) {
+                    $fieldValue = [
+                        'heading_type' => 'h1',
+                        'is_description' => true,
+                        'is_summary' => false,
+                        'is_custom' => false,
+                    ];
+                }
                 $value = $fieldValue;
                 break;
 
             case 'socials':
-                $value = array_map(function ($social) {
-                    return (object) socials()[$social];
-                }, $fieldValue);
+                if (!is_array($fieldValue)) {
+                    $value = [];
+                } else {
+                    $socials = [];
+                    foreach ($fieldValue as $social) {
+                        if (isset(socials()[$social]))
+                            $socials[] = socials()[$social];
+                    }
+                    $value = $socials;
+                }
                 break;
             case 'phone':
-                $value = phones()[$fieldValue];
+                if (!is_string($fieldValue)) {
+                    $value = '';
+                    break;
+                }
+                if (!isset(phones()[$fieldValue])) {
+                    $value = '';
+                } else {
+                    $value = phones()[$fieldValue];
+                }
                 break;
             case 'phones':
-                $value = array_map(function ($phone) {
-                    return phones()[$phone];
-                }, $fieldValue);
+                if (!is_array($fieldValue)) {
+                    $value = [];
+                } else {
+                    $phones = [];
+                    foreach ($fieldValue as $phone) {
+                        if (isset(phones()[$phone]))
+                            $phones[] = phones()[$phone];
+                    }
+                    $value = $phones;
+                }
                 break;
             case 'email':
-                $value = emails()[$fieldValue];
+                if (!is_string($fieldValue)) {
+                    $value = '';
+                    break;
+                }
+                if (!isset(emails()[$fieldValue])) {
+                    $value = '';
+                } else {
+                    $value = emails()[$fieldValue];
+                }
                 break;
             case 'emails':
-                $value = array_map(function ($email) {
-                    return emails()[$email];
-                }, $fieldValue);
+                if (!is_array($fieldValue)) {
+                    $value = [];
+                } else {
+                    $emails = [];
+                    foreach ($fieldValue as $email) {
+                        if (isset(emails()[$email]))
+                            $emails[] = emails()[$email];
+                    }
+                    $value = $emails;
+                }
                 break;
             case 'address':
-                $value = addresses()[$fieldValue];
+                if (!is_string($fieldValue)) {
+                    $value = '';
+                    break;
+                }
+                if (!isset(addresses()[$fieldValue])) {
+                    $value = '';
+                } else {
+                    $value = addresses()[$fieldValue];
+                }
                 break;
             case 'addresses':
-                $value = array_map(function ($address) {
-                    return addresses()[$address];
-                }, $fieldValue);
+                if (!is_array($fieldValue)) {
+                    $value = [];
+                } else {
+                    $addresses = [];
+                    foreach ($fieldValue as $address) {
+                        if (isset(addresses()[$address]))
+                            $addresses[] = addresses()[$address];
+                    }
+                    $value = $addresses;
+                }
                 break;
             case 'schedule':
-                $value = schedules()[$fieldValue];
+                if (!is_string($fieldValue)) {
+                    $value = '';
+                    break;
+                }
+                if (!isset(schedules()[$fieldValue])) {
+                    $value = '';
+                } else {
+                    $value = schedules()[$fieldValue];
+                }
                 break;
             case 'schedules':
-                $value = array_map(function ($schedule) {
-                    return schedules()[$schedule];
-                }, $fieldValue);
+                if (!is_array($fieldValue)) {
+                    $value = [];
+                    break;
+                }
+                $value = [];
+                foreach ($fieldValue as $schedule) {
+                    if (!isset(schedules()[$schedule])) {
+                        continue;
+                    }
+                    $value[] = schedules()[$schedule];
+                }
                 break;
 
             case 'menu':
+                if (!is_string($fieldValue)) {
+                    $value = [];
+                    break;
+                }
                 $value = GetLinks::run($fieldValue);
                 break;
-            case 'form':
-                $value = $fieldValue;
-                break;
             case 'page':
-                if (! is_array($fieldValue)) {
-                    throw new Exception('Page field must be an array');
-                }
-                if (! isset($fieldValue['parent_id']) || ! isset($fieldValue['id'])) {
-                    throw new Exception('Page field must have parent_id and id keys');
+                if (! is_array($fieldValue) || ! isset($fieldValue['id']) || ! isset($fieldValue['parent_id'])) {
+                    $fieldValue = [
+                        'parent_id' => null,
+                        'id' => Page::query()->first()->id ?? 0,
+                        'ids' => [],
+                    ];
                 }
                 $value = PageRepository::make()->find($fieldValue['id']);
                 break;
             case 'pages':
-                if (! is_array($fieldValue)) {
-                    throw new Exception('Pages field must be an array');
+                if (! is_array($fieldValue) || ! isset($fieldValue['parent_id'])) {
+                    $fieldValue = [
+                        'parent_id' => null,
+                        'ids' => [],
+                    ];
                 }
-                if (! isset($fieldValue['parent_id'])) {
-                    throw new Exception('Pages field must have parent_id key');
-                }
+                // if (! is_array($fieldValue)) {
+                //     throw new Exception('Pages field must be an array');
+                // }
+                // if (! isset($fieldValue['parent_id'])) {
+                //     throw new Exception('Pages field must have parent_id key');
+                // }
                 $limit = $fieldValue['limit'] ?? 10;
                 $sort = $fieldValue['order_by'] ?? 'sorting';
                 $sortOrder = 'desc';
@@ -148,7 +265,7 @@ class SchemaParser
                 }
                 break;
             default:
-                $value = $fieldValue;
+                $value = $fieldValue ?? '';
                 break;
         }
         if (is_array($value) && empty($value)) {
@@ -156,7 +273,7 @@ class SchemaParser
 
             return;
         }
-        if ($value) {
+        if ($value || (is_string($value) && strlen($value) == 0) || (is_numeric($value) && $value == 0)) {
             $this->variables[$this->field->name] = $value;
         }
     }
