@@ -12,21 +12,21 @@ use SmartCms\Core\Services\Schema\Builder;
 
 function schema(string $type): array
 {
-   return [
-      'name' => 'test',
-      'type' => $type
-   ];
+    return [
+        'name' => 'test',
+        'type' => $type,
+    ];
 }
 
 function testType(string $type, $instance)
 {
-   it("can build $type variable", function () use ($type, $instance) {
-      $field = ArrayToField::make(schema($type));
-      $filamentFields = Builder::make($field);
-      expect($filamentFields)->toBeArray();
-      expect($filamentFields)->toHaveCount(1);
-      expect($filamentFields[0])->toBeInstanceOf($instance);
-   });
+    it("can build $type variable", function () use ($type, $instance) {
+        $field = ArrayToField::make(schema($type));
+        $filamentFields = Builder::make($field);
+        expect($filamentFields)->toBeArray();
+        expect($filamentFields)->toHaveCount(1);
+        expect($filamentFields[0])->toBeInstanceOf($instance);
+    });
 }
 
 testType('text', TextInput::class);
@@ -50,47 +50,47 @@ testType('form', Select::class);
 testType('page', Fieldset::class);
 testType('pages', Fieldset::class);
 // testType('array', Repeater::class);
-it("can build array variable", function () {
-   $schema = [
-      'name' => 'test',
-      'type' => 'array',
-      'schema' => [
-         schema('text'),
-         schema('number'),
-      ]
-   ];
-   $field = ArrayToField::make($schema);
-   $filamentFields = Builder::make($field);
-   expect($filamentFields)->toBeArray();
-   expect($filamentFields)->toHaveCount(1);
-   expect($filamentFields[0])->toBeInstanceOf(Repeater::class);
+it('can build array variable', function () {
+    $schema = [
+        'name' => 'test',
+        'type' => 'array',
+        'schema' => [
+            schema('text'),
+            schema('number'),
+        ],
+    ];
+    $field = ArrayToField::make($schema);
+    $filamentFields = Builder::make($field);
+    expect($filamentFields)->toBeArray();
+    expect($filamentFields)->toHaveCount(1);
+    expect($filamentFields[0])->toBeInstanceOf(Repeater::class);
 });
 
-it("cant build array without schema", function () {
-   $schema = [
-      'name' => 'test',
-      'type' => 'array',
-   ];
-   $field = ArrayToField::make($schema);
-   Builder::make($field);
+it('cant build array without schema', function () {
+    $schema = [
+        'name' => 'test',
+        'type' => 'array',
+    ];
+    $field = ArrayToField::make($schema);
+    Builder::make($field);
 })->throws(\Exception::class);
 
-it("can build variable without type", function () {
-   $schema = [
-      'name' => 'test',
-   ];
-   $field = ArrayToField::make($schema);
-   $filamentFields = Builder::make($field);
-   expect($filamentFields)->toBeArray();
-   expect($filamentFields)->toHaveCount(1);
-   expect($filamentFields[0])->toBeInstanceOf(TextInput::class);
+it('can build variable without type', function () {
+    $schema = [
+        'name' => 'test',
+    ];
+    $field = ArrayToField::make($schema);
+    $filamentFields = Builder::make($field);
+    expect($filamentFields)->toBeArray();
+    expect($filamentFields)->toHaveCount(1);
+    expect($filamentFields[0])->toBeInstanceOf(TextInput::class);
 });
 
-it("throws error when type is not supported", function () {
-   $schema = [
-      'name' => 'test',
-      'type' => 'unsupported',
-   ];
-   $field = ArrayToField::make($schema);
-   Builder::make($field);
+it('throws error when type is not supported', function () {
+    $schema = [
+        'name' => 'test',
+        'type' => 'unsupported',
+    ];
+    $field = ArrayToField::make($schema);
+    Builder::make($field);
 })->throws(\Exception::class);

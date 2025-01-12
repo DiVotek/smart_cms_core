@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
-use SmartCms\Core\Models\Page;
-
 if (! function_exists('logo')) {
     function logo(): string
     {

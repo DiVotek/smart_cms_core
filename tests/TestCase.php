@@ -12,9 +12,9 @@ abstract class TestCase extends Orchestra
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'SmartCms\\Core\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'SmartCms\\Core\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

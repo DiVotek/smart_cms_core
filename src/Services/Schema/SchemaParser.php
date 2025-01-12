@@ -60,14 +60,14 @@ class SchemaParser
                 $value = (bool) $fieldValue;
                 break;
             case 'text':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = '';
                     break;
                 }
                 $value = $fieldValue;
                 break;
             case 'form':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = 0;
                     break;
                 }
@@ -75,21 +75,21 @@ class SchemaParser
                 break;
             case 'image':
             case 'file':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $fieldValue = '';
                 }
-                if (!$fieldValue) {
+                if (! $fieldValue) {
                     $value = no_image();
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/' . $fieldValue;
+                    $fieldValue = 'storage/'.$fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
                 break;
             case 'heading':
-                if (!is_array($fieldValue) || !isset($fieldValue['heading_type']) || !isset($fieldValue['use_page_heading']) || !isset($fieldValue['use_page_name']) || !isset($fieldValue['use_custom'])) {
+                if (! is_array($fieldValue) || ! isset($fieldValue['heading_type']) || ! isset($fieldValue['use_page_heading']) || ! isset($fieldValue['use_page_name']) || ! isset($fieldValue['use_custom'])) {
                     $fieldValue = [
                         'heading_type' => 'h1',
                         'use_page_heading' => true,
@@ -100,7 +100,7 @@ class SchemaParser
                 $value = $fieldValue;
                 break;
             case 'description':
-                if(!is_array($fieldValue) || !isset($fieldValue['heading_type']) || !isset($fieldValue['is_description']) || !isset($fieldValue['is_summary']) || !isset($fieldValue['is_custom'])) {
+                if (! is_array($fieldValue) || ! isset($fieldValue['heading_type']) || ! isset($fieldValue['is_description']) || ! isset($fieldValue['is_summary']) || ! isset($fieldValue['is_custom'])) {
                     $fieldValue = [
                         'heading_type' => 'h1',
                         'is_description' => true,
@@ -112,105 +112,109 @@ class SchemaParser
                 break;
 
             case 'socials':
-                if (!is_array($fieldValue)) {
+                if (! is_array($fieldValue)) {
                     $value = [];
                 } else {
                     $socials = [];
                     foreach ($fieldValue as $social) {
-                        if (isset(socials()[$social]))
+                        if (isset(socials()[$social])) {
                             $socials[] = socials()[$social];
+                        }
                     }
                     $value = $socials;
                 }
                 break;
             case 'phone':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = '';
                     break;
                 }
-                if (!isset(phones()[$fieldValue])) {
+                if (! isset(phones()[$fieldValue])) {
                     $value = '';
                 } else {
                     $value = phones()[$fieldValue];
                 }
                 break;
             case 'phones':
-                if (!is_array($fieldValue)) {
+                if (! is_array($fieldValue)) {
                     $value = [];
                 } else {
                     $phones = [];
                     foreach ($fieldValue as $phone) {
-                        if (isset(phones()[$phone]))
+                        if (isset(phones()[$phone])) {
                             $phones[] = phones()[$phone];
+                        }
                     }
                     $value = $phones;
                 }
                 break;
             case 'email':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = '';
                     break;
                 }
-                if (!isset(emails()[$fieldValue])) {
+                if (! isset(emails()[$fieldValue])) {
                     $value = '';
                 } else {
                     $value = emails()[$fieldValue];
                 }
                 break;
             case 'emails':
-                if (!is_array($fieldValue)) {
+                if (! is_array($fieldValue)) {
                     $value = [];
                 } else {
                     $emails = [];
                     foreach ($fieldValue as $email) {
-                        if (isset(emails()[$email]))
+                        if (isset(emails()[$email])) {
                             $emails[] = emails()[$email];
+                        }
                     }
                     $value = $emails;
                 }
                 break;
             case 'address':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = '';
                     break;
                 }
-                if (!isset(addresses()[$fieldValue])) {
+                if (! isset(addresses()[$fieldValue])) {
                     $value = '';
                 } else {
                     $value = addresses()[$fieldValue];
                 }
                 break;
             case 'addresses':
-                if (!is_array($fieldValue)) {
+                if (! is_array($fieldValue)) {
                     $value = [];
                 } else {
                     $addresses = [];
                     foreach ($fieldValue as $address) {
-                        if (isset(addresses()[$address]))
+                        if (isset(addresses()[$address])) {
                             $addresses[] = addresses()[$address];
+                        }
                     }
                     $value = $addresses;
                 }
                 break;
             case 'schedule':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = '';
                     break;
                 }
-                if (!isset(schedules()[$fieldValue])) {
+                if (! isset(schedules()[$fieldValue])) {
                     $value = '';
                 } else {
                     $value = schedules()[$fieldValue];
                 }
                 break;
             case 'schedules':
-                if (!is_array($fieldValue)) {
+                if (! is_array($fieldValue)) {
                     $value = [];
                     break;
                 }
                 $value = [];
                 foreach ($fieldValue as $schedule) {
-                    if (!isset(schedules()[$schedule])) {
+                    if (! isset(schedules()[$schedule])) {
                         continue;
                     }
                     $value[] = schedules()[$schedule];
@@ -218,7 +222,7 @@ class SchemaParser
                 break;
 
             case 'menu':
-                if (!is_string($fieldValue)) {
+                if (! is_string($fieldValue)) {
                     $value = [];
                     break;
                 }
