@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Actions\Template;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Route;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\Menu;
 
@@ -18,11 +17,11 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::get('menu_links_' . $lang . '_' . $id, function () use ($id) {
+        return Cache::get('menu_links_'.$lang.'_'.$id, function () use ($id) {
             $menu = Menu::query()->find($id);
             if ($menu) {
                 $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
+                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
 
                 return $links;
             }
@@ -47,6 +46,7 @@ class GetLinks
                 }
             }
         }
+
         return $links;
     }
 }

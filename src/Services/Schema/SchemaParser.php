@@ -83,7 +83,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/' . $fieldValue;
+                    $fieldValue = 'storage/'.$fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
@@ -119,7 +119,7 @@ class SchemaParser
                     foreach ($fieldValue as $social) {
                         $soc = socials()[$social] ?? null;
                         if ($soc) {
-                            $socials[] = (object)$soc;
+                            $socials[] = (object) $soc;
                         }
                     }
                     $value = $socials;
