@@ -12,6 +12,7 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -88,7 +89,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                     }
 
                                     return $form->schema($fields);
@@ -126,7 +127,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
                         Select::make('parent_id')
                             ->label(_fields('parent'))
                             ->relationship('parent', 'name', function ($query) use ($form) {
@@ -157,6 +158,7 @@ class StaticPageResource extends Resource
 
                     return $state;
                 }),
+                ImageColumn::make('image')->label(_columns('image'))->defaultImageUrl(no_image())->square(),
                 TableSchema::getStatus(),
                 TableSchema::getSorting(),
                 TableSchema::getViews(),

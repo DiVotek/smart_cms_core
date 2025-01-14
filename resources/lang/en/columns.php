@@ -22,4 +22,5 @@ return [
     'form' => 'Form',
     'form_name' => 'Form Name',
     'required' => 'Required',
+    'image' => 'Image',
 ];
