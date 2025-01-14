@@ -106,4 +106,6 @@ return [
     'translates' => 'Translates',
     'default' => 'Default',
     'design_wrap' => 'Design',
+    'use_custom' => 'Use custom',
+    'heading' => 'Heading',
 ];

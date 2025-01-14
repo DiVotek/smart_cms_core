@@ -18,7 +18,7 @@ class Heading extends Component
 
     public function __construct(array $options = [])
     {
-        $title = $options['title'] ?? '';
+        $title = $options['heading'] ?? '';
         $entity = Context::get('entity');
         if (! $entity) {
             $entity = new Page;

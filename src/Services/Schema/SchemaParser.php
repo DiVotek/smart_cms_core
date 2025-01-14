@@ -83,12 +83,13 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
                 break;
             case 'heading':
+                $fieldValue = $this->values[$this->field->name] ?? [];
                 if (! is_array($fieldValue) || ! isset($fieldValue['heading_type']) || ! isset($fieldValue['use_page_heading']) || ! isset($fieldValue['use_page_name']) || ! isset($fieldValue['use_custom'])) {
                     $fieldValue = [
                         'heading_type' => 'h1',
@@ -97,16 +98,23 @@ class SchemaParser
                         'use_custom' => false,
                     ];
                 }
+                if ($fieldValue['use_custom']) {
+                    $fieldValue['heading'] = $this->values[current_lang()][$this->field->name] ?? $fieldValue['heading'] ?? '';
+                }
                 $value = $fieldValue;
                 break;
             case 'description':
-                if (! is_array($fieldValue) || ! isset($fieldValue['heading_type']) || ! isset($fieldValue['is_description']) || ! isset($fieldValue['is_summary']) || ! isset($fieldValue['is_custom'])) {
+                $fieldValue = $this->values[$this->field->name] ?? [];
+                if (! is_array($fieldValue) || ! isset($fieldValue['is_description']) || ! isset($fieldValue['is_summary']) || ! isset($fieldValue['is_custom'])) {
                     $fieldValue = [
                         'heading_type' => 'h1',
                         'is_description' => true,
                         'is_summary' => false,
                         'is_custom' => false,
                     ];
+                }
+                if ($fieldValue['is_custom']) {
+                    $fieldValue['description'] = $this->values[current_lang()][$this->values[current_lang()][$this->field->name]] ?? $fieldValue['description'] ?? '';
                 }
                 $value = $fieldValue;
                 break;
