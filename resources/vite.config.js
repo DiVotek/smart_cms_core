@@ -1,32 +1,42 @@
-import { readdirSync, statSync } from 'fs';
+import tailwindcss from '@tailwindcss/vite';
+import { existsSync, readdirSync, statSync } from 'fs';
 import laravel from 'laravel-vite-plugin';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
 
-function getFilesRecursive(dir, extensions = ['.js', '.css']) {
-    const files = [];
+
+function getAssets() {
+    let dir = resolve(__dirname, 'scms/templates/');
     const entries = readdirSync(dir);
-
+    let files = [];
     for (const entry of entries) {
-        const fullPath = resolve(dir, entry);
-        if (statSync(fullPath).isDirectory()) {
-            files.push(...getFilesRecursive(fullPath, extensions));
-        } else if (extensions.some(ext => fullPath.endsWith(ext))) {
-            files.push(fullPath);
+        let assetsPath = resolve(dir, entry) + '/assets';
+        if (!existsSync(assetsPath) || !statSync(assetsPath).isDirectory()) {
+            continue;
+        }
+        let jsPath = assetsPath + '/js';
+        let cssPath = assetsPath + '/css';
+        if (existsSync(jsPath) && statSync(jsPath).isDirectory()) {
+            const js = resolve(dir, entry) + '/assets/js/app.js';
+            if (existsSync(js) && statSync(js).isFile()) {
+                files.push(js);
+            }
+        }
+
+        if (existsSync(cssPath) && statSync(cssPath).isDirectory()) {
+            const css = resolve(dir, entry) + '/assets/css/app.css';
+            if (existsSync(css) && statSync(css).isFile()) {
+                files.push(css);
+            }
         }
     }
-
     return files;
 }
-
-let inputFiles = getFilesRecursive(resolve(__dirname, 'scms/templates/'));
-inputFiles = inputFiles.filter(file => !file.endsWith('tailwind.config.js'));
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: inputFiles,
+            input: getAssets(),
             refresh: true,
         }),
         tailwindcss(),
