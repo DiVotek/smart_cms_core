@@ -28,7 +28,7 @@ class Description extends Component
         if (! $entity) {
             $entity = new Page;
         }
-        $seo = $entity->seo()->where('language_id',current_lang_id())->first() ?? new Seo();
+        $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
         $isDescription = $options['is_description'] ?? false;
         if ($isDescription) {
             $this->description = $seo->content ?? '';

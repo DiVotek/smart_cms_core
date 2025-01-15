@@ -24,7 +24,7 @@ class Heading extends Component
         if (! $entity) {
             $entity = new Page;
         }
-        $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo();
+        $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
         if (isset($options['use_page_heading']) && $options['use_page_heading']) {
             $title = $seo->heading ?? $entity->name();
         }
