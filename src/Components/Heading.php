@@ -7,6 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Models\Seo;
 
 class Heading extends Component
 {
@@ -23,7 +24,7 @@ class Heading extends Component
         if (! $entity) {
             $entity = new Page;
         }
-        $seo = $entity?->seo;
+        $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo();
         if (isset($options['use_page_heading']) && $options['use_page_heading']) {
             $title = $seo->heading ?? $entity->name();
         }

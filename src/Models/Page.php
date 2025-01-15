@@ -69,7 +69,7 @@ class Page extends BaseModel
         $breadcrumbs = [
             [
                 'name' => $this->name() ?? '',
-                'slug' => $this->route(),
+                'link' => $this->route(),
             ],
         ];
         if ($this->parent_id) {

@@ -223,6 +223,7 @@ class Config
                 'path' => $layout['path'],
                 'schema' => $schema,
                 'value' => $value,
+                'is_categories' => $layout['is_categories'] ?? false,
             ]);
         }
     }
@@ -244,6 +245,7 @@ class Config
                 'path' => $layout['path'],
                 'schema' => $schema,
                 'value' => $value,
+                'is_categories' => $layout['is_categories'] ?? false,
             ]);
         }
     }

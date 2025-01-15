@@ -7,6 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Models\Seo;
 
 class Description extends Component
 {
@@ -27,7 +28,7 @@ class Description extends Component
         if (! $entity) {
             $entity = new Page;
         }
-        $seo = $entity?->seo;
+        $seo = $entity->seo()->where('language_id',current_lang_id())->first() ?? new Seo();
         $isDescription = $options['is_description'] ?? false;
         if ($isDescription) {
             $this->description = $seo->content ?? '';

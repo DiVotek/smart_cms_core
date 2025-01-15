@@ -42,8 +42,8 @@ class PageEntityDto implements DtoInterface
         $this->heading = $heading;
         $this->short_description = $short_description;
         $this->content = $content;
-        $this->image = $image;
-        $this->banner = $banner;
+        $this->image = $this->validateImage($image);
+        $this->banner = $this->validateImage($banner);
         $this->categories = $categories;
         $this->items = $items;
         $this->created_at = $created_at;

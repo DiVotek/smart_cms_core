@@ -37,4 +37,16 @@ trait AsDto
     {
         return $this->toObject();
     }
+
+    public function validateImage(string $image): string
+    {
+        if (! str_contains($image, 'storage')) {
+            if (! str_starts_with($image, '/')) {
+                $image = '/'.$image;
+            }
+            $image = asset('storage'.$image);
+        }
+
+        return $image;
+    }
 }

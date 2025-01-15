@@ -36,7 +36,7 @@ class PageDto implements DtoInterface
         $this->name = $name;
         $this->originalName = $originalName;
         $this->link = $link;
-        $this->image = $image;
+        $this->image = $this->validateImage($image);
         $this->custom = $custom;
         $this->heading = $heading;
         $this->summary = $summary;
@@ -51,7 +51,7 @@ class PageDto implements DtoInterface
             'name' => $this->name,
             'heading' => $this->heading,
             'link' => $this->link,
-            'image' => asset($this->image),
+            'image' => $this->image,
             'custom' => $this->custom,
             'summary' => $this->summary,
             'created_at' => $this->transformDate($this->created_at),
