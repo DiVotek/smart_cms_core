@@ -28,4 +28,7 @@ return [
     'create_from_tpl' => 'Create from template',
     'setup' => 'Setup',
     'translate' => 'Translate',
+    'setup_success' => 'Setup was successful!',
+    'reset' => 'Reset',
+    'success' => 'Success',
 ];

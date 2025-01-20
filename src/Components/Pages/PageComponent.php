@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Components\Pages;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\Component;
@@ -41,8 +42,8 @@ class PageComponent extends Component
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $temp = $entity->template()->select([
@@ -64,11 +65,22 @@ class PageComponent extends Component
         $this->og_image = _settings('og_image', logo());
         Event::dispatch('cms.page.construct', $this);
         if (! isset($this->dto)) {
-            $categories = Page::query()->where('parent_id', $entity->id)->pluck('id')->toArray();
-            $items = Page::query()->whereIn('parent_id', $categories)->pluck('id')->toArray();
-            $transformedCategories = PageRepository::make()->findMultiple($categories);
-            $transformedItems = PageRepository::make()->findMultiple($items);
-            $this->dto = PageEntityDto::factory($entity->name(), $entity->image ?? logo(), $entity->created_at, $entity->updated_at, $entity->getBreadcrumbs(), $seo->title ?? '', $seo->heading ?? '', $seo->summary ?? '', $seo->content ?? '', $entity->banner ?? '', $transformedCategories, $transformedItems);
+            $repository = new PageRepository;
+            if ($entity->parent_id) {
+                $categories = [];
+                $items = Page::query()->where('parent_id', $entity->id)->paginate(15);
+            } else {
+                $categories = Page::query()->where('parent_id', $entity->id)->pluck('id')->toArray();
+                $items = Page::query()->whereIn('parent_id', $categories)->paginate(15);
+            }
+            $items->getCollection()->transform(function (Page $page) use ($repository) {
+                return $repository->transform($page)->get();
+            });
+            $categories = Page::query()->whereIn('id', $categories)->paginate(15);
+            $categories->getCollection()->transform(function (Page $page) use ($repository) {
+                return $repository->transform($page)->get();
+            });
+            $this->dto = new PageEntityDto($entity->name, $entity->image ?? null, $entity->created_at, $entity->updated_at, $entity->getBreadcrumbs(), $categories, $items, $seo->heading ?? null, $seo->summary ?? null, $seo->content ?? null, $entity->banner ?? null);
         }
         Event::dispatch('cms.page.constructed', [&$this->dto]);
     }

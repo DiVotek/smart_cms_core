@@ -75,6 +75,9 @@ class Settings extends BaseSettings
                             ->required()->hidden(function ($get) {
                                 return ! $get(sconfig('is_multi_lang'));
                             }),
+                        Schema::getImage(sconfig('branding.logo'), path: 'branding')
+                            ->label(_fields('logo'))
+                            ->required(),
                         // TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
                         Select::make(sconfig('template'))
                             ->label(_fields('template'))
@@ -107,7 +110,7 @@ class Settings extends BaseSettings
                                     ->form(function ($form) {
                                         $theme = _config()->getTheme();
                                         foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.'.$key)
+                                            $schema[] = ColorPicker::make('theme.' . $key)
                                                 ->label(ucfirst($key))
                                                 ->default($value);
                                         }
@@ -132,24 +135,10 @@ class Settings extends BaseSettings
                                     ->success()
                                     ->send();
                             }),
-                            Actions\Action::make('save')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
-                                $keys = [
-                                    sconfig('company_name') => $get(sconfig('company_name')),
-                                    sconfig('main_language') => $get(sconfig('main_language')),
-                                    sconfig('is_multi_lang') => $get(sconfig('is_multi_lang')),
-                                    sconfig('additional_languages') => $get(sconfig('additional_languages')),
-                                ];
-                                setting($keys);
-                                $this->getSavedNotification()?->send();
-                                // $this->save();
-                            }),
                         ])->alignEnd(),
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
-                            Schema::getImage(sconfig('branding.logo'), path: 'branding')
-                                ->label(_fields('logo'))
-                                ->required(),
                             // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
                             Schema::getImage(name: sconfig('branding.favicon'), path: 'branding')->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('branding.socials'))->label(_fields('socials'))
@@ -166,17 +155,6 @@ class Settings extends BaseSettings
                                         ->label(strans('admin.icon'))->default(''),
                                 ])
                                 ->default([]),
-                            Actions::make([
-                                Actions\Action::make('save_tab_2')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
-                                    $keys = [
-                                        sconfig('branding.logo') => $get(sconfig('branding.logo')),
-                                        sconfig('branding.favicon') => $get(sconfig('branding.favicon')),
-                                        sconfig('branding.socials') => $get(sconfig('branding.socials')),
-                                    ];
-                                    setting($keys);
-                                    $this->getSavedNotification()?->send();
-                                }),
-                            ])->alignEnd(),
                         ]),
                     Tabs\Tab::make(strans('admin.company_info'))
                         ->schema([
@@ -199,52 +177,27 @@ class Settings extends BaseSettings
                                             ->required(),
                                     ]),
                                 ]),
-                            Actions::make([
-                                Actions\Action::make('save_tab_3')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
-                                    $keys = [
-                                        sconfig('company_info') => $get(sconfig('company_info')),
-                                    ];
-                                    setting($keys);
-                                    $this->getSavedNotification()?->send();
-                                }),
-                            ])->alignEnd(),
                         ]),
-                    Tabs\Tab::make(strans('admin.mail'))
-                        ->schema([
-                            TextInput::make('admin_mails')
-                                ->label(strans('admin.admin_mails'))->helperText(strans('admin.admin_mails_helper')),
-                            Fieldset::make(__('Mailer'))
-                                ->schema([
-                                    TextInput::make(sconfig('mail.host'))->label(strans('admin.host')),
-                                    TextInput::make(sconfig('mail.port'))->label(strans('admin.port')),
-                                    TextInput::make(sconfig('mail.username'))->label(strans('admin.username')),
-                                    TextInput::make(sconfig('mail.password'))->label(strans('admin.password')),
-                                    Select::make(sconfig('mail.encryption'))
-                                        ->label(strans('admin.encryption'))
-                                        ->options([
-                                            'ssl' => 'SSL',
-                                            'tls' => 'TLS',
-                                        ]),
-                                    TextInput::make(sconfig('mail.from'))->label(strans('admin.from')),
-                                    TextInput::make(sconfig('mail.name'))->label(strans('admin.name')),
-                                ]),
-                            Actions::make([
-                                Actions\Action::make('save_tab_4')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
-                                    $keys = [
-                                        sconfig('admin_mails') => $get('admin_mails'),
-                                        sconfig('mail.host') => $get(sconfig('mail.host')),
-                                        sconfig('mail.port') => $get(sconfig('mail.port')),
-                                        sconfig('mail.username') => $get(sconfig('mail.username')),
-                                        sconfig('mail.password') => $get(sconfig('mail.password')),
-                                        sconfig('mail.encryption') => $get(sconfig('mail.encryption')),
-                                        sconfig('mail.from') => $get(sconfig('mail.from')),
-                                        sconfig('mail.name') => $get(sconfig('mail.name')),
-                                    ];
-                                    setting($keys);
-                                    $this->getSavedNotification()?->send();
-                                }),
-                            ])->alignEnd(),
-                        ]),
+                    // Tabs\Tab::make(strans('admin.mail'))
+                    //     ->schema([
+                    //         TextInput::make('admin_mails')
+                    //             ->label(strans('admin.admin_mails'))->helperText(strans('admin.admin_mails_helper')),
+                    //         Fieldset::make(__('Mailer'))
+                    //             ->schema([
+                    //                 TextInput::make(sconfig('mail.host'))->label(strans('admin.host')),
+                    //                 TextInput::make(sconfig('mail.port'))->label(strans('admin.port')),
+                    //                 TextInput::make(sconfig('mail.username'))->label(strans('admin.username')),
+                    //                 TextInput::make(sconfig('mail.password'))->label(strans('admin.password')),
+                    //                 Select::make(sconfig('mail.encryption'))
+                    //                     ->label(strans('admin.encryption'))
+                    //                     ->options([
+                    //                         'ssl' => 'SSL',
+                    //                         'tls' => 'TLS',
+                    //                     ]),
+                    //                 TextInput::make(sconfig('mail.from'))->label(strans('admin.from')),
+                    //                 TextInput::make(sconfig('mail.name'))->label(strans('admin.name')),
+                    //             ]),
+                    //     ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
                         Toggle::make('indexation')
                             ->label(_fields('indexation'))
@@ -306,22 +259,6 @@ class Settings extends BaseSettings
                             ->label(_fields('og_type')),
                         Schema::getImage('og_image')
                             ->label(_fields('og_image')),
-                        Actions::make([
-                            Actions\Action::make('save_tab_5')->label(_actions('save'))->icon('heroicon-o-check')->action(function ($get) {
-                                $keys = [
-                                    'indexation' => $get('indexation'),
-                                    'gtm' => $get('gtm'),
-                                    'title' => $get('title'),
-                                    'description' => $get('description'),
-                                    'meta' => $get('meta'),
-                                    'scripts' => $get('scripts'),
-                                    'og_type' => $get('og_type'),
-                                    'og_image' => $get('og_image'),
-                                ];
-                                setting($keys);
-                                $this->getSavedNotification()?->send();
-                            }),
-                        ])->alignEnd(),
                     ]),
                 ]),
         ];

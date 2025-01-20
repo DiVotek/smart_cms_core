@@ -295,7 +295,7 @@ class SmartCmsPanelManager extends PanelProvider
     {
         $pages = [
             \Filament\Pages\Dashboard::class,
-            TemplatePage::class,
+            // TemplatePage::class,
         ];
         Event::dispatch('cms.admin.navigation.pages', [&$pages]);
 
