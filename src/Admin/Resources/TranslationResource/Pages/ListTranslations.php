@@ -32,21 +32,21 @@ class ListTranslations extends ListRecords
                         ->send();
                 }),
             Actions\Action::make('create_from_tpl')
-            ->icon('heroicon-o-plus-circle')
-            ->label(_actions('create_from_tpl'))->action(function () {
-                $config = new Config;
-                $config->initTranslates();
-                Notification::make()->title(_actions('success'))->success()->send();
-            }),
+                ->icon('heroicon-o-plus-circle')
+                ->label(_actions('create_from_tpl'))->action(function () {
+                    $config = new Config;
+                    $config->initTranslates();
+                    Notification::make()->title(_actions('success'))->success()->send();
+                }),
             Actions\Action::make('reset')
-            ->icon('heroicon-o-x-circle')
-            ->label(_actions('reset'))->action(function () {
-                $translations = Translation::query()->get();
-                foreach ($translations as $translation) {
-                    $translation->update(['value' => $translation->key]);
-                }
-                Notification::make()->title(_actions('success'))->success()->send();
-            }),
+                ->icon('heroicon-o-x-circle')
+                ->label(_actions('reset'))->action(function () {
+                    $translations = Translation::query()->get();
+                    foreach ($translations as $translation) {
+                        $translation->update(['value' => $translation->key]);
+                    }
+                    Notification::make()->title(_actions('success'))->success()->send();
+                }),
         ];
     }
 }
