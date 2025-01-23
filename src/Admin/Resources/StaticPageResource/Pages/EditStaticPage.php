@@ -5,6 +5,7 @@ namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Core\Models\MenuSection;
 
 class EditStaticPage extends EditRecord
 {
@@ -30,7 +31,7 @@ class EditStaticPage extends EditRecord
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -38,10 +39,21 @@ class EditStaticPage extends EditRecord
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')
                 ->action(function () {
+                    $url = ListStaticPages::getUrl();
+                    $parent = $this->record->parent;
+                    if ($parent) {
+                        $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+                        if ($menuSection) {
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
+                            $url = ListStaticPages::getUrl([
+                                'activeTab' => $name
+                            ]);
+                        }
+                    }
                     $this->save(true, true);
                     $this->record->touch();
 
-                    return redirect()->to(ListStaticPages::getUrl());
+                    return redirect()->to($url);
                 }),
             $this->getSaveFormAction()
                 ->label(_actions('save'))

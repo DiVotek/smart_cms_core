@@ -6,6 +6,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -15,6 +16,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
+use Schmeits\FilamentCharacterCounter\Forms\Components\RichEditor;
+use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
+use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput as ComponentsTextInput;
+use SmartCms\Core\Models\Language;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\TemplateSection;
 
@@ -143,7 +148,7 @@ class Schema
         $links = Page::query()->pluck('name', 'id')->toArray();
         $reference = [];
         foreach ($links as $key => $link) {
-            $reference[$key.'_'.Page::class] = $link;
+            $reference[$key . '_' . Page::class] = $link;
         }
         Event::dispatch('cms.admin.menu.building', [&$reference]);
 
@@ -179,5 +184,51 @@ class Schema
                 self::getSelect('template_section_id', $options),
                 Hidden::make('value')->default([]),
             ])->default([]);
+    }
+
+    public static function getSeoForm(array $existed_languages = []): array
+    {
+        $languages = get_active_languages()->whereNotIn('id', $existed_languages)->pluck('id')->toArray();
+        $language = Hidden::make('language_id');
+        if (is_multi_lang()) {
+            $language = Schema::getSelect('language_id')->relationship('language', 'name',function($query)use($existed_languages){
+                $query->whereNotIn('id', $existed_languages);
+            })->preload();
+        }
+        $language = $language->default($languages[0] ?? main_lang_id());
+        return [
+            Section::make('')->schema([
+                $language,
+                ComponentsTextInput::make('title')
+                    ->label(_fields('seo_title'))
+                    ->required()
+                    ->translatable()
+                    ->rules('string', 'max:255')
+                    ->characterLimit(255)
+                    ->maxLength(255),
+                ComponentsTextInput::make('heading')
+                    ->label(_fields('seo_heading'))
+                    ->translatable()
+                    ->rules('string', 'max:255')
+                    ->characterLimit(255)
+                    ->maxLength(255),
+                Textarea::make('description')
+                    ->label(_fields('seo_description'))
+                    ->required()
+                    ->rules('string', 'max:255')
+                    ->translatable()
+                    ->characterLimit(255)
+                    ->maxLength(255),
+                Textarea::make('summary')
+                    ->label(_fields('seo_summary'))
+                    ->translatable()
+                    ->rules('string', 'max:500')
+                    ->maxLength(500),
+                RichEditor::make('content')
+                    ->label(_fields('seo_content'))
+                    ->translatable()
+                    ->rules('string'),
+            ]),
+        ];
     }
 }

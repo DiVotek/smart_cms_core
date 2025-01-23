@@ -80,20 +80,22 @@ class SeoResource extends Resource
                         ->translatable()
                         ->characterLimit(255)
                         ->maxLength(255),
-                    RichEditor::make('summary')
+                    Textarea::make('summary')
                         ->label(_fields('seo_summary'))
                         ->translatable()
                         ->rules('string', 'max:500')
-                        ->maxLength(500)->toolbarButtons([
-                            'blockquote',
-                            'bold',
-                            'italic',
-                            'redo',
-                            'strike',
-                            'underline',
-                            'undo',
-                            'codeBlock',
-                        ]),
+                        ->maxLength(500)
+                        // ->toolbarButtons([
+                        //     'blockquote',
+                        //     'bold',
+                        //     'italic',
+                        //     'redo',
+                        //     'strike',
+                        //     'underline',
+                        //     'undo',
+                        //     'codeBlock',
+                        // ])
+                        ,
                     RichEditor::make('content')
                         ->label(_fields('seo_content'))
                         ->translatable()

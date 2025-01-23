@@ -11,6 +11,8 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use SmartCms\Core\Admin\Resources\SeoResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Core\Models\MenuSection;
+use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
 
 class EditSeo extends ManageRelatedRecords
@@ -78,7 +80,7 @@ class EditSeo extends ManageRelatedRecords
                     }
 
                     return $this->record->seo !== null;
-                }),
+                })->form(Schema::getSeoForm($this->getOwnerRecord()->seo()->pluck('language_id')->toArray())),
             ])->paginated(false);
     }
 
@@ -87,17 +89,28 @@ class EditSeo extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
                 ->label('Save & Close')
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')
-                ->action(function ($record, $data) {
+                ->action(function () {
+                    $url = ListStaticPages::getUrl();
+                    $parent = $this->getOwnerRecord()->parent;
+                    if ($parent) {
+                        $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+                        if ($menuSection) {
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
+                            $url = ListStaticPages::getUrl([
+                                'activeTab' => $name
+                            ]);
+                        }
+                    }
                     $this->getOwnerRecord()->touch();
 
-                    return redirect()->to(ListStaticPages::getUrl());
+                    return redirect()->to($url);
                 }),
             \Filament\Actions\Action::make(_actions('save'))
                 ->label(_actions('save'))

@@ -16,6 +16,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\TableSchema;
 
@@ -99,7 +100,7 @@ class EditTemplate extends ManageRelatedRecords
                         ->label(_fields('component'))
                         ->required()
                         ->live(),
-                ])
+                ])->createAnother(false)
                     ->using(function (array $data, string $model): Model {
                         $newSection = null;
                         $sorting = $model::query()->where('entity_id', $this->record->getKey())
@@ -184,10 +185,21 @@ class EditTemplate extends ManageRelatedRecords
                 ->label('Save & Close')
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')
-                ->action(function ($record, $data) {
+                ->action(function () {
+                    $url = ListStaticPages::getUrl();
+                    $parent = $this->getOwnerRecord()->parent;
+                    if ($parent) {
+                        $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+                        if ($menuSection) {
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
+                            $url = ListStaticPages::getUrl([
+                                'activeTab' => $name
+                            ]);
+                        }
+                    }
                     $this->getOwnerRecord()->touch();
 
-                    return redirect()->to(ListStaticPages::getUrl());
+                    return redirect()->to($url);
                 }),
             \Filament\Actions\Action::make(_actions('save'))
                 ->label(_actions('save'))

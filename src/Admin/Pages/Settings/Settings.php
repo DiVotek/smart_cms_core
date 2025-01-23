@@ -199,7 +199,7 @@ class Settings extends BaseSettings
                     //             ]),
                     //     ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
-                        Toggle::make('indexation')
+                        Toggle::make(sconfig('indexation'))
                             ->label(_fields('indexation'))
                             ->helperText(_hints('indexation'))
                             ->required(),
