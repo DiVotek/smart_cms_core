@@ -190,7 +190,7 @@ class Schema
         $languages = get_active_languages()->whereNotIn('id', $existed_languages)->pluck('id')->toArray();
         $language = Hidden::make('language_id');
         if (is_multi_lang()) {
-            $language = Schema::getSelect('language_id')->relationship('language', 'name',function($query)use($languages){
+            $language = Schema::getSelect('language_id')->relationship('language', 'name', function ($query) use ($languages) {
                 $query->whereIn('id', $languages);
             })->preload();
         }
