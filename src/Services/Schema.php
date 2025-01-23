@@ -19,7 +19,6 @@ use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Schmeits\FilamentCharacterCounter\Forms\Components\RichEditor;
 use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput as ComponentsTextInput;
-use SmartCms\Core\Models\Language;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\TemplateSection;
 
@@ -148,7 +147,7 @@ class Schema
         $links = Page::query()->pluck('name', 'id')->toArray();
         $reference = [];
         foreach ($links as $key => $link) {
-            $reference[$key . '_' . Page::class] = $link;
+            $reference[$key.'_'.Page::class] = $link;
         }
         Event::dispatch('cms.admin.menu.building', [&$reference]);
 
@@ -191,11 +190,12 @@ class Schema
         $languages = get_active_languages()->whereNotIn('id', $existed_languages)->pluck('id')->toArray();
         $language = Hidden::make('language_id');
         if (is_multi_lang()) {
-            $language = Schema::getSelect('language_id')->relationship('language', 'name',function($query)use($existed_languages){
+            $language = Schema::getSelect('language_id')->relationship('language', 'name', function ($query) use ($existed_languages) {
                 $query->whereNotIn('id', $existed_languages);
             })->preload();
         }
         $language = $language->default($languages[0] ?? main_lang_id());
+
         return [
             Section::make('')->schema([
                 $language,

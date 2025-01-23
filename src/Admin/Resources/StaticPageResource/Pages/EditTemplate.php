@@ -191,9 +191,9 @@ class EditTemplate extends ManageRelatedRecords
                     if ($parent) {
                         $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
                         if ($menuSection) {
-                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name.'Categories';
                             $url = ListStaticPages::getUrl([
-                                'activeTab' => $name
+                                'activeTab' => $name,
                             ]);
                         }
                     }
