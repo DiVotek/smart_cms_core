@@ -78,4 +78,24 @@ class TemplateConfigException extends \Exception
     {
         return new self("Template config translates not valid in template: $name");
     }
+
+    public static function menuSectionCategoriesNotExists(string $name, string $template): self
+    {
+        return new self("Template config menu section categories not exists in section: $name in template: $template");
+    }
+
+    public static function menuSectionCategoriesLayoutNotExists(string $name, string $template): self
+    {
+        return new self("Template config menu section categories layout not exists in section: $name in template: $template");
+    }
+
+    public static function menuSectionItemsNotExists(string $name, string $template): self
+    {
+        return new self("Template config menu section items not exists in section: $name in template: $template");
+    }
+
+    public static function menuSectionItemsLayoutNotExists(string $name, string $template): self
+    {
+        return new self("Template config menu section items layout not exists in section: $name in template: $template");
+    }
 }

@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
@@ -120,6 +121,7 @@ class TemplateSectionResource extends Resource
             ->columns([
                 TableSchema::getName(),
                 TableSchema::getStatus(),
+                TextColumn::make('template')->label(_nav('template')),
                 TableSchema::getUpdatedAt(),
             ])
             ->filters([])

@@ -21,6 +21,8 @@ class MenuSection extends BaseModel
         'parent_id',
         'icon',
         'categories_template',
+        'items_layout_id',
+        'categories_layout_id',
     ];
 
     protected $guarded = [];

@@ -13,6 +13,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('path');
+            $table->boolean('status')->default(true);
+            $table->boolean('can_be_used')->default(false);
+            $table->string('template');
             $table->json('schema');
             $table->json('value');
             $table->timestamps();

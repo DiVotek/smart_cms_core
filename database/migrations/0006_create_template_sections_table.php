@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create(TemplateSection::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('template');
             $table->boolean('status')->default(true);
             $table->boolean('locked')->default(false);
             $table->boolean('is_system')->default(false);
@@ -20,7 +21,6 @@ return new class extends Migration
             $table->json('schema')->nullable();
             $table->timestamps();
         });
-
     }
 
     public function down()

@@ -41,7 +41,7 @@ class SchemaParser
                 }
             } catch (Exception $e) {
                 if (config('app.debug')) {
-                    // dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                    dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
                 }
             }
         }
@@ -51,7 +51,7 @@ class SchemaParser
 
     public function parse()
     {
-        $fieldValue = $this->values[current_lang()][$this->field->name] ?? $this->values[$this->field->name];
+        $fieldValue = $this->values[current_lang()][$this->field->name] ?? $this->values[$this->field->name] ?? null;
         switch ($this->field->type) {
             case 'number':
                 $value = (int) $fieldValue ?? 0;

@@ -6,6 +6,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\LayoutResource\Pages as Pages;
@@ -20,7 +21,12 @@ class LayoutResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::withoutGlobalScopes()->count();
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
     public static function getNavigationGroup(): ?string
@@ -82,6 +88,8 @@ class LayoutResource extends Resource
         return $table
             ->columns([
                 TableSchema::getName(),
+                TableSchema::getStatus(),
+                TextColumn::make('template')->label(_nav('template')),
                 TableSchema::getUpdatedAt(),
             ])
             ->filters([

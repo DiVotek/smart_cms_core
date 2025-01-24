@@ -38,6 +38,10 @@ use SmartCms\Core\Admin\Resources\LayoutResource;
 use SmartCms\Core\Admin\Resources\MenuResource;
 use SmartCms\Core\Admin\Resources\MenuSectionResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditMenuSection;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditSeo;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditStaticPage;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditTemplate;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 use SmartCms\Core\Admin\Resources\TranslationResource;
@@ -148,13 +152,31 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
+                    ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
+                    ->isActiveWhen(function () use ($section) {
+                        $route = request()->route()->getName();
+                        $activeRoutes = [
+                            EditStaticPage::getRouteName() => request('record') == $section->parent_id,
+                            EditSeo::getRouteName() => request('record') == $section->parent_id,
+                            EditTemplate::getRouteName() => request('record') == $section->parent_id,
+                            EditMenuSection::getRouteName() => request('record') == $section->parent_id,
+                        ];
+                        foreach ($activeRoutes as $activeRoute => $isActive) {
+                            if ($route === $activeRoute && $isActive) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    ->group($section->name);
             }
             Filament::registerNavigationItems($items);
         });

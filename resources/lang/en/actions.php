@@ -31,4 +31,8 @@ return [
     'setup_success' => 'Setup was successful!',
     'reset' => 'Reset',
     'success' => 'Success',
+    'transfer' => 'Transfer',
+    'change_template' => 'Change template',
+    'change_theme' => 'Change theme',
+    'update_template' => 'Update template',
 ];

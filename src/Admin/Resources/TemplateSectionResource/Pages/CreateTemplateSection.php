@@ -15,6 +15,7 @@ class CreateTemplateSection extends CreateRecord
     {
         $schema = Helper::getComponentSchema($data['design']);
         $data['schema'] = $schema;
+        $data['template'] = template();
 
         return parent::handleRecordCreation($data);
     }

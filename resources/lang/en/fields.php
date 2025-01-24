@@ -108,4 +108,9 @@ return [
     'design_wrap' => 'Design',
     'use_custom' => 'Use custom',
     'heading' => 'Heading',
+    'categories_layout' => 'Categories layout',
+    'items_layout' => 'Items layout',
+    'items_template' => 'Items template',
+    'section' => 'Section',
+    'menu_section' => 'Menu section',
 ];

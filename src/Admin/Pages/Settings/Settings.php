@@ -17,11 +17,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Models\Language;
+use SmartCms\Core\Models\Layout;
+use SmartCms\Core\Models\MenuSection;
+use SmartCms\Core\Models\Page;
+use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Config;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
@@ -78,64 +83,6 @@ class Settings extends BaseSettings
                         Schema::getImage(sconfig('branding.logo'), path: 'branding')
                             ->label(_fields('logo'))
                             ->required(),
-                        // TextInput::make(sconfig('country'))->label(_fields('country'))->required(),
-                        Select::make(sconfig('template'))
-                            ->label(_fields('template'))
-                            ->suffixAction(
-                                ActionsAction::make(_actions('theme'))
-                                    ->label(_actions('theme'))
-                                    ->slideOver()
-                                    ->icon('heroicon-o-cog')
-                                    ->fillForm(function (): array {
-                                        $theme = _settings('theme', []);
-                                        if (empty($theme)) {
-                                            $theme = _config()->getTheme();
-                                            setting([
-                                                sconfig('theme') => _config()->getTheme(),
-                                            ]);
-                                        }
-
-                                        return [
-                                            'theme' => _settings('theme', []),
-                                        ];
-                                    })
-                                    ->action(function (array $data): void {
-                                        setting([
-                                            sconfig('theme') => $data['theme'],
-                                        ]);
-                                    })
-                                    ->hidden(function () {
-                                        return empty(_config()->getTheme());
-                                    })
-                                    ->form(function ($form) {
-                                        $theme = _config()->getTheme();
-                                        foreach ($theme as $key => $value) {
-                                            $schema[] = ColorPicker::make('theme.'.$key)
-                                                ->label(ucfirst($key))
-                                                ->default($value);
-                                        }
-
-                                        return $form
-                                            ->schema([
-                                                Section::make('')->schema($schema),
-                                            ]);
-                                    }),
-                            )
-                            ->options(Helper::getTemplates())
-                            ->native(false)
-                            ->searchable(),
-                        Actions::make([
-                            Actions\Action::make('setup')->label(_actions('setup'))->icon('heroicon-o-wrench')->action(function ($get) {
-                                $config = new Config;
-                                $config->initTranslates();
-                                $config->initMenuSections();
-                                $config->initLayouts();
-                                Notification::make()
-                                    ->title(_actions('setup_success'))
-                                    ->success()
-                                    ->send();
-                            }),
-                        ])->alignEnd(),
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
@@ -203,7 +150,7 @@ class Settings extends BaseSettings
                             ->label(_fields('indexation'))
                             ->helperText(_hints('indexation'))
                             ->required(),
-                        TextInput::make('gtm')
+                        TextInput::make(sconfig('gtm'))
                             ->label(_fields('google_tag'))
                             ->helperText(_hints('gtm'))
                             ->string(),
@@ -264,9 +211,105 @@ class Settings extends BaseSettings
         ];
     }
 
+
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('change_template')
+                ->label(_actions('change_template'))
+                ->color('danger')
+                ->fillForm(function (): array {
+                    return [
+                        'template' => template(),
+                    ];
+                })
+                ->form(function ($form) {
+                    return $form->schema([
+                        Select::make('template')
+                            ->label(_fields('template'))
+                            ->options(function () {
+                                $templates = Helper::getTemplates();
+                                $templates = array_filter($templates, function ($key) {
+                                    return $key != template();
+                                }, ARRAY_FILTER_USE_KEY);
+                                return $templates;
+                            })
+                            ->required(),
+                    ]);
+                })
+                ->action(function (array $data) {
+                    setting([
+                        sconfig('template') => $data['template'],
+                    ]);
+                    Layout::query()->where('template', '!=', $data['template'])->delete();
+                    TemplateSection::query()->where('template', '!=', $data['template'])->delete();
+                    $menusections = MenuSection::query()->pluck('parent_id')->toArray();
+                    foreach ($menusections as $section) {
+                        if (Page::query()->where('parent_id', $section)->count() == 0) {
+                            MenuSection::query()->where('id', $section)->delete();
+                        }
+                    }
+                    $config = new Config;
+                    $config->initLayouts();
+                    $config->initMenuSections();
+                    $config->initTranslates();
+                    Notification::make()
+                        ->title(_actions('setup_success'))
+                        ->success()
+                        ->send();
+                })
+                ->requiresConfirmation()
+                ->icon('heroicon-o-cog'),
+            Action::make('update_template')
+                ->label(_actions('update_template'))
+                ->icon('heroicon-o-arrow-path')
+                ->action(function () {
+                    $config = new Config;
+                    $config->initLayouts();
+                    $config->initMenuSections();
+                    $config->initTranslates();
+                    Notification::make()
+                        ->title(_actions('setup_success'))
+                        ->success()
+                        ->send();
+                }),
+            Action::make('change_theme')
+                ->label(_actions('change_theme'))
+                ->icon('heroicon-o-paint-brush')
+                ->fillForm(function (): array {
+                    $theme = _settings('theme', []);
+                    if (empty($theme)) {
+                        $theme = _config()->getTheme();
+                        setting([
+                            sconfig('theme') => _config()->getTheme(),
+                        ]);
+                    }
+
+                    return [
+                        'theme' => _settings('theme', []),
+                    ];
+                })
+                ->action(function (array $data): void {
+                    setting([
+                        sconfig('theme') => $data['theme'],
+                    ]);
+                })
+                ->hidden(function () {
+                    return empty(_config()->getTheme());
+                })
+                ->form(function ($form) {
+                    $theme = _config()->getTheme();
+                    foreach ($theme as $key => $value) {
+                        $schema[] = ColorPicker::make('theme.' . $key)
+                            ->label(ucfirst($key))
+                            ->default($value);
+                    }
+
+                    return $form
+                        ->schema([
+                            Section::make('')->schema($schema),
+                        ]);
+                }),
             Action::make(_actions('update'))
                 ->icon('heroicon-m-arrow-up-on-square')
                 ->label(_actions('update'))
@@ -284,27 +327,27 @@ class Settings extends BaseSettings
                             ->send();
                     }
                 }),
-            Action::make(_actions('clear_cache'))
-                ->icon('heroicon-m-arrow-path')
-                ->label(_actions('clear_cache'))
-                ->requiresConfirmation()->action(function () {
-                    $command = 'optimize';
-                    if (config('app.env') != 'production') {
-                        $command = 'optimize:clear';
-                    }
-                    $res = Artisan::call($command);
-                    if ($res == 0) {
-                        Notification::make()
-                            ->title(_actions('clear_cache_success'))
-                            ->success()
-                            ->send();
-                    } else {
-                        Notification::make()
-                            ->title(_actions('clear_cache_error'))
-                            ->error()
-                            ->send();
-                    }
-                }),
+            // Action::make(_actions('clear_cache'))
+            //     ->icon('heroicon-m-arrow-path')
+            //     ->label(_actions('clear_cache'))
+            //     ->requiresConfirmation()->action(function () {
+            //         $command = 'optimize';
+            //         if (config('app.env') != 'production') {
+            //             $command = 'optimize:clear';
+            //         }
+            //         $res = Artisan::call($command);
+            //         if ($res == 0) {
+            //             Notification::make()
+            //                 ->title(_actions('clear_cache_success'))
+            //                 ->success()
+            //                 ->send();
+            //         } else {
+            //             Notification::make()
+            //                 ->title(_actions('clear_cache_error'))
+            //                 ->error()
+            //                 ->send();
+            //         }
+            //     }),
             Action::make('save_2')
                 ->label(_actions('save'))
                 ->icon('heroicon-o-check-circle')
@@ -312,5 +355,13 @@ class Settings extends BaseSettings
                     $this->save();
                 }),
         ];
+    }
+
+    protected function beforeSave()
+    {
+        if ($this->data[sconfig('template')] != template()) {
+            Layout::query()->update(['status' => 0]);
+            TemplateSection::query()->update(['status' => 0]);
+        }
     }
 }

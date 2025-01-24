@@ -38,7 +38,7 @@ class Config
         $config = [];
         $template = template();
         $templateConfigPath = scms_template_path($template);
-        $yamlConfig = $templateConfigPath.'/config.yaml';
+        $yamlConfig = $templateConfigPath . '/config.yaml';
         if (! File::exists($yamlConfig)) {
             throw TemplateConfigException::notFound($template);
         }
@@ -81,8 +81,14 @@ class Config
                 if (! isset($menuSection['description'])) {
                     throw TemplateConfigException::menuSectionDescriptionNotExists($menuSection['name'], $config['name']);
                 }
-                if (! isset($menuSection['schema'])) {
+                if (! isset($menuSection['layout'])) {
                     throw TemplateConfigException::menuSectionSchemaNotExists($menuSection['name'], $config['name']);
+                }
+                if (!isset($menuSection['categories'])) {
+                    throw TemplateConfigException::menuSectionCategoriesNotExists($menuSection['name'], $config['name']);
+                }
+                if (!isset($menuSection['items'])) {
+                    throw TemplateConfigException::menuSectionItemsNotExists($menuSection['name'], $config['name']);
                 }
             }
         }
@@ -95,12 +101,12 @@ class Config
 
     public function validateLayouts(string $path, array $config)
     {
-        $dir = $path.'layouts';
+        $dir = $path . 'layouts';
         if (! File::exists($dir) || ! File::isDirectory($dir)) {
             throw TemplateConfigException::layoutsNotExists($config['name']);
         }
-        $mainLayout = $dir.'/main.blade.php';
-        $mainlayoutConfig = $dir.'/main.yaml';
+        $mainLayout = $dir . '/main.blade.php';
+        $mainlayoutConfig = $dir . '/main.yaml';
         if (! File::exists($mainLayout) || ! File::exists($mainlayoutConfig)) {
             throw TemplateConfigException::mainLayoutNotExists($config['name']);
         }
@@ -108,7 +114,7 @@ class Config
 
     public function validateSections(string $path, array $config)
     {
-        $dir = $path.'sections';
+        $dir = $path . 'sections';
         if (! File::exists($dir) || ! File::isDirectory($dir)) {
             throw TemplateConfigException::sectionsNotExists($config['name']);
         }
@@ -128,15 +134,15 @@ class Config
     {
         $sections = [];
         $templateConfigPath = scms_template_path(template());
-        $dir = $templateConfigPath.'sections';
+        $dir = $templateConfigPath . 'sections';
         $dirs = File::directories($dir);
         foreach ($dirs as $directory) {
             foreach (File::files($directory) as $file) {
                 if (File::extension($file) === 'yaml') {
                     $config = Yaml::parse(File::get($file));
                     $fileName = File::name($file);
-                    if (File::exists($directory.'/'.$fileName.'.blade.php')) {
-                        $config['path'] = $fileName.'/'.$fileName;
+                    if (File::exists($directory . '/' . $fileName . '.blade.php')) {
+                        $config['path'] = $fileName . '/' . $fileName;
                     } else {
                         continue;
                     }
@@ -151,9 +157,9 @@ class Config
     public function getLayouts(): array
     {
         $templateConfigPath = scms_template_path(template());
-        $dir = $templateConfigPath.'layouts';
+        $dir = $templateConfigPath . 'layouts';
         $configs = [];
-        $mainLayout = $dir.'/main.yaml';
+        $mainLayout = $dir . '/main.yaml';
         $mainLayoutConfig = Yaml::parse(File::get($mainLayout));
         $mainLayoutConfig['path'] = 'main';
         $configs[] = $mainLayoutConfig;
@@ -163,8 +169,8 @@ class Config
                 if (File::extension($file) === 'yaml') {
                     $config = Yaml::parse(File::get($file));
                     $fileName = File::name($file);
-                    if (File::exists($directory.'/'.$fileName.'.blade.php')) {
-                        $config['path'] = $fileName.'/'.$fileName;
+                    if (File::exists($directory . '/' . $fileName . '.blade.php')) {
+                        $config['path'] = $fileName . '/' . $fileName;
                     } else {
                         continue;
                     }
@@ -213,21 +219,7 @@ class Config
     {
         $layouts = $this->getLayouts();
         foreach ($layouts as $layout) {
-            $name = $layout['name'];
-            $schema = $layout['schema'];
-            if (! is_array($schema)) {
-                $schema = [];
-            }
-            $value = [];
-            if (Layout::query()->where('path', $layout['path'])->exists()) {
-                $value = Layout::query()->where('path', $layout['path'])->first()->value;
-            }
-            Layout::query()->updateOrCreate(['name' => $name], [
-                'path' => $layout['path'],
-                'schema' => $schema,
-                'value' => $value,
-                'is_categories' => $layout['is_categories'] ?? false,
-            ]);
+            $this->initLayout($layout['path']);
         }
     }
 
@@ -243,19 +235,21 @@ class Config
             if (! is_array($schema)) {
                 $schema = [];
             }
-            $layout = Layout::query()->where('path', $path)->first();
-            if (! $layout) {
-                Layout::query()->updateOrCreate(['name' => $name], [
+            $original = Layout::query()->where('path', $path)->where('template', template())->first();
+            if (! $original) {
+                Layout::query()->create([
+                    'name' => $name,
                     'path' => $layout['path'],
                     'schema' => $schema,
+                    'status' => 1,
+                    'template' => template(),
                     'value' => [],
-                    'is_categories' => $layout['is_categories'] ?? false,
+                    'can_be_used' => true,
                 ]);
             } else {
-                $layout->update([
+                $original->update([
                     'name' => $name,
                     'schema' => $schema,
-                    'is_categories' => $layout['is_categories'] ?? false,
                 ]);
             }
         }
@@ -267,8 +261,18 @@ class Config
         foreach ($menuSections as $menuSection) {
             $name = $menuSection['name'];
             $icon = $menuSection['icon'];
-            $isCategories = $menuSection['is_categories'] ?? false;
-            $customFields = $menuSection['schema'] ?? [];
+            $isCategories = $menuSection['categories']['enabled'] ?? false;
+            $categoriesLayout = $menuSection['categories']['layout'] ?? null;
+            $itemsLayout = $menuSection['items']['layout'] ?? null;
+            $items_layout_id = Layout::query()->where('template', template())->where('path', $itemsLayout . '/' . $itemsLayout)->first()->id ?? null;
+            $categories_layout_id = Layout::query()->where('template', template())->where('path', $categoriesLayout . '/' . $categoriesLayout)->first()->id ?? null;
+            if($categories_layout_id){
+                Layout::query()->where('id', $categories_layout_id)->update(['can_be_used' => false]);
+            }
+            if($items_layout_id){
+                Layout::query()->where('id', $items_layout_id)->update(['can_be_used' => false]);
+            }
+            $customFields = $menuSection['items']['schema'] ?? [];
             $slug = \Illuminate\Support\Str::slug($name);
             $parent_id = null;
             if (Page::query()->where('slug', $slug)->exists()) {
@@ -280,13 +284,16 @@ class Config
                 ]);
                 $parent_id = $page->id;
             }
-            MenuSection::query()->updateOrCreate(['name' => $name], [
+            $data = [
                 'icon' => $icon,
                 'parent_id' => $parent_id,
                 'is_categories' => $isCategories,
                 'custom_fields' => $customFields,
                 'sorting' => MenuSection::query()->max('sorting') + 1,
-            ]);
+                'categories_layout_id' => $categories_layout_id,
+                'items_layout_id' => $items_layout_id,
+            ];
+            MenuSection::query()->updateOrCreate(['name' => $name], $data);
         }
     }
 }

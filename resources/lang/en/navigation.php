@@ -43,4 +43,5 @@ return [
     'edit' => 'Edit',
     'layout' => 'Layout',
     'layouts' => 'Layouts',
+    'menu_section_settings' => 'Menu Section Settings',
 ];

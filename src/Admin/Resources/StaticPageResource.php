@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Components\Actions\Action as ActionsAction;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -49,7 +50,20 @@ class StaticPageResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $parent = $form->getRecord()->parent_id;
+        $parent = $form->getRecord()->parent;
+        $parentField = [
+            Hidden::make('parent_id')->default($parent ? $parent->id : null),
+        ];
+        $layoutField =   [Select::make('layout_id')->relationship('layout', 'name')->nullable()];
+        if ($parent) {
+            $section = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+            if ($section) {
+                $layoutField = [];
+                if ($parent->parent_id && $section->parent_id == $parent->parent_id) {
+                    $parentField = [Select::make('parent_id')->options(Page::query()->where('parent_id', $parent->parent_id)->pluck('name', 'id'))->required()];
+                }
+            }
+        }
         $customFields = [];
         if (MenuSection::query()->where('parent_id', $parent)->exists()) {
             $parent = MenuSection::query()->where('parent_id', $parent)->first();
@@ -89,7 +103,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                     }
 
                                     return $form->schema($fields);
@@ -127,16 +141,9 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
-                        Select::make('parent_id')
-                            ->label(_fields('parent'))
-                            ->relationship('parent', 'name', function ($query) use ($form) {
-                                $query->where('id', '!=', $form->getRecord()?->id);
-                            })
-                            ->nullable()->default(function () {
-                                return request('parent') ?? null;
-                            })->hidden((bool) request('parent'))->live(),
-                        Select::make('layout_id')->relationship('layout', 'name')->nullable(),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        ...$parentField,
+                        ...$layoutField,
                         ...$customFields,
                     ]),
             ]);
@@ -144,6 +151,12 @@ class StaticPageResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $parentCol = [];
+
+        $activeTab = request('activeTab');
+        if ($activeTab && strlen($activeTab) > 0 && !str_contains($activeTab, 'Categories')) {
+            $parentCol = [TextColumn::make('parent.name')->label(_fields('parent'))];
+        }
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
@@ -162,6 +175,7 @@ class StaticPageResource extends Resource
                 TableSchema::getStatus(),
                 TableSchema::getSorting(),
                 TableSchema::getViews(),
+                ...$parentCol,
                 TableSchema::getUpdatedAt(),
             ])
             ->filters([
@@ -216,17 +230,22 @@ class StaticPageResource extends Resource
             // 'translates' => Pages\EditTranslates::route('/{record}/translates'),
             'seo' => Pages\EditSeo::route('/{record}/seo'),
             'template' => Pages\EditTemplate::route('/{record}/template'),
+            'menu' => Pages\EditMenuSection::route('/{record}/menu'),
         ];
     }
 
     public static function getRecordSubNavigation($page): array
     {
-        return $page->generateNavigationItems([
+        $section = MenuSection::query()->where('parent_id', $page->record->id)->first();
+        $items = [
             Pages\EditStaticPage::class,
-            // Pages\EditTranslates::class,
             Pages\EditSeo::class,
             Pages\EditTemplate::class,
-        ]);
+        ];
+        if($section) {
+            $items[] = Pages\EditMenuSection::class;
+        }
+        return $page->generateNavigationItems($items);
     }
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
