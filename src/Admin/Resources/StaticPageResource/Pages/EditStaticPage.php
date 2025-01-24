@@ -30,7 +30,7 @@ class EditStaticPage extends EditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit') . ' ' . $section->name;
+            return _actions('edit').' '.$section->name;
         } else {
             return parent::getHeading();
         }
@@ -41,7 +41,7 @@ class EditStaticPage extends EditRecord
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -54,7 +54,7 @@ class EditStaticPage extends EditRecord
                     if ($parent) {
                         $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
                         if ($menuSection) {
-                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name.'Categories';
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
                             ]);

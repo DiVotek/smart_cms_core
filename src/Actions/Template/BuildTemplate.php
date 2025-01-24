@@ -16,7 +16,7 @@ class BuildTemplate
     public function handle(array $template): array
     {
         foreach ($template as $d) {
-            $section = TemplateSection::query()->where('id', $d['template_section_id'])->where('template',template())->first();
+            $section = TemplateSection::query()->where('id', $d['template_section_id'])->where('template', template())->first();
             if (! $section) {
                 continue;
             }

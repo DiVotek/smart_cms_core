@@ -7,17 +7,17 @@ use SmartCms\Core\Models\Layout;
 
 class LayoutFactory extends Factory
 {
-   protected $model = Layout::class;
+    protected $model = Layout::class;
 
-   public function definition()
-   {
-      return [
-         'name' => $this->faker->word,
-         'path' => $this->faker->word,
-         'schema' => [],
-         'value' => [],
-         'status' => $this->faker->boolean,
-         'template' => template(),
-      ];
-   }
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->word,
+            'path' => $this->faker->word,
+            'schema' => [],
+            'value' => [],
+            'status' => $this->faker->boolean,
+            'template' => template(),
+        ];
+    }
 }

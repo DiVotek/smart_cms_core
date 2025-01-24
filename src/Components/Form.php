@@ -16,7 +16,7 @@ class Form extends Component
 
     public function __construct($form, array $values = [], array $errors = [])
     {
-        $form = ModelsForm::find($form) ?? new ModelsForm();
+        $form = ModelsForm::find($form) ?? new ModelsForm;
         $fields = $form->fields ?? [];
         $newFields = [];
         foreach ($fields as &$group) {

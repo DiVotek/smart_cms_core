@@ -5,7 +5,6 @@ namespace SmartCms\Core\Admin\Pages\Settings;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
@@ -17,7 +16,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
-use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
@@ -211,7 +209,6 @@ class Settings extends BaseSettings
         ];
     }
 
-
     protected function getHeaderActions(): array
     {
         return [
@@ -232,6 +229,7 @@ class Settings extends BaseSettings
                                 $templates = array_filter($templates, function ($key) {
                                     return $key != template();
                                 }, ARRAY_FILTER_USE_KEY);
+
                                 return $templates;
                             })
                             ->required(),
@@ -300,7 +298,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.' . $key)
+                        $schema[] = ColorPicker::make('theme.'.$key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }

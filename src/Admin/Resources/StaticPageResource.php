@@ -54,7 +54,7 @@ class StaticPageResource extends Resource
         $parentField = [
             Hidden::make('parent_id')->default($parent ? $parent->id : null),
         ];
-        $layoutField =   [Select::make('layout_id')->relationship('layout', 'name')->nullable()];
+        $layoutField = [Select::make('layout_id')->relationship('layout', 'name')->nullable()];
         if ($parent) {
             $section = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
             if ($section) {
@@ -103,7 +103,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                                     }
 
                                     return $form->schema($fields);
@@ -141,7 +141,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,
@@ -154,9 +154,10 @@ class StaticPageResource extends Resource
         $parentCol = [];
 
         $activeTab = request('activeTab');
-        if ($activeTab && strlen($activeTab) > 0 && !str_contains($activeTab, 'Categories')) {
+        if ($activeTab && strlen($activeTab) > 0 && ! str_contains($activeTab, 'Categories')) {
             $parentCol = [TextColumn::make('parent.name')->label(_fields('parent'))];
         }
+
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
@@ -242,9 +243,10 @@ class StaticPageResource extends Resource
             Pages\EditSeo::class,
             Pages\EditTemplate::class,
         ];
-        if($section) {
+        if ($section) {
             $items[] = Pages\EditMenuSection::class;
         }
+
         return $page->generateNavigationItems($items);
     }
 

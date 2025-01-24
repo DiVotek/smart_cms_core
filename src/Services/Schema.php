@@ -181,8 +181,8 @@ class Schema
             ->helperText(_hints('template'))
             ->schema([
                 self::getSelect('template_section_id', $options)
-                ->label(_fields('section'))
-                ->preload()->required(),
+                    ->label(_fields('section'))
+                    ->preload()->required(),
                 Hidden::make('value')->default([]),
             ])->default([]);
     }
