@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'Панель керування',
+    'pages' => 'Сторінки',
+    'static_pages' => 'Статичні сторінки',
+    'menu' => 'Меню',
+    'menus' => 'Меню',
+    'forms' => 'Форми',
+    'layouts' => 'Макети',
+    'settings' => 'Налаштування',
+    'system' => 'Система',
+    'design-template' => 'Дизайн/Шаблон',
+    'design' => 'Дизайн',
+    'template' => 'Шаблон',
+    'templates' => 'Шаблони',
+    'header' => 'Шапка',
+    'footer' => 'Підвал',
+    'general' => 'Загальне',
+    'branding' => 'Брендинг',
+    'company_info' => 'Інформація про компанію',
+    'admin' => 'Адмін',
+    'admins' => 'Адміни',
+    'seo' => 'SEO',
+];

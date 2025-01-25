@@ -20,7 +20,6 @@ return [
     'model_template_sections' => 'Sections',
     'model_translation' => 'Translation',
     'model_translations' => 'Translations',
-    'default_variables' => 'Default variables',
     'theme' => 'Theme',
     'model_menu_section' => 'Menu Section',
     'model_menu_sections' => 'Menu Sections',
@@ -31,8 +30,6 @@ return [
     'model_menu' => 'Menu',
     'model_menus' => 'Menus',
     'category' => 'Category',
-    'email' => 'Email',
-    'emails' => 'Emails',
     'users' => 'Users',
     'general' => 'General',
     'translates' => 'Translates',
@@ -44,4 +41,5 @@ return [
     'layout' => 'Layout',
     'layouts' => 'Layouts',
     'menu_section_settings' => 'Menu Section Settings',
+    'layout_settings' => 'Layout Settings',
 ];

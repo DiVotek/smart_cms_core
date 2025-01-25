@@ -20,7 +20,6 @@ return [
     'slug' => 'Slug',
     'sorting' => 'Sorting',
     'repeater_add' => 'Add',
-    'seo_and_template' => 'Seo and template',
     'type' => 'Type',
     'field_type' => 'Field type',
     'required' => 'Required',
@@ -46,21 +45,15 @@ return [
     'parent' => 'Parent',
 
     'company_name' => 'Company name',
-    'company_slogan' => 'Company slogan',
-    'company_description' => 'Company description',
     'country' => 'Country',
     'company_info' => 'Company info',
     'phones' => 'Phones',
     'main_language' => 'Main language',
 
-    'header_logo' => 'Header logo',
     'logo' => 'Logo',
     'footer_logo' => 'Footer logo',
     'favicon' => 'Favicon',
     'socials' => 'Socials',
-
-    'menu_header' => 'Header menu',
-    'menu_footer' => 'Footer menu',
 
     'is_required' => 'Is required',
     'custom' => 'Custom fields',
@@ -113,4 +106,12 @@ return [
     'items_template' => 'Items template',
     'section' => 'Section',
     'menu_section' => 'Menu section',
+
+    'layout_settings' => 'Layout Settings',
+    'layout_config' => 'Layout Configuration',
+
+    'template_file' => 'Template ZIP File',
+    'help' => 'Help',
+    'layout_help' => 'Layout Help',
+    'no_description' => 'No description available',
 ];
