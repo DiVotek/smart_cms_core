@@ -22,6 +22,7 @@ class EditMenu extends EditRecord
                 ->action(function ($record, $data) {
                     $this->save(true, true);
                     $this->record->touch();
+
                     return redirect()->to(ListMenus::getUrl());
                 }),
             $this->getSaveFormAction()

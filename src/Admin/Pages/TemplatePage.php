@@ -2,17 +2,17 @@
 
 namespace SmartCms\Core\Admin\Pages;
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\File;
-use Filament\Notifications\Notification;
-use ZipArchive;
 use Livewire\Attributes\Computed;
+use ZipArchive;
 
 class TemplatePage extends Page
 {
@@ -110,22 +110,23 @@ class TemplatePage extends Page
     {
         try {
             $templatesPath = base_path('scms/templates');
-            $zipPath = storage_path('app/public/' . $file);
+            $zipPath = storage_path('app/public/'.$file);
 
-            if (!File::exists($templatesPath)) {
+            if (! File::exists($templatesPath)) {
                 File::makeDirectory($templatesPath, 0755, true);
             }
 
             $zip = new ZipArchive;
-            if ($zip->open($zipPath) === TRUE) {
+            if ($zip->open($zipPath) === true) {
                 // Validate template structure
                 $isValid = $this->validateTemplateStructure($zip);
 
-                if (!$isValid) {
+                if (! $isValid) {
                     Notification::make()
                         ->title(strans('invalid_template'))
                         ->danger()
                         ->send();
+
                     return;
                 }
 
@@ -144,7 +145,7 @@ class TemplatePage extends Page
             }
         } catch (\Exception $e) {
             Notification::make()
-                ->title(strans('template_upload_error') . ': ' . $e->getMessage())
+                ->title(strans('template_upload_error').': '.$e->getMessage())
                 ->danger()
                 ->send();
         }
@@ -180,16 +181,16 @@ class TemplatePage extends Page
         $templates = [];
         $templatesPath = base_path('scms/templates');
 
-        if (!File::exists($templatesPath)) {
+        if (! File::exists($templatesPath)) {
             return [];
         }
 
         foreach (File::directories($templatesPath) as $template) {
             $templateName = basename($template);
-            $configFile = $template . '/config.php';
-            $config = File::exists($configFile) ? include($configFile) : [];
-            $thumbnail = File::exists($template . '/thumbnail.png')
-                ? asset('scms/templates/' . $templateName . '/thumbnail.png')
+            $configFile = $template.'/config.php';
+            $config = File::exists($configFile) ? include ($configFile) : [];
+            $thumbnail = File::exists($template.'/thumbnail.png')
+                ? asset('scms/templates/'.$templateName.'/thumbnail.png')
                 : asset('images/default-template.png');
 
             $templates[] = [

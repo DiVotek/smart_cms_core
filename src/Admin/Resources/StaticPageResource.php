@@ -103,7 +103,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                                     }
 
                                     return $form->schema($fields);
@@ -141,7 +141,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,

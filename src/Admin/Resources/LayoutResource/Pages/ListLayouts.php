@@ -22,7 +22,7 @@ class ListLayouts extends ListRecords
                 ->modalFooterActions([
                     Actions\Action::make('close')
                         ->label(_actions('close'))
-                        ->modalSubmitAction(false)
+                        ->modalSubmitAction(false),
                 ]),
             Actions\CreateAction::make()
                 ->label(_actions('create')),

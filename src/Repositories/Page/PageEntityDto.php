@@ -17,7 +17,7 @@ class PageEntityDto implements DtoInterface
     {
         return [
             'name' => $this->name,
-            'breadcrumbs' => array_map(fn($breadcrumb) => (object) $breadcrumb, $this->breadcrumbs),
+            'breadcrumbs' => array_map(fn ($breadcrumb) => (object) $breadcrumb, $this->breadcrumbs),
             'heading' => $this->heading ?? $this->name,
             'parent' => $this->parent ? $this->parent->get() : null,
             'siblings' => $this->siblings,

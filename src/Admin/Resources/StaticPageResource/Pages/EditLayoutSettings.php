@@ -2,12 +2,12 @@
 
 namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
-use Filament\Resources\Pages\EditRecord;
-use SmartCms\Core\Admin\Resources\StaticPageResource;
-use Filament\Forms\Form;
-use Filament\Forms\Components\Section;
 use Filament\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Resources\StaticPageResource;
 
 class EditLayoutSettings extends EditRecord
 {
@@ -31,7 +31,7 @@ class EditLayoutSettings extends EditRecord
                     ->label(_fields('layout_settings'))
                     ->schema($this->record->getLayoutSettingsForm())
                     ->columns(1)
-                    ->visible(fn() => $this->record->layout_id !== null),
+                    ->visible(fn () => $this->record->layout_id !== null),
             ]);
     }
 
@@ -40,7 +40,7 @@ class EditLayoutSettings extends EditRecord
         return [
             Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             Actions\ViewAction::make()
-                ->url(fn() => $this->record->route())
+                ->url(fn () => $this->record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             Actions\Action::make('save_close')
@@ -48,6 +48,7 @@ class EditLayoutSettings extends EditRecord
                 ->icon('heroicon-o-check-badge')
                 ->action(function () {
                     $this->save();
+
                     return redirect()->to(ListStaticPages::getUrl());
                 }),
             Actions\Action::make('save')
@@ -58,7 +59,6 @@ class EditLayoutSettings extends EditRecord
                 }),
         ];
     }
-
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {

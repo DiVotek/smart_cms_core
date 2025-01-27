@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Models;
 
 use SmartCms\Core\Traits\HasBreadcrumbs;
+use SmartCms\Core\Traits\HasLayoutSettings;
 use SmartCms\Core\Traits\HasRoute;
 use SmartCms\Core\Traits\HasSeo;
 use SmartCms\Core\Traits\HasSlug;
@@ -11,7 +12,6 @@ use SmartCms\Core\Traits\HasStatus;
 use SmartCms\Core\Traits\HasTemplate;
 use SmartCms\Core\Traits\HasTranslate;
 use SmartCms\Core\Traits\HasViews;
-use SmartCms\Core\Traits\HasLayoutSettings;
 
 /**
  * class Page
@@ -33,6 +33,7 @@ use SmartCms\Core\Traits\HasLayoutSettings;
 class Page extends BaseModel
 {
     use HasBreadcrumbs;
+    use HasLayoutSettings;
     use HasRoute;
     use HasSeo;
     use HasSlug;
@@ -41,7 +42,6 @@ class Page extends BaseModel
     use HasTemplate;
     use HasTranslate;
     use HasViews;
-    use HasLayoutSettings;
 
     protected $fillable = [
         'name',
