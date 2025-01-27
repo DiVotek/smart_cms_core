@@ -41,8 +41,8 @@ class PageComponent extends Component
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $temp = $entity->template()->select([
@@ -79,7 +79,14 @@ class PageComponent extends Component
             $categories->getCollection()->transform(function (Page $page) use ($repository) {
                 return $repository->transform($page)->get();
             });
-            $this->dto = new PageEntityDto($entity->name, $entity->image ?? null, $entity->created_at, $entity->updated_at, $entity->getBreadcrumbs(), $categories, $items, $seo->heading ?? null, $seo->summary ?? null, $seo->content ?? null, $entity->banner ?? null);
+            $siblings = [];
+            if ($entity->parent_id) {
+                $siblings = Page::query()->where('parent_id', $entity->parent_id)->where('id', '!=', $entity->id)->get()->transform(function (Page $page) use ($repository) {
+                    return $repository->transform($page)->get();
+                })->toArray();
+            }
+            $parent = $entity->parent ? $repository->transform($entity->parent) : null;
+            $this->dto = new PageEntityDto($entity->name, $entity->image ?? null, $entity->created_at, $entity->updated_at, $entity->getBreadcrumbs(), $categories, $items, $seo->heading ?? null, $seo->summary ?? null, $seo->content ?? null, $entity->banner ?? null, $siblings, $parent);
         }
         Event::dispatch('cms.page.constructed', [&$this->dto]);
     }
@@ -94,7 +101,7 @@ class PageComponent extends Component
                 @section("content")
                 @section('meta-image',asset($entity->image ?? $og_image))
                 @if($layout)
-                @include('template::layouts.'.$layout->path, [...$layout->getVariables(),'entity' => $dto->toObject()])
+                @include('template::layouts.'.$layout->path, [...$layout->getVariables($entity->layout_settings ?? []),'entity' => $dto->toObject()])
                 @endif
                 <x-s::layout.builder :data="$template" />
                 @endsection

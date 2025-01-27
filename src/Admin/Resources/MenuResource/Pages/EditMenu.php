@@ -12,15 +12,16 @@ class EditMenu extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
-            \Filament\Actions\Action::make(_actions('save_close'))
-                ->label('Save & Close')
+            \Filament\Actions\DeleteAction::make()
+                ->label(_actions('delete'))
+                ->icon('heroicon-o-x-circle'),
+            \Filament\Actions\Action::make('save_close')
+                ->label(_actions('save_close'))
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')
                 ->action(function ($record, $data) {
                     $this->save(true, true);
                     $this->record->touch();
-
                     return redirect()->to(ListMenus::getUrl());
                 }),
             $this->getSaveFormAction()
@@ -30,7 +31,6 @@ class EditMenu extends EditRecord
                     $this->record->touch();
                 })
                 ->formId('form'),
-
         ];
     }
 }

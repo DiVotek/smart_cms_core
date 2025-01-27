@@ -11,6 +11,7 @@ use SmartCms\Core\Traits\HasStatus;
 use SmartCms\Core\Traits\HasTemplate;
 use SmartCms\Core\Traits\HasTranslate;
 use SmartCms\Core\Traits\HasViews;
+use SmartCms\Core\Traits\HasLayoutSettings;
 
 /**
  * class Page
@@ -40,6 +41,7 @@ class Page extends BaseModel
     use HasTemplate;
     use HasTranslate;
     use HasViews;
+    use HasLayoutSettings;
 
     protected $fillable = [
         'name',
@@ -52,11 +54,13 @@ class Page extends BaseModel
         'parent_id',
         'layout_id',
         'custom',
+        'layout_settings',
     ];
 
     protected $casts = [
         'status' => 'boolean',
         'custom' => 'array',
+        'layout_settings' => 'array',
     ];
 
     public function layout()

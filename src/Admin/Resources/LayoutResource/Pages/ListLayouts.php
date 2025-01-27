@@ -13,12 +13,19 @@ class ListLayouts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make(_actions('help'))
+            Actions\Action::make('help')
+                ->label(_actions('help'))
                 ->iconButton()
                 ->icon('heroicon-o-question-mark-circle')
+                ->modalHeading(_fields('layout_help'))
                 ->modalDescription(_hints('help.layout'))
-                ->modalFooterActions([]),
-            Actions\CreateAction::make(),
+                ->modalFooterActions([
+                    Actions\Action::make('close')
+                        ->label(_actions('close'))
+                        ->modalSubmitAction(false)
+                ]),
+            Actions\CreateAction::make()
+                ->label(_actions('create')),
         ];
     }
 }

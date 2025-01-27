@@ -25,7 +25,7 @@ return [
     'was_sent' => 'was sent!',
     'save' => 'Save',
     'saved' => 'Saved!',
-    'create_from_tpl' => null,
+    'create_from_tpl' => 'Create from template',
     'setup' => 'Setup',
     'translate' => null,
     'setup_success' => 'Setup was successful!',
@@ -40,4 +40,5 @@ return [
     'help' => 'Help',
     'delete' => 'Delete',
     'close' => 'Close',
+    'edit_layout_settings' => 'Edit layout settings',
 ];

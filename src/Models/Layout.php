@@ -30,8 +30,8 @@ class Layout extends BaseModel
         return $this->hasMany(Page::class);
     }
 
-    public function getVariables(): array
+    public function getVariables(?array $value = null): array
     {
-        return SchemaParser::make($this->schema, $this->value);
+        return SchemaParser::make($this->schema, $value ?? $this->value);
     }
 }

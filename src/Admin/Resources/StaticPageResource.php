@@ -103,7 +103,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                     }
 
                                     return $form->schema($fields);
@@ -141,7 +141,7 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,
@@ -228,10 +228,10 @@ class StaticPageResource extends Resource
         return [
             'index' => Pages\ListStaticPages::route('/'),
             'edit' => Pages\EditStaticPage::route('/{record}/edit'),
-            // 'translates' => Pages\EditTranslates::route('/{record}/translates'),
             'seo' => Pages\EditSeo::route('/{record}/seo'),
             'template' => Pages\EditTemplate::route('/{record}/template'),
             'menu' => Pages\EditMenuSection::route('/{record}/menu'),
+            'layout-settings' => Pages\EditLayoutSettings::route('/{record}/layout-settings'),
         ];
     }
 
@@ -242,6 +242,7 @@ class StaticPageResource extends Resource
             Pages\EditStaticPage::class,
             Pages\EditSeo::class,
             Pages\EditTemplate::class,
+            Pages\EditLayoutSettings::class,
         ];
         if ($section) {
             $items[] = Pages\EditMenuSection::class;
