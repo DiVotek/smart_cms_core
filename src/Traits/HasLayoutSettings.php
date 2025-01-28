@@ -5,7 +5,6 @@ namespace SmartCms\Core\Traits;
 use SmartCms\Core\Services\Config;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
-use SmartCms\Core\Services\Schema\SchemaParser;
 
 trait HasLayoutSettings
 {
