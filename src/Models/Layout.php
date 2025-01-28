@@ -32,6 +32,9 @@ class Layout extends BaseModel
 
     public function getVariables(?array $value = null): array
     {
-        return SchemaParser::make($this->schema, $value ?? $this->value);
+        if (!$value || empty($value)) {
+            $value = $this->value;
+        }
+        return SchemaParser::make($this->schema, $value);
     }
 }

@@ -24,11 +24,20 @@ class Image extends Component
             $placeholder = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
             if (isset($data['attributes']['src']) && strlen($data['attributes']['src']) > 0) {
                 $src = $data['attributes']['src'];
+
+                // Fix double slashes while preserving protocol and domain
+                if (preg_match('#^(https?://[^/]+)/+#', $src, $matches)) {
+                    $domain = $matches[1];
+                    $path = preg_replace('#^' . preg_quote($domain, '#') . '/+#', '', $src);
+                    $path = preg_replace('#//+#', '/', $path);
+                    $src = $domain . '/' . $path;
+                }
+
                 if (str_starts_with($src, '/')) {
                     $src = substr($src, 1);
                 }
                 if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-                    $src = '/storage/'.$src;
+                    $src = '/storage/' . $src;
                 }
                 if (! str_contains($src, 'http')) {
                     $newAttributes = glide()->src($src, $this->maxHeight);

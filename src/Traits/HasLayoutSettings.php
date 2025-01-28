@@ -33,21 +33,4 @@ trait HasLayoutSettings
 
         return $schema;
     }
-
-    public function parseLayoutSettings(): array
-    {
-        dd(123);
-        if (! $this->layout_settings || ! $this->layout) {
-            return [];
-        }
-
-        $configFile = base_path('scms/templates/'.template().'/layouts/'.$this->layout->path.'/config.php');
-        if (! file_exists($configFile)) {
-            return [];
-        }
-
-        $schema = include $configFile;
-
-        return SchemaParser::make($schema['fields'] ?? [], $this->layout_settings);
-    }
 }
