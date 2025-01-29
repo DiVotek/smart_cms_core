@@ -289,6 +289,11 @@ class SchemaParser
 
             return;
         }
+        if ($this->field->type == 'bool') {
+            $this->variables[$this->field->name] = (bool) $value;
+
+            return;
+        }
         if ($value || (is_string($value) && strlen($value) == 0) || (is_numeric($value) && $value == 0)) {
             $this->variables[$this->field->name] = $value;
         }
