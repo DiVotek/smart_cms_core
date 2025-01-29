@@ -10,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table(Page::getDb(), function (Blueprint $table) {
-            if (!Schema::hasColumn(Page::getDb(), 'layout_settings')) {
+            if (! Schema::hasColumn(Page::getDb(), 'layout_settings')) {
                 $table->json('layout_settings')->nullable()->after('layout_id');
             }
         });

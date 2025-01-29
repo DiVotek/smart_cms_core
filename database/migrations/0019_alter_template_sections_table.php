@@ -10,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table(TemplateSection::getDb(), function (Blueprint $table) {
-            if (!Schema::hasColumn(TemplateSection::getDb(), 'template')) {
+            if (! Schema::hasColumn(TemplateSection::getDb(), 'template')) {
                 $table->string('template')->default('');
             }
         });
