@@ -34,7 +34,7 @@ class Field extends Component
         $this->options = $field->options[current_lang()] ?? [];
         if (! empty($field->options)) {
             $this->options = array_map(function ($option) {
-                return $option[current_lang()];
+                return $option[current_lang()] ?? $option[main_lang()] ?? '';
             }, $field->options);
         }
         $this->required = $field->required;
@@ -67,8 +67,8 @@ class Field extends Component
     public function render()
     {
         // return Cache::rememberForever('scms_form_field_component', function () {
-        if (view()->exists('templates::'.template().'.form.field')) {
-            return view('templates::'.template().'.form.field');
+        if (view()->exists('templates::' . template() . '.form.field')) {
+            return view('templates::' . template() . '.form.field');
         }
 
         return <<<'blade'

@@ -83,7 +83,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
@@ -273,6 +273,9 @@ class SchemaParser
                 break;
             case 'array':
                 $value = [];
+                if (! is_array($fieldValue)) {
+                    $fieldValue = [];
+                }
                 foreach ($fieldValue as $v) {
                     $value[] = (object) self::make($this->field->options, $v);
                 }
