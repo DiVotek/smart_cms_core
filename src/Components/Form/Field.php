@@ -67,8 +67,8 @@ class Field extends Component
     public function render()
     {
         // return Cache::rememberForever('scms_form_field_component', function () {
-        if (view()->exists('templates::' . template() . '.form.field')) {
-            return view('templates::' . template() . '.form.field');
+        if (view()->exists('templates::'.template().'.form.field')) {
+            return view('templates::'.template().'.form.field');
         }
 
         return <<<'blade'
