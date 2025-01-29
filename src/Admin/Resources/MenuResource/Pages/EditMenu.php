@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Admin\Resources\MenuResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\MenuResource;
 
 class EditMenu extends EditRecord
@@ -33,5 +34,14 @@ class EditMenu extends EditRecord
                 })
                 ->formId('form'),
         ];
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $record->value = $data['value'];
+        $record->name = $data['name'];
+        $record->saveQuietly();
+
+        return $record;
     }
 }
