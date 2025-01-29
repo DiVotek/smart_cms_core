@@ -10,14 +10,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table(Page::getDb(), function (Blueprint $table) {
-            $table->json('layout_settings')->nullable()->after('layout_id');
+            if (!Schema::hasColumn(Page::getDb(), 'layout_settings')) {
+                $table->json('layout_settings')->nullable()->after('layout_id');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table(Page::getDb(), function (Blueprint $table) {
-            $table->dropColumn('layout_settings');
+            if (Schema::hasColumn(Page::getDb(), 'layout_settings')) {
+                $table->dropColumn('layout_settings');
+            }
         });
     }
 };
