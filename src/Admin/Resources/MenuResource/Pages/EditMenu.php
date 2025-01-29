@@ -35,13 +35,4 @@ class EditMenu extends EditRecord
                 ->formId('form'),
         ];
     }
-
-    protected function handleRecordUpdate(Model $record, array $data): Model
-    {
-        $record->value = $data['value'];
-        $record->name = $data['name'];
-        $record->saveQuietly();
-
-        return $record;
-    }
 }
