@@ -3,10 +3,7 @@
 namespace SmartCms\Core\Routes\Handlers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
-use Mauricius\LaravelHtmx\Http\HtmxResponse;
-use SmartCms\Core\Components\Form as ComponentsForm;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form;
@@ -62,7 +59,8 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
+        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
+
         return new ScmsResponse(true);
     }
 }
