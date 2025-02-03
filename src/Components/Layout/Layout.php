@@ -42,15 +42,15 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
-                return 'scms/templates/'.template().'/assets/css/app.css';
+            if (File::exists(scms_template_path(template()) . '/assets/css/app.css')) {
+                return 'scms/templates/' . template() . '/assets/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
-                return 'scms/templates/'.template().'/assets/js/app.js';
+            if (File::exists(scms_template_path(template()) . '/assets/js/app.js')) {
+                return 'scms/templates/' . template() . '/assets/js/app.js';
             } else {
                 return '';
             }
@@ -59,7 +59,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
     }
 
@@ -100,13 +100,6 @@ class Layout extends Component
                       <x-s::layout.main-layout>
                                 @yield('content')
                       </x-s::layout.main-layout>
-                            <div x-data="dialog" x-show="isShow" x-cloak
-                                @open-modal.window="openModal($event.detail.element, $event.detail.label, $event.detail.description, $event.detail.time, $event.detail.backdrop)"
-                                @keyup.escape="closeModal()" @click.self="closeModal()" x-trap.inert.noscroll="isShow" :data-open="isShow"
-                                id="dialog" role="dialog" :aria-label="label" :aria-description="description" class="dialog":style="`position: fixed; inset: 0; z-index: 50; ${isBackdrop ? 'background-color: #00000080; backdrop-filter: blur(4px);' : ''}`"
-                                x-transition:enter="ease-out duration-200"
-                                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-out duration-200"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
                             @foreach($scripts as $script)
                                 {!! $script['scripts'] !!}
                             @endforeach
