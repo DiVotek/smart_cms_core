@@ -19,7 +19,6 @@ Route::get('/{slug?}/{second_slug?}/{third_slug?}', PageHandler::class)
     ->where('lang', '[a-zA-Z]{2}')
     ->middleware('web')
     ->name('cms.page');
-
-Route::get('/api/form', FormHandler::class)->name('smartcms.form.submit')->middleware('web');
+Route::post('/api/form', FormHandler::class)->name('smartcms.form.submit')->middleware('web');
 Route::get('/api/notifications', [NotificationController::class, 'index'])->name('notifications.list')->middleware('web');
 Route::get('/api/notifications/delete/{id}', [NotificationController::class, 'delete'])->name('notifications.delete')->middleware('web');

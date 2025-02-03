@@ -3,17 +3,13 @@
 namespace SmartCms\Core\Routes;
 
 use Illuminate\Support\Facades\Session;
+use SmartCms\Core\Services\ScmsResponse;
 
 class NotificationController
 {
     public function index()
     {
-        $templ = 'templates::'.template().'.notifications';
-        if (view()->exists($templ)) {
-            return view($templ, ['notifications' => session('notifications', [])]);
-        }
-
-        return '';
+        return new ScmsResponse(true, ['notifications' => session('notifications', [])]);
     }
 
     public function delete($id)

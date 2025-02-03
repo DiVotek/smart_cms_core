@@ -44,7 +44,7 @@ class Form extends Component
             <form id="{{$form->html_id ?? $form->code}}"
                 name="{{$form->code}}"
                 hx-get="{{route('smartcms.form.submit')}}"
-                hx-target="#{{$form->html_id ?? $form->code}}" x-init="htmx.process($el);"
+                hx-target="#{{$form->html_id ?? $form->code}}"
                 hx-swap="outerHTML"
                 hx-trigger="submit"
                 {{$attributes->merge(['class' => $form->class ?? ''])}}>
