@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use SmartCms\Core\Routes\Handlers\FormFieldsHandler;
 use SmartCms\Core\Routes\Handlers\FormHandler;
 use SmartCms\Core\Routes\Handlers\PageHandler;
 use SmartCms\Core\Routes\Handlers\RobotsHandler;
@@ -20,5 +21,6 @@ Route::get('/{slug?}/{second_slug?}/{third_slug?}', PageHandler::class)
     ->middleware('web')
     ->name('cms.page');
 Route::post('/api/form', FormHandler::class)->name('smartcms.form.submit')->middleware('web');
+Route::get('/api/form/fields', FormFieldsHandler::class)->name('smartcms.form.fields')->middleware('web');
 Route::get('/api/notifications', [NotificationController::class, 'index'])->name('notifications.list')->middleware('web');
 Route::get('/api/notifications/delete/{id}', [NotificationController::class, 'delete'])->name('notifications.delete')->middleware('web');
