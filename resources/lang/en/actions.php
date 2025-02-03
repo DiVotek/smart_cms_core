@@ -41,4 +41,6 @@ return [
     'delete' => 'Delete',
     'close' => 'Close',
     'edit_layout_settings' => 'Edit layout settings',
+    'clear_slug' => 'Clear slug',
+    'generate_slug' => 'Generate slug',
 ];

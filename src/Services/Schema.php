@@ -42,11 +42,22 @@ class Schema
             ->readOnly()
             ->required($isRequired)
             ->helperText(__('Slug will be generated automatically from title of any language'))
-            ->hintAction(Action::make(__('Clear slug'))
-                ->requiresConfirmation()
-                ->action(function (Set $set, $state) {
-                    $set('slug', null);
-                }))->default('');
+            ->default('')->hintActions([
+                Action::make('clear_slug')
+                    ->label(_actions('clear_slug'))
+                    ->requiresConfirmation()
+                    ->icon('heroicon-o-trash')
+                    ->action(function (Set $set, $state) {
+                        $set('slug', null);
+                    }),
+                Action::make('generate_slug')
+                    ->label(_actions('generate_slug'))
+                    ->icon('heroicon-o-arrow-path')
+                    ->action(function (Set $set, $get) {
+                        $name = $get('name') ?? '';
+                        $set('slug', Str::slug($name));
+                    }),
+            ]);
         if ($table) {
             $slug->unique(table: $table, ignoreRecord: true);
         }
@@ -59,30 +70,31 @@ class Schema
         return TextInput::make('name')
             ->label(_fields('name'))
             ->string()
-            ->reactive()
+            // ->reactive()
             ->required($isRequired)
-            ->live(debounce: 1000)
-            ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state, ?Model $record) {
-                $isSlugEdit = true;
-                if ($record && $record->slug) {
-                    $isSlugEdit = false;
-                }
-                if ($get('title') == $old) {
-                    $set('title', $state);
-                }
-                if ($get('heading') == $old) {
-                    $set('heading', $state);
-                }
-                if (($get('slug') ?? '') !== Str::slug($old) && $get('slug') !== null) {
-                    return;
-                }
-                if ($get('slug') == null && ! $isSlugEdit) {
-                    $isSlugEdit = true;
-                }
-                if ($isSlugEdit) {
-                    $set('slug', Str::slug($state));
-                }
-            });
+            // ->live(debounce: 1000)
+            // ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state, ?Model $record) {
+            //     $isSlugEdit = true;
+            //     if ($record && $record->slug) {
+            //         $isSlugEdit = false;
+            //     }
+            //     if ($get('title') == $old) {
+            //         $set('title', $state);
+            //     }
+            //     if ($get('heading') == $old) {
+            //         $set('heading', $state);
+            //     }
+            //     if (($get('slug') ?? '') !== Str::slug($old) && $get('slug') !== null) {
+            //         return;
+            //     }
+            //     if ($get('slug') == null && ! $isSlugEdit) {
+            //         $isSlugEdit = true;
+            //     }
+            //     if ($isSlugEdit) {
+            //         $set('slug', Str::slug($state));
+            //     }
+            // })
+        ;
     }
 
     public static function getImage(string $name = 'image', bool $isMultiple = false, string $path = '', string $filaname = ''): FileUpload
@@ -147,7 +159,7 @@ class Schema
         $links = Page::query()->pluck('name', 'id')->toArray();
         $reference = [];
         foreach ($links as $key => $link) {
-            $reference[$key.'_'.Page::class] = $link;
+            $reference[$key . '_' . Page::class] = $link;
         }
         Event::dispatch('cms.admin.menu.building', [&$reference]);
 
