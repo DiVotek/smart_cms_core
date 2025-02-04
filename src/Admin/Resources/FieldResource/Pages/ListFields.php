@@ -40,13 +40,13 @@ class ListFields extends ListRecords
                                 'url' => 'Url',
                             ])
                             ->default('text')
-                            ->required()->native(false)->searchable(true)
+                            ->required()->native(false)->searchable(true),
                     ]);
                 })->modal()->action(function (array $data) {
                     Field::query()->create([
                         'name' => $data['name'],
                         'type' => 'text',
-                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']).'_'.\Illuminate\Support\Str::random(5),
                     ]);
                 }),
         ];
