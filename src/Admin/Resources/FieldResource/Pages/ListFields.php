@@ -3,8 +3,13 @@
 namespace SmartCms\Core\Admin\Resources\FieldResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Admin\Resources\FieldResource;
+use SmartCms\Core\Models\Field;
+use SmartCms\Core\Services\Schema;
 
 class ListFields extends ListRecords
 {
@@ -13,7 +18,37 @@ class ListFields extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make('create')
+                ->label(_actions('create'))
+                ->form(function (Form $form) {
+                    return $form->schema([
+                        Schema::getName(true),
+                        Toggle::make('is_required')->default(true),
+                        Select::make('type')
+                            ->label(_fields('field_type'))
+                            ->options([
+                                'text' => 'Text',
+                                'textarea' => 'Textarea',
+                                'select' => 'Select',
+                                'radio' => 'Radio',
+                                'checkbox' => 'Checkbox',
+                                'file' => 'File',
+                                'date' => 'Date',
+                                'email' => 'Email',
+                                'number' => 'Number',
+                                'tel' => 'Tel',
+                                'url' => 'Url',
+                            ])
+                            ->default('text')
+                            ->required()->native(false)->searchable(true)
+                    ]);
+                })->modal()->action(function (array $data) {
+                    Field::query()->create([
+                        'name' => $data['name'],
+                        'type' => 'text',
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
+                    ]);
+                }),
         ];
     }
 }

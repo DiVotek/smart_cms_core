@@ -52,16 +52,16 @@ class FieldResource extends Resource
         $options = [];
         $mask = [];
         foreach (get_active_languages() as $lang) {
-            $label[] = Forms\Components\TextInput::make('label.'.$lang->slug)
-                ->label(_fields('label').' ('.$lang->name.')')
+            $label[] = Forms\Components\TextInput::make('label.' . $lang->slug)
+                ->label(_fields('label') . ' (' . $lang->name . ')')
                 ->required();
-            $placeholder[] = Forms\Components\TextInput::make('placeholder.'.$lang->slug)
-                ->label(_fields('placeholder').' ('.$lang->name.')');
-            $description[] = Forms\Components\Textarea::make('description.'.$lang->slug)
-                ->label(_fields('description').' ('.$lang->name.')');
-            $options[] = Forms\Components\TextInput::make('mask.'.$lang->slug)
-                ->label(_fields('options').' ('.$lang->name.')');
-            $mask[] = Forms\Components\TextInput::make('mask.'.$lang->slug)->label(_fields('mask').' ('.$lang->name.')');
+            $placeholder[] = Forms\Components\TextInput::make('placeholder.' . $lang->slug)
+                ->label(_fields('placeholder') . ' (' . $lang->name . ')');
+            $description[] = Forms\Components\Textarea::make('description.' . $lang->slug)
+                ->label(_fields('description') . ' (' . $lang->name . ')');
+            $options[] = Forms\Components\TextInput::make('mask.' . $lang->slug)
+                ->label(_fields('options') . ' (' . $lang->name . ')');
+            $mask[] = Forms\Components\TextInput::make('mask.' . $lang->slug)->label(_fields('mask') . ' (' . $lang->name . ')');
         }
 
         return $form
@@ -69,7 +69,7 @@ class FieldResource extends Resource
                 Section::make('')->schema([
                     Schema::getName()->live()->afterStateUpdated(function ($get, $set) {
                         if (! $get('html_id')) {
-                            $set('html_id', \Illuminate\Support\Str::slug($get('name')).'-'.\Illuminate\Support\Str::random(5));
+                            $set('html_id', \Illuminate\Support\Str::slug($get('name')) . '-' . \Illuminate\Support\Str::random(5));
                         }
                     }),
                     Forms\Components\Select::make('type')
@@ -88,7 +88,7 @@ class FieldResource extends Resource
                             'url' => 'Url',
                         ])->required()->native(false)->searchable(true)->live(debounce: 250),
                     Repeater::make('options')->schema($options)
-                        ->nullable()->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                        ->nullable()->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
                     Forms\Components\Toggle::make('required')
                         ->label(_fields('required'))
                         ->default(false),
@@ -114,6 +114,7 @@ class FieldResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('updated_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(_columns('username'))
