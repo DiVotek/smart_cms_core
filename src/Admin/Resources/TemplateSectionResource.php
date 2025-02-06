@@ -102,6 +102,9 @@ class TemplateSectionResource extends Resource
                                 }
                             }
                             $fields = [];
+                            if (! isset($currentComponent['schema'])) {
+                                return [];
+                            }
                             foreach ($currentComponent['schema'] as $field) {
                                 $field = ArrayToField::make($field, 'value.');
                                 $componentField = Builder::make($field);
