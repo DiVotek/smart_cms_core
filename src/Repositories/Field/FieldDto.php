@@ -2,8 +2,11 @@
 
 namespace SmartCms\Core\Repositories\Field;
 
+use SmartCms\Core\Traits\Dto\AsDto;
+
 class FieldDto
 {
+    use AsDto;
     public function __construct(
         public int $id,
         public string $name,

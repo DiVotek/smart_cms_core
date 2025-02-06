@@ -26,7 +26,7 @@ class FormFieldsHandler
             foreach ($field['fields'] as $f) {
                 $fieldModel = Field::query()->where('id', $f['field'] ?? 0)->first();
                 if ($fieldModel) {
-                    $group['fields'][] = FieldRepository::make()->find($fieldModel->id);
+                    $group['fields'][] = FieldRepository::make()->find($fieldModel->id)->get();
                 }
             }
             $fields[] = $group;
