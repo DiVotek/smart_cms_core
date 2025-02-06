@@ -110,7 +110,7 @@ class TemplatePage extends Page
     {
         try {
             $templatesPath = base_path('scms/templates');
-            $zipPath = storage_path('app/public/' . $file);
+            $zipPath = storage_path('app/public/'.$file);
 
             if (! File::exists($templatesPath)) {
                 File::makeDirectory($templatesPath, 0755, true);
@@ -145,7 +145,7 @@ class TemplatePage extends Page
             }
         } catch (\Exception $e) {
             Notification::make()
-                ->title(strans('template_upload_error') . ': ' . $e->getMessage())
+                ->title(strans('template_upload_error').': '.$e->getMessage())
                 ->danger()
                 ->send();
         }
@@ -187,10 +187,10 @@ class TemplatePage extends Page
 
         foreach (File::directories($templatesPath) as $template) {
             $templateName = basename($template);
-            $configFile = $template . '/config.php';
-            $config = File::exists($configFile) ? include($configFile) : [];
-            $thumbnail = File::exists($template . '/thumbnail.png')
-                ? asset('scms/templates/' . $templateName . '/thumbnail.png')
+            $configFile = $template.'/config.php';
+            $config = File::exists($configFile) ? include ($configFile) : [];
+            $thumbnail = File::exists($template.'/thumbnail.png')
+                ? asset('scms/templates/'.$templateName.'/thumbnail.png')
                 : asset('images/default-template.png');
 
             $templates[] = [
