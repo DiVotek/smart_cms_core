@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
@@ -215,6 +216,8 @@ class Settings extends BaseSettings
             Action::make('change_template')
                 ->label(_actions('change_template'))
                 ->color('danger')
+                ->size(ActionSize::ExtraLarge)
+                ->iconButton()
                 ->fillForm(function (): array {
                     return [
                         'template' => template(),
@@ -260,7 +263,9 @@ class Settings extends BaseSettings
                 ->icon('heroicon-o-cog'),
             Action::make('update_template')
                 ->label(_actions('update_template'))
+                ->iconButton()
                 ->icon('heroicon-o-arrow-path')
+                ->size(ActionSize::ExtraLarge)
                 ->action(function () {
                     $config = new Config;
                     $config->initLayouts();
@@ -274,6 +279,8 @@ class Settings extends BaseSettings
             Action::make('change_theme')
                 ->label(_actions('change_theme'))
                 ->icon('heroicon-o-paint-brush')
+                ->size(ActionSize::ExtraLarge)
+                ->iconButton()
                 ->fillForm(function (): array {
                     $theme = _settings('theme', []);
                     if (empty($theme)) {
@@ -298,7 +305,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -311,6 +318,8 @@ class Settings extends BaseSettings
             Action::make(_actions('update'))
                 ->icon('heroicon-m-arrow-up-on-square')
                 ->label(_actions('update'))
+                ->size(ActionSize::ExtraLarge)
+                ->iconButton()
                 ->requiresConfirmation()->action(function () {
                     $res = Artisan::call('scms:update');
                     if ($res == 0) {
@@ -348,6 +357,8 @@ class Settings extends BaseSettings
             //     }),
             Action::make('save_2')
                 ->label(_actions('save'))
+                ->iconButton()
+                ->size(ActionSize::ExtraLarge)
                 ->icon('heroicon-o-check-circle')
                 ->action(function () {
                     $this->save();
