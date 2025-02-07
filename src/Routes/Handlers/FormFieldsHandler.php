@@ -36,6 +36,7 @@ class FormFieldsHandler
             'fields' => $fields,
             'button' => $form->button[current_lang()] ?? $form->button[main_lang()] ?? '',
         ];
+
         return new ScmsResponse(true, $fields);
     }
 }
