@@ -20,11 +20,12 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::get('menu_links_' . $lang . '_' . $id, function () use ($id) {
+        return Cache::get('menu_links_'.$lang.'_'.$id, function () use ($id) {
             $menu = Menu::query()->find($id);
             if ($menu) {
                 $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
+                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
+
                 return $links;
             }
 
@@ -37,25 +38,25 @@ class GetLinks
         $links = [];
         $currentUrl = url()->current();
         foreach ($reference as $link) {
-            if (!isset($link['type']) || !isset($link['name']) || !isset($link['children'])) {
+            if (! isset($link['type']) || ! isset($link['name']) || ! isset($link['children'])) {
                 continue;
             }
             $route = null;
             switch ($link['type']) {
                 case Page::class:
                     $page = Page::query()->find($link['id']);
-                    if (!$page) {
+                    if (! $page) {
                         break;
                     }
                     $route = $page->route();
                     break;
                 case MenuSection::class:
                     $menuSection = MenuSection::query()->find($link['id']);
-                    if (!$menuSection) {
+                    if (! $menuSection) {
                         break;
                     }
                     $page = Page::query()->find($menuSection->parent_id);
-                    if (!$page) {
+                    if (! $page) {
                         break;
                     }
                     $route = $page->route();
@@ -67,7 +68,7 @@ class GetLinks
                     Event::dispatch('cms.menu.building', [$link, &$route]);
                     break;
             }
-            if (!$route) {
+            if (! $route) {
                 continue;
             }
             $links[] = (object) [

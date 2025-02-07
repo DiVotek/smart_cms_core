@@ -6,7 +6,6 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -195,7 +194,7 @@ class Schema
                                     $set('name', $page->name);
                                     $translates = Translate::query()->where('entity_id', $state)->where('entity_type', Page::class)->get();
                                     foreach ($translates as $translate) {
-                                        $set($translate->language->slug . '.name', $translate->value ?? '');
+                                        $set($translate->language->slug.'.name', $translate->value ?? '');
                                     }
                                 }
                             }),
@@ -210,6 +209,7 @@ class Schema
                         if (! is_array($schema)) {
                             return [];
                         }
+
                         return $schema;
                 }
             }),
@@ -222,16 +222,17 @@ class Schema
                         ->icon(function ($get) {
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
-                                if ($get($language->slug . '.name')) {
+                                if ($get($language->slug.'.name')) {
                                     return 'heroicon-o-check-circle';
                                 }
                             }
+
                             return 'heroicon-o-exclamation-circle';
                         })->form(function ($form) {
                             $fields = [];
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
-                                $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                             }
 
                             return $form->schema($fields);
@@ -240,7 +241,7 @@ class Schema
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
                                 $translates[$language->slug] = [
-                                    'name' => $get($language->slug . '.name') ?? '',
+                                    'name' => $get($language->slug.'.name') ?? '',
                                 ];
                             }
 
@@ -249,9 +250,9 @@ class Schema
                             foreach (get_active_languages() as $lang) {
                                 $name = $data[$lang->slug]['name'] ?? '';
                                 if ($name) {
-                                    $set($lang->slug . '.name', $name);
+                                    $set($lang->slug.'.name', $name);
                                 } else {
-                                    $set($lang->slug . '.name', '');
+                                    $set($lang->slug.'.name', '');
                                 }
                             }
                         }),
@@ -262,7 +263,7 @@ class Schema
                 ->default(true),
         ];
         foreach (get_active_languages() as $lang) {
-            $form[] = Hidden::make($lang->slug . '.name');
+            $form[] = Hidden::make($lang->slug.'.name');
         }
 
         return AdjacencyList::make($name)->columnSpanFull()
