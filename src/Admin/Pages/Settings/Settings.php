@@ -305,7 +305,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.' . $key)
+                        $schema[] = ColorPicker::make('theme.'.$key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
