@@ -114,4 +114,7 @@ return [
     'help' => 'Help',
     'layout_help' => 'Layout Help',
     'no_description' => 'No description available',
+    'as_link' => 'As link',
+    'page' => 'Page',
+    'url' => 'URL',
 ];

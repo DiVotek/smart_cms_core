@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use SmartCms\Core\Actions\Template\GetLinks;
+use SmartCms\Core\Components\Form;
+use SmartCms\Core\Models\Form as ModelsForm;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Repositories\Page\PageRepository;
 
@@ -42,8 +44,8 @@ class SchemaParser
                 }
             } catch (Exception $e) {
                 if (config('app.debug')) {
-                    Log::error($e->getMessage(), $this->field, $this->values, $e->getTrace());
-                    // dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                    // Log::error($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                    dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
                 }
             }
         }
@@ -73,7 +75,12 @@ class SchemaParser
                     $value = 0;
                     break;
                 }
-                $value = (int) $fieldValue;
+                $form = ModelsForm::query()->find($fieldValue);
+                if ($form) {
+                    $value = $form->code;
+                } else {
+                    $value = 0;
+                }
                 break;
             case 'image':
             case 'file':
@@ -85,7 +92,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);

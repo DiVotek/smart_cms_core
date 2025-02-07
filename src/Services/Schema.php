@@ -4,7 +4,9 @@ namespace SmartCms\Core\Services;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -19,8 +21,10 @@ use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Schmeits\FilamentCharacterCounter\Forms\Components\RichEditor;
 use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput as ComponentsTextInput;
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\TemplateSection;
+use SmartCms\Core\Models\Translate;
 
 class Schema
 {
@@ -155,32 +159,117 @@ class Schema
 
     public static function getLinkBuilder(string $name): AdjacencyList
     {
-        $links = Page::query()->pluck('name', 'id')->toArray();
-        $reference = [];
-        foreach ($links as $key => $link) {
-            $reference[$key.'_'.Page::class] = $link;
+        $types = [
+            Page::class => 'Page',
+            MenuSection::class => 'Menu Section',
+            'custom' => 'Custom',
+        ];
+        Event::dispatch('cms.admin.menu.form', [&$types]);
+        $form = [
+            Select::make('type')
+                ->native(false)
+                ->preload()
+                ->required()
+                ->reactive()
+                ->options($types)->default(Page::class)->afterStateUpdated(function (Set $set, $state) {
+                    $set('name', '');
+                    $set('id', '');
+                }),
+            Group::make(function ($get) {
+                $type = $get('type') ?? Page::class;
+                switch ($type) {
+                    case 'custom':
+                        return [
+                            TextInput::make('url')
+                                ->url()
+                                ->label(_fields('url'))
+                                ->required(),
+                        ];
+                    case Page::class:
+                        return [
+                            Select::make('id')->label(_fields('page'))->options(function () {
+                                return Page::query()->whereNull('parent_id')->pluck('name', 'id')->toArray();
+                            })->reactive()->afterStateUpdated(function (Set $set, $state) {
+                                $page = Page::query()->where('id', $state)->first();
+                                if ($page) {
+                                    $set('name', $page->name);
+                                    $translates = Translate::query()->where('entity_id', $state)->where('entity_type', Page::class)->get();
+                                    foreach ($translates as $translate) {
+                                        $set($translate->language->slug . '.name', $translate->value ?? '');
+                                    }
+                                }
+                            }),
+                        ];
+                    case MenuSection::class:
+                        return [
+                            Select::make('id')->label(_fields('menu_section'))->options(MenuSection::query()->pluck('name', 'id')->toArray()),
+                        ];
+                    default:
+                        $schema = [];
+                        Event::dispatch('cms.admin.menu.building', [$type, &$schema]);
+                        if (! is_array($schema)) {
+                            return [];
+                        }
+                        return $schema;
+                }
+            }),
+            TextInput::make('name')
+                ->label(_fields('name'))->suffixActions([
+                    Action::make(_fields('translates'))
+                        ->hidden(function () {
+                            return ! is_multi_lang();
+                        })
+                        ->icon(function ($get) {
+                            $languages = get_active_languages();
+                            foreach ($languages as $language) {
+                                if ($get($language->slug . '.name')) {
+                                    return 'heroicon-o-check-circle';
+                                }
+                            }
+                            return 'heroicon-o-exclamation-circle';
+                        })->form(function ($form) {
+                            $fields = [];
+                            $languages = get_active_languages();
+                            foreach ($languages as $language) {
+                                $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                            }
+
+                            return $form->schema($fields);
+                        })->fillForm(function ($get) {
+                            $translates = [];
+                            $languages = get_active_languages();
+                            foreach ($languages as $language) {
+                                $translates[$language->slug] = [
+                                    'name' => $get($language->slug . '.name') ?? '',
+                                ];
+                            }
+
+                            return $translates;
+                        })->action(function ($set, $data) {
+                            foreach (get_active_languages() as $lang) {
+                                $name = $data[$lang->slug]['name'] ?? '';
+                                if ($name) {
+                                    $set($lang->slug . '.name', $name);
+                                } else {
+                                    $set($lang->slug . '.name', '');
+                                }
+                            }
+                        }),
+                ])
+                ->required(),
+            Toggle::make('as_link')
+                ->label(_fields('as_link'))
+                ->default(true),
+        ];
+        foreach (get_active_languages() as $lang) {
+            $form[] = Hidden::make($lang->slug . '.name');
         }
-        Event::dispatch('cms.admin.menu.building', [&$reference]);
 
         return AdjacencyList::make($name)->columnSpanFull()
             ->maxDepth(2)
             ->labelKey('name')
             ->modal(true)
-            ->form([
-                Schema::getSelect('id', $reference)->live(),
-            ])
-            ->addAction(function (Action $action) {
-                $action->label(__('Add link'));
-                $action->mutateFormDataUsing(function ($data) {
-                    $id = $data['id'];
-                    $arr = explode('_', $id);
-                    $data['entity_id'] = $arr[0];
-                    $data['entity_type'] = $arr[1];
-                    $data['name'] = $data['entity_type']::query()->where('id', $data['entity_id'])->first()->name ?? '';
-
-                    return $data;
-                });
-            });
+            ->form($form);
     }
 
     public static function getTemplateBuilder(string $name = 'template'): Repeater

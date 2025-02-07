@@ -5,6 +5,8 @@ namespace SmartCms\Core;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -152,14 +154,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -311,6 +313,12 @@ class SmartCmsPanelManager extends PanelProvider
             }
 
             return $this;
+        });
+        Form::configureUsing(function (Form $form): void {
+            $form->columns(1);
+        });
+        Select::configureUsing(function (Select $select): void {
+            $select->native(false)->preload()->searchable();
         });
     }
 
