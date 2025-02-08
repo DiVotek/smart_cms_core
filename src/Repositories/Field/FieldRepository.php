@@ -14,7 +14,7 @@ class FieldRepository implements RepositoryInterface
     {
         $fields = Field::query()->whereIn('id', $ids)->get();
 
-        return $fields->map(fn (Field $field) => $this->transform($field))->toObject();
+        return $fields->map(fn(Field $field) => $this->transform($field))->toObject();
     }
 
     public function find(int $id): object
@@ -28,7 +28,6 @@ class FieldRepository implements RepositoryInterface
     {
         $mask = $field->mask ?? [];
         $mask = $mask[current_lang()] ?? $mask[main_lang()] ?? '';
-
         return new FieldDto(
             $field->id,
             $field->name,

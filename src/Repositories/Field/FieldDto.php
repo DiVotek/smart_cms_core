@@ -32,10 +32,10 @@ class FieldDto
             'mask' => $this->mask,
             'class' => $this->class,
             'style' => $this->style,
-            'label' => $this->label[current_lang()] ?? $this->label[main_lang()] ?? '',
-            'description' => $this->description[current_lang()] ?? $this->description[main_lang()] ?? '',
-            'placeholder' => $this->placeholder[current_lang()] ?? $this->placeholder[main_lang()] ?? '',
-            'options' => $this->options ?? [],
+            'label' => $this->label,
+            'description' => $this->description,
+            'placeholder' => $this->placeholder,
+            'options' => $this->options,
             'required' => $this->required ?? false,
         ];
     }

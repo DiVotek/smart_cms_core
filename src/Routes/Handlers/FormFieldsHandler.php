@@ -33,7 +33,7 @@ class FormFieldsHandler
         }
         $fields = [
             'name' => $form->name,
-            'fields' => $fields,
+            'groups' => $fields,
             'button' => $form->button[current_lang()] ?? $form->button[main_lang()] ?? '',
         ];
 

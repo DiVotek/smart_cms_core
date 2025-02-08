@@ -21,7 +21,6 @@ class FormHandler
             return abort(404);
         }
         $validation = [];
-        $attributes = $request->input('form_attributes', []);
         $customAttributes = [];
         foreach ($form->fields as $field) {
             foreach ($field['fields'] as $f) {
@@ -59,7 +58,7 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
+        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
 
         return new ScmsResponse(true);
     }
