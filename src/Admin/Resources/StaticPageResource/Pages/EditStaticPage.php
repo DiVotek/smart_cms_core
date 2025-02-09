@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\MenuSection;
@@ -31,7 +30,7 @@ class EditStaticPage extends EditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit') . ' ' . $section->name;
+            return _actions('edit').' '.$section->name;
         } else {
             return parent::getHeading();
         }
@@ -42,7 +41,7 @@ class EditStaticPage extends EditRecord
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-eye')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -55,7 +54,7 @@ class EditStaticPage extends EditRecord
                     if ($parent) {
                         $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
                         if ($menuSection) {
-                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name.'Categories';
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
                             ]);
