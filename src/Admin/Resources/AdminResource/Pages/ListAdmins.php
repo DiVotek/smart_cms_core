@@ -10,10 +10,21 @@ class ListAdmins extends ListRecords
 {
     protected static string $resource = AdminResource::class;
 
+    public function getBreadcrumbs(): array
+    {
+        if (config('shared.admin.breadcrumbs', false)) {
+            return parent::getBreadcrumbs();
+        }
+
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make('help')
+                ->help(_hints('help.admin')),
+            Actions\CreateAction::make()->create(),
         ];
     }
 }

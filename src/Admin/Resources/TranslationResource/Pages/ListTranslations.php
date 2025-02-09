@@ -13,16 +13,23 @@ class ListTranslations extends ListRecords
 {
     protected static string $resource = TranslationResource::class;
 
+    public function getBreadcrumbs(): array
+    {
+        if (config('shared.admin.breadcrumbs', false)) {
+            return parent::getBreadcrumbs();
+        }
+
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make(_hints('help'))
-                ->iconButton()
-                ->icon('heroicon-o-question-mark-circle')
-                ->modalDescription(_actions('translations_help'))
-                ->modalFooterActions([]),
+            Actions\Action::make('help')
+                ->help(_hints('help.translations')),
             Actions\Action::make(_actions('clear_cache'))
                 ->icon('heroicon-m-arrow-path')
+                ->iconic()
                 ->label(_actions('clear_cache'))
                 ->action(function () {
                     cache()->forget('translations');
@@ -33,6 +40,7 @@ class ListTranslations extends ListRecords
                 }),
             Actions\Action::make('create_from_tpl')
                 ->icon('heroicon-o-plus-circle')
+                ->iconic()
                 ->label(_actions('create_from_tpl'))->action(function () {
                     $config = new Config;
                     $config->initTranslates();
@@ -40,6 +48,7 @@ class ListTranslations extends ListRecords
                 }),
             Actions\Action::make('reset')
                 ->icon('heroicon-o-x-circle')
+                ->iconic()
                 ->label(_actions('reset'))->action(function () {
                     $translations = Translation::query()->get();
                     foreach ($translations as $translation) {

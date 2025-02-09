@@ -15,11 +15,22 @@ class ListFields extends ListRecords
 {
     protected static string $resource = FieldResource::class;
 
+    public function getBreadcrumbs(): array
+    {
+        if (config('shared.admin.breadcrumbs', false)) {
+            return parent::getBreadcrumbs();
+        }
+
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('help')
+                ->help(_hints('help.fields')),
             Actions\Action::make('create')
-                ->label(_actions('create'))
+                ->create()
                 ->form(function (Form $form) {
                     return $form->schema([
                         Schema::getName(true),
@@ -46,7 +57,7 @@ class ListFields extends ListRecords
                     Field::query()->create([
                         'name' => $data['name'],
                         'type' => 'text',
-                        'html_id' => \Illuminate\Support\Str::slug($data['name']).'_'.\Illuminate\Support\Str::random(5),
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
                     ]);
                 }),
         ];

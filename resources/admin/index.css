@@ -18,3 +18,6 @@ fi-sidebar-item-button {
 .fi-sidebar-nav {
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
+.-m-4-i {
+    margin-left: .5rem !important;
+  }

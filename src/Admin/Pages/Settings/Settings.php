@@ -4,7 +4,6 @@ namespace SmartCms\Core\Admin\Pages\Settings;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
@@ -16,7 +15,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
-use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
@@ -50,10 +48,14 @@ class Settings extends BaseSettings
 
     public function getBreadcrumbs(): array
     {
-        return [
-            Dashboard::getUrl() => _nav('dashboard'),
-            _nav('settings'),
-        ];
+        if (config('shared.admin.breadcrumbs', false)) {
+            return [
+                Dashboard::getUrl() => _nav('dashboard'),
+                _nav('settings'),
+            ];
+        }
+
+        return [];
     }
 
     public function schema(): array|Closure
@@ -85,7 +87,6 @@ class Settings extends BaseSettings
                     ]),
                     Tabs\Tab::make(strans('admin.branding'))
                         ->schema([
-                            // Schema::getImage(sconfig('footer_logo'))->label(_fields('footer_logo')),
                             Schema::getImage(name: sconfig('branding.favicon'), path: 'branding')->label(_fields('favicon')),
                             Schema::getRepeater(sconfig('branding.socials'))->label(_fields('socials'))
                                 ->schema([
@@ -124,26 +125,6 @@ class Settings extends BaseSettings
                                     ]),
                                 ]),
                         ]),
-                    // Tabs\Tab::make(strans('admin.mail'))
-                    //     ->schema([
-                    //         TextInput::make('admin_mails')
-                    //             ->label(strans('admin.admin_mails'))->helperText(strans('admin.admin_mails_helper')),
-                    //         Fieldset::make(__('Mailer'))
-                    //             ->schema([
-                    //                 TextInput::make(sconfig('mail.host'))->label(strans('admin.host')),
-                    //                 TextInput::make(sconfig('mail.port'))->label(strans('admin.port')),
-                    //                 TextInput::make(sconfig('mail.username'))->label(strans('admin.username')),
-                    //                 TextInput::make(sconfig('mail.password'))->label(strans('admin.password')),
-                    //                 Select::make(sconfig('mail.encryption'))
-                    //                     ->label(strans('admin.encryption'))
-                    //                     ->options([
-                    //                         'ssl' => 'SSL',
-                    //                         'tls' => 'TLS',
-                    //                     ]),
-                    //                 TextInput::make(sconfig('mail.from'))->label(strans('admin.from')),
-                    //                 TextInput::make(sconfig('mail.name'))->label(strans('admin.name')),
-                    //             ]),
-                    //     ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
                         Toggle::make(sconfig('indexation'))
                             ->label(_fields('indexation'))
@@ -216,8 +197,7 @@ class Settings extends BaseSettings
             Action::make('change_template')
                 ->label(_actions('change_template'))
                 ->color('danger')
-                ->size(ActionSize::ExtraLarge)
-                ->iconButton()
+                ->iconic()
                 ->fillForm(function (): array {
                     return [
                         'template' => template(),
@@ -263,9 +243,8 @@ class Settings extends BaseSettings
                 ->icon('heroicon-o-cog'),
             Action::make('update_template')
                 ->label(_actions('update_template'))
-                ->iconButton()
                 ->icon('heroicon-o-arrow-path')
-                ->size(ActionSize::ExtraLarge)
+                ->iconic()
                 ->action(function () {
                     $config = new Config;
                     $config->initLayouts();
@@ -279,8 +258,7 @@ class Settings extends BaseSettings
             Action::make('change_theme')
                 ->label(_actions('change_theme'))
                 ->icon('heroicon-o-paint-brush')
-                ->size(ActionSize::ExtraLarge)
-                ->iconButton()
+                ->iconic()
                 ->fillForm(function (): array {
                     $theme = _settings('theme', []);
                     if (empty($theme)) {
@@ -305,7 +283,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -318,8 +296,7 @@ class Settings extends BaseSettings
             Action::make(_actions('update'))
                 ->icon('heroicon-m-arrow-up-on-square')
                 ->label(_actions('update'))
-                ->size(ActionSize::ExtraLarge)
-                ->iconButton()
+                ->iconic()
                 ->requiresConfirmation()->action(function () {
                     $res = Artisan::call('scms:update');
                     if ($res == 0) {
@@ -334,31 +311,8 @@ class Settings extends BaseSettings
                             ->send();
                     }
                 }),
-            // Action::make(_actions('clear_cache'))
-            //     ->icon('heroicon-m-arrow-path')
-            //     ->label(_actions('clear_cache'))
-            //     ->requiresConfirmation()->action(function () {
-            //         $command = 'optimize';
-            //         if (config('app.env') != 'production') {
-            //             $command = 'optimize:clear';
-            //         }
-            //         $res = Artisan::call($command);
-            //         if ($res == 0) {
-            //             Notification::make()
-            //                 ->title(_actions('clear_cache_success'))
-            //                 ->success()
-            //                 ->send();
-            //         } else {
-            //             Notification::make()
-            //                 ->title(_actions('clear_cache_error'))
-            //                 ->error()
-            //                 ->send();
-            //         }
-            //     }),
             Action::make('save_2')
                 ->label(_actions('save'))
-                ->iconButton()
-                ->size(ActionSize::ExtraLarge)
                 ->icon('heroicon-o-check-circle')
                 ->action(function () {
                     $this->save();

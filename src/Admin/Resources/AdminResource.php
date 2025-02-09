@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\AdminResource\Pages;
 use SmartCms\Core\Models\Admin;
 use SmartCms\Core\Services\TableSchema;
@@ -29,6 +30,11 @@ class AdminResource extends Resource
     public static function getModelLabel(): string
     {
         return _nav('admin');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Admin::query()->count() > 1;
     }
 
     public static function getPluralModelLabel(): string
@@ -78,9 +84,7 @@ class AdminResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 

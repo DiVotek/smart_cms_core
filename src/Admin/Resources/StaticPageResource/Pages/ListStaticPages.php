@@ -26,6 +26,15 @@ class ListStaticPages extends ListRecords
 
     public string $actionName;
 
+    public function getBreadcrumbs(): array
+    {
+        if (config('shared.admin.breadcrumbs', false)) {
+            return parent::getBreadcrumbs();
+        }
+
+        return [];
+    }
+
     public function mount(): void
     {
         parent::mount();
@@ -33,7 +42,7 @@ class ListStaticPages extends ListRecords
         $activeTab = request('activeTab');
         foreach (MenuSection::all() as $section) {
             if ($section->is_categories) {
-                if ($section->name._nav('categories') == $activeTab) {
+                if ($section->name . _nav('categories') == $activeTab) {
                     $this->menuSection = $section;
                     break;
                 } else {
@@ -51,12 +60,12 @@ class ListStaticPages extends ListRecords
         }
         $actionName = request('activeTab') ?? '';
         $buttonName = _actions('create');
-        $actionName = _actions('create').' '.$actionName;
+        $actionName = _actions('create') . ' ' . $actionName;
         if ($this->menuSection) {
             if (! str_contains($actionName, _nav('categories'))) {
-                $buttonName .= ' '._nav('item');
+                $buttonName .= ' ' . _nav('item');
             } else {
-                $buttonName .= ' '._nav('category');
+                $buttonName .= ' ' . _nav('category');
             }
         }
         $this->actionName = $buttonName;
@@ -71,18 +80,12 @@ class ListStaticPages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make(_actions('help'))
-                ->iconButton()
-                ->icon('heroicon-o-question-mark-circle')
-                ->modalDescription(_hints('help.page'))
-                ->modalFooterActions([]),
+            Actions\Action::make('help')->help(_hints('help.page'))->modalFooterActions([]),
             Actions\Action::make('Template')
                 ->hidden(function () {
                     return (bool) $this->menuSection;
                 })
-                ->label(_actions('template'))
-                ->slideOver()
-                ->icon('heroicon-o-cog')
+                ->template()
                 ->fillForm(function (): array {
                     return [
                         'template' => _settings('static_page_template', []),
@@ -102,7 +105,8 @@ class ListStaticPages extends ListRecords
                         ]);
                 }),
             Actions\Action::make($this->actionName)
-                ->label($this->actionName)
+                // ->label($this->actionName)
+                ->create()
                 ->form(function ($form) {
                     if ($this->menuSection) {
                         if ($this->isCategories) {
@@ -128,7 +132,7 @@ class ListStaticPages extends ListRecords
                         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
                     }
                     if (Page::query()->where('slug', $data['slug'])->exists()) {
-                        $data['slug'] = $data['slug'].'-'.\Illuminate\Support\Str::random(5);
+                        $data['slug'] = $data['slug'] . '-' . \Illuminate\Support\Str::random(5);
                     }
                     if ($this->menuSection) {
                         if ($this->isCategories) {
@@ -146,19 +150,19 @@ class ListStaticPages extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('All')->modifyQueryUsing(fn (Builder $query) => $query->whereNull('parent_id')),
+            'all' => Tab::make('All')->modifyQueryUsing(fn(Builder $query) => $query->whereNull('parent_id')),
         ];
         foreach (MenuSection::query()->get() as $section) {
             if ($section->is_categories) {
-                $name = $section->name._nav('categories');
+                $name = $section->name . _nav('categories');
                 $tabs[$name] = Tab::make($name)
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
                 $categories = Page::query()->where('parent_id', $section->parent_id)->pluck('id')->toArray();
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('parent_id', $categories));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('parent_id', $categories));
             } else {
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
             }
         }
 

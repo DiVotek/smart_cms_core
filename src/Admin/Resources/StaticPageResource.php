@@ -103,7 +103,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                     }
 
                                     return $form->schema($fields);
@@ -141,8 +141,8 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
-                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/'.$form->getRecord()->slug) : 'pages/banners/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/' . $form->getRecord()->slug) : 'pages/banners/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,
@@ -186,11 +186,13 @@ class StaticPageResource extends Resource
                 TableSchema::getFilterStatus(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->iconButton(),
+                Tables\Actions\DeleteAction::make()->iconButton(),
                 Action::make('View')
                     ->label(_actions('view'))
                     ->icon('heroicon-o-eye')
+                    ->color('gray')
+                    ->iconButton()
                     ->url(function ($record) {
                         return $record->route();
                     })->openUrlInNewTab(),

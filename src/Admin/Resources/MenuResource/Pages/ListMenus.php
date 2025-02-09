@@ -10,10 +10,21 @@ class ListMenus extends ListRecords
 {
     protected static string $resource = MenuResource::class;
 
+    public function getBreadcrumbs(): array
+    {
+        if (config('shared.admin.breadcrumbs', false)) {
+            return parent::getBreadcrumbs();
+        }
+
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make('help')
+                ->help(_hints('help.menu')),
+            Actions\CreateAction::make()->create(),
         ];
     }
 }
