@@ -5,6 +5,7 @@ namespace SmartCms\Core;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction as ActionsCreateAction;
+use Filament\Actions\DeleteAction as ActionsDeleteAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
@@ -21,6 +22,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -162,14 +164,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -326,7 +328,7 @@ class SmartCmsPanelManager extends PanelProvider
             $action->iconButton();
         });
         CreateAction::configureUsing(function (CreateAction $action): void {
-            $action->iconButton();
+            $action->label(_actions('create'))->icon('heroicon-m-plus')->createAnother(false);
         });
         ViewAction::configureUsing(function (ViewAction $action): void {
             $action->iconButton();
@@ -339,6 +341,9 @@ class SmartCmsPanelManager extends PanelProvider
         });
         AttachAction::configureUsing(function (AttachAction $action): void {
             $action->attachAnother(false);
+        });
+        ActionsDeleteAction::configureUsing(function (ActionsDeleteAction $action): void {
+            $action->icon('heroicon-o-x-circle');
         });
         Action::macro('iconic', function () {
             return $this->iconButton()

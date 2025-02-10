@@ -13,10 +13,9 @@ class EditTemplateSection extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle')->iconic(),
+            \Filament\Actions\DeleteAction::make(),
             \Filament\Actions\Action::make(_actions('save_close'))
                 ->label('Save & Close')
-                ->iconic()
                 ->icon('heroicon-o-check-badge')
                 ->formId('form')
                 ->action(function () {
@@ -26,7 +25,6 @@ class EditTemplateSection extends EditRecord
                     return redirect()->to(ListTemplateSection::getUrl());
                 }),
             $this->getSaveFormAction()
-                ->iconic()
                 ->label(_actions('save'))
                 ->icon('heroicon-o-check-circle')
                 ->action(function () {
