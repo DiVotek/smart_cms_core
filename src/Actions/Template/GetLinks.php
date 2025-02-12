@@ -20,11 +20,11 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::get('menu_links_'.$lang.'_'.$id, function () use ($id) {
+        return Cache::get('menu_links_' . $lang . '_' . $id, function () use ($id) {
             $menu = Menu::query()->find($id);
             if ($menu) {
                 $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
+                Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
 
                 return $links;
             }
@@ -64,6 +64,8 @@ class GetLinks
                 case 'custom':
                     $route = $link['url'] ?? '/';
                     break;
+                case 'text':
+                    $route = url('/');
                 default:
                     Event::dispatch('cms.menu.building', [$link, &$route]);
                     break;
@@ -75,7 +77,7 @@ class GetLinks
                 'name' => $link[current_lang()]['name'] ?? $link['name'] ?? '',
                 'link' => $route,
                 'active' => $currentUrl === $route,
-                'as_link' => $link['as_link'] ?? false,
+                'as_link' => $link['type'] === 'text',
                 'children' => $this->parseLinks($link['children'] ?? []),
             ];
         }

@@ -13,7 +13,7 @@ class EditFields extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\DeleteAction::make(),
         ];
     }
 }

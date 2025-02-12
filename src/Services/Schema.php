@@ -162,6 +162,7 @@ class Schema
             Page::class => 'Page',
             MenuSection::class => 'Menu Section',
             'custom' => 'Custom',
+            'text' => 'Text',
         ];
         Event::dispatch('cms.admin.menu.form', [&$types]);
         $form = [
@@ -194,7 +195,7 @@ class Schema
                                     $set('name', $page->name);
                                     $translates = Translate::query()->where('entity_id', $state)->where('entity_type', Page::class)->get();
                                     foreach ($translates as $translate) {
-                                        $set($translate->language->slug.'.name', $translate->value ?? '');
+                                        $set($translate->language->slug . '.name', $translate->value ?? '');
                                     }
                                 }
                             }),
@@ -222,7 +223,7 @@ class Schema
                         ->icon(function ($get) {
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
-                                if ($get($language->slug.'.name')) {
+                                if ($get($language->slug . '.name')) {
                                     return 'heroicon-o-check-circle';
                                 }
                             }
@@ -232,7 +233,7 @@ class Schema
                             $fields = [];
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
-                                $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                             }
 
                             return $form->schema($fields);
@@ -241,7 +242,7 @@ class Schema
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
                                 $translates[$language->slug] = [
-                                    'name' => $get($language->slug.'.name') ?? '',
+                                    'name' => $get($language->slug . '.name') ?? '',
                                 ];
                             }
 
@@ -250,20 +251,20 @@ class Schema
                             foreach (get_active_languages() as $lang) {
                                 $name = $data[$lang->slug]['name'] ?? '';
                                 if ($name) {
-                                    $set($lang->slug.'.name', $name);
+                                    $set($lang->slug . '.name', $name);
                                 } else {
-                                    $set($lang->slug.'.name', '');
+                                    $set($lang->slug . '.name', '');
                                 }
                             }
                         }),
                 ])
                 ->required(),
-            Toggle::make('as_link')
-                ->label(_fields('as_link'))
-                ->default(true),
+            // Toggle::make('as_link')
+            //     ->label(_fields('as_link'))
+            //     ->default(true),
         ];
         foreach (get_active_languages() as $lang) {
-            $form[] = Hidden::make($lang->slug.'.name');
+            $form[] = Hidden::make($lang->slug . '.name');
         }
 
         return AdjacencyList::make($name)->columnSpanFull()
