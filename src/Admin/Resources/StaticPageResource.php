@@ -22,8 +22,11 @@ use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Translate;
+use SmartCms\Core\Services\Config;
 use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
+use SmartCms\Core\Services\Schema\ArrayToField;
+use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
 
 class StaticPageResource extends Resource
@@ -55,6 +58,8 @@ class StaticPageResource extends Resource
             Hidden::make('parent_id')->default($parent ? $parent->id : null),
         ];
         $layoutField = [Select::make('layout_id')->relationship('layout', 'name')->nullable()];
+        $customFields = [];
+
         if ($parent) {
             $section = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
             if ($section) {
@@ -63,18 +68,14 @@ class StaticPageResource extends Resource
                     $parentField = [Select::make('parent_id')->options(Page::query()->where('parent_id', $parent->parent_id)->pluck('name', 'id'))->required()];
                 }
             }
-        }
-        $customFields = [];
-        if (MenuSection::query()->where('parent_id', $parent)->exists()) {
-            $parent = MenuSection::query()->where('parent_id', $parent)->first();
-            $fields_id = (int) $parent->custom_fields ?? null;
-            if ($fields_id !== null && $fields_id != '') {
-                $fieldSchema = _config()->getCustomFields()[$fields_id] ?? [];
-                if (is_array($fieldSchema) && isset($fieldSchema['schema'])) {
-                    $fields = $fieldSchema['schema'];
-                    foreach ($fields as &$field) {
-                        $newVar = Helper::getVariableSchema($field);
-                        $customFields = array_merge($customFields, Helper::parseVariableByType($newVar, 'custom.'));
+            if (MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->exists()) {
+                $parent = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+                if ($parent->custom_fields && is_array($parent->custom_fields)) {
+                    foreach ($parent->custom_fields as $field_) {
+                        if (is_array($field_) && isset($field_['name']) && isset($field_['type'])) {
+                            $array_to_field = ArrayToField::make($field_, 'custom.');
+                            $customFields = array_merge($customFields, SchemaBuilder::make($array_to_field));
+                        }
                     }
                 }
             }
@@ -103,7 +104,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                     }
 
                                     return $form->schema($fields);
@@ -141,8 +142,8 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
-                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/'.$form->getRecord()->slug) : 'pages/banners/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/' . $form->getRecord()->slug) : 'pages/banners/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,

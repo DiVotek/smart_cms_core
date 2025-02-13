@@ -20,8 +20,6 @@ class PageDto implements DtoInterface
 
     public string $image;
 
-    public array $custom;
-
     public string $heading;
 
     public string $summary;
@@ -30,14 +28,13 @@ class PageDto implements DtoInterface
 
     public DateTime $updated_at;
 
-    public function __construct(int $id, string $name, string $originalName, string $link, DateTime $created_at, DateTime $updated_at, string $image = '', array $custom = [], string $heading = '', string $summary = '')
+    public function __construct(int $id, string $name, string $originalName, string $link, DateTime $created_at, DateTime $updated_at, string $image = '', string $heading = '', string $summary = '')
     {
         $this->id = $id;
         $this->name = $name;
         $this->originalName = $originalName;
         $this->link = $link;
         $this->image = $this->validateImage($image);
-        $this->custom = $custom;
         $this->heading = $heading;
         $this->summary = $summary;
         $this->created_at = $created_at;
@@ -52,7 +49,6 @@ class PageDto implements DtoInterface
             'heading' => $this->heading,
             'link' => $this->link,
             'image' => $this->image,
-            'custom' => $this->custom,
             'summary' => $this->summary,
             'created_at' => $this->transformDate($this->created_at),
             'updated_at' => $this->transformDate($this->updated_at),

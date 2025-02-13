@@ -71,7 +71,6 @@ class PageRepository implements RepositoryInterface
             $page->created_at,
             $page->updated_at,
             $page->image ?? '',
-            $page->custom ?? [],
             $seo->heading ?? $page->name(),
             $seo->summary ?? ''
         );
