@@ -22,8 +22,6 @@ use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Translate;
-use SmartCms\Core\Services\Config;
-use SmartCms\Core\Services\Helper;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
@@ -104,7 +102,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                                     }
 
                                     return $form->schema($fields);
@@ -142,8 +140,8 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
-                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/' . $form->getRecord()->slug) : 'pages/banners/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/'.$form->getRecord()->slug) : 'pages/banners/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,
