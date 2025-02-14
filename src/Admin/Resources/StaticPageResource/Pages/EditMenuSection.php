@@ -42,10 +42,10 @@ class EditMenuSection extends EditRecord
             Section::make('')->schema([
                 Schema::getName(),
                 Schema::getSorting(),
-                IconPicker::make('icon')
-                    ->label(_fields('icon'))
-                    ->sets(['heroicons'])
-                    ->placeholder('heroicon-o-menu')->preload(),
+                // IconPicker::make('icon')
+                //     ->label(_fields('icon'))
+                //     ->sets(['heroicons'])
+                //     ->placeholder('heroicon-o-menu')->preload()->searchable(false),
                 Select::make('categories_layout_id')
                     ->label(_fields('categories_layout'))
                     ->disabled()->options(Layout::query()->pluck('name', 'id')->toArray()),
@@ -73,7 +73,7 @@ class EditMenuSection extends EditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit').' '.$section->name;
+            return _actions('edit') . ' ' . $section->name;
         } else {
             return parent::getHeading();
         }
@@ -102,7 +102,7 @@ class EditMenuSection extends EditRecord
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -115,7 +115,7 @@ class EditMenuSection extends EditRecord
                     if ($parent) {
                         $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
                         if ($menuSection) {
-                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name.'Categories';
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
                             ]);
