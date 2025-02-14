@@ -3,9 +3,11 @@
 namespace SmartCms\Core\Repositories\Page;
 
 use Illuminate\Support\Facades\Event;
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Repositories\RepositoryInterface;
+use SmartCms\Core\Services\Schema\SchemaParser;
 
 class PageRepository implements RepositoryInterface
 {
@@ -63,6 +65,14 @@ class PageRepository implements RepositoryInterface
     public function transform(Page $page): PageDto
     {
         $seo = $page->seo ?? new Seo;
+        $custom_fields = $page->custom ?? [];
+        $custom = [];
+        if ($custom_fields && $page->parent) {
+            $menuSection = MenuSection::query()->where('parent_id', $page->parent->parent_id ?? $page->parent->id)->first();
+            if ($menuSection) {
+                $custom = SchemaParser::make($menuSection->custom_fields, $custom_fields);
+            }
+        }
         $dto = new PageDto(
             $page->id,
             $page->name(),
@@ -72,7 +82,8 @@ class PageRepository implements RepositoryInterface
             $page->updated_at,
             $page->image ?? '',
             $seo->heading ?? $page->name(),
-            $seo->summary ?? ''
+            $seo->summary ?? '',
+            $custom
         );
         Event::dispatch('cms.page.transform', [$page, $dto]);
 
