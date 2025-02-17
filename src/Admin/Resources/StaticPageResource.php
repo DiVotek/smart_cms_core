@@ -102,7 +102,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                     }
 
                                     return $form->schema($fields);
@@ -140,8 +140,8 @@ class StaticPageResource extends Resource
                         Schema::getSlug(Page::getDb(), $isRequired),
                         Schema::getStatus(),
                         Schema::getSorting(),
-                        Schema::getImage(path: $form->getRecord() ? ('pages/'.$form->getRecord()->slug) : 'pages/temp'),
-                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/'.$form->getRecord()->slug) : 'pages/banners/temp'),
+                        Schema::getImage(path: $form->getRecord() ? ('pages/' . $form->getRecord()->slug) : 'pages/temp'),
+                        Schema::getImage(name: 'banner', path: $form->getRecord() ? ('pages/banners/' . $form->getRecord()->slug) : 'pages/banners/temp'),
                         ...$parentField,
                         ...$layoutField,
                         ...$customFields,
@@ -225,6 +225,11 @@ class StaticPageResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         return false;
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
     public static function getPages(): array
