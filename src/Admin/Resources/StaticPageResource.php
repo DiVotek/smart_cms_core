@@ -18,7 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use SmartCms\Core\Admin\Resources\StaticPageResource\Pages as Pages;
+use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Translate;

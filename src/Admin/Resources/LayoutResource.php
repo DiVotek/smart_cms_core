@@ -9,7 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use SmartCms\Core\Admin\Resources\LayoutResource\Pages as Pages;
+use SmartCms\Core\Admin\Resources\LayoutResource\Pages;
 use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
