@@ -91,7 +91,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/' . $fieldValue;
+                    $fieldValue = 'storage/'.$fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
