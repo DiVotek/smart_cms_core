@@ -196,6 +196,7 @@ class Settings extends BaseSettings
         return [
             Action::make('change_template')
                 ->label(_actions('change_template'))
+                ->tooltip(_actions('change_template'))
                 ->color('danger')
                 ->iconic()
                 ->fillForm(function (): array {
@@ -230,7 +231,7 @@ class Settings extends BaseSettings
                             MenuSection::query()->where('id', $section)->delete();
                         }
                     }
-                    $config = new Config;
+                    $config = new Config(true);
                     $config->initLayouts();
                     $config->initMenuSections();
                     $config->initTranslates();
@@ -242,6 +243,7 @@ class Settings extends BaseSettings
                 ->requiresConfirmation()
                 ->icon('heroicon-o-cog'),
             Action::make('update_template')
+                ->tooltip(_actions('update_template'))
                 ->label(_actions('update_template'))
                 ->icon('heroicon-o-arrow-path')
                 ->iconic()
@@ -257,6 +259,7 @@ class Settings extends BaseSettings
                 }),
             Action::make('change_theme')
                 ->label(_actions('change_theme'))
+                ->tooltip(_actions('change_theme'))
                 ->icon('heroicon-o-paint-brush')
                 ->iconic()
                 ->fillForm(function (): array {
@@ -283,7 +286,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -295,6 +298,7 @@ class Settings extends BaseSettings
                 }),
             Action::make(_actions('update'))
                 ->icon('heroicon-m-arrow-up-on-square')
+                ->tooltip(_actions('update'))
                 ->label(_actions('update'))
                 ->iconic()
                 ->requiresConfirmation()->action(function () {

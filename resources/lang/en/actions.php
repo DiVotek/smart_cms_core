@@ -43,4 +43,5 @@ return [
     'edit_layout_settings' => 'Edit layout settings',
     'clear_slug' => 'Clear slug',
     'generate_slug' => 'Generate slug',
+    'transfer' => 'Transfer',
 ];
