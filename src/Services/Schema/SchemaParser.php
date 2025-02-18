@@ -91,7 +91,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
@@ -122,7 +122,11 @@ class SchemaParser
                     ];
                 }
                 if ($fieldValue['is_custom']) {
-                    $fieldValue['description'] = $this->values[current_lang()][$this->values[current_lang()][$this->field->name]] ?? $fieldValue['description'] ?? '';
+                    if (isset($this->values[current_lang()])) {
+                        $fieldValue['description'] = $this->values[current_lang()][$this->values[current_lang()][$this->field->name]] ?? $fieldValue['description'] ?? '';
+                    } else {
+                        $fieldValue['description'] = $fieldValue['description'] ?? '';
+                    }
                 }
                 $value = $fieldValue;
                 break;
