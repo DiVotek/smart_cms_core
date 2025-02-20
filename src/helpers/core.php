@@ -3,7 +3,7 @@
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/' . _settings('branding.logo', '');
+        return '/'._settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
