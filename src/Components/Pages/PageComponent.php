@@ -43,8 +43,8 @@ class PageComponent extends Component
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $temp = $entity->template()->select([
@@ -63,7 +63,8 @@ class PageComponent extends Component
         $layout = Layout::find($entity->layout_id);
         $this->layout = $layout;
         $this->entity = $entity;
-        $this->og_image = _settings('og_image', logo());
+        $og_image = _settings('og_image', logo());
+        $this->og_image = validateImage($og_image);
         Event::dispatch('cms.page.construct', $this);
         if (! isset($this->dto)) {
             $repository = new PageRepository;

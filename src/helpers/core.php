@@ -3,7 +3,7 @@
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/'._settings('branding.logo', '');
+        return '/' . _settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
@@ -69,7 +69,7 @@ if (! function_exists('template')) {
 if (! function_exists('company_name')) {
     function company_name(): string
     {
-        return _settings('branding.company_name', '');
+        return _settings('company_name', '');
     }
 }
 
@@ -128,5 +128,18 @@ if (! function_exists('no_image')) {
     function no_image(): string
     {
         return 'https://placehold.co/200x200?text=No+Image';
+    }
+}
+if (! function_exists('validateImage')) {
+    function validateImage(string $image): string
+    {
+        if (! str_contains($image, 'storage')) {
+            if (! str_starts_with($image, '/')) {
+                $image = '/' . $image;
+            }
+            $image = asset('storage' . $image);
+        }
+
+        return $image;
     }
 }
