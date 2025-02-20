@@ -37,22 +37,23 @@ class SitemapHandler
     {
         return <<<'blade'
                     <?php
+
             header('content-type: text/xml');
             echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
             @php
                 use Carbon\Carbon;
             @endphp
             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-               @foreach ($links as $link)
-                  @if(isset($link['link']) && isset($link['lastmod']))
-                     <sitemap>
-                           <loc>{{ $link['link'] }}</loc>
-                           <lastmod>
-                              {{ Carbon::parse($link['lastmod'])->tz("UTC")->toAtomString() }}
-                           </lastmod>
-                     </sitemap>
-                  @endisset
-               @endforeach
+                    @foreach ($links as $link)
+                        <url>
+                            <loc>{{ url($link['link']) }}</loc>
+                            <lastmod>
+                                {{ $link['lastmod']->toAtomString() }}
+                            </lastmod>
+                            <changefreq>{{ $link['changefreq'] }}</changefreq>
+                            <priority>{{ $link['priority'] }}</priority>
+                        </url>
+                    @endforeach
             </urlset>
         blade;
     }
