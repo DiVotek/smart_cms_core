@@ -146,8 +146,10 @@ class EditTemplate extends ManageRelatedRecords
                                 'status' => $oldSection->status,
                                 'locked' => $oldSection->locked,
                                 'design' => $oldSection->design,
+                                'schema' => $oldSection->schema,
                                 'value' => $record->value,
                                 'is_system' => $oldSection->is_system,
+                                'template' => $oldSection->template,
                             ]);
                             Notification::make()
                                 ->title(__('Record was saved'))
@@ -178,7 +180,7 @@ class EditTemplate extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -191,7 +193,7 @@ class EditTemplate extends ManageRelatedRecords
                     if ($parent) {
                         $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
                         if ($menuSection) {
-                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name.'Categories';
+                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name . 'Categories';
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
                             ]);

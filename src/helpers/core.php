@@ -3,7 +3,7 @@
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/'._settings('branding.logo', '');
+        return '/' . _settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
@@ -127,6 +127,6 @@ if (! function_exists('format_phone')) {
 if (! function_exists('no_image')) {
     function no_image(): string
     {
-        return '';
+        return 'https://placehold.co/200x200?text=No+Image';
     }
 }

@@ -42,15 +42,15 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
-                return 'scms/templates/'.template().'/assets/css/app.css';
+            if (File::exists(scms_template_path(template()) . '/assets/css/app.css')) {
+                return 'scms/templates/' . template() . '/assets/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
-                return 'scms/templates/'.template().'/assets/js/app.js';
+            if (File::exists(scms_template_path(template()) . '/assets/js/app.js')) {
+                return 'scms/templates/' . template() . '/assets/js/app.js';
             } else {
                 return '';
             }
@@ -59,7 +59,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
     }
 
@@ -70,7 +70,7 @@ class Layout extends Component
                     <html lang="{{current_lang()}}">
                     <head>
                         <meta charset="UTF-8" />
-                        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+                        <meta name="viewport" content="width=device-width, initial-scale=1">
                         <link rel="canonical" href="{{ url()->current() }}" />
                         <link rel="icon" type="image/x-icon" href="{{$favicon}}">
                         <link rel="preload" href="{{asset('/storage'.logo())}}" as="image" type="image/webp">
