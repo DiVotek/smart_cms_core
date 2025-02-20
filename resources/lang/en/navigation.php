@@ -42,4 +42,5 @@ return [
     'layouts' => 'Layouts',
     'menu_section_settings' => 'Menu Section Settings',
     'layout_settings' => 'Layout Settings',
+    'settings' => 'Settings',
 ];
