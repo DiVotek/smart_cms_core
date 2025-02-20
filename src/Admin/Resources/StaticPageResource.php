@@ -84,7 +84,7 @@ class StaticPageResource extends Resource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/' . $form->getRecord()->slug;
+            $imagePath = 'pages/'.$form->getRecord()->slug;
         }
 
         return $form
@@ -106,7 +106,7 @@ class StaticPageResource extends Resource
                                     $fields = [];
                                     $languages = get_active_languages();
                                     foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                                     }
 
                                     return $form->schema($fields);
