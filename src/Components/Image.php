@@ -31,12 +31,12 @@ class Image extends Component
                 }
 
                 // Handle storage paths
-                if (!str_contains($src, 'storage') && !str_contains($src, 'http')) {
-                    $src = 'storage/' . $src;
+                if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
+                    $src = 'storage/'.$src;
                 }
 
                 // Only process with glide if it's not an external URL
-                if (!str_contains($src, 'http')) {
+                if (! str_contains($src, 'http')) {
                     // Ensure clean path before passing to glide
                     $src = preg_replace('#/+#', '/', $src); // Replace multiple slashes with single slash
                     $newAttributes = glide()->src($src, $this->maxHeight);
