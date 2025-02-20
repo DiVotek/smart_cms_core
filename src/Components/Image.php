@@ -25,21 +25,20 @@ class Image extends Component
             if (isset($data['attributes']['src']) && strlen($data['attributes']['src']) > 0) {
                 $src = $data['attributes']['src'];
 
-                // Fix double slashes while preserving protocol and domain
-                if (preg_match('#^(https?://[^/]+)/+#', $src, $matches)) {
-                    $domain = $matches[1];
-                    $path = preg_replace('#^'.preg_quote($domain, '#').'/+#', '', $src);
-                    $path = preg_replace('#//+#', '/', $path);
-                    $src = $domain.'/'.$path;
-                }
-
+                // First normalize the path by removing any leading slash
                 if (str_starts_with($src, '/')) {
                     $src = substr($src, 1);
                 }
-                if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-                    $src = '/storage/'.$src;
+
+                // Handle storage paths
+                if (!str_contains($src, 'storage') && !str_contains($src, 'http')) {
+                    $src = 'storage/' . $src;
                 }
-                if (! str_contains($src, 'http')) {
+
+                // Only process with glide if it's not an external URL
+                if (!str_contains($src, 'http')) {
+                    // Ensure clean path before passing to glide
+                    $src = preg_replace('#/+#', '/', $src); // Replace multiple slashes with single slash
                     $newAttributes = glide()->src($src, $this->maxHeight);
                     $attributes = array_merge($this->attributes->getAttributes(), $newAttributes->getAttributes());
                     $this->attributes = $this->attributes->setAttributes($attributes);
