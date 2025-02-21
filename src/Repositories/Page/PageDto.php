@@ -30,7 +30,9 @@ class PageDto implements DtoInterface
 
     public array $custom_fields;
 
-    public function __construct(int $id, string $name, string $originalName, string $link, DateTime $created_at, DateTime $updated_at, string $image = '', string $heading = '', string $summary = '', array $custom_fields = [])
+    public ?PageDto $parent;
+
+    public function __construct(int $id, string $name, string $originalName, string $link, DateTime $created_at, DateTime $updated_at, string $image = '', string $heading = '', string $summary = '', array $custom_fields = [], ?PageDto $parent = null)
     {
         $this->id = $id;
         $this->name = $name;
@@ -42,6 +44,7 @@ class PageDto implements DtoInterface
         $this->created_at = $created_at;
         $this->updated_at = $updated_at;
         $this->custom_fields = $custom_fields;
+        $this->parent = $parent;
     }
 
     public function toArray(): array
@@ -56,6 +59,7 @@ class PageDto implements DtoInterface
             'created_at' => $this->transformDate($this->created_at),
             'updated_at' => $this->transformDate($this->updated_at),
             'custom' => (object) $this->custom_fields,
+            'parent' => $this->parent ? $this->parent->get() : null,
             ...$this->extra,
         ];
     }

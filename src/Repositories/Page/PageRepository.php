@@ -62,7 +62,7 @@ class PageRepository implements RepositoryInterface
         return $pageDtos;
     }
 
-    public function transform(Page $page): PageDto
+    public function transform(Page $page, $isParent = true): PageDto
     {
         $seo = $page->seo ?? new Seo;
         $custom_fields = $page->custom ?? [];
@@ -72,6 +72,10 @@ class PageRepository implements RepositoryInterface
             if ($menuSection) {
                 $custom = SchemaParser::make($menuSection->custom_fields, $custom_fields);
             }
+        }
+        $parent = null;
+        if ($isParent) {
+            $parent = $page->parent ? $this->transform($page->parent, false) : null;
         }
         $dto = new PageDto(
             $page->id,
@@ -83,7 +87,8 @@ class PageRepository implements RepositoryInterface
             $page->image ?? '',
             $seo->heading ?? $page->name(),
             $seo->summary ?? '',
-            $custom
+            $custom,
+            $parent
         );
         Event::dispatch('cms.page.transform', [$page, $dto]);
 
