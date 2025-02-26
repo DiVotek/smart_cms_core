@@ -42,15 +42,15 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
-                return 'scms/templates/'.template().'/assets/css/app.css';
+            if (File::exists(scms_template_path(template()) . '/assets/css/app.css')) {
+                return 'scms/templates/' . template() . '/assets/css/app.css';
             } else {
                 return '';
             }
         });
         $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
-                return 'scms/templates/'.template().'/assets/js/app.js';
+            if (File::exists(scms_template_path(template()) . '/assets/js/app.js')) {
+                return 'scms/templates/' . template() . '/assets/js/app.js';
             } else {
                 return '';
             }
@@ -59,7 +59,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
     }
 
@@ -88,7 +88,12 @@ class Layout extends Component
                         <meta property="og:description" content="@yield('description')" />
                         <meta property="og:url" content="{{ url()->current() }}" />
                         <meta property="og:image" content="@yield('meta-image')" />
-                        <meta property="og:site_name" content="{{company_name()}}">
+                        <meta property="og:site_name" content="{{ company_name() }}">
+                        <meta name="twitter:card" content="summary">
+                        <meta name="twitter:site" content="{{ '@' . company_name() }}">
+                        <meta name="twitter:description" content="@yield('description')">
+                        <meta name="twitter:title" content="@yield('title')">
+                        <meta name="twitter:image" content="@yield('meta-image')">
                         <x-s::microdata.organization />
                         <x-s::microdata.website />
                         @yield('microdata')
