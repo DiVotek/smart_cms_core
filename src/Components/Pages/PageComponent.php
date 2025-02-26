@@ -43,8 +43,8 @@ class PageComponent extends Component
         $titleMod = _settings('title_mod', []);
         $descriptionMod = _settings('description_mod', []);
         $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
-        $this->title = ($titleMod->prefix ?? '').($seo->title ?? '').($titleMod->suffix ?? '');
-        $this->meta_description = ($descriptionMod->prefix ?? '').($seo->description ?? '').($descriptionMod->suffix ?? '');
+        $this->title = ($titleMod->prefix ?? '') . ($seo->title ?? '') . ($titleMod->suffix ?? '');
+        $this->meta_description = ($descriptionMod->prefix ?? '') . ($seo->description ?? '') . ($descriptionMod->suffix ?? '');
         $this->meta_keywords = $seo->meta_keywords ?? '';
         $this->breadcrumbs = method_exists($entity, 'getBreadcrumbs') ? $entity->getBreadcrumbs() : [];
         $temp = $entity->template()->select([
@@ -114,6 +114,18 @@ class PageComponent extends Component
                 @section('keywords', $meta_keywords)
                 @section("content")
                 @section('meta-image',$og_image)
+                @section('microdata')
+                    @if(count($entity->getBreadcrumbs()) > 1)
+                    <x-s::microdata.breadcrumbs :data="$entity->getBreadcrumbs()" />
+                    @endif
+                    @if($entity->parent)
+                        @if($entity->parent->parent_id)
+                        <x-s::microdata.blog-article :entity="$dto->toObject()" />
+                        @else
+                        <x-s::microdata.news-article :entity="$dto->toObject()" />
+                        @endif
+                    @endif
+                @endsection
                 @if($layout)
                 @include('template::layouts.'.$layout->path, [...$layout->getVariables($entity->layout_settings ?? []),'entity' => $dto->toObject()])
                 @endif

@@ -246,7 +246,16 @@ type: pages
 **Description:**
 A field that used to combine multiple fields which can be repeated multiple times.
 
+### **21. Textarea**
+
+**Description:**
+A field that used to display textarea.
+
 **Structure:**
+
+```yaml
+type: textarea
+```
 
 ```yaml
 type: array

@@ -15,7 +15,7 @@ class Breadcrumbs extends Microdata
 
     public function render(): View|Closure|string
     {
-        return '<x-microdata :type="$type" :properties="$properties" />';
+        return '<x-s::microdata.microdata :type="$type" :properties="$properties" />';
     }
 
     public function buildData($entity): array
@@ -25,8 +25,8 @@ class Breadcrumbs extends Microdata
             $data['itemListElement'][] = (object) [
                 '@type' => 'ListItem',
                 'position' => $i++,
-                'name' => $item['title'],
-                'item' => $item['url'],
+                'name' => $item['name'],
+                'item' => $item['link'],
             ];
         }
 
