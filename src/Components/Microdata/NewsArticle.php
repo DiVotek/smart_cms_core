@@ -2,6 +2,8 @@
 
 namespace SmartCms\Core\Components\Microdata;
 
+use Carbon\Carbon;
+
 class NewsArticle extends Microdata
 {
     public object $entity;
@@ -21,14 +23,14 @@ class NewsArticle extends Microdata
                 'name' => company_name(),
                 'logo' => [
                     '@type' => 'ImageObject',
-                    'url' => logo(),
+                    'url' => validateImage(logo()),
                 ],
             ],
             'headline' => $this->entity->heading ?? $this->entity->name ?? '',
             'articleBody' => $this->entity->summary ?? '',
             'image' => validateImage($this->entity->image ?? no_image()),
-            'datePublished' => $this->entity->created_at,
-            'dateModified' => $this->entity->updated_at,
+            'datePublished' => Carbon::parse($this->entity->created_at)->toIso8601String(),
+            'dateModified' => Carbon::parse($this->entity->updated_at)->toIso8601String(),
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
                 '@id' => url()->current(),
