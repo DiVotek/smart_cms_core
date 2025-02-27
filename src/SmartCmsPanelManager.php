@@ -26,6 +26,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
@@ -166,14 +167,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -274,7 +275,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
         );
 
         Filament::registerRenderHook(
@@ -341,6 +342,9 @@ class SmartCmsPanelManager extends PanelProvider
             $action->iconButton();
         });
         DeleteAction::configureUsing(function (DeleteAction $action): void {
+            $action->iconButton();
+        });
+        DetachAction::configureUsing(function (DetachAction $action): void {
             $action->iconButton();
         });
         ActionsCreateAction::configureUsing(function (ActionsCreateAction $action): void {
