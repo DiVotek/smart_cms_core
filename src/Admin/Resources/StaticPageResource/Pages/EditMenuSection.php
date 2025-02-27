@@ -73,7 +73,7 @@ class EditMenuSection extends EditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit') . ' ' . $section->name;
+            return _actions('edit').' '.$section->name;
         } else {
             return parent::getHeading();
         }
@@ -102,7 +102,7 @@ class EditMenuSection extends EditRecord
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -117,7 +117,7 @@ class EditMenuSection extends EditRecord
                         if ($menuSection) {
                             $name = $menuSection->name;
                             if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name . 'Categories';
+                                $name = $menuSection->name.'Categories';
                             }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,

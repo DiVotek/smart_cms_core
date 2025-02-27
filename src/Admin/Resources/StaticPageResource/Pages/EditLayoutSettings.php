@@ -43,7 +43,7 @@ class EditLayoutSettings extends EditRecord
                     ])
                     ->schema($this->record->getLayoutSettingsForm())
                     ->columns(1)
-                    ->visible(fn() => $this->record->layout_id !== null),
+                    ->visible(fn () => $this->record->layout_id !== null),
             ]);
     }
 
@@ -52,7 +52,7 @@ class EditLayoutSettings extends EditRecord
         return [
             Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             Actions\ViewAction::make()
-                ->url(fn() => $this->record->route())
+                ->url(fn () => $this->record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             Actions\Action::make('save_close')
@@ -67,7 +67,7 @@ class EditLayoutSettings extends EditRecord
                         if ($menuSection) {
                             $name = $menuSection->name;
                             if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name . 'Categories';
+                                $name = $menuSection->name.'Categories';
                             }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
