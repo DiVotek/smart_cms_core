@@ -89,7 +89,7 @@ class EditSeo extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -98,11 +98,14 @@ class EditSeo extends ManageRelatedRecords
                 ->formId('form')
                 ->action(function () {
                     $url = ListStaticPages::getUrl();
-                    $parent = $this->getOwnerRecord()->parent;
+                    $parent = $this->record->parent;
                     if ($parent) {
                         $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
                         if ($menuSection) {
-                            $name = $parent->parent_id ? $menuSection->name : $menuSection->name.'Categories';
+                            $name = $menuSection->name;
+                            if ($parent->parent_id == null && $menuSection->is_categories) {
+                                $name = $menuSection->name . 'Categories';
+                            }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
                             ]);

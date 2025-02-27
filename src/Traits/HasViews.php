@@ -4,6 +4,7 @@ namespace SmartCms\Core\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 trait HasViews
 {
@@ -21,7 +22,8 @@ trait HasViews
 
     public function view(): int
     {
-        return $this->incrementQuietly($this->getViewsColumn());
+        // quietly update dont work with incrementQuietly
+        return DB::table(static::getDb())->where('id', $this->id)->increment($this->getViewsColumn());
     }
 
     /**

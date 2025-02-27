@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
+use SmartCms\Core\Models\MenuSection;
 
 class EditLayoutSettings extends EditRecord
 {
@@ -42,7 +43,7 @@ class EditLayoutSettings extends EditRecord
                     ])
                     ->schema($this->record->getLayoutSettingsForm())
                     ->columns(1)
-                    ->visible(fn () => $this->record->layout_id !== null),
+                    ->visible(fn() => $this->record->layout_id !== null),
             ]);
     }
 
@@ -51,7 +52,7 @@ class EditLayoutSettings extends EditRecord
         return [
             Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             Actions\ViewAction::make()
-                ->url(fn () => $this->record->route())
+                ->url(fn() => $this->record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             Actions\Action::make('save_close')
@@ -59,8 +60,22 @@ class EditLayoutSettings extends EditRecord
                 ->icon('heroicon-o-check-badge')
                 ->action(function () {
                     $this->save();
+                    $url = ListStaticPages::getUrl();
+                    $parent = $this->record->parent;
+                    if ($parent) {
+                        $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+                        if ($menuSection) {
+                            $name = $menuSection->name;
+                            if ($parent->parent_id == null && $menuSection->is_categories) {
+                                $name = $menuSection->name . 'Categories';
+                            }
+                            $url = ListStaticPages::getUrl([
+                                'activeTab' => $name,
+                            ]);
+                        }
+                    }
 
-                    return redirect()->to(ListStaticPages::getUrl());
+                    return redirect()->to($url);
                 }),
             Actions\Action::make('save')
                 ->label(_actions('save'))

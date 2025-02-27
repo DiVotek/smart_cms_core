@@ -46,6 +46,10 @@ class FormHandler
                 $data[$field->name] = $value;
             }
         }
+        $referer = $request->header('referer') ?? $request->server('HTTP_REFERER') ?? $request->headers->get('referer');
+        if ($referer) {
+            $data['From page'] = $referer;
+        }
         ContactForm::query()->create([
             'form_id' => $form->id,
             'data' => $data,
@@ -58,7 +62,7 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
+        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
 
         return new ScmsResponse(true);
     }
