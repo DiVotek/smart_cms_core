@@ -70,7 +70,7 @@ class PageRepository implements RepositoryInterface
         if ($custom_fields && $page->parent) {
             $menuSection = MenuSection::query()->where('parent_id', $page->parent->parent_id ?? $page->parent->id)->first();
             if ($menuSection) {
-                $custom = SchemaParser::make($menuSection->custom_fields, $custom_fields);
+                $custom = SchemaParser::make($menuSection->custom_fields ?? [], $custom_fields);
             }
         }
         $parent = null;
