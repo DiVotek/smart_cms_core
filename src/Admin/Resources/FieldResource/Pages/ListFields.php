@@ -56,8 +56,9 @@ class ListFields extends ListRecords
                 })->modal()->action(function (array $data) {
                     Field::query()->create([
                         'name' => $data['name'],
-                        'type' => 'text',
-                        'html_id' => \Illuminate\Support\Str::slug($data['name']).'_'.\Illuminate\Support\Str::random(5),
+                        'type' => $data['type'] ?? 'text',
+                        'required' => $data['is_required'] ?? false,
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
                     ]);
                 }),
         ];
