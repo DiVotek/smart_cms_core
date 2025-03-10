@@ -17,6 +17,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
@@ -109,6 +110,7 @@ class SmartCmsPanelManager extends PanelProvider
             ->spa(config('app.spa', false))
             ->font('Roboto')
             ->darkMode(false)
+            ->favicon(validateImage(_settings('branding.favicon', '/favicon.ico')))
             ->brandName($this->getBrandName())
             ->resources($this->getResources())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -167,14 +169,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -275,7 +277,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
         );
 
         Filament::registerRenderHook(
