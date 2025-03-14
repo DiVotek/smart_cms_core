@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use SmartCms\Core\Admin\Resources\AdminResource\Pages;
 use SmartCms\Core\Models\Admin;
 use SmartCms\Core\Services\TableSchema;
@@ -32,9 +33,23 @@ class AdminResource extends Resource
         return _nav('admin');
     }
 
+    public static function canAccess(): bool
+    {
+        if (! Auth::check()) {
+            return false;
+        }
+
+        return Auth::user()->username == 'superadmin';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()->username == 'superadmin' && $record->username !== 'superadmin';
+    }
+
     public static function canDelete(Model $record): bool
     {
-        return Admin::query()->count() > 1;
+        return $record->username !== 'superadmin';
     }
 
     public static function getPluralModelLabel(): string
@@ -49,10 +64,10 @@ class AdminResource extends Resource
                 Section::make('')->schema([
                     Forms\Components\TextInput::make('username')
                         ->label(_fields('username'))
-                        ->required()->unique(),
+                        ->required()->unique(ignoreRecord: true),
                     Forms\Components\TextInput::make('email')
                         ->label(_fields('email'))
-                        ->email()->unique()
+                        ->email()->unique(ignoreRecord: true)
                         ->required(),
                     Forms\Components\TextInput::make('password')
                         ->label(_fields('password'))
@@ -82,6 +97,7 @@ class AdminResource extends Resource
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
