@@ -34,7 +34,7 @@ class Link extends Component
                 if (! isset($data['attributes']['class'])) {
                     $data['attributes']['class'] = '';
                 }
-                $data['attributes']['class'] .= ' active ' . $this->activeClasses;
+                $data['attributes']['class'] .= ' active '.$this->activeClasses;
                 unset($data['attributes']['title']);
                 unset($data['attributes']['href']);
 
