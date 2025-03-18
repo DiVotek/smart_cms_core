@@ -6,7 +6,6 @@ use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -25,6 +24,7 @@ class TranslationResource extends BaseResource
     protected static ?int $navigationSort = 4;
 
     public static string $resourceLabel = 'model_translation';
+
     public static ?string $resourceGroup = 'system';
 
     public static function canCreate(): bool
@@ -102,7 +102,6 @@ class TranslationResource extends BaseResource
                 ->relationship('language', 'name')->hidden(! is_multi_lang()),
         ];
     }
-
 
     public static function getResourcePages(): array
     {

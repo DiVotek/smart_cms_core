@@ -8,6 +8,7 @@ use SmartCms\Core\Traits\HasHooks;
 class Update extends Command
 {
     use HasHooks;
+
     protected $signature = 'scms:update';
 
     protected $description = 'Update Smart CMS';

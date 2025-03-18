@@ -6,11 +6,9 @@ use Filament\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\Pages\BaseEditRecord;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
-use SmartCms\Core\Models\MenuSection;
 
 class EditLayoutSettings extends BaseEditRecord
 {
@@ -20,7 +18,6 @@ class EditLayoutSettings extends BaseEditRecord
     {
         return _actions('edit_layout_settings');
     }
-
 
     public function form(Form $form): Form
     {
@@ -40,7 +37,7 @@ class EditLayoutSettings extends BaseEditRecord
                     ])
                     ->schema($this->record->getLayoutSettingsForm())
                     ->columns(1)
-                    ->visible(fn() => $this->record->layout_id !== null),
+                    ->visible(fn () => $this->record->layout_id !== null),
             ]);
     }
 
@@ -48,7 +45,7 @@ class EditLayoutSettings extends BaseEditRecord
     {
         return [
             Actions\ViewAction::make()
-                ->url(fn() => $this->record->route())
+                ->url(fn () => $this->record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

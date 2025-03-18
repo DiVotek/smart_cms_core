@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;

@@ -39,9 +39,10 @@ class FormResource extends BaseResource
         $notification = [];
         $emailText = [];
         foreach (get_active_languages() as $lang) {
-            $buttons[] = Hidden::make('data.' . $lang->slug . '.button');
-            $notification[] = Hidden::make('data.' . $lang->slug . '.notification');
+            $buttons[] = Hidden::make('data.'.$lang->slug.'.button');
+            $notification[] = Hidden::make('data.'.$lang->slug.'.notification');
         }
+
         return [
             Section::make('')->schema([
                 Schema::getName(true)->maxLength(255)->suffixActions([Schema::getTranslateAction()]),
@@ -56,47 +57,51 @@ class FormResource extends BaseResource
                             ->inline(false),
                     ])->columns(2),
                 Forms\Components\TextInput::make('data.button')
-                    ->formatStateUsing(fn(?string $state): string => blank($state) ? 'Submit' : $state)
+                    ->formatStateUsing(fn (?string $state): string => blank($state) ? 'Submit' : $state)
                     ->label(_fields('button'))
                     ->default('Submit')
                     ->maxLength(255)
                     ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
                         foreach ($data as $key => $value) {
-                            $set('data.' . $key . '.button', $value);
+                            $set('data.'.$key.'.button', $value);
                         }
                     })->fillForm(function ($record) {
                         $data = [];
                         foreach (get_active_languages() as $lang) {
                             $data[$lang->slug] = $record->data[$lang->slug]['button'] ?? '';
                         }
+
                         return $data;
                     })->form(function ($form) {
                         $schema = [];
                         foreach (get_active_languages() as $lang) {
-                            $schema[] = TextInput::make($lang->slug)->label(_fields('button') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('button').' ('.$lang->name.')')->default('')->maxLength(255);
                         }
+
                         return $form->schema($schema);
                     })),
                 Forms\Components\TextInput::make('data.notification')
-                    ->formatStateUsing(fn(?string $state): string => blank($state) ? 'Form submitted successfully' : $state)
+                    ->formatStateUsing(fn (?string $state): string => blank($state) ? 'Form submitted successfully' : $state)
                     ->label(_fields('notification'))
                     ->default('Form submitted successfully')
                     ->maxLength(255)
                     ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
                         foreach ($data as $key => $value) {
-                            $set('data.' . $key . '.notification', $value);
+                            $set('data.'.$key.'.notification', $value);
                         }
                     })->fillForm(function ($record) {
                         $data = [];
                         foreach (get_active_languages() as $lang) {
                             $data[$lang->slug] = $record->data[$lang->slug]['notification'] ?? '';
                         }
+
                         return $data;
                     })->form(function ($form) {
                         $schema = [];
                         foreach (get_active_languages() as $lang) {
-                            $schema[] = TextInput::make($lang->slug)->label(_fields('notification') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('notification').' ('.$lang->name.')')->default('')->maxLength(255);
                         }
+
                         return $form->schema($schema);
                     })),
                 Section::make(_fields('additional'))->schema([

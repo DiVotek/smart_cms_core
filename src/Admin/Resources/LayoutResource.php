@@ -2,11 +2,8 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -67,6 +64,7 @@ class LayoutResource extends BaseResource
                 $schema = array_merge($schema, $componentField);
             }
         }
+
         return $schema;
     }
 
@@ -86,13 +84,12 @@ class LayoutResource extends BaseResource
             Action::make('update_schema')->iconButton()
                 ->tooltip(_actions('update_schema'))
                 ->label(_actions('update_schema'))->icon('heroicon-o-arrow-path')->action(function ($record) {
-                    $config = new Config();
+                    $config = new Config;
                     $config->initLayout($record->path);
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
         ];
     }
-
 
     public static function getResourcePages(): array
     {

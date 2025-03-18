@@ -43,9 +43,11 @@ class TemplateSectionResource extends BaseResource
     {
         return ! $record->is_system;
     }
+
     protected static function getFormSchema(Form $form): array
     {
         $components = _config()->getSections();
+
         return [
             Section::make('')->schema([
                 Schema::getName(true)->maxLength(255)->suffixAction(Action::make('design')
@@ -92,12 +94,14 @@ class TemplateSectionResource extends BaseResource
                             $componentField = Builder::make($field);
                             $fields = array_merge($fields, $componentField);
                         }
+
                         return $fields;
                     })->live()
                     ->columnSpanFull()->key('dynamicTypeFields'),
             ]),
         ];
     }
+
     protected static function getTableColumns(Table $table): array
     {
         return [
@@ -107,6 +111,7 @@ class TemplateSectionResource extends BaseResource
             TableSchema::getUpdatedAt(),
         ];
     }
+
     protected static function getResourcePages(): array
     {
         return [

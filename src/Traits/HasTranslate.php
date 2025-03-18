@@ -34,7 +34,7 @@ trait HasTranslate
 
     public function get_translate_key()
     {
-        return $this->getTable() . '_' . $this->id;
+        return $this->getTable().'_'.$this->id;
     }
 
     public function name()

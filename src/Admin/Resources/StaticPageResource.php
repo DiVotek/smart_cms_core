@@ -9,14 +9,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
@@ -78,7 +74,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/' . $form->getRecord()->slug;
+            $imagePath = 'pages/'.$form->getRecord()->slug;
         }
 
         return [
@@ -99,7 +95,7 @@ class StaticPageResource extends BaseResource
                                 $fields = [];
                                 $languages = get_active_languages();
                                 foreach ($languages as $language) {
-                                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                    $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                                 }
 
                                 return $form->schema($fields);
@@ -166,6 +162,7 @@ class StaticPageResource extends BaseResource
                 })->openUrlInNewTab(),
         ];
     }
+
     protected static function getTableColumns(Table $table): array
     {
         $parentCol = [];
@@ -174,6 +171,7 @@ class StaticPageResource extends BaseResource
         if ($activeTab && strlen($activeTab) > 0 && ! str_contains($activeTab, 'Categories')) {
             $parentCol = [TextColumn::make('parent.name')->label(_fields('parent'))];
         }
+
         return [
             TableSchema::getName()->limit(50)->tooltip(function (TextColumn $column): ?string {
                 $state = $column->getState();
@@ -193,6 +191,7 @@ class StaticPageResource extends BaseResource
             TableSchema::getUpdatedAt(),
         ];
     }
+
     protected static function getResourcePages(): array
     {
         return [
@@ -207,7 +206,7 @@ class StaticPageResource extends BaseResource
 
     public static function canDelete(Model $record): bool
     {
-        return $record->slug && strlen($record->slug) > 0 && !MenuSection::query()->where('parent_id', $record->id)->exists();
+        return $record->slug && strlen($record->slug) > 0 && ! MenuSection::query()->where('parent_id', $record->id)->exists();
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -232,6 +231,7 @@ class StaticPageResource extends BaseResource
         if ($section) {
             $items[] = Pages\EditMenuSection::class;
         }
+
         return $items;
     }
 }

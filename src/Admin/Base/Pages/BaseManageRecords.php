@@ -8,7 +8,6 @@ use SmartCms\Core\Traits\HasHooks;
 
 abstract class BaseManageRecords extends ManageRecords
 {
-
     use HasHooks;
 
     public function getBreadcrumbs(): array
@@ -26,8 +25,9 @@ abstract class BaseManageRecords extends ManageRecords
         $shortClassName = (new \ReflectionClass($this))->getShortName();
         $actions = $this->getResourceHeaderActions();
         $actions = $this->applyHook('header_actions', $actions);
+
         return [
-            Actions\Action::make('help')->help(_hints('help.' . $shortClassName))->modalFooterActions([]),
+            Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
             ...$actions,
             Actions\CreateAction::make(),
         ];

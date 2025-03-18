@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Admin\Resources\FormResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\Pages\BaseEditRecord;
 use SmartCms\Core\Admin\Resources\FormResource;
 

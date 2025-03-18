@@ -37,7 +37,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema as FacadesSchema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -168,14 +167,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -216,6 +215,7 @@ class SmartCmsPanelManager extends PanelProvider
         ];
         Event::dispatch('cms.admin.navigation.resources', [&$resources]);
         self::applyHook('navigation.resources', $resources);
+
         return $resources;
     }
 
@@ -279,7 +279,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
         );
 
         Filament::registerRenderHook(
@@ -391,6 +391,7 @@ class SmartCmsPanelManager extends PanelProvider
         ];
         Event::dispatch('cms.admin.navigation.pages', [&$pages]);
         self::applyHook('navigation.pages', $pages);
+
         return $pages;
     }
 
@@ -401,6 +402,7 @@ class SmartCmsPanelManager extends PanelProvider
         ];
         Event::dispatch('cms.admin.navigation.settings_pages', [&$pages]);
         self::applyHook('navigation.settings_pages', $pages);
+
         return $pages;
     }
 

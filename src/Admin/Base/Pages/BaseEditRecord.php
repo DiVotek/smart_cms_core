@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Admin\Base\Pages;
 
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use SmartCms\Core\Traits\HasHooks;
-use Filament\Actions;
 
 abstract class BaseEditRecord extends EditRecord
 {
@@ -28,6 +28,7 @@ abstract class BaseEditRecord extends EditRecord
     {
         $actions = $this->getResourceHeaderActions();
         $actions = $this->applyHook('header_actions', $actions);
+
         return [
             Actions\DeleteAction::make(),
             ...$actions,
@@ -48,7 +49,7 @@ abstract class BaseEditRecord extends EditRecord
                     $this->save();
                     $this->record->touch();
                 })
-                ->formId('form')
+                ->formId('form'),
         ];
     }
 }

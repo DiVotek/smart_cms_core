@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Admin\Base\Pages;
 
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use SmartCms\Core\Traits\HasHooks;
-use Filament\Actions;
 
 abstract class BaseCreateRecord extends CreateRecord
 {
@@ -24,6 +24,7 @@ abstract class BaseCreateRecord extends CreateRecord
     {
         $actions = $this->getResourceHeaderActions();
         $actions = $this->applyHook('header_actions', $actions);
+
         return [
             ...$actions,
             Actions\Action::make(_actions('save_close'))
@@ -41,7 +42,7 @@ abstract class BaseCreateRecord extends CreateRecord
                 ->action(function () {
                     $this->create(false);
                 })
-                ->formId('form')
+                ->formId('form'),
         ];
     }
 }

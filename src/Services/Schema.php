@@ -4,7 +4,6 @@ namespace SmartCms\Core\Services;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -15,14 +14,10 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Schmeits\FilamentCharacterCounter\Forms\Components\RichEditor;
 use Schmeits\FilamentCharacterCounter\Forms\Components\Textarea;
 use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput as ComponentsTextInput;
-use SmartCms\Core\Models\MenuSection;
-use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Models\Translate;
 
@@ -235,7 +230,7 @@ class Schema
                 $fields = [];
                 $languages = get_active_languages();
                 foreach ($languages as $language) {
-                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                    $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
                 }
 
                 return $form->schema($fields);

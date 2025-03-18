@@ -25,7 +25,7 @@ trait HasSorting
 
     public function scopeSorted(Builder $query): Builder
     {
-        return $query->orderBy($this->getDb() . '.' . $this->getSortingColumn(), 'asc');
+        return $query->orderBy($this->getDb().'.'.$this->getSortingColumn(), 'asc');
     }
 
     public function getSortingColumn(): string

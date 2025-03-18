@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Admin\Base\Pages;
 
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Traits\HasHooks;
-use Filament\Actions;
 
 abstract class BaseListRecords extends ListRecords
 {
@@ -25,8 +25,9 @@ abstract class BaseListRecords extends ListRecords
         $shortClassName = (new \ReflectionClass($this))->getShortName();
         $actions = $this->getResourceHeaderActions();
         $actions = $this->applyHook('header_actions', $actions);
+
         return [
-            Actions\Action::make('help')->help(_hints('help.' . $shortClassName))->modalFooterActions([]),
+            Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
             ...$actions,
             Actions\CreateAction::make(),
         ];

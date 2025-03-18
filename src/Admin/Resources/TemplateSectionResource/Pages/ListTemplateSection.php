@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 

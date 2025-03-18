@@ -10,13 +10,13 @@ trait HasHooks
     {
         $className = static::class;
 
-        if (!isset(static::$hooks[$className][$hookName])) {
+        if (! isset(static::$hooks[$className][$hookName])) {
             static::$hooks[$className][$hookName] = [];
         }
 
         static::$hooks[$className][$hookName][] = [
             'callback' => $callback,
-            'priority' => $priority
+            'priority' => $priority,
         ];
 
         usort(static::$hooks[$className][$hookName], function ($a, $b) {
@@ -27,7 +27,7 @@ trait HasHooks
     public static function applyHook($hookName, &$value = null, ...$args)
     {
         $className = static::class;
-        if (!isset(static::$hooks[$className][$hookName])) {
+        if (! isset(static::$hooks[$className][$hookName])) {
             return $value;
         }
 
@@ -35,12 +35,12 @@ trait HasHooks
             $callback = $hook['callback'];
             if (is_string($callback) && class_exists($callback)) {
                 // It's a class name with invoke method
-                $callbackInstance = new $callback();
+                $callbackInstance = new $callback;
                 $tempResult = $callbackInstance($value, ...$args);
                 if ($tempResult !== null) {
                     $value = $tempResult;
                 }
-            } else if (is_array($callback) && count($callback) === 2 && is_string($callback[0]) && class_exists($callback[0])) {
+            } elseif (is_array($callback) && count($callback) === 2 && is_string($callback[0]) && class_exists($callback[0])) {
                 // It's a [ClassName, methodName] format
                 $tempResult = call_user_func($callback, $value, ...$args);
                 if ($tempResult !== null) {

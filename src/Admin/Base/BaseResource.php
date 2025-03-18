@@ -13,31 +13,33 @@ abstract class BaseResource extends Resource
     use HasHooks;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+
     /**
      * Define the resource label in single string
-     *
-     * @var string
      */
     public static string $resourceLabel;
 
     /**
      * Define the resource group in single string
-     *
-     * @var string|null
      */
     public static ?string $resourceGroup;
 
     abstract protected static function getFormSchema(Form $form): array;
+
     abstract protected static function getTableColumns(Table $table): array;
+
     abstract protected static function getResourcePages(): array;
+
     protected static function getResourceRelations(): array
     {
         return [];
     }
+
     protected static function getResourceSubNavigation($page): array
     {
         return [];
     }
+
     protected static function getTableActions(Table $table): array
     {
         return [];
@@ -84,6 +86,7 @@ abstract class BaseResource extends Resource
     {
         $pages = static::getResourcePages();
         $pages = static::applyHook('pages', $pages);
+
         return $pages;
     }
 
@@ -91,6 +94,7 @@ abstract class BaseResource extends Resource
     {
         $actions = static::getTableActions($table);
         $actions = static::applyHook('table_actions', $actions);
+
         return [
             \Filament\Tables\Actions\EditAction::make(),
             \Filament\Tables\Actions\DeleteAction::make(),
@@ -102,6 +106,7 @@ abstract class BaseResource extends Resource
     {
         $filters = static::getTableFilters();
         $filters = static::applyHook('table_filters', $filters);
+
         return $filters;
     }
 
@@ -109,6 +114,7 @@ abstract class BaseResource extends Resource
     {
         $bulkActions = static::getTableBulkActions();
         $bulkActions = static::applyHook('table_bulk_actions', $bulkActions);
+
         return [
             \Filament\Tables\Actions\BulkActionGroup::make([
                 \Filament\Tables\Actions\DeleteBulkAction::make(),
@@ -121,6 +127,7 @@ abstract class BaseResource extends Resource
     {
         $relations = static::getResourceRelations();
         $relations = static::applyHook('relations', $relations);
+
         return $relations;
     }
 
@@ -136,13 +143,14 @@ abstract class BaseResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return _nav(static::$resourceLabel . 's');
+        return _nav(static::$resourceLabel.'s');
     }
 
     public static function getNavigationGroup(): ?string
     {
         return _nav(static::$resourceGroup);
     }
+
     public static function getRecordSubNavigation($page): array
     {
         $subNavigation = static::getResourceSubNavigation($page);

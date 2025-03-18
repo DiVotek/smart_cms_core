@@ -25,7 +25,7 @@ trait HasStatus
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where(self::getDb() . '.' . $this->getStatusColumn(), self::STATUS_ON);
+        return $query->where(self::getDb().'.'.$this->getStatusColumn(), self::STATUS_ON);
     }
 
     public function scopeInactive(Builder $query): Builder

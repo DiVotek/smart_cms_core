@@ -4,7 +4,6 @@ namespace SmartCms\Core\Admin\Resources\TranslationResource\Pages;
 
 use Filament\Actions;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
 use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\TranslationResource;
 use SmartCms\Core\Models\Translation;

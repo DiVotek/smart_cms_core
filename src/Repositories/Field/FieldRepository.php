@@ -15,7 +15,7 @@ class FieldRepository implements RepositoryInterface
     {
         $fields = Field::query()->whereIn('id', $ids)->get();
 
-        return $fields->map(fn(Field $field) => $this->transform($field))->toObject();
+        return $fields->map(fn (Field $field) => $this->transform($field))->toObject();
     }
 
     public function find(int $id, bool $required = true): object
