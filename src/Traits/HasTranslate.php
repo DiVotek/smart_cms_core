@@ -15,7 +15,7 @@ trait HasTranslate
     public function getTranslatableNameAttribute()
     {
         if (! is_multi_lang()) {
-            return $this->attributes['name'];
+            return $this->attributes['name'] ?? '';
         }
         if (Context::has($this->get_translate_key())) {
             return Context::get($this->get_translate_key());
@@ -24,7 +24,7 @@ trait HasTranslate
         if ($translation) {
             Context::add($this->get_translate_key(), $translation->value);
         } else {
-            Context::add($this->get_translate_key(), $this->attributes['name']);
+            Context::add($this->get_translate_key(), $this->attributes['name'] ?? '');
         }
 
         return Context::get($this->get_translate_key());
@@ -34,7 +34,7 @@ trait HasTranslate
 
     public function get_translate_key()
     {
-        return $this->getTable().'_'.$this->id;
+        return $this->getTable() . '_' . $this->id;
     }
 
     public function name()

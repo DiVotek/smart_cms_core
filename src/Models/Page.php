@@ -43,19 +43,21 @@ class Page extends BaseModel
     use HasTranslate;
     use HasViews;
 
-    protected $fillable = [
-        'name',
-        'slug',
-        'sorting',
-        'image',
-        'banner',
-        'status',
-        'views',
-        'parent_id',
-        'layout_id',
-        'custom',
-        'layout_settings',
-    ];
+    // protected $fillable = [
+    //     'name',
+    //     'slug',
+    //     'sorting',
+    //     'image',
+    //     'banner',
+    //     'status',
+    //     'views',
+    //     'parent_id',
+    //     'layout_id',
+    //     'custom',
+    //     'layout_settings',
+    // ];
+
+    protected $guarded = [];
 
     protected $casts = [
         'status' => 'boolean',

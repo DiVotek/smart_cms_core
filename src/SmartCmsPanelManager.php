@@ -66,9 +66,12 @@ use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Singletone\Languages;
 use SmartCms\Core\Services\Singletone\Settings;
 use SmartCms\Core\Services\Singletone\Translates;
+use SmartCms\Core\Traits\HasHooks;
 
 class SmartCmsPanelManager extends PanelProvider
 {
+    use HasHooks;
+
     public function panel(Panel $panel): Panel
     {
         $this->app->singleton('_settings', function () {
@@ -92,8 +95,8 @@ class SmartCmsPanelManager extends PanelProvider
                 ->locales(config('shared.admin.locales', []));
         });
         FilamentAsset::register([
-            Css::make('custom-stylesheet', asset('/smart_cms_core/index.css')),
-            JS::make('custom-script', asset('/smart_cms_core/index.js')),
+            Css::make('scms-stylesheet', asset('/smart_cms_core/index.css')),
+            JS::make('scms-script', asset('/smart_cms_core/index.js')),
         ]);
         $this->addMacro();
 
@@ -119,9 +122,6 @@ class SmartCmsPanelManager extends PanelProvider
             ->databaseNotifications()
             ->widgets($this->getWidgets())
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->navigationGroups(
-                $this->getNavigationGroups()
-            )
             ->middleware([
                 NoIndex::class,
                 EncryptCookies::class,
@@ -168,14 +168,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make($section->name . ' ' . _nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -196,6 +196,8 @@ class SmartCmsPanelManager extends PanelProvider
                     ->group($section->name);
             }
             Filament::registerNavigationItems($items);
+            $groups = $this->getNavigationGroups();
+            Filament::registerNavigationGroups($groups);
         });
     }
 
@@ -213,7 +215,7 @@ class SmartCmsPanelManager extends PanelProvider
             LayoutResource::class,
         ];
         Event::dispatch('cms.admin.navigation.resources', [&$resources]);
-
+        self::applyHook('navigation.resources', $resources);
         return $resources;
     }
 
@@ -243,6 +245,7 @@ class SmartCmsPanelManager extends PanelProvider
             ],
         ];
         Event::dispatch('cms.admin.navigation.groups', [&$groups]);
+        self::applyHook('navigation.groups', $groups);
         foreach ($groups as $group) {
             if (! isset($group['name'])) {
                 continue;
@@ -276,7 +279,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
         );
 
         Filament::registerRenderHook(
@@ -292,14 +295,6 @@ class SmartCmsPanelManager extends PanelProvider
                     ->openUrlInNewTab()
                     ->render()
                     ->__toString();
-
-                return Blade::render(Action::make('view')->label('View website')->url(url('/'))->openUrlInNewTab()->render());
-
-                return <<<'HTML'
-            <a href="/" target="_blank" class="flex items-center justify-center p-2 font-semibold rounded-lg h-9 text-primary-600 bg-primary-500/10">
-                View Website
-            </a>
-            HTML;
             }
         );
     }
@@ -393,10 +388,9 @@ class SmartCmsPanelManager extends PanelProvider
     {
         $pages = [
             \Filament\Pages\Dashboard::class,
-            // TemplatePage::class,
         ];
         Event::dispatch('cms.admin.navigation.pages', [&$pages]);
-
+        self::applyHook('navigation.pages', $pages);
         return $pages;
     }
 
@@ -406,7 +400,7 @@ class SmartCmsPanelManager extends PanelProvider
             \SmartCms\Core\Admin\Pages\Settings\Settings::class,
         ];
         Event::dispatch('cms.admin.navigation.settings_pages', [&$pages]);
-
+        self::applyHook('navigation.settings_pages', $pages);
         return $pages;
     }
 
@@ -417,6 +411,7 @@ class SmartCmsPanelManager extends PanelProvider
             TopContactForms::class,
         ];
         Event::dispatch('cms.admin.widgets', [&$widgets]);
+        self::applyHook('widgets', $widgets);
 
         return $widgets;
     }

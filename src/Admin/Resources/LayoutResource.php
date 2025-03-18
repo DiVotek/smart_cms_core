@@ -4,25 +4,28 @@ namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\LayoutResource\Pages;
 use SmartCms\Core\Models\Layout;
+use SmartCms\Core\Services\Config;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
 use SmartCms\Core\Services\TableSchema;
 
-class LayoutResource extends Resource
+class LayoutResource extends BaseResource
 {
     protected static ?string $model = Layout::class;
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::withoutGlobalScopes()->count();
-    }
+    protected static ?int $navigationSort = 3;
+
+    public static string $resourceLabel = 'layout';
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
@@ -32,16 +35,6 @@ class LayoutResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return _nav('design-template');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return _nav('layout');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return _nav('layouts');
     }
 
     public static function canCreate(): bool
@@ -54,7 +47,7 @@ class LayoutResource extends Resource
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function getFormSchema(Form $form): array
     {
         $instance = $form->getModelInstance();
         $schema = [];
@@ -74,46 +67,37 @@ class LayoutResource extends Resource
                 $schema = array_merge($schema, $componentField);
             }
         }
-        if (count($schema) > 0) {
-            $schema = [
-                Section::make('')->schema($schema),
-            ];
-        }
-
-        return $form->schema($schema);
+        return $schema;
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TableSchema::getName(),
-                TableSchema::getStatus(),
-                TextColumn::make('template')->label(_nav('template')),
-                TableSchema::getUpdatedAt(),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([]);
-    }
-
-    public static function getRelations(): array
+    public static function getTableColumns(Table $table): array
     {
         return [
-            //
+            TableSchema::getName(),
+            TableSchema::getStatus()->disabled(),
+            TextColumn::make('template')->label(_nav('template')),
+            TableSchema::getUpdatedAt(),
         ];
     }
 
-    public static function getPages(): array
+    public static function getTableActions(Table $table): array
     {
         return [
-            'index' => Pages\ListLayouts::route('/'),
-            'create' => Pages\CreateLayout::route('/create'),
-            'edit' => Pages\EditLayout::route('/{record}/edit'),
+            Action::make('update_schema')->iconButton()
+                ->tooltip(_actions('update_schema'))
+                ->label(_actions('update_schema'))->icon('heroicon-o-arrow-path')->action(function ($record) {
+                    $config = new Config();
+                    $config->initLayout($record->path);
+                    Notification::make()->title(_actions('success'))->success()->send();
+                }),
+        ];
+    }
+
+
+    public static function getResourcePages(): array
+    {
+        return [
+            'index' => Pages\ManageLayouts::route('/'),
         ];
     }
 }

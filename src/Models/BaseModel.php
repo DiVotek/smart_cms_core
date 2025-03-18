@@ -3,19 +3,21 @@
 namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Traits\HasHooks;
 
 class BaseModel extends Model
 {
-    protected $tablePrefix;
+    use HasHooks;
+
+    protected $tablePrefix = 'smart_cms_';
 
     public function getTable()
     {
-        $this->tablePrefix = sconfig('database_table_prefix', 'smart_cms_');
 
         $table = parent::getTable();
 
         if (! str_starts_with($table, $this->tablePrefix)) {
-            return $this->tablePrefix.$table;
+            return $this->tablePrefix . $table;
         }
 
         return $table;
@@ -24,5 +26,23 @@ class BaseModel extends Model
     public static function getDb(): string
     {
         return (new static)->getTable();
+    }
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::saving(function (BaseModel $model) {
+            $model->applyHook('before_save', $model);
+        });
+        static::creating(function (BaseModel $model) {
+            $model->applyHook('before_create', $model);
+        });
+        static::updating(function (BaseModel $model) {
+            $model->applyHook('before_update', $model);
+        });
+        static::deleting(function (BaseModel $model) {
+            $model->applyHook('before_delete', $model);
+        });
     }
 }

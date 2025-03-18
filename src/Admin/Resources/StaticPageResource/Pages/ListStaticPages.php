@@ -11,12 +11,13 @@ use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
 
-class ListStaticPages extends ListRecords
+class ListStaticPages extends BaseListRecords
 {
     protected static string $resource = StaticPageResource::class;
 
@@ -42,7 +43,7 @@ class ListStaticPages extends ListRecords
         $activeTab = request('activeTab');
         foreach (MenuSection::all() as $section) {
             if ($section->is_categories) {
-                if ($section->name._nav('categories') == $activeTab) {
+                if ($section->name . _nav('categories') == $activeTab) {
                     $this->menuSection = $section;
                     break;
                 } else {
@@ -60,12 +61,12 @@ class ListStaticPages extends ListRecords
         }
         $actionName = request('activeTab') ?? '';
         $buttonName = _actions('create');
-        $actionName = _actions('create').' '.$actionName;
+        $actionName = _actions('create') . ' ' . $actionName;
         if ($this->menuSection) {
             if (! str_contains($actionName, _nav('categories'))) {
-                $buttonName .= ' '._nav('item');
+                $buttonName .= ' ' . _nav('item');
             } else {
-                $buttonName .= ' '._nav('category');
+                $buttonName .= ' ' . _nav('category');
             }
         }
         $this->actionName = $buttonName;
@@ -77,10 +78,9 @@ class ListStaticPages extends ListRecords
         return $this->menuSection ? $this->menuSection->name : 'Static Pages';
     }
 
-    protected function getHeaderActions(): array
+    protected function getResourceHeaderActions(): array
     {
         return [
-            Actions\Action::make('help')->help(_hints('help.page'))->modalFooterActions([]),
             Actions\Action::make('Template')
                 ->hidden(function () {
                     return (bool) $this->menuSection;
@@ -105,7 +105,6 @@ class ListStaticPages extends ListRecords
                         ]);
                 }),
             Actions\Action::make($this->actionName)
-                // ->label($this->actionName)
                 ->create()
                 ->form(function ($form) {
                     if ($this->menuSection) {
@@ -132,7 +131,7 @@ class ListStaticPages extends ListRecords
                         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
                     }
                     if (Page::query()->where('slug', $data['slug'])->exists()) {
-                        $data['slug'] = $data['slug'].'-'.\Illuminate\Support\Str::random(5);
+                        $data['slug'] = $data['slug'] . '-' . \Illuminate\Support\Str::random(5);
                     }
                     if ($this->menuSection) {
                         if ($this->isCategories) {
@@ -150,19 +149,19 @@ class ListStaticPages extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('All')->modifyQueryUsing(fn (Builder $query) => $query->whereNull('parent_id')),
+            'all' => Tab::make('All')->modifyQueryUsing(fn(Builder $query) => $query->whereNull('parent_id')),
         ];
         foreach (MenuSection::query()->get() as $section) {
             if ($section->is_categories) {
-                $name = $section->name._nav('categories');
+                $name = $section->name . _nav('categories');
                 $tabs[$name] = Tab::make($name)
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
                 $categories = Page::query()->where('parent_id', $section->parent_id)->pluck('id')->toArray();
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('parent_id', $categories));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('parent_id', $categories));
             } else {
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
             }
         }
 

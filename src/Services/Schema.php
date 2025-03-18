@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
@@ -156,124 +157,6 @@ class Schema
             ->native(false)->searchable(true);
     }
 
-    public static function getLinkBuilder(string $name): AdjacencyList
-    {
-        $types = [
-            Page::class => 'Page',
-            MenuSection::class => 'Menu Section',
-            'custom' => 'Custom',
-            'text' => 'Text',
-        ];
-        Event::dispatch('cms.admin.menu.form', [&$types]);
-        $form = [
-            Select::make('type')
-                ->native(false)
-                ->preload()
-                ->required()
-                ->reactive()
-                ->options($types)->default(Page::class)->afterStateUpdated(function (Set $set, $state) {
-                    $set('name', '');
-                    $set('id', '');
-                }),
-            Group::make(function ($get) {
-                $type = $get('type') ?? Page::class;
-                switch ($type) {
-                    case 'custom':
-                        return [
-                            TextInput::make('url')
-                                ->url()
-                                ->label(_fields('url'))
-                                ->required(),
-                        ];
-                    case Page::class:
-                        return [
-                            Select::make('id')->label(_fields('page'))->options(function () {
-                                return Page::query()->whereNull('parent_id')->pluck('name', 'id')->toArray();
-                            })->reactive()->afterStateUpdated(function (Set $set, $state) {
-                                $page = Page::query()->where('id', $state)->first();
-                                if ($page) {
-                                    $set('name', $page->name);
-                                    $translates = Translate::query()->where('entity_id', $state)->where('entity_type', Page::class)->get();
-                                    foreach ($translates as $translate) {
-                                        $set($translate->language->slug.'.name', $translate->value ?? '');
-                                    }
-                                }
-                            }),
-                        ];
-                    case MenuSection::class:
-                        return [
-                            Select::make('id')->label(_fields('menu_section'))->options(MenuSection::query()->pluck('name', 'id')->toArray()),
-                        ];
-                    default:
-                        $schema = [];
-                        Event::dispatch('cms.admin.menu.building', [$type, &$schema]);
-                        if (! is_array($schema)) {
-                            return [];
-                        }
-
-                        return $schema;
-                }
-            }),
-            TextInput::make('name')
-                ->label(_fields('name'))->suffixActions([
-                    Action::make(_fields('translates'))
-                        ->hidden(function () {
-                            return ! is_multi_lang();
-                        })
-                        ->icon(function ($get) {
-                            $languages = get_active_languages();
-                            foreach ($languages as $language) {
-                                if ($get($language->slug.'.name')) {
-                                    return 'heroicon-o-check-circle';
-                                }
-                            }
-
-                            return 'heroicon-o-exclamation-circle';
-                        })->form(function ($form) {
-                            $fields = [];
-                            $languages = get_active_languages();
-                            foreach ($languages as $language) {
-                                $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
-                            }
-
-                            return $form->schema($fields);
-                        })->fillForm(function ($get) {
-                            $translates = [];
-                            $languages = get_active_languages();
-                            foreach ($languages as $language) {
-                                $translates[$language->slug] = [
-                                    'name' => $get($language->slug.'.name') ?? '',
-                                ];
-                            }
-
-                            return $translates;
-                        })->action(function ($set, $data) {
-                            foreach (get_active_languages() as $lang) {
-                                $name = $data[$lang->slug]['name'] ?? '';
-                                if ($name) {
-                                    $set($lang->slug.'.name', $name);
-                                } else {
-                                    $set($lang->slug.'.name', '');
-                                }
-                            }
-                        }),
-                ])
-                ->required(),
-            // Toggle::make('as_link')
-            //     ->label(_fields('as_link'))
-            //     ->default(true),
-        ];
-        foreach (get_active_languages() as $lang) {
-            $form[] = Hidden::make($lang->slug.'.name');
-        }
-
-        return AdjacencyList::make($name)->columnSpanFull()
-            ->maxDepth(2)
-            ->labelKey('name')
-            ->modal(true)
-            ->form($form);
-    }
-
     public static function getTemplateBuilder(string $name = 'template'): Repeater
     {
         $options = TemplateSection::query()->pluck('name', 'id')->toArray();
@@ -334,5 +217,57 @@ class Schema
                     ->rules('string'),
             ]),
         ];
+    }
+
+    public static function getTranslateAction()
+    {
+        return Action::make(_fields('translates'))
+            ->hidden(function () {
+                return ! is_multi_lang();
+            })
+            ->icon(function ($record) {
+                if ($record->translatable()->count() > 0) {
+                    return 'heroicon-o-check-circle';
+                }
+
+                return 'heroicon-o-exclamation-circle';
+            })->form(function ($form) {
+                $fields = [];
+                $languages = get_active_languages();
+                foreach ($languages as $language) {
+                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                }
+
+                return $form->schema($fields);
+            })->fillForm(function ($record) {
+                $translates = [];
+                $languages = get_active_languages();
+                foreach ($languages as $language) {
+                    $translates[$language->slug] = [
+                        'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
+                    ];
+                }
+
+                return $translates;
+            })->action(function ($record, $data) {
+                foreach (get_active_languages() as $lang) {
+                    $name = $data[$lang->slug]['name'] ?? '';
+                    if ($name == '') {
+                        Translate::query()->where([
+                            'language_id' => $lang->id,
+                            'entity_id' => $record->id,
+                            'entity_type' => get_class($record),
+                        ])->delete();
+
+                        continue;
+                    }
+                    Translate::query()->updateOrCreate([
+                        'language_id' => $lang->id,
+                        'entity_id' => $record->id,
+                        'entity_type' => get_class($record),
+                    ], ['value' => $name]);
+                }
+                Notification::make()->success()->title(_actions('saved'))->send();
+            });
     }
 }

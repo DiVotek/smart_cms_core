@@ -4,9 +4,10 @@ namespace SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 
-class ListTemplateSection extends ListRecords
+class ListTemplateSection extends BaseListRecords
 {
     protected static string $resource = TemplateSectionResource::class;
 
@@ -19,12 +20,17 @@ class ListTemplateSection extends ListRecords
         return [];
     }
 
-    protected function getHeaderActions(): array
+    protected function getResourceHeaderActions(): array
     {
-        return [
-            Actions\Action::make('help')
-                ->help(_hints('help.page')),
-            Actions\CreateAction::make()->create(),
-        ];
+        return [];
     }
+
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         Actions\Action::make('help')
+    //             ->help(_hints('help.page')),
+    //         Actions\CreateAction::make()->create(),
+    //     ];
+    // }
 }

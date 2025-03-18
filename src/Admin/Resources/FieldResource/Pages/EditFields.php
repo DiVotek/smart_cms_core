@@ -2,18 +2,17 @@
 
 namespace SmartCms\Core\Admin\Resources\FieldResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use SmartCms\Core\Admin\Base\Pages\BaseEditRecord;
 use SmartCms\Core\Admin\Resources\FieldResource;
 
-class EditFields extends EditRecord
+class EditFields extends BaseEditRecord
 {
     protected static string $resource = FieldResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         Actions\DeleteAction::make(),
+    //     ];
+    // }
 }

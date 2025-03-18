@@ -5,28 +5,18 @@ namespace SmartCms\Core\Admin\Resources\TranslationResource\Pages;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\TranslationResource;
 use SmartCms\Core\Models\Translation;
 use SmartCms\Core\Services\Config;
 
-class ListTranslations extends ListRecords
+class ListTranslations extends BaseListRecords
 {
     protected static string $resource = TranslationResource::class;
 
-    public function getBreadcrumbs(): array
-    {
-        if (config('shared.admin.breadcrumbs', false)) {
-            return parent::getBreadcrumbs();
-        }
-
-        return [];
-    }
-
-    protected function getHeaderActions(): array
+    protected function getResourceHeaderActions(): array
     {
         return [
-            Actions\Action::make('help')
-                ->help(_hints('help.translations')),
             Actions\Action::make(_actions('clear_cache'))
                 ->icon('heroicon-m-arrow-path')
                 ->iconic()

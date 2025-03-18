@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasSorting
 {
-    public function initializeHasSorting()
-    {
-        $this->mergeFillable([$this->getSortingColumn()]);
-    }
+    // public function initializeHasSorting()
+    // {
+    //     $this->mergeFillable([$this->getSortingColumn()]);
+    // }
 
     protected static function bootHasSorting(): void
     {
@@ -18,14 +18,14 @@ trait HasSorting
             $instance = new static;
             $instance->scopeSorted($builder);
         });
-        static::booting(function (Model $model) {
-            $model->mergeFillable([$model->getSortingColumn()]);
-        });
+        // static::booting(function (Model $model) {
+        //     $model->mergeFillable([$model->getSortingColumn()]);
+        // });
     }
 
     public function scopeSorted(Builder $query): Builder
     {
-        return $query->orderBy($this->getDb().'.'.$this->getSortingColumn(), 'asc');
+        return $query->orderBy($this->getDb() . '.' . $this->getSortingColumn(), 'asc');
     }
 
     public function getSortingColumn(): string

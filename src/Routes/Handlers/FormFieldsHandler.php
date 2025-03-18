@@ -19,22 +19,16 @@ class FormFieldsHandler
         }
         $fields = [];
         foreach ($form->fields as $field) {
-            $group = ['class' => $field['class'] ?? '', 'fields' => []];
-            if (! isset($field['fields'])) {
-                continue;
+            $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
+            if ($fieldModel) {
+                $fields[] = FieldRepository::make()->find($fieldModel->id, $field['is_required'] ?? false)->get();
             }
-            foreach ($field['fields'] as $f) {
-                $fieldModel = Field::query()->where('id', $f['field'] ?? 0)->first();
-                if ($fieldModel) {
-                    $group['fields'][] = FieldRepository::make()->find($fieldModel->id)->get();
-                }
-            }
-            $fields[] = $group;
         }
+        $button = $form->data[current_lang()]['button'] ?? $form->data['button'] ?? '';
         $fields = [
-            'name' => $form->name,
-            'groups' => $fields,
-            'button' => $form->button[current_lang()] ?? $form->button[main_lang()] ?? '',
+            'name' => $form->name(),
+            'fields' => $fields,
+            'button' => $button,
         ];
 
         return new ScmsResponse(true, $fields);

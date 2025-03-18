@@ -18,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
@@ -27,35 +28,28 @@ use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
 
-class StaticPageResource extends Resource
+class StaticPageResource extends BaseResource
 {
-    public static function getNavigationGroup(): ?string
+    protected static ?string $model = Page::class;
+
+    public static ?string $resourceGroup = 'pages';
+
+    public static string $resourceLabel = 'model_page';
+
+    public static function canCreate(): bool
     {
-        return _nav('pages');
+        return false;
     }
 
-    public static function getModel(): string
-    {
-        return config('shared.page_model', Page::class);
-    }
-
-    public static function getModelLabel(): string
-    {
-        return _nav('model_page');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return _nav('model_pages');
-    }
-
-    public static function form(Form $form): Form
+    public static function getFormSchema(Form $form): array
     {
         $parent = $form->getRecord()->parent;
         $parentField = [
             Hidden::make('parent_id')->default($parent ? $parent->id : null),
         ];
-        $layoutField = [Select::make('layout_id')->relationship('layout', 'name')->nullable()];
+        $layoutField = [Select::make('layout_id')->relationship('layout', 'name')->nullable()->hidden(function ($record) {
+            return $record->parent_id || MenuSection::query()->where('parent_id', $record->id)->exists();
+        })];
         $customFields = [];
 
         if ($parent) {
@@ -84,76 +78,95 @@ class StaticPageResource extends Resource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
-        return $form
-            ->schema([
-                Section::make()
-                    ->schema([
-                        Schema::getReactiveName()->suffixActions([
-                            ActionsAction::make(_fields('translates'))
-                                ->hidden(function () {
-                                    return ! is_multi_lang();
-                                })
-                                ->icon(function ($record) {
-                                    if ($record->translatable()->count() > 0) {
-                                        return 'heroicon-o-check-circle';
-                                    }
+        return [
+            Section::make()
+                ->schema([
+                    Schema::getReactiveName()->suffixActions([
+                        ActionsAction::make(_fields('translates'))
+                            ->hidden(function () {
+                                return ! is_multi_lang();
+                            })
+                            ->icon(function ($record) {
+                                if ($record->translatable()->count() > 0) {
+                                    return 'heroicon-o-check-circle';
+                                }
 
-                                    return 'heroicon-o-exclamation-circle';
-                                })->form(function ($form) {
-                                    $fields = [];
-                                    $languages = get_active_languages();
-                                    foreach ($languages as $language) {
-                                        $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
-                                    }
+                                return 'heroicon-o-exclamation-circle';
+                            })->form(function ($form) {
+                                $fields = [];
+                                $languages = get_active_languages();
+                                foreach ($languages as $language) {
+                                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
+                                }
 
-                                    return $form->schema($fields);
-                                })->fillForm(function ($record) {
-                                    $translates = [];
-                                    $languages = get_active_languages();
-                                    foreach ($languages as $language) {
-                                        $translates[$language->slug] = [
-                                            'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
-                                        ];
-                                    }
+                                return $form->schema($fields);
+                            })->fillForm(function ($record) {
+                                $translates = [];
+                                $languages = get_active_languages();
+                                foreach ($languages as $language) {
+                                    $translates[$language->slug] = [
+                                        'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
+                                    ];
+                                }
 
-                                    return $translates;
-                                })->action(function ($record, $data) {
-                                    foreach (get_active_languages() as $lang) {
-                                        $name = $data[$lang->slug]['name'] ?? '';
-                                        if ($name == '') {
-                                            Translate::query()->where([
-                                                'language_id' => $lang->id,
-                                                'entity_id' => $record->id,
-                                                'entity_type' => config('shared.page_model', Page::class),
-                                            ])->delete();
-
-                                            continue;
-                                        }
-                                        Translate::query()->updateOrCreate([
+                                return $translates;
+                            })->action(function ($record, $data) {
+                                foreach (get_active_languages() as $lang) {
+                                    $name = $data[$lang->slug]['name'] ?? '';
+                                    if ($name == '') {
+                                        Translate::query()->where([
                                             'language_id' => $lang->id,
                                             'entity_id' => $record->id,
-                                            'entity_type' => config('shared.page_model', Page::class),
-                                        ], ['value' => $name]);
+                                            'entity_type' => Page::class,
+                                        ])->delete();
+
+                                        continue;
                                     }
-                                    Notification::make()->success()->title(_actions('saved'))->send();
-                                }),
-                        ]),
-                        Schema::getSlug(Page::getDb(), $isRequired),
-                        Schema::getStatus(),
-                        Schema::getSorting(),
-                        Schema::getImage(path: $imagePath),
-                        Schema::getImage(name: 'banner', path: $imagePath),
-                        ...$parentField,
-                        ...$layoutField,
-                        ...$customFields,
+                                    Translate::query()->updateOrCreate([
+                                        'language_id' => $lang->id,
+                                        'entity_id' => $record->id,
+                                        'entity_type' => Page::class,
+                                    ], ['value' => $name]);
+                                }
+                                Notification::make()->success()->title(_actions('saved'))->send();
+                            }),
                     ]),
-            ]);
+                    Schema::getSlug(Page::getDb(), $isRequired),
+                    Schema::getStatus(),
+                    Schema::getSorting(),
+                    Schema::getImage(path: $imagePath),
+                    Schema::getImage(name: 'banner', path: $imagePath),
+                    ...$parentField,
+                    ...$layoutField,
+                    ...$customFields,
+                ]),
+        ];
     }
 
-    public static function table(Table $table): Table
+    protected static function getTableFilters(): array
+    {
+        return [
+            TableSchema::getFilterStatus(),
+        ];
+    }
+
+    protected static function getTableActions(Table $table): array
+    {
+        return [
+            Action::make('View')
+                ->label(_actions('view'))
+                ->icon('heroicon-o-eye')
+                ->color('gray')
+                ->iconButton()
+                ->url(function ($record) {
+                    return $record->route();
+                })->openUrlInNewTab(),
+        ];
+    }
+    protected static function getTableColumns(Table $table): array
     {
         $parentCol = [];
 
@@ -161,69 +174,40 @@ class StaticPageResource extends Resource
         if ($activeTab && strlen($activeTab) > 0 && ! str_contains($activeTab, 'Categories')) {
             $parentCol = [TextColumn::make('parent.name')->label(_fields('parent'))];
         }
+        return [
+            TableSchema::getName()->limit(50)->tooltip(function (TextColumn $column): ?string {
+                $state = $column->getState();
+                if (strlen($state) <= $column->getCharacterLimit()) {
+                    return null;
+                }
 
-        return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
-                $query->withoutGlobalScopes()->whereNotIn('id', $menuSections);
-            })
-            ->columns([
-                TableSchema::getName()->limit(50)->tooltip(function (TextColumn $column): ?string {
-                    $state = $column->getState();
-                    if (strlen($state) <= $column->getCharacterLimit()) {
-                        return null;
-                    }
-
-                    return $state;
-                }),
-                ImageColumn::make('image')->label(_columns('image'))->defaultImageUrl(no_image())->square(),
-                TableSchema::getStatus()->disabled(function ($record) {
-                    return $record->slug == '';
-                }),
-                TableSchema::getSorting(),
-                TableSchema::getViews(),
-                ...$parentCol,
-                TableSchema::getUpdatedAt(),
-            ])
-            ->filters([
-                TableSchema::getFilterStatus(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make()->iconButton(),
-                Tables\Actions\DeleteAction::make()->iconButton(),
-                Action::make('View')
-                    ->label(_actions('view'))
-                    ->icon('heroicon-o-eye')
-                    ->color('gray')
-                    ->iconButton()
-                    ->url(function ($record) {
-                        return $record->route();
-                    })->openUrlInNewTab(),
-            ])
-            ->reorderable('sorting')
-            ->headerActions([
-                // Schema::helpAction('Static page help text')->hidden(function () {
-                //     return (bool) request('parent');
-                // }),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                return $state;
+            }),
+            ImageColumn::make('image')->label(_columns('image'))->defaultImageUrl(no_image())->square(),
+            TableSchema::getStatus()->disabled(function ($record) {
+                return $record->slug == '';
+            }),
+            TableSchema::getSorting(),
+            TableSchema::getViews(),
+            ...$parentCol,
+            TableSchema::getUpdatedAt(),
+        ];
     }
-
-    public static function getRelations(): array
+    protected static function getResourcePages(): array
     {
         return [
-            // Schema::getSeoAndTemplateRelationGroup(),
-            ...config('shared.admin.page_relations', []),
+            'index' => Pages\ListStaticPages::route('/'),
+            'edit' => Pages\EditStaticPage::route('/{record}/edit'),
+            'seo' => Pages\EditSeo::route('/{record}/seo'),
+            'template' => Pages\EditTemplate::route('/{record}/template'),
+            'menu' => Pages\EditMenuSection::route('/{record}/menu'),
+            'layout-settings' => Pages\EditLayoutSettings::route('/{record}/layout-settings'),
         ];
     }
 
     public static function canDelete(Model $record): bool
     {
-        return $record->slug && strlen($record->slug) > 0;
+        return $record->slug && strlen($record->slug) > 0 && !MenuSection::query()->where('parent_id', $record->id)->exists();
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -236,33 +220,18 @@ class StaticPageResource extends Resource
         return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
-    public static function getPages(): array
+    public static function getResourceSubNavigation($page): array
     {
-        return [
-            'index' => Pages\ListStaticPages::route('/'),
-            'edit' => Pages\EditStaticPage::route('/{record}/edit'),
-            'seo' => Pages\EditSeo::route('/{record}/seo'),
-            'template' => Pages\EditTemplate::route('/{record}/template'),
-            'menu' => Pages\EditMenuSection::route('/{record}/menu'),
-            'layout-settings' => Pages\EditLayoutSettings::route('/{record}/layout-settings'),
-        ];
-    }
-
-    public static function getRecordSubNavigation($page): array
-    {
-        $section = MenuSection::query()->where('parent_id', $page->record->id)->first();
         $items = [
             Pages\EditStaticPage::class,
             Pages\EditSeo::class,
             Pages\EditTemplate::class,
             Pages\EditLayoutSettings::class,
         ];
+        $section = MenuSection::query()->where('parent_id', $page->record->id)->first();
         if ($section) {
             $items[] = Pages\EditMenuSection::class;
         }
-
-        return $page->generateNavigationItems($items);
+        return $items;
     }
-
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 }

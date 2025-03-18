@@ -7,34 +7,24 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
+use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\FieldResource;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Services\Schema;
 
-class ListFields extends ListRecords
+class ListFields extends BaseListRecords
 {
     protected static string $resource = FieldResource::class;
 
-    public function getBreadcrumbs(): array
-    {
-        if (config('shared.admin.breadcrumbs', false)) {
-            return parent::getBreadcrumbs();
-        }
-
-        return [];
-    }
-
-    protected function getHeaderActions(): array
+    protected function getResourceHeaderActions(): array
     {
         return [
-            Actions\Action::make('help')
-                ->help(_hints('help.fields')),
-            Actions\Action::make('create')
+            Actions\Action::make('_create')
                 ->create()
                 ->form(function (Form $form) {
                     return $form->schema([
                         Schema::getName(true),
-                        Toggle::make('is_required')->default(true),
+                        // Toggle::make('is_required')->default(true),
                         Select::make('type')
                             ->label(_fields('field_type'))
                             ->options([
@@ -58,7 +48,7 @@ class ListFields extends ListRecords
                         'name' => $data['name'],
                         'type' => $data['type'] ?? 'text',
                         'required' => $data['is_required'] ?? false,
-                        'html_id' => \Illuminate\Support\Str::slug($data['name']).'_'.\Illuminate\Support\Str::random(5),
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
                     ]);
                 }),
         ];

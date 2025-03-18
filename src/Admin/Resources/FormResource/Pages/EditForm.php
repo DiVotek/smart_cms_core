@@ -2,18 +2,11 @@
 
 namespace SmartCms\Core\Admin\Resources\FormResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Base\Pages\BaseEditRecord;
 use SmartCms\Core\Admin\Resources\FormResource;
 
-class EditForm extends EditRecord
+class EditForm extends BaseEditRecord
 {
     protected static string $resource = FormResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
 }

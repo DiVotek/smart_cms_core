@@ -3,10 +3,11 @@
 namespace SmartCms\Core\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Event;
+use SmartCms\Core\Traits\HasHooks;
 
 class Update extends Command
 {
+    use HasHooks;
     protected $signature = 'scms:update';
 
     protected $description = 'Update Smart CMS';
@@ -14,7 +15,6 @@ class Update extends Command
     public function handle()
     {
         $this->info('Updating Smart CMS...');
-        Event::dispatch('cms.admin.update', $this);
         $process = new \Symfony\Component\Process\Process(['composer', 'update', 'smart-cms/core']);
         $process->setTimeout(120);
         $process->run();
@@ -33,7 +33,8 @@ class Update extends Command
             '--provider' => "SmartCms\Core\SmartCmsServiceProvider",
             '--tag' => 'templates',
         ]);
-        $this->call('migrate');
+        $this->call('migrate', ['--force' => true]);
+        $this->applyHook('update', $this);
         $this->info('Updated Smart CMS');
     }
 }

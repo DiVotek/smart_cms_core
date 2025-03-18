@@ -11,13 +11,14 @@ use Filament\Resources\Pages\EditRecord;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Base\Pages\BaseEditRecord;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
 
-class EditMenuSection extends EditRecord
+class EditMenuSection extends BaseEditRecord
 {
     protected static string $resource = StaticPageResource::class;
 
@@ -31,21 +32,12 @@ class EditMenuSection extends EditRecord
         return 'heroicon-o-cog';
     }
 
-    public function getBreadcrumb(): string
-    {
-        return $this->record->name;
-    }
-
     public function form(Form $form): Form
     {
         return $form->schema([
             Section::make('')->schema([
                 Schema::getName(),
                 Schema::getSorting(),
-                // IconPicker::make('icon')
-                //     ->label(_fields('icon'))
-                //     ->sets(['heroicons'])
-                //     ->placeholder('heroicon-o-menu')->preload()->searchable(false),
                 Select::make('categories_layout_id')
                     ->label(_fields('categories_layout'))
                     ->disabled()->options(Layout::query()->pluck('name', 'id')->toArray()),
@@ -73,18 +65,17 @@ class EditMenuSection extends EditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit').' '.$section->name;
+            return _actions('edit') . ' ' . $section->name;
         } else {
             return parent::getHeading();
         }
     }
 
-    protected function getHeaderActions(): array
+    protected function getResourceHeaderActions(): array
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
 
         return [
-            // \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\Action::make('transfer')->label(_actions('transfer'))->icon('heroicon-o-arrows-right-left')
                 ->color('danger')
                 ->form(function ($form) use ($section) {
@@ -102,41 +93,9 @@ class EditMenuSection extends EditRecord
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
-            \Filament\Actions\Action::make(_actions('save_close'))
-                ->label('Save & Close')
-                ->icon('heroicon-o-check-badge')
-                ->formId('form')
-                ->action(function () {
-                    $url = ListStaticPages::getUrl();
-                    $parent = $this->record->parent;
-                    if ($parent) {
-                        $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
-                        if ($menuSection) {
-                            $name = $menuSection->name;
-                            if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name.'Categories';
-                            }
-                            $url = ListStaticPages::getUrl([
-                                'activeTab' => $name,
-                            ]);
-                        }
-                    }
-                    $this->save(true, true);
-                    $this->record->touch();
-
-                    return redirect()->to($url);
-                }),
-            $this->getSaveFormAction()
-                ->label(_actions('save'))
-                ->icon('heroicon-o-check-circle')
-                ->action(function () {
-                    $this->save();
-                    $this->record->touch();
-                })
-                ->formId('form'),
         ];
     }
 

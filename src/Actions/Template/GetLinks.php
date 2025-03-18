@@ -8,10 +8,12 @@ use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Traits\HasHooks;
 
 class GetLinks
 {
     use AsAction;
+    use HasHooks;
 
     public function handle(?int $id): array
     {
@@ -20,11 +22,11 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::get('menu_links_'.$lang.'_'.$id, function () use ($id) {
+        return Cache::get('menu_links_' . $lang . '_' . $id, function () use ($id) {
             $menu = Menu::query()->find($id);
             if ($menu) {
                 $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
+                Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
 
                 return $links;
             }
@@ -67,7 +69,7 @@ class GetLinks
                 case 'text':
                     $route = url('/');
                 default:
-                    Event::dispatch('cms.menu.building', [$link, &$route]);
+                    self::applyHook('menu.building', $route, $link);
                     break;
             }
             if (! $route) {

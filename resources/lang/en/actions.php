@@ -44,4 +44,5 @@ return [
     'clear_slug' => 'Clear slug',
     'generate_slug' => 'Generate slug',
     'transfer' => 'Transfer',
+    'update_schema' => 'Update schema',
 ];

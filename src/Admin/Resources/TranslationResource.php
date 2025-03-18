@@ -12,14 +12,20 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\TranslationResource\Pages;
 use SmartCms\Core\Models\Translation;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
 
-class TranslationResource extends Resource
+class TranslationResource extends BaseResource
 {
     protected static ?string $model = Translation::class;
+
+    protected static ?int $navigationSort = 4;
+
+    public static string $resourceLabel = 'model_translation';
+    public static ?string $resourceGroup = 'system';
 
     public static function canCreate(): bool
     {
@@ -29,21 +35,6 @@ class TranslationResource extends Resource
     public static function canDelete(Model $record): bool
     {
         return false;
-    }
-
-    public static function getNavigationGroup(): ?string
-    {
-        return _nav('system');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return _nav('model_translation');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return _nav('model_translations');
     }
 
     public static function getNavigationBadge(): ?string
@@ -56,7 +47,7 @@ class TranslationResource extends Resource
         return $query->count();
     }
 
-    public static function form(Form $form): Form
+    public static function getFormSchema(Form $form): array
     {
         $language = Hidden::make('language_id');
         if (is_multi_lang()) {
@@ -64,62 +55,59 @@ class TranslationResource extends Resource
         }
         $language = $language->default(main_lang_id());
 
-        return $form
-            ->schema([
-                Section::make('')->schema([
-                    Forms\Components\TextInput::make('key')
-                        ->label(_fields('key'))
-                        ->required(),
-                    $language,
-                    Forms\Components\TextInput::make('value')
-                        ->label(_fields('value'))
-                        ->required(),
-                ]),
-            ])->columns(1);
+        return [
+            Section::make('')->schema([
+                Forms\Components\TextInput::make('key')
+                    ->label(_fields('key'))
+                    ->required(),
+                $language,
+                Forms\Components\TextInput::make('value')
+                    ->label(_fields('value'))
+                    ->required(),
+            ]),
+        ];
     }
 
-    public static function table(Table $table): Table
+    public static function getEloquentQuery(): Builder
     {
-        return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                if (! is_multi_lang()) {
-                    $query->where('language_id', main_lang_id());
-                }
-            })
-            ->columns([
-                Tables\Columns\TextColumn::make('key')
-                    ->label(_columns('key'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('language.name')
-                    ->numeric()
-                    ->label(_columns('language'))
-                    ->sortable()->hidden(! is_multi_lang()),
-                Tables\Columns\TextInputColumn::make('value')
-                    ->label(_columns('value'))
-                    ->searchable(),
-                TableSchema::getUpdatedAt(),
-            ])
-            ->filters([
-                SelectFilter::make('language_id')
-                    ->relationship('language', 'name')->hidden(! is_multi_lang()),
-            ])
-            ->actions([])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
-            ]);
+        $query = parent::getEloquentQuery();
+        if (! is_multi_lang()) {
+            $query->where('language_id', main_lang_id());
+        }
+
+        return $query;
     }
 
-    public static function getRelations(): array
+    public static function getTableColumns(Table $table): array
     {
-        return [];
+        return [
+            Tables\Columns\TextColumn::make('key')
+                ->label(_columns('key'))
+                ->searchable(),
+            Tables\Columns\TextColumn::make('language.name')
+                ->numeric()
+                ->label(_columns('language'))
+                ->sortable()->hidden(! is_multi_lang()),
+            Tables\Columns\TextInputColumn::make('value')
+                ->label(_columns('value'))
+                ->searchable(),
+            TableSchema::getUpdatedAt(),
+        ];
     }
 
-    public static function getPages(): array
+    public static function getTableFilters(): array
+    {
+        return [
+            SelectFilter::make('language_id')
+                ->relationship('language', 'name')->hidden(! is_multi_lang()),
+        ];
+    }
+
+
+    public static function getResourcePages(): array
     {
         return [
             'index' => Pages\ListTranslations::route('/'),
-            'create' => Pages\CreateTranslation::route('/create'),
-            'edit' => Pages\EditTranslation::route('/{record}/edit'),
         ];
     }
 }

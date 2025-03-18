@@ -4,30 +4,19 @@ namespace SmartCms\Core\Admin\Resources\FormResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\ListRecords;
+use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\FormResource;
 use SmartCms\Core\Models\Form as ModelsForm;
 use SmartCms\Core\Services\Schema;
 
-class ListForms extends ListRecords
+class ListForms extends BaseListRecords
 {
     protected static string $resource = FormResource::class;
 
-    public function getBreadcrumbs(): array
-    {
-        if (config('shared.admin.breadcrumbs', false)) {
-            return parent::getBreadcrumbs();
-        }
-
-        return [];
-    }
-
-    protected function getHeaderActions(): array
+    protected function getResourceHeaderActions(): array
     {
         return [
-            Actions\Action::make('help')
-                ->help(_hints('help.forms')),
-            Actions\Action::make('create')
+            Actions\Action::make('_create')
                 ->create()
                 ->form(function (Form $form) {
                     return $form->schema([

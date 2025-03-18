@@ -19,6 +19,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
+use SmartCms\Core\Jobs\UpdateJob;
 use SmartCms\Core\Models\Language;
 use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Models\MenuSection;
@@ -286,7 +287,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -302,18 +303,11 @@ class Settings extends BaseSettings
                 ->label(_actions('update'))
                 ->iconic()
                 ->requiresConfirmation()->action(function () {
-                    $res = Artisan::call('scms:update');
-                    if ($res == 0) {
-                        Notification::make()
-                            ->title(_actions('success_update'))
-                            ->success()
-                            ->send();
-                    } else {
-                        Notification::make()
-                            ->title(_actions('error_update'))
-                            ->error()
-                            ->send();
-                    }
+                    UpdateJob::dispatch();
+                    Notification::make()
+                        ->title(_actions('update_started'))
+                        ->success()
+                        ->send();
                 }),
             Action::make('save_2')
                 ->label(_actions('save'))

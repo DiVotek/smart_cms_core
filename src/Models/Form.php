@@ -4,6 +4,7 @@ namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Traits\HasTable;
+use SmartCms\Core\Traits\HasTranslate;
 
 /**
  * class Form
@@ -19,6 +20,7 @@ use SmartCms\Core\Traits\HasTable;
 class Form extends BaseModel
 {
     use HasTable;
+    use HasTranslate;
 
     protected $guarded = [];
 
@@ -27,5 +29,6 @@ class Form extends BaseModel
         'button' => 'array',
         'notification' => 'array',
         'email_text' => 'array',
+        'data' => 'array',
     ];
 }

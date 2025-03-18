@@ -54,15 +54,14 @@ class FormHandler
             'form_id' => $form->id,
             'data' => $data,
         ]);
-        $notifications = $form->notification ?? [];
-        $notification = $notifications[current_lang()] ?? '';
+        $notification = $form->data[current_lang()]['notification'] ?? $form->data['notification'] ?? '';
         if ($notification) {
             UserNotification::make()
                 ->title($notification)
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
+        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll();
 
         return new ScmsResponse(true);
     }

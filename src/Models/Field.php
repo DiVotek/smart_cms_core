@@ -2,8 +2,12 @@
 
 namespace SmartCms\Core\Models;
 
+use SmartCms\Core\Traits\HasTranslate;
+
 class Field extends BaseModel
 {
+    use HasTranslate;
+
     protected $guarded = [];
 
     protected $casts = [
@@ -12,5 +16,6 @@ class Field extends BaseModel
         'label' => 'array',
         'description' => 'array',
         'mask' => 'array',
+        'data' => 'array',
     ];
 }

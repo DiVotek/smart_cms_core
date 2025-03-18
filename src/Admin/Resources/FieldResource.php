@@ -3,148 +3,143 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\FieldResource\Pages;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
 
-class FieldResource extends Resource
+class FieldResource extends BaseResource
 {
     protected static ?string $model = Field::class;
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-    {
-        return parent::getEloquentQuery()->withoutGlobalScopes();
-    }
+    protected static ?int $navigationSort = 2;
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
+    public static string $resourceLabel = 'field';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return _nav('communication');
-    }
+    public static ?string $resourceGroup = 'system';
 
-    public static function getModelLabel(): string
+    public static function getFormSchema(Form $form): array
     {
-        return _nav('field');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return _nav('fields');
-    }
-
-    public static function form(Form $form): Form
-    {
-
-        $label = [];
-        $placeholder = [];
-        $description = [];
         $options = [];
-        $mask = [];
+        $hidden = [];
         foreach (get_active_languages() as $lang) {
-            $label[] = Forms\Components\TextInput::make('label.'.$lang->slug)
-                ->label(_fields('label').' ('.$lang->name.')')
-                ->required();
-            $placeholder[] = Forms\Components\TextInput::make('placeholder.'.$lang->slug)
-                ->label(_fields('placeholder').' ('.$lang->name.')');
-            $description[] = Forms\Components\Textarea::make('description.'.$lang->slug)
-                ->label(_fields('description').' ('.$lang->name.')');
-            $options[] = Forms\Components\TextInput::make('mask.'.$lang->slug)
-                ->label(_fields('options').' ('.$lang->name.')');
-            $mask[] = Forms\Components\TextInput::make('mask.'.$lang->slug)->label(_fields('mask').' ('.$lang->name.')');
+            $hidden[] = Forms\Components\Hidden::make('data.' . $lang->slug . '.placeholder');
+            $hidden[] = Forms\Components\Hidden::make('data.' . $lang->slug . '.description');
         }
 
-        return $form
-            ->schema([
-                Section::make('')->schema([
-                    Schema::getName()->live()->afterStateUpdated(function ($get, $set) {
-                        if (! $get('html_id')) {
-                            $set('html_id', \Illuminate\Support\Str::slug($get('name')).'-'.\Illuminate\Support\Str::random(5));
+        return [
+            ...$hidden,
+            Section::make('')->schema([
+                Schema::getReactiveName()->suffixActions([
+                    Schema::getTranslateAction()
+                ])->live(debounce: 1500)->afterStateUpdated(function ($state, $set, $get) {
+                    $placeholder = $get('data.placeholder');
+                    $description = $get('data.description');
+                    if (str_contains($state, $placeholder)) {
+                        $set('data.placeholder', $state);
+                    }
+                    if (str_contains($state, $description)) {
+                        $set('data.description', $state);
+                    }
+                }),
+                Forms\Components\Select::make('type')
+                    ->label(_fields('field_type'))
+                    ->options([
+                        'text' => 'Text',
+                        'textarea' => 'Textarea',
+                        'select' => 'Select',
+                        'radio' => 'Radio',
+                        'checkbox' => 'Checkbox',
+                        'file' => 'File',
+                        'date' => 'Date',
+                        'email' => 'Email',
+                        'number' => 'Number',
+                        'tel' => 'Tel',
+                        'url' => 'Url',
+                    ])->required()->native(false)->searchable(true)->live(debounce: 250),
+                Repeater::make('options')->schema($options)
+                    ->nullable()->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                Forms\Components\TextInput::make('data.placeholder')
+                    ->formatStateUsing(fn(?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
+                    ->label(_fields('placeholder'))
+                    ->maxLength(255)
+                    ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
+                        foreach ($data as $key => $value) {
+                            $set('data.' . $key . '.placeholder', $value);
                         }
-                    }),
-                    Forms\Components\Select::make('type')
-                        ->label(_fields('field_type'))
-                        ->options([
-                            'text' => 'Text',
-                            'textarea' => 'Textarea',
-                            'select' => 'Select',
-                            'radio' => 'Radio',
-                            'checkbox' => 'Checkbox',
-                            'file' => 'File',
-                            'date' => 'Date',
-                            'email' => 'Email',
-                            'number' => 'Number',
-                            'tel' => 'Tel',
-                            'url' => 'Url',
-                        ])->required()->native(false)->searchable(true)->live(debounce: 250),
-                    Repeater::make('options')->schema($options)
-                        ->nullable()->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
-                    Forms\Components\Toggle::make('required')
-                        ->label(_fields('required'))
-                        ->default(false),
-                    ...$label,
-                    ...$placeholder,
-                    ...$description,
-                    ...$mask,
-                    Forms\Components\TextInput::make('validation')
-                        ->label(_fields('validation')),
-                    Forms\Components\TextInput::make('html_id')
-                        ->label(_fields('html_id'))->hidden(),
-                ]),
-                // Section::make('additional')->schema([
-
-                //     Forms\Components\TextInput::make('class')
-                //         ->label(_fields('class'))->default(''),
-                //     Forms\Components\TextInput::make('style')
-                //         ->label(_fields('style')),
-                // ])->collapsed(),
-            ]);
+                    })->fillForm(function ($record) {
+                        $data = [];
+                        foreach (get_active_languages() as $lang) {
+                            $data[$lang->slug] = $record->data[$lang->slug]['placeholder'] ?? '';
+                        }
+                        return $data;
+                    })->form(function ($form) {
+                        $schema = [];
+                        foreach (get_active_languages() as $lang) {
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('placeholder') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                        }
+                        return $form->schema($schema);
+                    })),
+                Forms\Components\TextInput::make('data.description')
+                    ->formatStateUsing(fn(?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
+                    ->label(_fields('description'))
+                    ->maxLength(255)
+                    ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
+                        foreach ($data as $key => $value) {
+                            $set('data.' . $key . '.description', $value);
+                        }
+                    })->fillForm(function ($record) {
+                        $data = [];
+                        foreach (get_active_languages() as $lang) {
+                            $data[$lang->slug] = $record->data[$lang->slug]['description'] ?? '';
+                        }
+                        return $data;
+                    })->form(function ($form) {
+                        $schema = [];
+                        foreach (get_active_languages() as $lang) {
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('description') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                        }
+                        return $form->schema($schema);
+                    })),
+                Forms\Components\TextInput::make('data.mask')
+                    ->label(_fields('mask'))
+                    ->maxLength(255),
+                // Forms\Components\TextInput::make('validation')
+                //     ->label(_fields('validation')),
+            ]),
+        ];
     }
 
-    public static function table(Table $table): Table
+    public static function getTableColumns(Table $table): array
     {
-        return $table
-            ->defaultSort('updated_at', 'desc')
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label(_columns('username'))
-                    ->searchable(),
-                Tables\Columns\ToggleColumn::make('required')
-                    ->label(_columns('required')),
-                TableSchema::getUpdatedAt(),
-            ])
-            ->filters([])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        return [
+            Tables\Columns\TextColumn::make('name')
+                ->label(_columns('username'))
+                ->searchable(),
+            Tables\Columns\TextColumn::make('type')
+                ->label(_columns('type')),
+            TableSchema::getUpdatedAt(),
+        ];
     }
 
-    public static function getRelations(): array
-    {
-        return [];
-    }
-
-    public static function getPages(): array
+    public static function getResourcePages(): array
     {
         return [
             'index' => Pages\ListFields::route('/'),
-            'create' => Pages\CreateField::route('/create'),
             'edit' => Pages\EditFields::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }
