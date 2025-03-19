@@ -20,11 +20,14 @@ class PageHandler
     {
         $this->bindUser();
         $segments = $request->segments();
+        $lang = main_lang();
         if (isset($request->lang)) {
             $this->limit++;
-            $this->setLanguage($request->lang);
+            $lang = $request->lang;
+            // $this->setLanguage($request->lang);
             array_shift($segments);
         }
+        $this->setLanguage($lang);
         if ($this->limit < count($segments)) {
             return abort(404);
         }
@@ -59,6 +62,7 @@ class PageHandler
     {
         app()->setLocale($lang);
         Context::add('current_lang', $lang);
+        app('_lang')->setCurrentLanguage($lang);
     }
 
     private function bindUser()

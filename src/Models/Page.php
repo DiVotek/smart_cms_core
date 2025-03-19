@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
+use Illuminate\Support\Facades\Cache;
 use SmartCms\Core\Traits\HasBreadcrumbs;
 use SmartCms\Core\Traits\HasLayoutSettings;
 use SmartCms\Core\Traits\HasRoute;
@@ -42,20 +43,6 @@ class Page extends BaseModel
     use HasTemplate;
     use HasTranslate;
     use HasViews;
-
-    // protected $fillable = [
-    //     'name',
-    //     'slug',
-    //     'sorting',
-    //     'image',
-    //     'banner',
-    //     'status',
-    //     'views',
-    //     'parent_id',
-    //     'layout_id',
-    //     'custom',
-    //     'layout_settings',
-    // ];
 
     protected $guarded = [];
 
@@ -109,5 +96,21 @@ class Page extends BaseModel
     public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function getCachedParent()
+    {
+        if (!$this->parent_id) {
+            return null;
+        }
+
+        // Cache key based on parent's id.
+        $cacheKey = "page_parent_{$this->parent_id}";
+
+        // Cache the parent for 60 minutes.
+        return Cache::remember($cacheKey, now()->addMinutes(60), function () {
+            return $this->parent()->first();
+        });
+        // return $this->parent()->first();
     }
 }

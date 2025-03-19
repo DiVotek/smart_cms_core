@@ -2,11 +2,13 @@
 
 namespace SmartCms\Core\Repositories\Page;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Repositories\RepositoryInterface;
+use SmartCms\Core\Resources\PageResource;
 use SmartCms\Core\Services\Schema\SchemaParser;
 
 class PageRepository implements RepositoryInterface
@@ -18,12 +20,10 @@ class PageRepository implements RepositoryInterface
 
     public function find(int $id): object
     {
-        $page = Page::query()->find($id);
-
-        return $this->transform($page)->toObject();
+        return PageResource::make(Page::query()->find($id))->get();
     }
 
-    public function filterBy(array $filters, array $sort = [], int $limit = 10): array
+    public function filterBy(array $filters, array $sort = [], int $limit = 10): array|Collection
     {
         $pages = Page::query();
         foreach ($filters as $key => $value) {
@@ -43,17 +43,15 @@ class PageRepository implements RepositoryInterface
             $pages->orderBy($key, $value);
         }
         $pages = $pages->limit($limit)->get();
-        $pageDtos = [];
-        foreach ($pages as $page) {
-            $pageDtos[] = $this->transform($page)->toObject();
-        }
-
-        return $pageDtos;
+        return $pages->map(function ($page) {
+            return PageResource::make($page)->get();
+        });
     }
 
     public function findMultiple(array $ids): array
     {
         $pages = Page::query()->whereIn('id', $ids)->get();
+        return PageResource::collection($pages)->get();
         $pageDtos = [];
         foreach ($pages as $page) {
             $pageDtos[] = $this->transform($page)->toObject();

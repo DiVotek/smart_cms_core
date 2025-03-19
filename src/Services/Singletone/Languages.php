@@ -11,10 +11,23 @@ class Languages
 
     public Language $defaultLanguage;
 
+    public ?Language $currentLanguage;
+
+    private $currentLanguageInitialized = false;
+
     public function __construct()
     {
         $this->languages = Language::all();
         $this->defaultLanguage = $this->get(_settings('main_language', 1));
+    }
+
+    public function getCurrent(): Language
+    {
+        if (!$this->currentLanguageInitialized) {
+            return $this->defaultLanguage;
+        }
+
+        return $this->currentLanguage;
     }
 
     public function get(int $id): Language
@@ -40,5 +53,11 @@ class Languages
     public function getDefault(): Language
     {
         return $this->defaultLanguage;
+    }
+
+    public function setCurrentLanguage($languageSlug)
+    {
+        $this->currentLanguage = $this->languages->where('slug', $languageSlug)->first() ?? $this->defaultLanguage;
+        return $this;
     }
 }

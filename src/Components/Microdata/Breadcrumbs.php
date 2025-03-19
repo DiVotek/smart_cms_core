@@ -22,11 +22,14 @@ class Breadcrumbs extends Microdata
     {
         $i = 1;
         foreach ($entity as $item) {
+            if (is_object($item)) {
+                $item = (array) $item;
+            }
             $data['itemListElement'][] = (object) [
                 '@type' => 'ListItem',
                 'position' => $i++,
-                'name' => $item['name'],
-                'item' => $item['link'],
+                'name' => $item['name'] ?? '',
+                'item' => $item['link'] ?? '',
             ];
         }
 
