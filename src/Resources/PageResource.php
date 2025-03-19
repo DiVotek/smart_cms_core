@@ -2,8 +2,6 @@
 
 namespace SmartCms\Core\Resources;
 
-use SmartCms\Core\Models\Seo;
-
 class PageResource extends BaseResource
 {
     /**
@@ -44,7 +42,7 @@ class PageResource extends BaseResource
 
     public function getKey()
     {
-        return 'page_resource_' . $this->resource->id . '_' . current_lang_id();
+        return 'page_resource_'.$this->resource->id.'_'.current_lang_id();
     }
 
     /**
@@ -52,7 +50,7 @@ class PageResource extends BaseResource
      */
     public static function clearCache($pageId)
     {
-        $cacheKey = 'page_resource_' . $pageId . '_' . current_lang_id();
+        $cacheKey = 'page_resource_'.$pageId.'_'.current_lang_id();
         if (isset(static::$requestCache[$cacheKey])) {
             unset(static::$requestCache[$cacheKey]);
         }

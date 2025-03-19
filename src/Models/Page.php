@@ -100,7 +100,7 @@ class Page extends BaseModel
 
     public function getCachedParent()
     {
-        if (!$this->parent_id) {
+        if (! $this->parent_id) {
             return null;
         }
 

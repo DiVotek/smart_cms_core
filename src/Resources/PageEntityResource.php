@@ -3,12 +3,13 @@
 namespace SmartCms\Core\Resources;
 
 use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\Seo;
 
 class PageEntityResource extends BaseResource
 {
     public $categories = [];
+
     public $items = [];
+
     public $siblings = [];
 
     public function prepareData($request): array
@@ -20,10 +21,11 @@ class PageEntityResource extends BaseResource
         // Get categories and items separately
         $this->fetchCategoriesAndItems($this->resource);
         $this->getSiblings();
+
         return [
             'id' => $this->id,
             'name' => $name,
-            'breadcrumbs' => array_map(fn($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
+            'breadcrumbs' => array_map(fn ($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
             'heading' => $seo->heading ?? $name,
             'link' => $this->resource->route(),
             'image' => $this->validateImage($this->resource->image),
@@ -74,7 +76,7 @@ class PageEntityResource extends BaseResource
         // This includes all "posts" regardless of which category they belong to
         $categoryIds = $categories->pluck('id')->toArray();
 
-        if (!empty($categoryIds)) {
+        if (! empty($categoryIds)) {
             // Get all items from all categories
             $allItems = Page::whereIn('parent_id', $categoryIds)
                 ->orderBy('created_at', 'desc')
@@ -98,7 +100,7 @@ class PageEntityResource extends BaseResource
 
         $categoryIds = $categories->pluck('id')->toArray();
 
-        if (!empty($categoryIds)) {
+        if (! empty($categoryIds)) {
             // Get paginated items
             $paginatedItems = Page::whereIn('parent_id', $categoryIds)
                 ->orderBy('created_at', 'desc')

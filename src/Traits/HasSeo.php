@@ -23,7 +23,7 @@ trait HasSeo
         $languageId = $languageId ?? current_lang_id();
 
         // Create a unique cache key for this entity's SEO
-        $cacheKey = 'seo_' . $this->getTable() . '_' . $this->getKey() . '_' . $languageId;
+        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
 
         // Check request cache first
         if (isset(static::$requestCache[$cacheKey])) {
@@ -31,7 +31,7 @@ trait HasSeo
         }
 
         // If not in request cache, fetch from database
-        $seo = $this->seo()->where('language_id', $languageId)->first() ?: new Seo();
+        $seo = $this->seo()->where('language_id', $languageId)->first() ?: new Seo;
 
         // Store in request cache
         static::$requestCache[$cacheKey] = $seo;
@@ -43,7 +43,7 @@ trait HasSeo
     {
         // Clear any cached SEO data when adding
         $languageId = $attributes['language_id'] ?? current_lang_id();
-        $cacheKey = 'seo_' . $this->getTable() . '_' . $this->getKey() . '_' . $languageId;
+        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
 
         if (isset(static::$requestCache[$cacheKey])) {
             unset(static::$requestCache[$cacheKey]);
@@ -56,7 +56,7 @@ trait HasSeo
     {
         // Clear any cached SEO data when updating
         $languageId = $attributes['language_id'] ?? current_lang_id();
-        $cacheKey = 'seo_' . $this->getTable() . '_' . $this->getKey() . '_' . $languageId;
+        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
 
         if (isset(static::$requestCache[$cacheKey])) {
             unset(static::$requestCache[$cacheKey]);

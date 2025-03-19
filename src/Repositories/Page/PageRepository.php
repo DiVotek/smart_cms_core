@@ -43,6 +43,7 @@ class PageRepository implements RepositoryInterface
             $pages->orderBy($key, $value);
         }
         $pages = $pages->limit($limit)->get();
+
         return $pages->map(function ($page) {
             return PageResource::make($page)->get();
         });
@@ -51,6 +52,7 @@ class PageRepository implements RepositoryInterface
     public function findMultiple(array $ids): array
     {
         $pages = Page::query()->whereIn('id', $ids)->get();
+
         return PageResource::collection($pages)->get();
         $pageDtos = [];
         foreach ($pages as $page) {

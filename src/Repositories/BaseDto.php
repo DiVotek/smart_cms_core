@@ -10,6 +10,7 @@ abstract class BaseDto implements DtoInterface
     use HasHooks;
 
     public array $extra = [];
+
     abstract public function toArray(): array;
 
     abstract public function fromModel(Model $model): self;
@@ -20,7 +21,7 @@ abstract class BaseDto implements DtoInterface
     {
         return [
             ...$this->toArray(),
-            ...$this->extra
+            ...$this->extra,
         ];
     }
 

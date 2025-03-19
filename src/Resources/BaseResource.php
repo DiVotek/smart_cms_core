@@ -17,6 +17,7 @@ abstract class BaseResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->prepareData($request);
+
         return $this->applyDataHooks($data);
     }
 
@@ -35,6 +36,7 @@ abstract class BaseResource extends JsonResource
     public function transformDate($date): string
     {
         $date = $date ?? now();
+
         return $date->format('d-m-Y');
     }
 }

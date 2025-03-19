@@ -3,21 +3,12 @@
 namespace SmartCms\Core\Components\Pages;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildTemplate;
 use SmartCms\Core\Models\Layout;
-use SmartCms\Core\Models\MenuSection;
-use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\Seo;
-use SmartCms\Core\Repositories\DtoInterface;
-use SmartCms\Core\Repositories\Page\PageEntityDto;
-use SmartCms\Core\Repositories\Page\PageRepository;
 use SmartCms\Core\Resources\PageEntityResource;
-use SmartCms\Core\Resources\PageResource;
-use SmartCms\Core\Services\Schema\SchemaParser;
 
 class PageComponent extends Component
 {

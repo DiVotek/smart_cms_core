@@ -23,7 +23,7 @@ class Languages
 
     public function getCurrent(): Language
     {
-        if (!$this->currentLanguageInitialized) {
+        if (! $this->currentLanguageInitialized) {
             return $this->defaultLanguage;
         }
 
@@ -58,6 +58,7 @@ class Languages
     public function setCurrentLanguage($languageSlug)
     {
         $this->currentLanguage = $this->languages->where('slug', $languageSlug)->first() ?? $this->defaultLanguage;
+
         return $this;
     }
 }

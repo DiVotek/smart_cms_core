@@ -6,7 +6,6 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
@@ -22,16 +21,13 @@ use SmartCms\Core\Middlewares\Lang;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Translation;
 use SmartCms\Core\Services\ExceptionHandler;
-use SmartCms\Core\Services\Singletone\Languages;
-use SmartCms\Core\Services\Singletone\Settings;
-use SmartCms\Core\Services\Singletone\Translates;
 use SmartCms\Core\Traits\HasHooks;
 
 class SmartCmsServiceProvider extends ServiceProvider
 {
     use HasHooks;
 
-    static $viewShare = [];
+    public static $viewShare = [];
 
     public function register()
     {
@@ -46,29 +42,29 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->mergeAuthConfig();
         $this->mergePanelConfig();
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/auth.php',
+            __DIR__.'/../config/auth.php',
             'auth-2'
         );
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/settings.php',
+            __DIR__.'/../config/settings.php',
             'settings'
         );
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/shared.php',
+            __DIR__.'/../config/shared.php',
             'shared'
         );
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
         $this->publishes([
-            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
-            __DIR__ . '/../public/' => public_path('smart_cms_core'),
+            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__.'/../public/' => public_path('smart_cms_core'),
         ], 'public');
         $this->publishes([
-            __DIR__ . '/../resources/templates' => scms_templates_path(),
+            __DIR__.'/../resources/templates' => scms_templates_path(),
         ], 'templates');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'smart_cms');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }
@@ -79,7 +75,7 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     protected function mergeAuthConfig()
     {
-        $packageAuth = require __DIR__ . '/../config/auth.php';
+        $packageAuth = require __DIR__.'/../config/auth.php';
         $appAuth = config('auth', []);
         if (isset($packageAuth['guards'])) {
             $appAuth['guards'] = array_merge(
@@ -123,10 +119,11 @@ class SmartCmsServiceProvider extends ServiceProvider
             $host = Page::query()->where('slug', '')->first();
             Context::add('host', $host);
             View::composer('template::*', function ($view) use ($host) {
-                if (!empty(static::$viewShare)) {
+                if (! empty(static::$viewShare)) {
                     foreach (static::$viewShare as $key => $value) {
                         $view->with($key, $value);
                     }
+
                     return;
                 }
                 $data = [
