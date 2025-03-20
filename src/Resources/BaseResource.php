@@ -21,6 +21,7 @@ abstract class BaseResource extends JsonResource
         return once(function () use ($request) {
             $data = $this->prepareData($request);
             $data = $this->applyDataHooks($data);
+
             return $data;
         });
         // $cacheKey = $this->getCacheKey();

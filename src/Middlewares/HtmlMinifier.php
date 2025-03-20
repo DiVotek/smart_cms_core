@@ -11,19 +11,18 @@ use Illuminate\Http\Request;
 class HtmlMinifier
 {
     private $replace = [
-        '/<!--[\s\S]*?-->/' => '', //remove comments
+        '/<!--[\s\S]*?-->/' => '', // remove comments
         "/<\?php/" => '<?php ',
         "/\n([\S])/" => '$1',
         "/\r/" => '', // remove carriage return
         "/\n/" => '', // remove new lines
         "/\t/" => '', // remove tab
         "/\s+/" => ' ', // remove spaces
-        "/> +</" => '><',
+        '/> +</' => '><',
     ];
 
     /**
      * @param  $htmlString  string
-     * @return string
      */
     public function minify(string $htmlString): string
     {
@@ -36,6 +35,7 @@ class HtmlMinifier
         return $next($request);
         $response = $next($request);
         $response->setContent($this->minify($response->getContent()));
+
         return $response;
     }
 }

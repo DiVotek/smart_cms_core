@@ -20,13 +20,13 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'templates::' . template() . '.sections';
+            $sectionComponent = 'templates::'.template().'.sections';
             $design = $section->design;
             $design = explode('\\', $design);
             $design = $design[count($design) - 1];
             $design = preg_replace('/([a-z])([A-Z])/', '$1-$2', $design);
             $design = str_replace('/', '.', $design);
-            $sectionComponent .= '.' . strtolower($design);
+            $sectionComponent .= '.'.strtolower($design);
             if (! empty($d['value'])) {
                 $section->value = $d['value'];
             }

@@ -35,6 +35,7 @@ class Page extends BaseModel
 {
     use HasBreadcrumbs;
     use HasLayoutSettings;
+    use HasParent;
     use HasRoute;
     use HasSeo;
     use HasSlug;
@@ -43,7 +44,6 @@ class Page extends BaseModel
     use HasTemplate;
     use HasTranslate;
     use HasViews;
-    use HasParent;
 
     protected $guarded = [];
 

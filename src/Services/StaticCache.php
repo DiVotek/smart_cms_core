@@ -19,6 +19,7 @@ class StaticCache
     public static function put($namespace, $key, $value)
     {
         static::$caches[$namespace][$key] = $value;
+
         return $value;
     }
 

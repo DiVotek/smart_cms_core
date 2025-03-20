@@ -22,7 +22,7 @@ trait HasSeo
     {
         $languageId = $languageId ?? current_lang_id();
 
-        $namespace = self::class . '.seo';
+        $namespace = self::class.'.seo';
         $key = $this->getKey();
         if (StaticCache::has($namespace, $key)) {
             return StaticCache::get($namespace, $key);
@@ -37,7 +37,7 @@ trait HasSeo
     {
         // Clear any cached SEO data when adding
         $languageId = $attributes['language_id'] ?? current_lang_id();
-        $cacheKey = 'seo_' . $this->getTable() . '_' . $this->getKey() . '_' . $languageId;
+        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
 
         if (isset(static::$requestCache[$cacheKey])) {
             unset(static::$requestCache[$cacheKey]);
@@ -50,7 +50,7 @@ trait HasSeo
     {
         // Clear any cached SEO data when updating
         $languageId = $attributes['language_id'] ?? current_lang_id();
-        $cacheKey = 'seo_' . $this->getTable() . '_' . $this->getKey() . '_' . $languageId;
+        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
 
         if (isset(static::$requestCache[$cacheKey])) {
             unset(static::$requestCache[$cacheKey]);

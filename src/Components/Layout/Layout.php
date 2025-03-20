@@ -4,7 +4,6 @@ namespace SmartCms\Core\Components\Layout;
 
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\Component;
 
@@ -46,20 +45,20 @@ class Layout extends Component
         }
         $this->theme = $theme;
         $style = '';
-        if (File::exists(scms_template_path(template()) . '/assets/css/app.css')) {
-            $style = 'scms/templates/' . template() . '/assets/css/app.css';
+        if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
+            $style = 'scms/templates/'.template().'/assets/css/app.css';
         }
         $this->style = $style;
         $script = '';
-        if (File::exists(scms_template_path(template()) . '/assets/js/app.js')) {
-            $script = 'scms/templates/' . template() . '/assets/js/app.js';
+        if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
+            $script = 'scms/templates/'.template().'/assets/js/app.js';
         }
         $this->script = $script;
         $fav = _settings('branding.favicon', '/favicon.ico');
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/' . $fav);
+        $this->favicon = asset('/storage/'.$fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = _settings('title_mod', []);
         $this->descriptionMod = _settings('description_mod', []);

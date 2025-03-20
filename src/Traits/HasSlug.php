@@ -7,12 +7,10 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 
 trait HasSlug
 {
-
     public function getSlugColumn(): string
     {
         return property_exists($this, 'slugColumn') ? $this->slugColumn : 'slug';

@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 trait HasSorting
 {
@@ -17,7 +16,7 @@ trait HasSorting
 
     public function scopeSorted(Builder $query): Builder
     {
-        return $query->orderBy($this->getDb() . '.' . $this->getSortingColumn(), 'asc');
+        return $query->orderBy($this->getDb().'.'.$this->getSortingColumn(), 'asc');
     }
 
     public function getSortingColumn(): string

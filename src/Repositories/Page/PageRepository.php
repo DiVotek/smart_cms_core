@@ -3,13 +3,9 @@
 namespace SmartCms\Core\Repositories\Page;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Event;
-use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Repositories\RepositoryInterface;
 use SmartCms\Core\Resources\PageResource;
-use SmartCms\Core\Services\Schema\SchemaParser;
 
 class PageRepository implements RepositoryInterface
 {
@@ -43,6 +39,7 @@ class PageRepository implements RepositoryInterface
             $pages->orderBy($key, $value);
         }
         $pages = $pages->limit($limit)->get();
+
         return $pages->map(function ($page) {
             return PageResource::make($page)->get();
         });

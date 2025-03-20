@@ -39,7 +39,7 @@ class Config
         $config = [];
         $template = template();
         $templateConfigPath = scms_template_path($template);
-        $yamlConfig = $templateConfigPath . '/config.yaml';
+        $yamlConfig = $templateConfigPath.'/config.yaml';
         if (! File::exists($yamlConfig)) {
             throw TemplateConfigException::notFound($template);
         }
@@ -102,12 +102,12 @@ class Config
 
     public function validateLayouts(string $path, array $config)
     {
-        $dir = $path . 'layouts';
+        $dir = $path.'layouts';
         if (! File::exists($dir) || ! File::isDirectory($dir)) {
             throw TemplateConfigException::layoutsNotExists($config['name']);
         }
-        $mainLayout = $dir . '/main.blade.php';
-        $mainlayoutConfig = $dir . '/main.yaml';
+        $mainLayout = $dir.'/main.blade.php';
+        $mainlayoutConfig = $dir.'/main.yaml';
         if (! File::exists($mainLayout) || ! File::exists($mainlayoutConfig)) {
             throw TemplateConfigException::mainLayoutNotExists($config['name']);
         }
@@ -115,7 +115,7 @@ class Config
 
     public function validateSections(string $path, array $config)
     {
-        $dir = $path . 'sections';
+        $dir = $path.'sections';
         if (! File::exists($dir) || ! File::isDirectory($dir)) {
             throw TemplateConfigException::sectionsNotExists($config['name']);
         }
@@ -135,15 +135,15 @@ class Config
     {
         $sections = [];
         $templateConfigPath = scms_template_path(template());
-        $dir = $templateConfigPath . 'sections';
+        $dir = $templateConfigPath.'sections';
         $dirs = File::directories($dir);
         foreach ($dirs as $directory) {
             foreach (File::files($directory) as $file) {
                 if (File::extension($file) === 'yaml') {
                     $config = Yaml::parse(File::get($file));
                     $fileName = File::name($file);
-                    if (File::exists($directory . '/' . $fileName . '.blade.php')) {
-                        $config['path'] = $fileName . '/' . $fileName;
+                    if (File::exists($directory.'/'.$fileName.'.blade.php')) {
+                        $config['path'] = $fileName.'/'.$fileName;
                     } else {
                         continue;
                     }
@@ -158,9 +158,9 @@ class Config
     public function getLayouts(): array
     {
         $templateConfigPath = scms_template_path(template());
-        $dir = $templateConfigPath . 'layouts';
+        $dir = $templateConfigPath.'layouts';
         $configs = [];
-        $mainLayout = $dir . '/main.yaml';
+        $mainLayout = $dir.'/main.yaml';
         $mainLayoutConfig = Yaml::parse(File::get($mainLayout));
         $mainLayoutConfig['path'] = 'main';
         $configs[] = $mainLayoutConfig;
@@ -170,8 +170,8 @@ class Config
                 if (File::extension($file) === 'yaml') {
                     $config = Yaml::parse(File::get($file));
                     $fileName = File::name($file);
-                    if (File::exists($directory . '/' . $fileName . '.blade.php')) {
-                        $config['path'] = $fileName . '/' . $fileName;
+                    if (File::exists($directory.'/'.$fileName.'.blade.php')) {
+                        $config['path'] = $fileName.'/'.$fileName;
                     } else {
                         continue;
                     }
@@ -238,7 +238,7 @@ class Config
             }
             $original = Layout::query()->where('path', $path)->where('template', template())->first();
             if (! $original) {
-                $layout =  Layout::query()->create([
+                $layout = Layout::query()->create([
                     'name' => $name,
                     'path' => $layout['path'],
                     'schema' => $schema,
@@ -271,8 +271,8 @@ class Config
             $isCategories = $menuSection['categories']['enabled'] ?? false;
             $categoriesLayout = $menuSection['categories']['layout'] ?? null;
             $itemsLayout = $menuSection['items']['layout'] ?? null;
-            $items_layout_id = Layout::query()->where('template', template())->where('path', $itemsLayout . '/' . $itemsLayout)->first()->id ?? null;
-            $categories_layout_id = Layout::query()->where('template', template())->where('path', $categoriesLayout . '/' . $categoriesLayout)->first()->id ?? null;
+            $items_layout_id = Layout::query()->where('template', template())->where('path', $itemsLayout.'/'.$itemsLayout)->first()->id ?? null;
+            $categories_layout_id = Layout::query()->where('template', template())->where('path', $categoriesLayout.'/'.$categoriesLayout)->first()->id ?? null;
             if ($categories_layout_id) {
                 Layout::query()->where('id', $categories_layout_id)->update(['can_be_used' => false]);
             }
@@ -303,7 +303,7 @@ class Config
             }
             $menu_section_page_layout = $menuSection['layout'] ?? null;
             if ($menu_section_page_layout) {
-                $page_layout = Layout::query()->where('template', template())->where('path', $menu_section_page_layout . '/' . $menu_section_page_layout)->first();
+                $page_layout = Layout::query()->where('template', template())->where('path', $menu_section_page_layout.'/'.$menu_section_page_layout)->first();
                 if ($page_layout) {
                     Page::query()->where('id', $parent_id)->update(['layout_id' => $page_layout->id]);
                 }

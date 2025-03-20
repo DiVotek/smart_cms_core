@@ -6,8 +6,6 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\Component;
-use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\Seo;
 
 class Heading extends Component
 {

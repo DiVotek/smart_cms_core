@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 
 trait HasStatus
@@ -22,7 +21,7 @@ trait HasStatus
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where(self::getDb() . '.' . $this->getStatusColumn(), self::STATUS_ON);
+        return $query->where(self::getDb().'.'.$this->getStatusColumn(), self::STATUS_ON);
     }
 
     public function scopeInactive(Builder $query): Builder

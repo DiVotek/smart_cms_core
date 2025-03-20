@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 trait HasViews
