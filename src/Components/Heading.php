@@ -20,16 +20,17 @@ class Heading extends Component
     public function __construct(array $options = [])
     {
         $title = $options['heading'] ?? '';
-        $entity = Context::get('entity');
-        if (! $entity) {
-            $entity = new Page;
-        }
-        $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
         if (isset($options['use_page_heading']) && $options['use_page_heading']) {
-            $title = $seo->heading ?? $entity->name();
+            $entity = Context::get('entity');
+            if ($entity) {
+                $title = $entity->heading ?? $entity->name ?? '';
+            }
         }
         if (isset($options['use_page_name']) && $options['use_page_name']) {
-            $title = $entity->name();
+            $entity = Context::get('entity');
+            if ($entity) {
+                $title = $entity->name();
+            }
         }
         $size = $options['heading_size'] ?? 'text-md';
         $type = $options['heading_type'] ?? 'none';

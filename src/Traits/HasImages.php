@@ -16,7 +16,7 @@ trait HasImages
     protected static function bootHasImages(): void
     {
         static::booting(function (Model $model) {
-            $model->mergeFillable([$model->getImagesColumn()]);
+            // $model->mergeFillable([$model->getImagesColumn()]);
             $model->mergeCasts([$model->getImagesColumn() => 'array']);
         });
     }
@@ -29,7 +29,7 @@ trait HasImages
     protected function image(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn () => $this->images[0] ?? '',
+            get: fn() => $this->images[0] ?? '',
         );
     }
 }

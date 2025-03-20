@@ -14,11 +14,11 @@ Route::get('/{lang?}/{slug?}/{second_slug?}/{third_slug?}', PageHandler::class)
     ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')
     ->name('cms.page.lang')
-    ->middleware('web');
+    ->middleware(['web', 'html.minifier']);
 Route::get('/{slug?}/{second_slug?}/{third_slug?}', PageHandler::class)
     ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')
-    ->middleware('web')
+    ->middleware(['web', 'html.minifier'])
     ->name('cms.page');
 Route::group(['middleware' => ['web', 'lang'], 'prefix' => 'api'], function () {
     Route::post('/form', FormHandler::class)->name('smartcms.form.submit');

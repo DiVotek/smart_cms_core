@@ -8,13 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 trait HasViews
 {
-    protected static function bootHasViews(): void
-    {
-        static::booting(function (Model $model) {
-            $model->mergeFillable([$model->getViewsColumn()]);
-        });
-    }
-
     public function getViewsColumn(): string
     {
         return property_exists($this, 'viewsColumn') ? $this->viewsColumn : 'views';

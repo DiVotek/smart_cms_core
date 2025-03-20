@@ -12,19 +12,6 @@ class MenuSection extends BaseModel
     use HasTable;
     use Notifiable;
 
-    protected $fillable = [
-        'sorting',
-        'name',
-        'is_categories',
-        'custom_fields',
-        'template',
-        'parent_id',
-        'icon',
-        'categories_template',
-        'items_layout_id',
-        'categories_layout_id',
-    ];
-
     protected $guarded = [];
 
     protected $casts = [

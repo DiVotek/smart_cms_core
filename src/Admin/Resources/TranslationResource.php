@@ -51,20 +51,18 @@ class TranslationResource extends BaseResource
     {
         $language = Hidden::make('language_id');
         if (is_multi_lang()) {
-            $language = Schema::getSelect('language_id')->relationship('language', 'name')->label(_fields('language'));
+            $language = Schema::getSelect('language_id')->relationship('language', 'name')->label(_fields('language'))->disabled();
         }
         $language = $language->default(main_lang_id());
 
         return [
-            Section::make('')->schema([
-                Forms\Components\TextInput::make('key')
-                    ->label(_fields('key'))
-                    ->required(),
-                $language,
-                Forms\Components\TextInput::make('value')
-                    ->label(_fields('value'))
-                    ->required(),
-            ]),
+            Forms\Components\TextInput::make('key')
+                ->label(_fields('key'))
+                ->required()->disabled(),
+            $language,
+            Forms\Components\TextInput::make('value')
+                ->label(_fields('value'))
+                ->required(),
         ];
     }
 
@@ -106,7 +104,7 @@ class TranslationResource extends BaseResource
     public static function getResourcePages(): array
     {
         return [
-            'index' => Pages\ListTranslations::route('/'),
+            'index' => Pages\ManageTranslations::route('/'),
         ];
     }
 }

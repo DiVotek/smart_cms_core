@@ -9,6 +9,8 @@ abstract class BaseResource extends JsonResource
 {
     use HasHooks;
 
+    // protected static $requestCache = [];
+
     protected function applyDataHooks(array $data)
     {
         return $this->applyHook('transform.data', $data, $this->resource);
@@ -16,9 +18,22 @@ abstract class BaseResource extends JsonResource
 
     public function toArray($request)
     {
-        $data = $this->prepareData($request);
+        return once(function () use ($request) {
+            $data = $this->prepareData($request);
+            $data = $this->applyDataHooks($data);
+            return $data;
+        });
+        // $cacheKey = $this->getCacheKey();
+        // if (isset(static::$requestCache[$cacheKey])) {
+        //     return static::$requestCache[$cacheKey];
+        // }
 
-        return $this->applyDataHooks($data);
+        // $data = $this->prepareData($request);
+        // $data = $this->applyDataHooks($data);
+
+        // static::$requestCache[$cacheKey] = $data;
+
+        // return $data;
     }
 
     public function get()
@@ -39,4 +54,10 @@ abstract class BaseResource extends JsonResource
 
         return $date->format('d-m-Y');
     }
+
+    // private function getCacheKey($key = null)
+    // {
+    //     $prefix = static::class;
+    //     return $prefix . '_' . ($key ?? $this->resource->id);
+    // }
 }

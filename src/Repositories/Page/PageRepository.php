@@ -43,7 +43,6 @@ class PageRepository implements RepositoryInterface
             $pages->orderBy($key, $value);
         }
         $pages = $pages->limit($limit)->get();
-
         return $pages->map(function ($page) {
             return PageResource::make($page)->get();
         });
@@ -54,44 +53,5 @@ class PageRepository implements RepositoryInterface
         $pages = Page::query()->whereIn('id', $ids)->get();
 
         return PageResource::collection($pages)->get();
-        $pageDtos = [];
-        foreach ($pages as $page) {
-            $pageDtos[] = $this->transform($page)->toObject();
-        }
-
-        return $pageDtos;
-    }
-
-    public function transform(Page $page, $isParent = true): PageDto
-    {
-        $seo = $page->seo ?? new Seo;
-        $custom_fields = $page->custom ?? [];
-        $custom = [];
-        if ($custom_fields && $page->parent) {
-            $menuSection = MenuSection::query()->where('parent_id', $page->parent->parent_id ?? $page->parent->id)->first();
-            if ($menuSection) {
-                $custom = SchemaParser::make($menuSection->custom_fields ?? [], $custom_fields);
-            }
-        }
-        $parent = null;
-        if ($isParent) {
-            $parent = $page->parent ? $this->transform($page->parent, false) : null;
-        }
-        $dto = new PageDto(
-            $page->id,
-            $page->name(),
-            $page->name,
-            $page->route(),
-            $page->created_at,
-            $page->updated_at,
-            $page->image ?? '',
-            $seo->heading ?? $page->name(),
-            $seo->summary ?? '',
-            $custom,
-            $parent
-        );
-        Event::dispatch('cms.page.transform', [$page, $dto]);
-
-        return $dto;
     }
 }

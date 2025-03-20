@@ -26,16 +26,14 @@ class Description extends Component
         }
         $entity = Context::get('entity');
         if (! $entity) {
-            $entity = new Page;
+            $this->description = '';
+        } else {
+            if (isset($options['is_description']) && $options['is_description']) {
+                $this->description = $entity->description ?? '';
+            } else {
+                $this->description = $entity->summary ?? '';
+            }
         }
-        $seo = $entity->seo()->where('language_id', current_lang_id())->first() ?? new Seo;
-        $isDescription = $options['is_description'] ?? false;
-        if ($isDescription) {
-            $this->description = $seo->content ?? '';
-
-            return;
-        }
-        $this->description = $seo->summary ?? '';
     }
 
     public function render(): View|Closure|string

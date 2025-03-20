@@ -12,17 +12,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 trait HasSlug
 {
-    public function initializeHasSlug()
-    {
-        $this->mergeFillable([$this->getSlugColumn()]);
-    }
-
-    protected static function bootHasSlug(): void
-    {
-        static::booting(function (Model $model) {
-            $model->mergeFillable([$model->getSlugColumn()]);
-        });
-    }
 
     public function getSlugColumn(): string
     {

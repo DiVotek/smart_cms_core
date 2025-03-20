@@ -223,8 +223,7 @@ class Settings extends BaseSettings
                     setting([
                         sconfig('template') => $data['template'],
                     ]);
-                    Layout::query()->where('template', '!=', $data['template'])->delete();
-                    TemplateSection::query()->where('template', '!=', $data['template'])->delete();
+                    app('_settings')->refresh();
                     $menusections = MenuSection::query()->pluck('parent_id')->toArray();
                     foreach ($menusections as $section) {
                         if (Page::query()->where('parent_id', $section)->count() == 0) {
@@ -232,9 +231,7 @@ class Settings extends BaseSettings
                         }
                     }
                     $config = new Config(true);
-                    $config->initLayouts();
-                    $config->initMenuSections();
-                    $config->initTranslates();
+                    $config->init(true);
                     Notification::make()
                         ->title(_actions('setup_success'))
                         ->success()
@@ -249,9 +246,7 @@ class Settings extends BaseSettings
                 ->iconic()
                 ->action(function () {
                     $config = new Config;
-                    $config->initLayouts();
-                    $config->initMenuSections();
-                    $config->initTranslates();
+                    $config->init();
                     Notification::make()
                         ->title(_actions('setup_success'))
                         ->success()
@@ -286,7 +281,7 @@ class Settings extends BaseSettings
                 ->form(function ($form) {
                     $theme = _config()->getTheme();
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }

@@ -15,11 +15,7 @@ namespace SmartCms\Core\Models;
  */
 class Translation extends BaseModel
 {
-    protected $fillable = [
-        'key',
-        'language_id',
-        'value',
-    ];
+    protected $guarded = [];
 
     public function language()
     {

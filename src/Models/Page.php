@@ -2,9 +2,9 @@
 
 namespace SmartCms\Core\Models;
 
-use Illuminate\Support\Facades\Cache;
 use SmartCms\Core\Traits\HasBreadcrumbs;
 use SmartCms\Core\Traits\HasLayoutSettings;
+use SmartCms\Core\Traits\HasParent;
 use SmartCms\Core\Traits\HasRoute;
 use SmartCms\Core\Traits\HasSeo;
 use SmartCms\Core\Traits\HasSlug;
@@ -43,6 +43,7 @@ class Page extends BaseModel
     use HasTemplate;
     use HasTranslate;
     use HasViews;
+    use HasParent;
 
     protected $guarded = [];
 
@@ -59,33 +60,37 @@ class Page extends BaseModel
 
     public function getBreadcrumbs(): array
     {
-        $breadcrumbs = [
-            [
-                'name' => $this->name() ?? '',
-                'link' => $this->route(),
-            ],
-        ];
-        if ($this->parent_id) {
-            $parent = $this->parent;
-            if ($parent) {
-                $breadcrumbs = array_merge($parent->getBreadcrumbs(), $breadcrumbs);
+        return once(function () {
+            $breadcrumbs = [
+                [
+                    'name' => $this->name() ?? '',
+                    'link' => $this->route(),
+                ],
+            ];
+            if ($this->parent_id) {
+                $parent = $this->getCachedParent();
+                if ($parent) {
+                    $breadcrumbs = array_merge($parent->getBreadcrumbs(), $breadcrumbs);
+                }
             }
-        }
 
-        return $breadcrumbs;
+            return $breadcrumbs;
+        });
     }
 
     public function route(): string
     {
-        $slugs = [];
-        $current = $this;
+        return once(function () {
+            $slugs = [];
+            $current = $this;
 
-        while ($current) {
-            array_unshift($slugs, $current->slug);
-            $current = $current->parent;
-        }
+            while ($current) {
+                array_unshift($slugs, $current->slug);
+                $current = $current->getCachedParent();
+            }
 
-        return tRoute('cms.page', ['slug' => implode('/', $slugs)]);
+            return tRoute('cms.page', ['slug' => implode('/', $slugs)]);
+        });
     }
 
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -96,21 +101,5 @@ class Page extends BaseModel
     public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
-    }
-
-    public function getCachedParent()
-    {
-        if (! $this->parent_id) {
-            return null;
-        }
-
-        // Cache key based on parent's id.
-        $cacheKey = "page_parent_{$this->parent_id}";
-
-        // Cache the parent for 60 minutes.
-        return Cache::remember($cacheKey, now()->addMinutes(60), function () {
-            return $this->parent()->first();
-        });
-        // return $this->parent()->first();
     }
 }

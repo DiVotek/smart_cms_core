@@ -117,4 +117,6 @@ return [
     'as_link' => 'As link',
     'page' => 'Page',
     'url' => 'URL',
+    'key' => 'Key'
+
 ];

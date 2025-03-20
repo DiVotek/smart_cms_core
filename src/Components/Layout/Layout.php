@@ -45,25 +45,21 @@ class Layout extends Component
             $theme = [];
         }
         $this->theme = $theme;
-        $this->style = Cache::remember('template_styles', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
-                return 'scms/templates/'.template().'/assets/css/app.css';
-            } else {
-                return '';
-            }
-        });
-        $this->script = Cache::remember('template_scripts', 60 * 60 * 24, function () {
-            if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
-                return 'scms/templates/'.template().'/assets/js/app.js';
-            } else {
-                return '';
-            }
-        });
+        $style = '';
+        if (File::exists(scms_template_path(template()) . '/assets/css/app.css')) {
+            $style = 'scms/templates/' . template() . '/assets/css/app.css';
+        }
+        $this->style = $style;
+        $script = '';
+        if (File::exists(scms_template_path(template()) . '/assets/js/app.js')) {
+            $script = 'scms/templates/' . template() . '/assets/js/app.js';
+        }
+        $this->script = $script;
         $fav = _settings('branding.favicon', '/favicon.ico');
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = _settings('title_mod', []);
         $this->descriptionMod = _settings('description_mod', []);

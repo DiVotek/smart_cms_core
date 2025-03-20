@@ -26,9 +26,13 @@ class PageComponent extends Component
 
     public $resource;
 
+    public array $breadcrumbs;
+
     public function __construct(Model $entity)
     {
         $this->resource = PageEntityResource::make($entity)->get();
+        $breadcrumbs = $this->resource->breadcrumbs ?? [];
+        $this->breadcrumbs = array_map(fn($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
         $this->title = $this->resource->title ?? $this->resource->name;
         $this->meta_description = $this->resource->meta_description ?? '';
         $this->meta_keywords = $seo->meta_keywords ?? '';
@@ -37,7 +41,7 @@ class PageComponent extends Component
             'value',
         ])->get()->toArray();
         $this->template = BuildTemplate::run($temp);
-        Context::add('entity', $entity);
+        Context::add('entity', $this->resource);
         if (method_exists($entity, 'view')) {
             $entity->view();
         }

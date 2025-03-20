@@ -44,7 +44,7 @@ class SchemaParser
             } catch (Exception $e) {
                 if (config('app.debug')) {
                     // Log::error($e->getMessage(), $this->field, $this->values, $e->getTrace());
-                    dd($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                    dd($e->getMessage(), $this->field, $this->values, $e->getTrace(), get_defined_vars(), $this->fields, $this->values);
                 }
             }
         }
@@ -91,7 +91,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);

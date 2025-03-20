@@ -9,14 +9,12 @@ trait HasTemplate
 {
     public function initializeHasTemplate()
     {
-        $this->mergeFillable(['template']);
         $this->mergeCasts(['template' => 'array']);
     }
 
     protected static function bootHasTemplate(): void
     {
         static::booting(function (Model $model) {
-            $model->mergeFillable(['template']);
             $model->mergeCasts(['template' => 'array']);
         });
     }

@@ -24,4 +24,9 @@ class Settings
     {
         return $this->settings->where('key', $key)->first()?->value ?? null;
     }
+
+    public function refresh()
+    {
+        $this->settings = Setting::all();
+    }
 }

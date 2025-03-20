@@ -63,11 +63,14 @@ class EditTemplate extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                return $query->withoutGlobalScopes();
+            })
             ->recordTitleAttribute('name')
             ->reorderable('sorting')
             ->columns([
                 Tables\Columns\TextColumn::make('section.name'),
-                ToggleColumn::make('section.status')->label(_columns('status')),
+                ToggleColumn::make('status')->label(_columns('status')),
                 TableSchema::getSorting(),
                 TableSchema::getUpdatedAt(),
             ])
@@ -90,8 +93,6 @@ class EditTemplate extends ManageRelatedRecords
                             $section = TemplateSection::query()->create($data);
 
                             return $section->getKey();
-
-                            return [$section->id => $section->name];
                         })
                         ->multiple()
                         ->preload()
@@ -120,10 +121,27 @@ class EditTemplate extends ManageRelatedRecords
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data): array {
+                Tables\Actions\EditAction::make()->mutateRecordDataUsing(function (array $data, $record): array {
                     $section = TemplateSection::find($data['template_section_id']);
                     if ($data['value'] == null) {
                         $data['value'] = $section->value ?? [];
+                    }
+                    return $data;
+                })->mutateFormDataUsing(function (array $data, $record): array {
+                    $section = TemplateSection::find($record->template_section_id);
+                    if (!$section) {
+                        return [];
+                    }
+                    if ($section->value == $data['value']) {
+                        $data['value'] = null;
+                    } else {
+                        $newSection = $section->replicate();
+                        $newSection->value = $data['value'];
+                        $newSection->name .= ' - ' . $this->record->name;
+                        $newSection->save();
+                        $record->template_section_id = $newSection->id;
+                        $record->save();
+                        $data['value'] = null;
                     }
 
                     return $data;
@@ -180,7 +198,7 @@ class EditTemplate extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -195,7 +213,7 @@ class EditTemplate extends ManageRelatedRecords
                         if ($menuSection) {
                             $name = $menuSection->name;
                             if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name.'Categories';
+                                $name = $menuSection->name . 'Categories';
                             }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,

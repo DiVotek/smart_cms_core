@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Models;
 
 use SmartCms\Core\Traits\HasSorting;
+use SmartCms\Core\Traits\HasStatus;
 
 /**
  * class Template
@@ -19,13 +20,9 @@ use SmartCms\Core\Traits\HasSorting;
 class Template extends BaseModel
 {
     use HasSorting;
+    use HasStatus;
 
     protected $guarded = [];
-
-    protected $fillable = [
-        'template_section_id',
-        'value',
-    ];
 
     protected $casts = [
         'value' => 'array',

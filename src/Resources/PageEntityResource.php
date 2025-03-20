@@ -2,7 +2,9 @@
 
 namespace SmartCms\Core\Resources;
 
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Services\Schema\SchemaParser;
 
 class PageEntityResource extends BaseResource
 {
@@ -16,25 +18,31 @@ class PageEntityResource extends BaseResource
     {
         $seo = $this->resource->getSeo();
         $name = $this->resource->name();
-        $custom_fields = $this->resource->custom_fields ?? [];
+        $custom_fields = $this->resource->custom ?? [];
+        $custom = [];
+        if ($custom_fields && $this->resource->parent_id) {
+            $parent = $this->resource->parent;
+            $menuSection = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
+            if ($menuSection) {
+                $custom = SchemaParser::make($menuSection->custom_fields ?? [], $custom_fields);
+            }
+        }
 
-        // Get categories and items separately
         $this->fetchCategoriesAndItems($this->resource);
         $this->getSiblings();
-
         return [
             'id' => $this->id,
             'name' => $name,
-            'breadcrumbs' => array_map(fn ($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
+            'breadcrumbs' => array_map(fn($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
             'heading' => $seo->heading ?? $name,
             'link' => $this->resource->route(),
             'image' => $this->validateImage($this->resource->image),
             'banner' => $this->validateImage($this->resource->banner),
             'summary' => $seo->summary ?? '',
-            'content' => $this->content ?? '',
+            'content' => $seo->content ?? '',
             'created_at' => $this->transformDate($this->created_at),
             'updated_at' => $this->transformDate($this->updated_at),
-            'custom' => (object) $custom_fields,
+            'custom' => (object) $custom,
             'parent' => $this->resource->parent ? PageResource::make($this->resource->parent)->get() : null,
             'siblings' => $this->siblings,
             'categories' => $this->categories,
@@ -60,59 +68,26 @@ class PageEntityResource extends BaseResource
         })->toArray();
     }
 
-    protected function fetchCategoriesAndItems(Page $entity, $itemsPerPage = 10)
+    protected function fetchCategoriesAndItems(Page $entity, $itemsPerPage = 15)
     {
-        // Get direct children as categories
         $categories = Page::where('parent_id', $entity->id)
-            ->orderBy('sorting')
             ->get();
 
-        // Transform categories
         $this->categories = $categories->map(function (Page $category) {
             return PageResource::make($category)->get();
         });
 
-        // Get all items that belong to any category (for blog-style display)
-        // This includes all "posts" regardless of which category they belong to
         $categoryIds = $categories->pluck('id')->toArray();
 
         if (! empty($categoryIds)) {
-            // Get all items from all categories
             $allItems = Page::whereIn('parent_id', $categoryIds)
-                ->orderBy('created_at', 'desc')
-                ->get();
+                ->paginate($itemsPerPage);
 
-            // Transform items
-            $this->items = $allItems->map(function (Page $page) {
+            $this->items = $allItems->through(function (Page $page) {
                 return PageResource::make($page)->get();
             });
         } else {
             $this->items = collect([]);
         }
-    }
-
-    // Add a method specifically for paginated items
-    public function getPaginatedItems($itemsPerPage = 10)
-    {
-        $categories = Page::where('parent_id', $this->resource->id)
-            ->orderBy('sorting')
-            ->get();
-
-        $categoryIds = $categories->pluck('id')->toArray();
-
-        if (! empty($categoryIds)) {
-            // Get paginated items
-            $paginatedItems = Page::whereIn('parent_id', $categoryIds)
-                ->orderBy('created_at', 'desc')
-                ->paginate($itemsPerPage);
-
-            // Transform while preserving pagination
-            $items = PageResource::collection($paginatedItems);
-
-            // Get complete response with pagination metadata
-            return $items->response()->getData(true);
-        }
-
-        return ['data' => [], 'meta' => [], 'links' => []];
     }
 }

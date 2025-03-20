@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form;
 use SmartCms\Core\Repositories\Field\FieldRepository;
+use SmartCms\Core\Resources\FieldResource;
 use SmartCms\Core\Services\ScmsResponse;
 
 class FormFieldsHandler
@@ -21,7 +22,9 @@ class FormFieldsHandler
         foreach ($form->fields as $field) {
             $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
             if ($fieldModel) {
-                $fields[] = FieldRepository::make()->find($fieldModel->id, $field['is_required'] ?? false)->get();
+                $fieldModel->required = $field['is_required'] ?? false;
+                $fields[] = FieldResource::make($fieldModel)->get();
+                // $fields[] = FieldRepository::make()->find($fieldModel->id, $field['is_required'] ?? false)->get();
             }
         }
         $button = $form->data[current_lang()]['button'] ?? $form->data['button'] ?? '';

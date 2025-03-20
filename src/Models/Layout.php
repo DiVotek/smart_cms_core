@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
+use Illuminate\Support\Facades\Cache;
 use SmartCms\Core\Services\Schema\SchemaParser;
 use SmartCms\Core\Traits\HasStatus;
 
@@ -9,15 +10,7 @@ class Layout extends BaseModel
 {
     use HasStatus;
 
-    protected $fillable = [
-        'name',
-        'path',
-        'schema',
-        'value',
-        'status',
-        'template',
-        'can_be_used',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'schema' => 'array',
@@ -32,6 +25,12 @@ class Layout extends BaseModel
 
     public function getVariables(?array $value = null): array
     {
+        if ($value == null) {
+            return Cache::remember('layout_variables_' . $this->id, 60, function () {
+                return SchemaParser::make($this->schema, $this->value);
+            });
+        }
+
         if (! $value || empty($value)) {
             $value = $this->value;
         }
