@@ -40,7 +40,7 @@ class PageComponent extends Component
         $this->resource = $resource;
         Context::add('entity', $this->resource);
         $breadcrumbs = $this->resource->breadcrumbs ?? [];
-        $this->breadcrumbs = array_map(fn($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
+        $this->breadcrumbs = array_map(fn ($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
         $this->title = $this->resource->title ?? $this->resource->name;
         $this->meta_description = $this->resource->meta_description ?? '';
         $this->meta_keywords = $seo->meta_keywords ?? '';

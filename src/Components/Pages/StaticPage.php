@@ -2,7 +2,6 @@
 
 namespace SmartCms\Core\Components\Pages;
 
-use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 
 class StaticPage extends PageComponent
