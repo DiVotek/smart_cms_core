@@ -21,6 +21,7 @@
         "php": "^8.2",
         "bezhansalleh/filament-language-switch": "^3.1",
         "filament/filament": "^3.3",
+        "gregwar/image": "^2.1",
         "guava/filament-icon-picker": "^2.0",
         "illuminate/contracts": "^10.0||^11.0",
         "intervention/image": "^2.7",

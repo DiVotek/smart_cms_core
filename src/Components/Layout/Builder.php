@@ -10,6 +10,8 @@ class Builder extends Component
 {
     public array $template;
 
+    public static $isRendered = false;
+
     public function __construct(array $data = [])
     {
         $this->template = $data;
@@ -17,6 +19,10 @@ class Builder extends Component
 
     public function render(): View|Closure|string
     {
+        if (self::$isRendered) {
+            return '';
+        }
+        self::$isRendered = true;
         return <<<'blade'
             <div class="builder">
                 @foreach ($template as $key => $field)

@@ -9,9 +9,12 @@ use SmartCms\Core\Actions\Template\GetLinks;
 use SmartCms\Core\Models\Form as ModelsForm;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Repositories\Page\PageRepository;
+use SmartCms\Core\Traits\HasHooks;
 
 class SchemaParser
 {
+    use HasHooks;
+
     public FieldSchema $field;
 
     public array $fields = [];
@@ -39,6 +42,7 @@ class SchemaParser
                 if (in_array($this->field->type, Builder::AVAILABLE_TYPES)) {
                     $this->parse();
                 } else {
+                    $this->applyHook('parse', $this);
                     Event::dispatch('cms.admin.schema.parse', $this);
                 }
             } catch (Exception $e) {
@@ -91,7 +95,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);

@@ -9,7 +9,6 @@ class PageResource extends BaseResource
         $seo = $this->resource->getSeo();
         $name = $this->resource->name();
         $custom_fields = $this->resource->custom_fields ?? [];
-
         $data = [
             'id' => $this->id,
             'name' => $name,

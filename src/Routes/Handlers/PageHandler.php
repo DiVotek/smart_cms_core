@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Session;
 use SmartCms\Core\Components\Pages\StaticPage;
+use SmartCms\Core\Traits\HasHooks;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class PageHandler
 {
+    use HasHooks;
     public $limit = 3;
 
     #[Cache(public: true, maxage: 31536000, mustRevalidate: true)]
@@ -35,9 +37,10 @@ class PageHandler
         if ($page) {
             return Blade::renderComponent(new StaticPage($page));
         }
-        $res = Event::dispatch('cms.page.get', [$segments]);
-        if ($res && is_array($res) && count($res) > 0 && $res[0]) {
-            return $res[0];
+        $res = null;
+        $this->applyHook('page.get', $res, $segments);
+        if ($res) {
+            return $res;
         }
         abort(404);
     }

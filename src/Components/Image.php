@@ -5,6 +5,7 @@ namespace SmartCms\Core\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Gregwar\Image\Image as ImageService;
 
 class Image extends Component
 {
@@ -15,36 +16,61 @@ class Image extends Component
     public function __construct(int $maxHeight = 600)
     {
         $this->maxHeight = $maxHeight;
-        $this->placeholder = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
+        $this->placeholder = no_image();
     }
 
     public function render(): View|Closure|string
     {
         return function (array $data) {
-            $placeholder = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
             if (isset($data['attributes']['src']) && strlen($data['attributes']['src']) > 0) {
                 $src = $data['attributes']['src'];
-
-                // First normalize the path by removing any leading slash
                 if (str_starts_with($src, '/')) {
                     $src = substr($src, 1);
                 }
-
-                // Handle storage paths
                 if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-                    $src = 'storage/'.$src;
+                    $src = 'storage/' . $src;
                 }
-
-                // Only process with glide if it's not an external URL
                 if (! str_contains($src, 'http')) {
-                    // Ensure clean path before passing to glide
-                    $src = preg_replace('#/+#', '/', $src); // Replace multiple slashes with single slash
-                    $newAttributes = glide()->src($src, $this->maxHeight);
-                    $attributes = array_merge($this->attributes->getAttributes(), $newAttributes->getAttributes());
+                    $src = preg_replace('#/+#', '/', $src);
+                    $height = $this->attributes->get('height', $this->maxHeight);
+                    $width = $this->attributes->get('width', $this->maxHeight);
+                    $src = ImageService::open(public_path($src))->resize(height: $height, width: $width, rescale: true)->webp();
+                    $attributes = array_merge($this->attributes->getAttributes(), [
+                        'src' => asset($src),
+                    ]);
                     $this->attributes = $this->attributes->setAttributes($attributes);
+                } else {
+                    $currentHost = request()->getHttpHost();
+                    $urlParts = parse_url($src);
+                    $currentHostParts = explode(':', $currentHost);
+                    $currentHostWithoutPort = $currentHostParts[0];
+                    if (
+                        isset($urlParts['host']) &&
+                        ($urlParts['host'] === $currentHost ||
+                            $urlParts['host'] === $currentHostWithoutPort)
+                    ) {
+                        $localPath = $urlParts['path'];
+                        if (str_starts_with($localPath, '/')) {
+                            $localPath = substr($localPath, 1);
+                        }
+
+                        $localPath = preg_replace('#/+#', '/', $localPath);
+                        $height = $this->attributes->get('height', $this->maxHeight);
+                        $width = $this->attributes->get('width', $this->maxHeight);
+
+                        try {
+                            $optimizedSrc = ImageService::open(public_path($localPath))->resize(height: $height, width: $width, rescale: true)->webp();
+                            $attributes = array_merge($this->attributes->getAttributes(), [
+                                'src' => asset($optimizedSrc),
+                            ]);
+                            $this->attributes = $this->attributes->setAttributes($attributes);
+                        } catch (\Exception $e) {
+                            // If unable to process the image, keep original URL
+                        }
+                    }
                 }
             } else {
-                $attributes = array_merge($this->attributes->getAttributes(), ['src' => $placeholder]);
+                $attributes = array_merge($this->attributes->getAttributes(), ['src' => $this->placeholder]);
                 $this->attributes->setAttributes($attributes);
             }
 

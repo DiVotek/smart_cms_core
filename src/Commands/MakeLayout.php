@@ -15,20 +15,29 @@ class MakeLayout extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $templatePath = scms_template_path(template());
-        $path = $templatePath.'/layouts/'.$name;
+        $name = str_replace('.blade.php', '', $name);
+        $name = str_replace('/', '.', $name);
+        $path = resource_path('views/layouts/' . $name . '.blade.php');
         if (File::exists($path)) {
             $this->error('Layout already exists');
 
             return;
         }
-        File::makeDirectory($path, 0755, true);
-        $defaultConfig = [
-            'name' => $name,
-            'schema' => [],
-        ];
-        $yamlConfig = Yaml::dump($defaultConfig, 2);
-        File::put($path.'/'.$name.'.yaml', $yamlConfig);
-        File::put($path.'/'.$name.'.blade.php', '');
+        $stub = <<<EOT
+{{-- @section_meta
+{
+    "name": "$name",
+    "schema": [
+
+    ]
+}
+@endsection_meta --}}
+
+EOT;
+        if (!File::exists(resource_path('views/layouts'))) {
+            File::makeDirectory(resource_path('views/layouts'), 0755, true);
+        }
+        File::put($path, $stub);
+        $this->info('Layout created successfully');
     }
 }

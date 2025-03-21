@@ -40,13 +40,6 @@ trait AsDto
 
     public function validateImage(string $image): string
     {
-        if (! str_contains($image, 'storage')) {
-            if (! str_starts_with($image, '/')) {
-                $image = '/'.$image;
-            }
-            $image = asset('storage'.$image);
-        }
-
-        return $image;
+        return validateImage($image ?? no_image());
     }
 }

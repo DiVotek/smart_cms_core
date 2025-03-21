@@ -4,7 +4,6 @@ namespace SmartCms\Core\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Yaml\Yaml;
 
 class MakeSection extends Command
 {
@@ -15,23 +14,29 @@ class MakeSection extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $templatePath = scms_template_path(template());
-        $sectionPath = $templatePath.'/sections/'.$name;
-        if (File::exists($sectionPath)) {
+        $name = str_replace('.blade.php', '', $name);
+        $name = str_replace('/', '.', $name);
+        $path = resource_path('views/sections/' . $name . '.blade.php');
+        if (File::exists($path)) {
             $this->error('Section already exists');
 
             return;
         }
-        File::makeDirectory($sectionPath, 0755, true);
-        $defaultConfig = [
-            'name' => $name,
-            'description' => '',
-            'preview' => '',
-            'schema' => [],
-        ];
-        $yamlConfig = Yaml::dump($defaultConfig, 2);
-        $sectionConfigPath = $sectionPath.'/'.$name.'.yaml';
-        File::put($sectionConfigPath, $yamlConfig);
-        File::put($sectionPath.'/'.$name.'.blade.php', '');
+        $stub = <<<EOT
+{{-- @section_meta
+{
+    "name": "$name",
+    "schema": [
+
+    ]
+}
+@endsection_meta --}}
+
+EOT;
+        if (!File::exists(resource_path('views/sections'))) {
+            File::makeDirectory(resource_path('views/sections'), 0755, true);
+        }
+        File::put($path, $stub);
+        $this->info('Section created successfully');
     }
 }

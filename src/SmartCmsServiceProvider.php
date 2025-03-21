@@ -37,7 +37,7 @@ class SmartCmsServiceProvider extends ServiceProvider
             Update::class,
             MakeSection::class,
             MakeLayout::class,
-            MakeTemplate::class,
+            // MakeTemplate::class,
             ChangeVite::class,
         ]);
         $this->mergeAuthConfig();
