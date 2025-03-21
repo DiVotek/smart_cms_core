@@ -25,12 +25,12 @@ class Admin extends User implements FilamentUser
         'password' => 'hashed',
     ];
 
+    protected $table = 'smart_cms_admins';
+
     public static function getDb(): string
     {
         return 'admins';
     }
-
-    protected $table = 'smart_cms_admins';
 
     public function canAccessPanel(Panel $panel): bool
     {

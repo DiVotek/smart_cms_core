@@ -27,7 +27,6 @@ class PageHandler
         if (isset($request->lang)) {
             $this->limit++;
             $lang = $request->lang;
-            // $this->setLanguage($request->lang);
             array_shift($segments);
         }
         $this->setLanguage($lang);
