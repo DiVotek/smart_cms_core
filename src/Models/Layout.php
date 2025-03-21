@@ -29,7 +29,7 @@ class Layout extends BaseModel
         $metadata = LayoutService::make()->getSectionMetadata($this->path ?? '');
         $schema = $metadata['schema'] ?? [];
         if ($value == null && $schema == $this->schema) {
-            return Cache::remember('layout_variables_' . $this->id . '_' . current_lang_id(), 60, function () {
+            return Cache::remember('layout_variables_'.$this->id.'_'.current_lang_id(), 60, function () {
                 return SchemaParser::make($this->schema, $this->value);
             });
         }

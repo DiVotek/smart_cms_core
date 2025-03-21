@@ -38,12 +38,12 @@ class Layout extends Component
         if (! is_array($theme)) {
             $theme = [];
         }
-        $this->theme = array_merge($theme, config('theme', []));;
+        $this->theme = array_merge($theme, config('theme', []));
         $fav = _settings('branding.favicon', '/favicon.ico');
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/' . $fav);
+        $this->favicon = asset('/storage/'.$fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = [
             'prefix' => _settings('title.prefix', ''),

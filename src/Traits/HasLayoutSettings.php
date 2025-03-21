@@ -15,7 +15,7 @@ trait HasLayoutSettings
         }
         $fields = [];
         $metadata = LayoutService::make()->getSectionMetadata($this->layout->path);
-        if (!$metadata || !is_array($metadata) || !isset($metadata['schema'])) {
+        if (! $metadata || ! is_array($metadata) || ! isset($metadata['schema'])) {
             return [];
         }
         foreach ($metadata['schema'] as $field) {

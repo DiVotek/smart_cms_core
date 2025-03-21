@@ -10,12 +10,9 @@ class LayoutService
 {
     public static function make(): self
     {
-        return new self();
+        return new self;
     }
 
-    /**
-     * @return array
-     */
     public function getAll(): array
     {
         $sections = [];
@@ -35,10 +32,6 @@ class LayoutService
         return $sections;
     }
 
-    /**
-     * @param string $sectionName
-     * @return array|null
-     */
     public function getSectionMetadata(string $sectionName): ?array
     {
         $metaFile = resource_path("views/layouts/meta/{$sectionName}.php");
@@ -51,16 +44,13 @@ class LayoutService
 
         if (File::exists($sectionFile)) {
             $content = File::get($sectionFile);
+
             return $this->parseMetadataFromBladeComments($content);
         }
 
         return null;
     }
 
-    /**
-     * @param string $content
-     * @return array|null
-     */
     protected function parseMetadataFromBladeComments(string $content): ?array
     {
         if (preg_match('/@section_meta\s*(.*?)\s*@endsection_meta/s', $content, $matches)) {
@@ -68,19 +58,16 @@ class LayoutService
 
             try {
                 $metadata = json_decode($jsonData, true, 512, JSON_THROW_ON_ERROR);
+
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error("Failed to parse section metadata: " . $e->getMessage());
+                Log::error('Failed to parse section metadata: '.$e->getMessage());
             }
         }
 
         return null;
     }
 
-    /**
-     * @param string $sectionName
-     * @return array
-     */
     public function getSectionFields(string $sectionName): array
     {
         $metadata = $this->getSectionMetadata($sectionName);
@@ -92,10 +79,6 @@ class LayoutService
         return [];
     }
 
-    /**
-     * @param string $sectionName
-     * @return array
-     */
     public function getSectionDefaults(string $sectionName): array
     {
         $fields = $this->getSectionFields($sectionName);
@@ -129,11 +112,6 @@ class LayoutService
         return $defaults;
     }
 
-    /**
-     * @param string $sectionName
-     * @param array $data
-     * @return array
-     */
     public function validateSectionData(string $sectionName, array $data): array
     {
         $fields = $this->getSectionFields($sectionName);
@@ -149,11 +127,6 @@ class LayoutService
         return $errors;
     }
 
-    /**
-     * @param string $sectionName
-     * @param array $data
-     * @return string
-     */
     public function renderSection(string $sectionName, array $data = []): string
     {
         $defaults = $this->getSectionDefaults($sectionName);

@@ -20,7 +20,7 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'sections.' . $section->design;
+            $sectionComponent = 'sections.'.$section->design;
             if (! empty($d['value'])) {
                 $section->value = $d['value'];
             }

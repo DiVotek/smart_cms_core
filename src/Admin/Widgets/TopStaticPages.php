@@ -21,7 +21,7 @@ class TopStaticPages extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->recordUrl(fn($record) => $record->route())
+            ->recordUrl(fn ($record) => $record->route())
             ->searchable(false)
             ->query(function () {
                 return Page::query()->orderBy('views', 'desc')->take(5);

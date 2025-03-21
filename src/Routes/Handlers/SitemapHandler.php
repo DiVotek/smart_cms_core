@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Routes\Handlers;
 
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Event;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Traits\HasHooks;

@@ -3,7 +3,7 @@
 if (! function_exists('sconfig')) {
     function sconfig(string $key): string
     {
-        return config('smart_cms.' . $key);
+        return config('smart_cms.'.$key);
     }
 }
 

@@ -21,15 +21,15 @@ class ManageTranslations extends BaseManageRecords
                 ->iconic()
                 ->action(function () {
                     $translates = config('translates', []);
-                    if (!is_array($translates)) {
+                    if (! is_array($translates)) {
                         $translates = [];
                     }
                     foreach ($translates as $key => $value) {
-                        if (!is_string($value)) {
+                        if (! is_string($value)) {
                             $value = '';
                         }
                         foreach (get_active_languages() as $lang) {
-                            if (!Translation::query()->where('language_id', $lang->id)->where('key', $key)->exists()) {
+                            if (! Translation::query()->where('language_id', $lang->id)->where('key', $key)->exists()) {
                                 Translation::query()->create([
                                     'language_id' => $lang->id,
                                     'key' => $key,

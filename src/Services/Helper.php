@@ -4,7 +4,6 @@ namespace SmartCms\Core\Services;
 
 class Helper
 {
-
     public static function getLabelFromField(string $field): string
     {
         $field = preg_replace('/(?<!^)([A-Z])/', ' $1', $field);
@@ -70,5 +69,4 @@ class Helper
 
         return VariableTypes::fromType($var['type'])->toFilamentField($var, $prefix);
     }
-
 }

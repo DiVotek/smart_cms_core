@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Hooks;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use SmartCms\Core\Models\Menu;
 
 class MenuHooks

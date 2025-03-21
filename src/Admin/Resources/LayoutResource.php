@@ -53,6 +53,7 @@ class LayoutResource extends BaseResource
             $componentField = Builder::make($field);
             $schemaFields = array_merge($schemaFields, $componentField);
         }
+
         return $schemaFields;
     }
 
