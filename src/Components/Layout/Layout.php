@@ -4,18 +4,13 @@ namespace SmartCms\Core\Components\Layout;
 
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\File;
 use Illuminate\View\Component;
 
 class Layout extends Component
 {
-    public string $style;
-
     public array $scripts;
 
     public array $meta_tags;
-
-    public string $script;
 
     public string $favicon;
 
@@ -43,25 +38,21 @@ class Layout extends Component
         if (! is_array($theme)) {
             $theme = [];
         }
-        $this->theme = $theme;
-        $style = '';
-        if (File::exists(scms_template_path(template()).'/assets/css/app.css')) {
-            $style = 'scms/templates/'.template().'/assets/css/app.css';
-        }
-        $this->style = $style;
-        $script = '';
-        if (File::exists(scms_template_path(template()).'/assets/js/app.js')) {
-            $script = 'scms/templates/'.template().'/assets/js/app.js';
-        }
-        $this->script = $script;
+        $this->theme = array_merge($theme, config('theme', []));;
         $fav = _settings('branding.favicon', '/favicon.ico');
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
-        $this->titleMod = _settings('title_mod', []);
-        $this->descriptionMod = _settings('description_mod', []);
+        $this->titleMod = [
+            'prefix' => _settings('title.prefix', ''),
+            'suffix' => _settings('title.suffix', ''),
+        ];
+        $this->descriptionMod = [
+            'prefix' => _settings('description.prefix', ''),
+            'suffix' => _settings('description.suffix', ''),
+        ];
     }
 
     public function render(): View|Closure|string
@@ -74,9 +65,9 @@ class Layout extends Component
                         <meta name="viewport" content="width=device-width, initial-scale=1">
                         <link rel="canonical" href="{{ url()->current() }}" />
                         <link rel="icon" type="image/x-icon" href="{{$favicon}}">
-                        <link rel="preload" href="{{asset('/storage'.logo())}}" as="image" type="image/webp">
-                        <title>@yield('title')</title>
-                        <meta name="description" content="@yield('description')" />
+                        <link rel="preload" href="{{validateImage(logo())}}" as="image" type="image/webp">
+                        <title>{{$titleMod['prefix'] ?? ''}}@yield('title'){{$titleMod['suffix'] ?? ''}}</title>
+                        <meta name="description" content="{{$descriptionMod['prefix'] ?? ''}}@yield('description'){{$descriptionMod['suffix'] ?? ''}}" />
                         <meta name="csrf-token" content="{{ csrf_token() }}">
                         <meta name="robots" content="index, follow">
                         <link rel="robots" href="{{route('robots')}}">
@@ -85,15 +76,15 @@ class Layout extends Component
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
                         <meta property="og:type" content="{{$og_type}}" />
-                        <meta property="og:title" content="{{$titleMod->prefix ?? ''}}@yield('title'){{$titleMod->suffix ?? ''}}" />
-                        <meta property="og:description" content="{{$descriptionMod->prefix ?? ''}}@yield('description'){{$descriptionMod->suffix ?? ''}}" />
+                        <meta property="og:title" content="{{$titleMod['prefix'] ?? ''}}@yield('title'){{$titleMod['suffix'] ?? ''}}" />
+                        <meta property="og:description" content="{{$descriptionMod['prefix'] ?? ''}}@yield('description'){{$descriptionMod['suffix'] ?? ''}}" />
                         <meta property="og:url" content="{{ url()->current() }}" />
                         <meta property="og:image" content="@yield('meta-image')" />
                         <meta property="og:site_name" content="{{ company_name() }}">
                         <meta name="twitter:card" content="summary">
                         <meta name="twitter:site" content="{{ '@' . company_name() }}">
-                        <meta name="twitter:description" content="@yield('description')">
-                        <meta name="twitter:title" content="@yield('title')">
+                        <meta name="twitter:description" content="{{$descriptionMod['prefix'] ?? ''}}@yield('description'){{$descriptionMod['suffix'] ?? ''}}">
+                        <meta name="twitter:title" content="{{$titleMod['prefix'] ?? ''}}@yield('title'){{$titleMod['suffix'] ?? ''}}">
                         <meta name="twitter:image" content="@yield('meta-image')">
                         <x-s::microdata.organization />
                         <x-s::microdata.website />
@@ -101,17 +92,17 @@ class Layout extends Component
                         <style>
                             :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
                         </style>
-                        @vite(['assets/js/app.js', 'assets/css/app.css'], 'templates/' . template())
+                        @vite(['resources/css/app.css', 'resources/js/app.js'])
                         @stack('styles')
                     </head>
                     <body class="antialiased">
-                      <x-s::layout.main-layout>
+                        <x-s::layout.main-layout>
                                 @yield('content')
-                      </x-s::layout.main-layout>
-                            @foreach($scripts as $script)
-                                {!! $script['scripts'] !!}
-                            @endforeach
-                            <x-s::misc.gtm />
+                        </x-s::layout.main-layout>
+                        @foreach($scripts as $script)
+                            {!! $script['scripts'] !!}
+                        @endforeach
+                        <x-s::misc.gtm />
                     </body>
                     </html>
         blade;

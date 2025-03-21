@@ -4,6 +4,7 @@ namespace SmartCms\Core\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use SmartCms\Core\Models\Layout;
 
 class MakeLayout extends Command
 {
@@ -16,7 +17,7 @@ class MakeLayout extends Command
         $name = $this->argument('name');
         $name = str_replace('.blade.php', '', $name);
         $name = str_replace('/', '.', $name);
-        $path = resource_path('views/layouts/'.$name.'.blade.php');
+        $path = resource_path('views/layouts/' . $name . '.blade.php');
         if (File::exists($path)) {
             $this->error('Layout already exists');
 
@@ -37,6 +38,13 @@ EOT;
             File::makeDirectory(resource_path('views/layouts'), 0755, true);
         }
         File::put($path, $stub);
+        Layout::query()->create([
+            'name' => $name,
+            'path' => $name,
+            'schema' => [],
+            'value' => [],
+            'template' => template(),
+        ]);
         $this->info('Layout created successfully');
     }
 }

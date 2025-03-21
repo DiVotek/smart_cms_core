@@ -6,17 +6,19 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Traits\HasHooks;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class SitemapHandler
 {
     use AsAction;
+    use HasHooks;
 
     #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function handle()
     {
         $links = [];
-        foreach (Page::query()->get() as $page) {
+        foreach (Page::query()->where('is_index', true)->get() as $page) {
             $links[] = [
                 'link' => $page->route(),
                 'priority' => 0.7,
@@ -24,7 +26,7 @@ class SitemapHandler
                 'lastmod' => $page->updated_at,
             ];
         }
-        Event::dispatch('cms.sitemap.generate', [&$links]);
+        $this->applyHook('generate', $links);
         $content = $this->getBladeContent();
         $content = Blade::render($content, [
             'links' => $links,
@@ -40,9 +42,6 @@ class SitemapHandler
 
             header('content-type: text/xml');
             echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
-            @php
-                use Carbon\Carbon;
-            @endphp
             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
                     @foreach ($links as $link)
                         <url>

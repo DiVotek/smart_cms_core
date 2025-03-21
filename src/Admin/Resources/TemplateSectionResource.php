@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 use SmartCms\Core\Models\TemplateSection;
+use SmartCms\Core\Services\Frontend\SectionService;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
@@ -46,7 +47,7 @@ class TemplateSectionResource extends BaseResource
 
     protected static function getFormSchema(Form $form): array
     {
-        $components = _config()->getSections();
+        $components = SectionService::make()->getAllSections();
 
         return [
             Section::make('')->schema([
@@ -79,8 +80,8 @@ class TemplateSectionResource extends BaseResource
                             return [];
                         }
                         $currentComponent = null;
-                        foreach ($components as $component) {
-                            if ($component['path'] == $path) {
+                        foreach ($components as $name => $component) {
+                            if ($name == $path) {
                                 $currentComponent = $component;
                                 break;
                             }

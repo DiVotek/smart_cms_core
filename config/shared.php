@@ -3,7 +3,6 @@
 use Filament\Support\Colors\Color;
 
 return [
-    'page_model' => \SmartCms\Core\Models\Page::class,
     'admin' => [
         'locales' => ['en', 'uk'],
         'colors' => [

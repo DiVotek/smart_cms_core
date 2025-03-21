@@ -45,4 +45,6 @@ return [
     'generate_slug' => 'Generate slug',
     'transfer' => 'Transfer',
     'update_schema' => 'Update schema',
+    'update_translates' => 'Update translates',
+    'updated_translates' => 'Translates was updated!',
 ];

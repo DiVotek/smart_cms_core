@@ -3,15 +3,13 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\LayoutResource\Pages;
 use SmartCms\Core\Models\Layout;
-use SmartCms\Core\Services\Config;
+use SmartCms\Core\Services\Frontend\LayoutService;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
 use SmartCms\Core\Services\TableSchema;
@@ -47,25 +45,15 @@ class LayoutResource extends BaseResource
     public static function getFormSchema(Form $form): array
     {
         $instance = $form->getModelInstance();
-        $schema = [];
-        if ($instance) {
-            if (config('app.env') == 'production') {
-                $layoutSchema = $instance->schema ?? [];
-            } else {
-                $layouts = collect(_config()->getLayouts());
-                $layout_schema = $layouts->where('path', $instance->path)->first();
-                if ($layout_schema && is_array($layout_schema['schema'])) {
-                    $layoutSchema = $layout_schema['schema'];
-                }
-            }
-            foreach ($layoutSchema as $value) {
-                $field = ArrayToField::make($value, 'value.');
-                $componentField = Builder::make($field);
-                $schema = array_merge($schema, $componentField);
-            }
+        $schema = LayoutService::make()->getSectionMetadata($instance->path ?? '');
+        $schema = $schema['schema'] ?? [];
+        $schemaFields = [];
+        foreach ($schema as $value) {
+            $field = ArrayToField::make($value, 'value.');
+            $componentField = Builder::make($field);
+            $schemaFields = array_merge($schemaFields, $componentField);
         }
-
-        return $schema;
+        return $schemaFields;
     }
 
     public static function getTableColumns(Table $table): array
@@ -75,19 +63,6 @@ class LayoutResource extends BaseResource
             TableSchema::getStatus()->disabled(),
             TextColumn::make('template')->label(_nav('template')),
             TableSchema::getUpdatedAt(),
-        ];
-    }
-
-    public static function getTableActions(Table $table): array
-    {
-        return [
-            Action::make('update_schema')->iconButton()
-                ->tooltip(_actions('update_schema'))
-                ->label(_actions('update_schema'))->icon('heroicon-o-arrow-path')->action(function ($record) {
-                    $config = new Config;
-                    $config->initLayout($record->path);
-                    Notification::make()->title(_actions('success'))->success()->send();
-                }),
         ];
     }
 

@@ -8,56 +8,53 @@ use SmartCms\Core\Models\Language;
 if (! function_exists('_actions')) {
     function _actions(string $key): string
     {
-        return strans('actions.'.$key);
+        return strans('actions.' . $key);
     }
 }
 
 if (! function_exists('strans')) {
     function strans(string $key): string
     {
-        $translation = trans('smart_cms_store::'.$key);
-        if ($translation === 'smart_cms_store::'.$key) {
-            $translation = trans('smart_cms::'.$key);
+        $translation = trans('smart_cms_store::' . $key);
+        if ($translation === 'smart_cms_store::' . $key) {
+            $translation = trans('smart_cms::' . $key);
         }
 
         return $translation;
-        // return __('smart_cms::' . $key);
     }
 }
 
 if (! function_exists('_columns')) {
     function _columns(string $key): string
     {
-        return strans('columns.'.$key);
+        return strans('columns.' . $key);
     }
 }
 
 if (! function_exists('_fields')) {
     function _fields(string $key): string
     {
-        return strans('fields.'.$key);
+        return strans('fields.' . $key);
     }
 }
 
 if (! function_exists('_hints')) {
     function _hints(string $key): string
     {
-        return strans('hints.'.$key);
+        return strans('hints.' . $key);
     }
 }
 
 if (! function_exists('_nav')) {
     function _nav(string $key): string
     {
-        return strans('navigation.'.$key);
+        return strans('navigation.' . $key);
     }
 }
 
 if (! function_exists('_t')) {
     function _t(string $key): string
     {
-        // return $key;
-
         return app('_trans')->get($key);
     }
 }
@@ -69,7 +66,7 @@ if (! function_exists('_lang_routes')) {
         $route = Route::getCurrentRoute();
         $name = $route->getName();
         if (! str_contains($name, 'lang')) {
-            $name = $name.'.lang';
+            $name = $name . '.lang';
         }
         if ($route->hasParameter('lang')) {
             foreach (get_active_languages() as $lang) {
@@ -113,7 +110,7 @@ if (! function_exists('tRoute')) {
         }
         $params = array_merge($params, ['lang' => current_lang()]);
         if (! str_contains($name, 'lang')) {
-            $name = $name.'.lang';
+            $name = $name . '.lang';
         }
 
         return route($name, $params);

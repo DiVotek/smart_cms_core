@@ -2,7 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
-use SmartCms\Core\Services\Helper;
+use SmartCms\Core\Services\Frontend\SectionService;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
 use SmartCms\Core\Traits\HasStatus;
@@ -41,8 +41,8 @@ class TemplateSection extends BaseModel
 
     public function getFields(): array
     {
-        $schema = Helper::getComponentSchema($this->design);
-        $fields = [];
+        $schema = SectionService::make()->getSectionMetadata($this->design);
+        $schema = $schema['fields'];
         $fields = [];
         foreach ($schema as $field) {
             $field = ArrayToField::make($field, 'value.');

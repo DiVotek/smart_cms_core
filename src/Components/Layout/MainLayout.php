@@ -23,6 +23,6 @@ class MainLayout extends Component
 
     public function render(): View|Closure|string
     {
-        return view('template::layouts.main', $this->layout->getVariables());
+        return view('layouts.main', $this->layout->getVariables());
     }
 }

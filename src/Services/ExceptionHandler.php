@@ -12,13 +12,13 @@ class ExceptionHandler extends Handler
 {
     public function render($request, Throwable $exception)
     {
-        $template_errors = scms_template_path(template()).'error.blade.php';
+        $template_errors = resource_path('views/errors/error.blade.php');
         if (config('app.debug') || ! File::exists($template_errors)) {
             return parent::render($request, $exception);
         }
         $status = ($exception instanceof HttpExceptionInterface)
-           ? $exception->getStatusCode()
-           : 500;
+            ? $exception->getStatusCode()
+            : 500;
         $content = File::get($template_errors);
         $view = Blade::render($content, ['exception' => $exception, 'status' => $status]);
 

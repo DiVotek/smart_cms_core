@@ -7,7 +7,6 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
@@ -20,12 +19,8 @@ use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Jobs\UpdateJob;
 use SmartCms\Core\Models\Language;
-use SmartCms\Core\Models\Layout;
-use SmartCms\Core\Models\MenuSection;
-use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\TemplateSection;
-use SmartCms\Core\Services\Config;
-use SmartCms\Core\Services\Helper;
+use SmartCms\Core\Services\Frontend\LayoutService;
+use SmartCms\Core\Services\Frontend\SectionService;
 use SmartCms\Core\Services\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -136,27 +131,27 @@ class Settings extends BaseSettings
                             ->string(),
                         Fieldset::make(_fields('title'))
                             ->schema([
-                                TextInput::make('title.prefix')
+                                TextInput::make(sconfig('title.prefix'))
                                     ->label(_fields('prefix'))
                                     ->string()
                                     ->helperText(_hints('title_prefix')),
-                                TextInput::make('title.suffix')
+                                TextInput::make(sconfig('title.suffix'))
                                     ->label(_fields('suffix'))
                                     ->helperText(_hints('title_suffix'))
                                     ->string(),
                             ]),
                         Fieldset::make(_fields('description'))
                             ->schema([
-                                TextInput::make('description.prefix')
+                                TextInput::make(sconfig('description.prefix'))
                                     ->label(_fields('prefix'))
                                     ->string()
                                     ->helperText(_hints('description_prefix')),
-                                TextInput::make('description.suffix')
+                                TextInput::make(sconfig('description.suffix'))
                                     ->label(_fields('suffix'))
                                     ->helperText(_hints('description_suffix'))
                                     ->string(),
                             ]),
-                        Schema::getRepeater('meta')
+                        Schema::getRepeater(sconfig('custom_meta'))
                             ->label(_fields('custom_meta'))
                             ->schema([
                                 TextInput::make('name')
@@ -169,7 +164,7 @@ class Settings extends BaseSettings
                                     ->label(_fields('meta_tags')),
                             ])
                             ->default([]),
-                        Schema::getRepeater('scripts')
+                        Schema::getRepeater(sconfig('custom_scripts'))
                             ->label(_fields('custom_scripts'))
                             ->schema([
                                 TextInput::make('name')
@@ -194,59 +189,16 @@ class Settings extends BaseSettings
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('change_template')
-                ->label(_actions('change_template'))
-                ->tooltip(_actions('change_template'))
-                ->color('danger')
-                ->iconic()
-                ->fillForm(function (): array {
-                    return [
-                        'template' => template(),
-                    ];
-                })
-                ->form(function ($form) {
-                    return $form->schema([
-                        Select::make('template')
-                            ->label(_fields('template'))
-                            ->options(function () {
-                                $templates = Helper::getTemplates();
-                                $templates = array_filter($templates, function ($key) {
-                                    return $key != template();
-                                }, ARRAY_FILTER_USE_KEY);
-
-                                return $templates;
-                            })
-                            ->required(),
-                    ]);
-                })
-                ->action(function (array $data) {
-                    setting([
-                        sconfig('template') => $data['template'],
-                    ]);
-                    app('_settings')->refresh();
-                    $menusections = MenuSection::query()->pluck('parent_id')->toArray();
-                    foreach ($menusections as $section) {
-                        if (Page::query()->where('parent_id', $section)->count() == 0) {
-                            MenuSection::query()->where('id', $section)->delete();
-                        }
-                    }
-                    $config = new Config(true);
-                    $config->init(true);
-                    Notification::make()
-                        ->title(_actions('setup_success'))
-                        ->success()
-                        ->send();
-                })
-                ->requiresConfirmation()
-                ->icon('heroicon-o-cog'),
             Action::make('update_template')
                 ->tooltip(_actions('update_template'))
                 ->label(_actions('update_template'))
                 ->icon('heroicon-o-arrow-path')
                 ->iconic()
                 ->action(function () {
-                    $config = new Config;
-                    $config->init();
+                    SectionService::make()->init();
+                    LayoutService::make()->init();
+                    // $config = new Config;
+                    // $config->init();
                     Notification::make()
                         ->title(_actions('setup_success'))
                         ->success()
@@ -259,15 +211,10 @@ class Settings extends BaseSettings
                 ->iconic()
                 ->fillForm(function (): array {
                     $theme = _settings('theme', []);
-                    if (empty($theme)) {
-                        $theme = _config()->getTheme();
-                        setting([
-                            sconfig('theme') => _config()->getTheme(),
-                        ]);
-                    }
+                    $theme = array_merge($theme, config('theme', []));
 
                     return [
-                        'theme' => _settings('theme', []),
+                        'theme' => $theme,
                     ];
                 })
                 ->action(function (array $data): void {
@@ -275,21 +222,17 @@ class Settings extends BaseSettings
                         sconfig('theme') => $data['theme'],
                     ]);
                 })
-                ->hidden(function () {
-                    return empty(_config()->getTheme());
-                })
                 ->form(function ($form) {
-                    $theme = _config()->getTheme();
+                    $theme = _settings('theme', []);
+                    $theme = array_merge($theme, config('theme', []));
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
 
                     return $form
-                        ->schema([
-                            Section::make('')->schema($schema),
-                        ]);
+                        ->schema($schema);
                 }),
             Action::make(_actions('update'))
                 ->icon('heroicon-m-arrow-up-on-square')
@@ -310,13 +253,5 @@ class Settings extends BaseSettings
                     $this->save();
                 }),
         ];
-    }
-
-    protected function beforeSave()
-    {
-        if ($this->data[sconfig('template')] != template()) {
-            Layout::query()->update(['status' => 0]);
-            TemplateSection::query()->update(['status' => 0]);
-        }
     }
 }

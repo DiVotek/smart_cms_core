@@ -2,55 +2,8 @@
 
 namespace SmartCms\Core\Services;
 
-use Exception;
-use Illuminate\Support\Facades\File;
-
 class Helper
 {
-    public static function getComponents(): array
-    {
-        $sections = [];
-        $directoryPath = scms_template_path(template().'/sections');
-        if (! File::exists($directoryPath)) {
-            return [];
-        }
-        $files = File::files($directoryPath);
-        $configSections = _config()->getSections();
-        foreach ($configSections as $section) {
-            if (isset($section['name']) && isset($section['file'])) {
-                $fileName = $section['file'];
-                $sections[$fileName] = $section['name'];
-            }
-        }
-        foreach ($files as $file) {
-            $name = basename($file, '.blade.php');
-            if (in_array($name, $sections)) {
-                continue;
-            }
-            $sections[$name] = ucfirst($name);
-        }
-        $directories = File::directories($directoryPath);
-        foreach ($directories as $directory) {
-            foreach (File::files($directory) as $file) {
-                $lastDir = basename($directory);
-                $files[$lastDir.'/'.basename($file)] = ucfirst($lastDir).' - '.ucfirst(basename($file, '.blade.php'));
-            }
-        }
-
-        return $sections;
-    }
-
-    public static function getComponentSchema(string $path): array
-    {
-        $components = _config()->getSections();
-        foreach ($components as $component) {
-            if ($component['path'] == $path) {
-                return $component['schema'];
-            }
-        }
-
-        return [];
-    }
 
     public static function getLabelFromField(string $field): string
     {
@@ -59,19 +12,6 @@ class Helper
         $field = implode(' ', $field);
 
         return __(ucfirst(strtolower($field)));
-    }
-
-    public static function getTemplates(): array
-    {
-        $templates = [];
-        $templatesPath = base_path('scms/templates/');
-        $files = File::directories($templatesPath);
-        foreach ($files as $file) {
-            $templateName = basename($file);
-            $templates[$templateName] = $templateName;
-        }
-
-        return $templates;
     }
 
     public static function getVariableSchema(array|string $var, string $prefix = ''): array
@@ -131,12 +71,4 @@ class Helper
         return VariableTypes::fromType($var['type'])->toFilamentField($var, $prefix);
     }
 
-    public static function parseVariableByType(array $var, string $prefix = ''): array
-    {
-        try {
-            return VariableTypes::fromType($var['type'])->toFilamentField($var, $prefix);
-        } catch (Exception $exception) {
-            return [];
-        }
-    }
 }

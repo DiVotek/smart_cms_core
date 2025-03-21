@@ -16,17 +16,11 @@ class BuildTemplate
     public function handle(array $template): array
     {
         foreach ($template as $d) {
-            $section = TemplateSection::query()->where('id', $d['template_section_id'])->where('template', template())->first();
+            $section = TemplateSection::query()->where('id', $d['template_section_id'])->first();
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'templates::'.template().'.sections';
-            $design = $section->design;
-            $design = explode('\\', $design);
-            $design = $design[count($design) - 1];
-            $design = preg_replace('/([a-z])([A-Z])/', '$1-$2', $design);
-            $design = str_replace('/', '.', $design);
-            $sectionComponent .= '.'.strtolower($design);
+            $sectionComponent = 'sections.' . $section->design;
             if (! empty($d['value'])) {
                 $section->value = $d['value'];
             }

@@ -39,7 +39,7 @@ class PageComponent extends Component
         }
         $this->resource = $resource;
         $breadcrumbs = $this->resource->breadcrumbs ?? [];
-        $this->breadcrumbs = array_map(fn ($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
+        $this->breadcrumbs = array_map(fn($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
         $this->title = $this->resource->title ?? $this->resource->name;
         $this->meta_description = $this->resource->meta_description ?? '';
         $this->meta_keywords = $seo->meta_keywords ?? '';
@@ -86,7 +86,7 @@ class PageComponent extends Component
                     @endisset
                 @endsection
                 @if($layout)
-                @include('template::layouts.'.$layout->path, [...$layout->getVariables($entity->layout_settings ?? []),'entity' => $resource])
+                @include('layouts.'.$layout->path, [...$layout->getVariables($resource->layout_settings ?? []),'entity' => $resource])
                 @endif
                 <x-s::layout.builder :data="$template" />
                 @endsection
