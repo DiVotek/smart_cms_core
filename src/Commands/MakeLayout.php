@@ -4,7 +4,6 @@ namespace SmartCms\Core\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Yaml\Yaml;
 
 class MakeLayout extends Command
 {
@@ -17,7 +16,7 @@ class MakeLayout extends Command
         $name = $this->argument('name');
         $name = str_replace('.blade.php', '', $name);
         $name = str_replace('/', '.', $name);
-        $path = resource_path('views/layouts/' . $name . '.blade.php');
+        $path = resource_path('views/layouts/'.$name.'.blade.php');
         if (File::exists($path)) {
             $this->error('Layout already exists');
 
@@ -34,7 +33,7 @@ class MakeLayout extends Command
 @endsection_meta --}}
 
 EOT;
-        if (!File::exists(resource_path('views/layouts'))) {
+        if (! File::exists(resource_path('views/layouts'))) {
             File::makeDirectory(resource_path('views/layouts'), 0755, true);
         }
         File::put($path, $stub);

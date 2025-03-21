@@ -26,7 +26,7 @@ class Layout extends BaseModel
     public function getVariables(?array $value = null): array
     {
         if ($value == null) {
-            return Cache::remember('layout_variables_' . $this->id . '_' . current_lang_id(), 60, function () {
+            return Cache::remember('layout_variables_'.$this->id.'_'.current_lang_id(), 60, function () {
                 return SchemaParser::make($this->schema, $this->value);
             });
         }

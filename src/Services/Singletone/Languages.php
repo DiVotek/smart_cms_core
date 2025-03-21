@@ -59,6 +59,7 @@ class Languages
     {
         $this->currentLanguage = $this->languages->where('slug', $languageSlug)->first() ?? $this->defaultLanguage;
         $this->currentLanguageInitialized = true;
+
         return $this;
     }
 }

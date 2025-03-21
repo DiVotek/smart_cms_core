@@ -23,6 +23,7 @@ class Builder extends Component
             return '';
         }
         self::$isRendered = true;
+
         return <<<'blade'
             <div class="builder">
                 @foreach ($template as $key => $field)

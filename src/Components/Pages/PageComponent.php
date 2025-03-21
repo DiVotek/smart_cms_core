@@ -4,7 +4,6 @@ namespace SmartCms\Core\Components\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Facades\Event;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildTemplate;
 use SmartCms\Core\Models\Layout;
@@ -14,6 +13,7 @@ use SmartCms\Core\Traits\HasHooks;
 class PageComponent extends Component
 {
     use HasHooks;
+
     public string $title;
 
     public string $meta_description;
@@ -34,12 +34,12 @@ class PageComponent extends Component
     {
         $resource = null;
         $this->applyHook('cms.page.construct', $resource, $entity);
-        if (!$resource) {
+        if (! $resource) {
             $resource = PageEntityResource::make($entity)->get();
         }
         $this->resource = $resource;
         $breadcrumbs = $this->resource->breadcrumbs ?? [];
-        $this->breadcrumbs = array_map(fn($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
+        $this->breadcrumbs = array_map(fn ($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
         $this->title = $this->resource->title ?? $this->resource->name;
         $this->meta_description = $this->resource->meta_description ?? '';
         $this->meta_keywords = $seo->meta_keywords ?? '';

@@ -3,9 +3,9 @@
 namespace SmartCms\Core\Components;
 
 use Closure;
+use Gregwar\Image\Image as ImageService;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use Gregwar\Image\Image as ImageService;
 
 class Image extends Component
 {
@@ -28,7 +28,7 @@ class Image extends Component
                     $src = substr($src, 1);
                 }
                 if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-                    $src = 'storage/' . $src;
+                    $src = 'storage/'.$src;
                 }
                 if (! str_contains($src, 'http')) {
                     $src = preg_replace('#/+#', '/', $src);

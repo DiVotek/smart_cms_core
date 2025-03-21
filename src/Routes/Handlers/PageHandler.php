@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Session;
 use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Traits\HasHooks;
@@ -15,6 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\Cache;
 class PageHandler
 {
     use HasHooks;
+
     public $limit = 3;
 
     #[Cache(public: true, maxage: 31536000, mustRevalidate: true)]

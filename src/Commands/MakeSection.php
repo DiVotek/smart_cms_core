@@ -16,7 +16,7 @@ class MakeSection extends Command
         $name = $this->argument('name');
         $name = str_replace('.blade.php', '', $name);
         $name = str_replace('/', '.', $name);
-        $path = resource_path('views/sections/' . $name . '.blade.php');
+        $path = resource_path('views/sections/'.$name.'.blade.php');
         if (File::exists($path)) {
             $this->error('Section already exists');
 
@@ -33,7 +33,7 @@ class MakeSection extends Command
 @endsection_meta --}}
 
 EOT;
-        if (!File::exists(resource_path('views/sections'))) {
+        if (! File::exists(resource_path('views/sections'))) {
             File::makeDirectory(resource_path('views/sections'), 0755, true);
         }
         File::put($path, $stub);
