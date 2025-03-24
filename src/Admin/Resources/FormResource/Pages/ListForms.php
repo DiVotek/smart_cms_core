@@ -26,7 +26,6 @@ class ListForms extends BaseListRecords
                     ModelsForm::query()->create([
                         'name' => $data['name'],
                         'code' => uniqid('form_'),
-                        'style' => '',
                         'fields' => [],
                     ]);
                 }),

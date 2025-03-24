@@ -20,18 +20,23 @@ class Install extends Command
             '--tag' => 'public',
         ]);
         $this->info('Publishing templates...');
-        $this->call('vendor:publish', [
-            '--provider' => "SmartCms\Core\SmartCmsServiceProvider",
-            '--tag' => 'templates',
-        ]);
         $this->call('filament-phone-input:install');
-        $this->call('filament:assets'); // ?
+        $this->call('filament:assets');
         $this->info('Installing admin panel...');
         $this->call('filament:install');
         $this->info('Publishing newer livewire...');
         $this->call('vendor:publish', [
             '--tag' => 'livewire:assets',
         ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'theme',
+        ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'translates',
+        ]);
+        // $this->call('vendor:publish', [
+        //     '--tag' => 'settings',
+        // ]);
         $this->info('Migrating database...');
         $this->call('migrate');
         $this->info('Install storage...');
@@ -39,9 +44,6 @@ class Install extends Command
         $this->info('Installed Smart CMS');
         if ($this->confirm('Do you wish to install node?')) {
             exec('npm install');
-        }
-        if ($this->confirm('Change vite config?')) {
-            $this->call('scms:vite');
         }
     }
 }
