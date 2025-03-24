@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Admin\Resources;
 
 use Filament\Forms\Form;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\BaseResource;

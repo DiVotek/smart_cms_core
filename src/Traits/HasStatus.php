@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Trait HasStatus
- *
- * @package SmartCms\Core\Traits
  */
 trait HasStatus
 {
@@ -26,18 +24,18 @@ trait HasStatus
     /**
      * Scope to filter active records.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder  $query  The query builder instance.
      * @return Builder The modified query builder.
      */
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where(self::getDb() . '.' . $this->getStatusColumn(), self::STATUS_ON);
+        return $query->where(self::getDb().'.'.$this->getStatusColumn(), self::STATUS_ON);
     }
 
     /**
      * Scope to filter inactive records.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder  $query  The query builder instance.
      * @return Builder The modified query builder.
      */
     public function scopeInactive(Builder $query): Builder

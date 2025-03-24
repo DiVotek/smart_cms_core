@@ -4,8 +4,6 @@ namespace SmartCms\Core\Traits\Repository;
 
 /**
  * Trait AsRepository
- *
- * @package SmartCms\Core\Traits\Repository
  */
 trait AsRepository
 {

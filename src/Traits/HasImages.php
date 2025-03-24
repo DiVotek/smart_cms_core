@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Trait HasImages
- *
- * @package SmartCms\Core\Traits
  */
 trait HasImages
 {
@@ -33,7 +31,7 @@ trait HasImages
     protected function image(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->images[0] ?? '',
+            get: fn () => $this->images[0] ?? '',
         );
     }
 }

@@ -12,7 +12,6 @@ use SmartCms\Core\Traits\HasTable;
 /**
  * Class Admin
  *
- * @package SmartCms\Core\Models
  * @property int $id The unique identifier for the model.
  * @property string $username The username of the admin.
  * @property string $email The email address of the admin.
@@ -23,9 +22,9 @@ use SmartCms\Core\Traits\HasTable;
  */
 class Admin extends User implements FilamentUser
 {
+    use HasFactory;
     use HasTable;
     use Notifiable;
-    use HasFactory;
 
     protected $fillable = [
         'username',

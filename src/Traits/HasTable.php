@@ -6,15 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Trait HasTable
- *
- * @package SmartCms\Core\Traits
  */
 trait HasTable
 {
     /**
      * Get the database table name.
-     *
-     * @return string
      */
     abstract public static function getDb(): string;
 

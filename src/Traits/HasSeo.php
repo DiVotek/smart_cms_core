@@ -7,8 +7,6 @@ use SmartCms\Core\Services\StaticCache;
 
 /**
  * Trait HasSeo
- *
- * @package SmartCms\Core\Traits
  */
 trait HasSeo
 {
@@ -27,14 +25,14 @@ trait HasSeo
     /**
      * Get the SEO for the current entity.
      *
-     * @param int|null $languageId The language ID to get the SEO for.
+     * @param  int|null  $languageId  The language ID to get the SEO for.
      * @return \SmartCms\Core\Models\Seo
      */
     public function getSeo($languageId = null)
     {
         $languageId = $languageId ?? current_lang_id();
 
-        $namespace = self::class . '.seo';
+        $namespace = self::class.'.seo';
         $key = $this->getKey();
         if (StaticCache::has($namespace, $key)) {
             return StaticCache::get($namespace, $key);

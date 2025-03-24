@@ -19,8 +19,8 @@ use SmartCms\Core\Traits\HasTranslate;
  */
 class Field extends BaseModel
 {
-    use HasTranslate;
     use HasFactory;
+    use HasTranslate;
 
     protected $guarded = [];
 

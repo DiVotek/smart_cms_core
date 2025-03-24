@@ -28,6 +28,7 @@ class MenuSection extends BaseModel
     use HasSorting;
     use HasTable;
     use Notifiable;
+
     protected $guarded = [];
 
     protected $casts = [

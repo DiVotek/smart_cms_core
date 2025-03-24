@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ContactForm extends BaseModel
 {
     use HasFactory;
+
     protected $guarded = [];
 
     protected $casts = ['data' => 'array'];

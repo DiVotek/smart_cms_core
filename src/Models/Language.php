@@ -22,6 +22,7 @@ class Language extends BaseModel
 {
     use HasFactory;
     use HasStatus;
+
     protected $guarded = [];
 
     public const LANGUAGES = [

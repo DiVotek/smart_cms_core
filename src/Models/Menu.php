@@ -17,9 +17,10 @@ use SmartCms\Core\Traits\HasTable;
  */
 class Menu extends BaseModel
 {
+    use HasFactory;
     use HasTable;
     use Notifiable;
-    use HasFactory;
+
     protected $guarded = [];
 
     protected $casts = [

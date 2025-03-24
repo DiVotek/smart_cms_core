@@ -7,16 +7,14 @@ use Illuminate\Http\Request;
 
 /**
  * Class NoIndex
- *
- * @package SmartCms\Core\Middlewares
  */
 class NoIndex
 {
     /**
      * Handles the request.
      *
-     * @param Request $request The request to handle.
-     * @param Closure $next The next middleware to handle.
+     * @param  Request  $request  The request to handle.
+     * @param  Closure  $next  The next middleware to handle.
      * @return \Illuminate\Http\Response The response.
      */
     public function handle(Request $request, Closure $next)

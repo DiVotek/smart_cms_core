@@ -7,8 +7,6 @@ use SmartCms\Core\Models\Template;
 
 /**
  * Trait HasTemplate
- *
- * @package SmartCms\Core\Traits
  */
 trait HasTemplate
 {

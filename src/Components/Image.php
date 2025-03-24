@@ -28,7 +28,7 @@ class Image extends Component
                     $src = substr($src, 1);
                 }
                 if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-                    $src = 'storage/' . $src;
+                    $src = 'storage/'.$src;
                 }
                 if (! str_contains($src, 'http')) {
                     $src = preg_replace('#/+#', '/', $src);

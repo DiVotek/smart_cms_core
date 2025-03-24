@@ -61,7 +61,7 @@ class LayoutService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: ' . $e->getMessage());
+                Log::error('Failed to parse section metadata: '.$e->getMessage());
             }
         }
 

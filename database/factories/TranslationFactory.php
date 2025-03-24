@@ -13,7 +13,7 @@ class TranslationFactory extends Factory
     public function definition(): array
     {
         return [
-            'key' => $this->faker->unique()->word() . '.' . $this->faker->word(),
+            'key' => $this->faker->unique()->word().'.'.$this->faker->word(),
             'language_id' => Language::factory(),
             'value' => $this->faker->sentence(),
         ];

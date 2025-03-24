@@ -4,8 +4,6 @@ namespace SmartCms\Core\Traits;
 
 /**
  * Trait HasHooks
- *
- * @package SmartCms\Core\Traits
  */
 trait HasHooks
 {

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Trait HasSlug
- *
- * @package SmartCms\Core\Traits
  */
 trait HasSlug
 {

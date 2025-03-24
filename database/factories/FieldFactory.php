@@ -14,7 +14,7 @@ class FieldFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'type' => $this->faker->randomElement(['text', 'select', 'checkbox', 'radio', 'textarea']),
-            'html_id' => 'field_' . $this->faker->unique()->word(),
+            'html_id' => 'field_'.$this->faker->unique()->word(),
             'data' => [
                 'mask' => $this->faker->word(),
                 'placeholder' => $this->faker->sentence(3),

@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use SmartCms\Core\Traits\HasBreadcrumbs;
 use SmartCms\Core\Traits\HasLayoutSettings;
 use SmartCms\Core\Traits\HasParent;
@@ -13,7 +14,6 @@ use SmartCms\Core\Traits\HasStatus;
 use SmartCms\Core\Traits\HasTemplate;
 use SmartCms\Core\Traits\HasTranslate;
 use SmartCms\Core\Traits\HasViews;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Page
@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Page extends BaseModel
 {
     use HasBreadcrumbs;
+    use HasFactory;
     use HasLayoutSettings;
     use HasParent;
     use HasRoute;
@@ -49,7 +50,6 @@ class Page extends BaseModel
     use HasTemplate;
     use HasTranslate;
     use HasViews;
-    use HasFactory;
 
     protected $guarded = [];
 

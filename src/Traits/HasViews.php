@@ -7,15 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Trait HasViews
- *
- * @package SmartCms\Core\Traits
  */
 trait HasViews
 {
     /**
      * Get the views column name.
-     *
-     * @return string
      */
     public function getViewsColumn(): string
     {
@@ -36,7 +32,7 @@ trait HasViews
     /**
      * Scope to order the results by views count in descending order.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder  $query  The query builder instance.
      * @return Builder The modified query builder.
      */
     public function scopeMostViewed(Builder $query)
@@ -47,7 +43,7 @@ trait HasViews
     /**
      * Scope to order the results by views count in ascending order.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder  $query  The query builder instance.
      * @return Builder The modified query builder.
      */
     public function scopeLeastViewed(Builder $query)

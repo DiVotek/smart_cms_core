@@ -16,7 +16,7 @@ class LayoutFactory extends Factory
             'path' => $this->faker->word(),
             'can_be_used' => $this->faker->boolean(80),
             'status' => $this->faker->boolean(80),
-            'schema' =>  [
+            'schema' => [
                 [
                     'name' => 'text',
                     'type' => 'text',

@@ -13,8 +13,6 @@ use SmartCms\Core\Traits\HasHooks;
  * Class GetLinks
  *
  * Gets links for the given menu.
- *
- * @package SmartCms\Core\Actions\Template
  */
 class GetLinks
 {
@@ -24,7 +22,7 @@ class GetLinks
     /**
      * Gets links for the given menu.
      *
-     * @param int|null $id The ID of the menu.
+     * @param  int|null  $id  The ID of the menu.
      * @return array The links for the given menu.
      */
     public function handle(?int $id): array
@@ -34,11 +32,11 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::remember('menu_links_' . $lang . '_' . $id, 3600, function () use ($id) {
+        return Cache::remember('menu_links_'.$lang.'_'.$id, 3600, function () use ($id) {
             $menu = Menu::query()->find($id);
             if ($menu) {
                 $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
+                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
 
                 return $links;
             }
@@ -50,7 +48,7 @@ class GetLinks
     /**
      * Parses the links for the given reference.
      *
-     * @param array $reference The reference to parse the links for.
+     * @param  array  $reference  The reference to parse the links for.
      * @return array The parsed links.
      */
     public function parseLinks(array $reference)

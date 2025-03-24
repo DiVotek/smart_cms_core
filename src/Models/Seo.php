@@ -3,9 +3,9 @@
 namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Seo
@@ -27,8 +27,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Seo extends BaseModel
 {
-    use HasTimestamps;
     use HasFactory;
+    use HasTimestamps;
+
     protected $guarded = [];
 
     public function seoable(): MorphTo

@@ -8,8 +8,6 @@ use SmartCms\Core\Services\Schema\Builder;
 
 /**
  * Trait HasLayoutSettings
- *
- * @package SmartCms\Core\Traits
  */
 trait HasLayoutSettings
 {

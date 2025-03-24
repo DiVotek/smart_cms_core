@@ -7,8 +7,6 @@ use SmartCms\Core\Models\Translate;
 
 /**
  * Trait HasTranslate
- *
- * @package SmartCms\Core\Traits
  */
 trait HasTranslate
 {
@@ -54,7 +52,7 @@ trait HasTranslate
      */
     public function get_translate_key()
     {
-        return $this->getTable() . '_' . $this->id;
+        return $this->getTable().'_'.$this->id;
     }
 
     /**

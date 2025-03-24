@@ -15,14 +15,14 @@ class FormFactory extends Factory
             'name' => $this->faker->sentence(3),
             'status' => $this->faker->boolean(80),
             'code' => $this->faker->unique()->word(),
-            'html_id' => 'form_' . $this->faker->word(),
-            'class' => 'form ' . $this->faker->word(),
+            'html_id' => 'form_'.$this->faker->word(),
+            'class' => 'form '.$this->faker->word(),
             'fields' => [],
             'button' => null,
             'notification' => null,
             'data' => [
-                "button" => "Submit",
-                "notification" => "Form submitted successfully",
+                'button' => 'Submit',
+                'notification' => 'Form submitted successfully',
             ],
         ];
     }

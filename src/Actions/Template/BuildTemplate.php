@@ -12,7 +12,6 @@ use SmartCms\Core\Services\Schema\SchemaParser;
  *
  * Builds the template for the given entity template.
  *
- * @package SmartCms\Core\Actions\Template
  *
  * @property array $result The result of the template build.
  */
@@ -25,7 +24,7 @@ class BuildTemplate
     /**
      * Builds the template for the given entity template.
      *
-     * @param array $template The template to build.
+     * @param  array  $template  The template to build.
      * @return array The built template.
      */
     public function handle(array $template): array
@@ -35,7 +34,7 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'sections.' . $section->design;
+            $sectionComponent = 'sections.'.$section->design;
             if (! empty($d['value'])) {
                 $section->value = $d['value'];
             }

@@ -2,14 +2,12 @@
 
 namespace SmartCms\Core\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use SmartCms\Core\Traits\HasHooks;
-use Illuminate\Http\Request;
 
 /**
  * Class BaseResource
- *
- * @package SmartCms\Core\Resources
  */
 abstract class BaseResource extends JsonResource
 {
@@ -18,7 +16,7 @@ abstract class BaseResource extends JsonResource
     /**
      * Applies the data hooks to the data.
      *
-     * @param array $data The data to apply the hooks to.
+     * @param  array  $data  The data to apply the hooks to.
      * @return mixed The data with the hooks applied.
      */
     protected function applyDataHooks(array $data): array
@@ -29,7 +27,7 @@ abstract class BaseResource extends JsonResource
     /**
      * Converts the resource to an array.
      *
-     * @param Request $request The request to convert the resource to an array for.
+     * @param  Request  $request  The request to convert the resource to an array for.
      * @return array The array representation of the resource.
      */
     public function toArray($request)
@@ -55,7 +53,7 @@ abstract class BaseResource extends JsonResource
     /**
      * Prepares the data for the resource.
      *
-     * @param Request $request The request to prepare the data for.
+     * @param  Request  $request  The request to prepare the data for.
      * @return array The prepared data.
      */
     abstract protected function prepareData($request): array;
@@ -63,7 +61,7 @@ abstract class BaseResource extends JsonResource
     /**
      * Validates the image.
      *
-     * @param string|null $image The image to validate.
+     * @param  string|null  $image  The image to validate.
      * @return string The validated image.
      */
     public function validateImage(?string $image): string
@@ -74,7 +72,7 @@ abstract class BaseResource extends JsonResource
     /**
      * Transforms the date.
      *
-     * @param \DateTime $date The date to transform.
+     * @param  \DateTime  $date  The date to transform.
      * @return string The transformed date.
      */
     public function transformDate($date): string
