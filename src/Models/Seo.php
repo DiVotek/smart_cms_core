@@ -5,29 +5,30 @@ namespace SmartCms\Core\Models;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * class Seo
+ * Class Seo
  *
  * @property int $id The unique identifier for the model.
- * @property string $title The title of the model.
- * @property string $heading The heading of the model.
- * @property string $summary The summary of the model.
- * @property string $content The content of the model.
- * @property string $description The description of the model.
- * @property string $keywords The keywords of the model.
- * @property int $language_id The language identifier for the model.
+ * @property string $title The SEO title.
+ * @property string $heading The page heading.
+ * @property string $summary The summary or excerpt.
+ * @property string $content The main content.
+ * @property string $description The meta description.
+ * @property string $keywords The meta keywords.
+ * @property int $language_id The language identifier.
+ * @property string $seoable_type The type of model this SEO belongs to.
+ * @property int $seoable_id The ID of the model this SEO belongs to.
  * @property \DateTime $created_at The date and time when the model was created.
  * @property \DateTime $updated_at The date and time when the model was last updated.
- * @property Language $language The language of the model.
- * @property mixed $seoable The seoable of the model.
- * @property string $seoable_type The seoable type of the model.
- * @property int $seoable_id The seoable identifier for the model.
+ * @property-read \SmartCms\Core\Models\Language $language The language of this SEO.
+ * @property-read mixed $seoable The model this SEO belongs to.
  */
 class Seo extends BaseModel
 {
     use HasTimestamps;
-
+    use HasFactory;
     protected $guarded = [];
 
     public function seoable(): MorphTo

@@ -5,13 +5,28 @@ namespace SmartCms\Core\Traits;
 use Illuminate\Support\Facades\Context;
 use SmartCms\Core\Models\Translate;
 
+/**
+ * Trait HasTranslate
+ *
+ * @package SmartCms\Core\Traits
+ */
 trait HasTranslate
 {
+    /**
+     * Get the translatable relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
     public function translatable()
     {
         return $this->morphOne(Translate::class, 'entity');
     }
 
+    /**
+     * Get the translatable name attribute.
+     *
+     * @return string
+     */
     public function getTranslatableNameAttribute()
     {
         if (! is_multi_lang()) {
@@ -32,11 +47,21 @@ trait HasTranslate
         // return $translation ? $translation->value : $this->attributes['name'];
     }
 
+    /**
+     * Get the translatable key.
+     *
+     * @return string
+     */
     public function get_translate_key()
     {
-        return $this->getTable().'_'.$this->id;
+        return $this->getTable() . '_' . $this->id;
     }
 
+    /**
+     * Get the translatable name attribute.
+     *
+     * @return string
+     */
     public function name()
     {
         return $this->getTranslatableNameAttribute();

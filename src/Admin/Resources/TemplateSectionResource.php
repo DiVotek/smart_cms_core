@@ -35,16 +35,6 @@ class TemplateSectionResource extends BaseResource
         return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
-    public static function canDelete(Model $record): bool
-    {
-        return ! $record->is_system;
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return ! $record->is_system;
-    }
-
     protected static function getFormSchema(Form $form): array
     {
         $components = SectionService::make()->getAllSections();
@@ -108,7 +98,6 @@ class TemplateSectionResource extends BaseResource
         return [
             TableSchema::getName(),
             TableSchema::getStatus(),
-            TextColumn::make('template')->label(_nav('template')),
             TableSchema::getUpdatedAt(),
         ];
     }

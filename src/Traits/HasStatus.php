@@ -3,8 +3,12 @@
 namespace SmartCms\Core\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Schema\Blueprint;
 
+/**
+ * Trait HasStatus
+ *
+ * @package SmartCms\Core\Traits
+ */
 trait HasStatus
 {
     public const STATUS_ON = 1;
@@ -19,11 +23,23 @@ trait HasStatus
         });
     }
 
+    /**
+     * Scope to filter active records.
+     *
+     * @param Builder $query The query builder instance.
+     * @return Builder The modified query builder.
+     */
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where(self::getDb().'.'.$this->getStatusColumn(), self::STATUS_ON);
+        return $query->where(self::getDb() . '.' . $this->getStatusColumn(), self::STATUS_ON);
     }
 
+    /**
+     * Scope to filter inactive records.
+     *
+     * @param Builder $query The query builder instance.
+     * @return Builder The modified query builder.
+     */
     public function scopeInactive(Builder $query): Builder
     {
         return $query->where($this->getStatusColumn(), self::STATUS_OFF);
@@ -32,21 +48,5 @@ trait HasStatus
     public function getStatusColumn(): string
     {
         return property_exists($this, 'statusColumn') ? $this->statusColumn : 'status';
-    }
-
-    public function getDefaultStatusValue(): int
-    {
-        return self::STATUS_ON;
-    }
-
-    public function statusMigrationField(Blueprint $table): void
-    {
-        $defaultStatus = $this->getDefaultStatusValue();
-        $table->tinyInteger('status')->default($defaultStatus)->after('id')->index();
-    }
-
-    public function fakeStatus(): int
-    {
-        return rand(0, 1);
     }
 }

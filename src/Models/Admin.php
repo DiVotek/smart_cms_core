@@ -4,14 +4,28 @@ namespace SmartCms\Core\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Notifications\Notifiable;
 use SmartCms\Core\Traits\HasTable;
 
+/**
+ * Class Admin
+ *
+ * @package SmartCms\Core\Models
+ * @property int $id The unique identifier for the model.
+ * @property string $username The username of the admin.
+ * @property string $email The email address of the admin.
+ * @property string $password The hashed password of the admin.
+ * @property string|null $remember_token The token used for "remember me" functionality.
+ * @property \DateTime $created_at The date and time when the model was created.
+ * @property \DateTime $updated_at The date and time when the model was last updated.
+ */
 class Admin extends User implements FilamentUser
 {
     use HasTable;
     use Notifiable;
+    use HasFactory;
 
     protected $fillable = [
         'username',

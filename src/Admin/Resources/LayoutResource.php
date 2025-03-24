@@ -62,7 +62,6 @@ class LayoutResource extends BaseResource
         return [
             TableSchema::getName(),
             TableSchema::getStatus()->disabled(),
-            TextColumn::make('template')->label(_nav('template')),
             TableSchema::getUpdatedAt(),
         ];
     }

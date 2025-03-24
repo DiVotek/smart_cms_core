@@ -1,6 +1,6 @@
 <?php
 
-namespace SmartCms\Store\Database\Factories;
+namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use SmartCms\Core\Models\Layout;
@@ -9,15 +9,20 @@ class LayoutFactory extends Factory
 {
     protected $model = Layout::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
-            'path' => $this->faker->word,
-            'schema' => [],
+            'name' => $this->faker->words(3, true),
+            'path' => $this->faker->word(),
+            'can_be_used' => $this->faker->boolean(80),
+            'status' => $this->faker->boolean(80),
+            'schema' =>  [
+                [
+                    'name' => 'text',
+                    'type' => 'text',
+                ],
+            ],
             'value' => [],
-            'status' => $this->faker->boolean,
-            'template' => template(),
         ];
     }
 }

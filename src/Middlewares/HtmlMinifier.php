@@ -31,8 +31,6 @@ class HtmlMinifier
 
     public function handle(Request $request, Closure $next)
     {
-        // Finish: 654 ms DOMContentLoaded: 324 ms load: 564 ms
-        return $next($request);
         $response = $next($request);
         $response->setContent($this->minify($response->getContent()));
 

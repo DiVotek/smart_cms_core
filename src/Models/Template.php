@@ -2,23 +2,28 @@
 
 namespace SmartCms\Core\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use SmartCms\Core\Traits\HasSorting;
 use SmartCms\Core\Traits\HasStatus;
 
 /**
- * class Template
+ * Class Template
  *
  * @property int $id The unique identifier for the model.
- * @property int $template_section_id The template section identifier for the model.
- * @property int $sorting The sorting of the model.
- * @property array $value The value of the model.
+ * @property int $template_section_id The template section identifier.
+ * @property int $sorting The sorting order of the template.
+ * @property bool $status The status of the template.
+ * @property array|null $value The template values.
+ * @property string $entity_type The type of entity this template belongs to.
+ * @property int $entity_id The ID of the entity this template belongs to.
  * @property \DateTime $created_at The date and time when the model was created.
  * @property \DateTime $updated_at The date and time when the model was last updated.
- * @property TemplateSection $section The section of the model.
- * @property mixed $entity The entity of the model.
+ * @property-read \SmartCms\Core\Models\TemplateSection $section The template section.
+ * @property-read mixed $entity The entity this template belongs to.
  */
 class Template extends BaseModel
 {
+    use HasFactory;
     use HasSorting;
     use HasStatus;
 

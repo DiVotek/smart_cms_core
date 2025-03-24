@@ -7,12 +7,27 @@ use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\TemplateSection;
 use SmartCms\Core\Services\Schema\SchemaParser;
 
+/**
+ * Class BuildTemplate
+ *
+ * Builds the template for the given entity template.
+ *
+ * @package SmartCms\Core\Actions\Template
+ *
+ * @property array $result The result of the template build.
+ */
 class BuildTemplate
 {
     use AsAction;
 
     public array $result = [];
 
+    /**
+     * Builds the template for the given entity template.
+     *
+     * @param array $template The template to build.
+     * @return array The built template.
+     */
     public function handle(array $template): array
     {
         foreach ($template as $d) {
@@ -20,7 +35,7 @@ class BuildTemplate
             if (! $section) {
                 continue;
             }
-            $sectionComponent = 'sections.'.$section->design;
+            $sectionComponent = 'sections.' . $section->design;
             if (! empty($d['value'])) {
                 $section->value = $d['value'];
             }

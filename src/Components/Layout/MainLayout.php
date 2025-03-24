@@ -14,7 +14,7 @@ class MainLayout extends Component
 
     public function __construct()
     {
-        $layout = Layout::query()->where('path', 'main')->where('template', template())->first();
+        $layout = Layout::query()->where('path', 'main')->first();
         if (! $layout) {
             throw new Exception('Main layout not found, configure it first');
         }

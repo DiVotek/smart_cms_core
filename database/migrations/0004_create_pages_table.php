@@ -28,7 +28,6 @@ return new class extends Migration
             'name' => 'Home',
             'slug' => '',
             'status' => 1,
-            'is_nav' => 0,
         ]);
     }
 

@@ -6,6 +6,11 @@ use SmartCms\Core\Services\Frontend\LayoutService;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
 
+/**
+ * Trait HasLayoutSettings
+ *
+ * @package SmartCms\Core\Traits
+ */
 trait HasLayoutSettings
 {
     public function getLayoutSettingsForm(): array

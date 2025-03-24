@@ -217,22 +217,25 @@ class Settings extends BaseSettings
                         'theme' => $theme,
                     ];
                 })
-                ->action(function (array $data): void {
-                    setting([
-                        sconfig('theme') => $data['theme'],
-                    ]);
-                })
                 ->form(function ($form) {
                     $theme = _settings('theme', []);
                     $theme = array_merge($theme, config('theme', []));
+                    $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
 
                     return $form
                         ->schema($schema);
+                })->action(function (array $data): void {
+                    if (! isset($data['theme'])) {
+                        $data['theme'] = [];
+                    }
+                    setting([
+                        sconfig('theme') => $data['theme'],
+                    ]);
                 }),
             Action::make(_actions('update'))
                 ->icon('heroicon-m-arrow-up-on-square')

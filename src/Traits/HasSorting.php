@@ -4,8 +4,14 @@ namespace SmartCms\Core\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * Trait HasSorting
+ *
+ * @package SmartCms\Core\Traits
+ */
 trait HasSorting
 {
+
     protected static function bootHasSorting(): void
     {
         static::addGlobalScope('sorted', function (Builder $builder) {
@@ -14,9 +20,15 @@ trait HasSorting
         });
     }
 
+    /**
+     * Scope to order the results by sorting column.
+     *
+     * @param Builder $query The query builder instance.
+     * @return Builder The modified query builder.
+     */
     public function scopeSorted(Builder $query): Builder
     {
-        return $query->orderBy($this->getDb().'.'.$this->getSortingColumn(), 'asc');
+        return $query->orderBy($this->getDb() . '.' . $this->getSortingColumn(), 'asc');
     }
 
     public function getSortingColumn(): string

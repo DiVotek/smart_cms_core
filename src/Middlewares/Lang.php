@@ -7,8 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
 use SmartCms\Core\Models\Language;
 
+/**
+ * Class Lang
+ *
+ * Prepends the language to the request.
+ *
+ * @package SmartCms\Core\Middlewares
+ */
 class Lang
 {
+    /**
+     * Handles the request.
+     *
+     * @param Request $request The request to handle.
+     * @return \Illuminate\Http\Response
+     */
     public function handle(Request $request, Closure $next)
     {
         $referer = $request->header('referer');

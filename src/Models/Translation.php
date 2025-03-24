@@ -2,19 +2,22 @@
 
 namespace SmartCms\Core\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 /**
- * class Translation
+ * Class Translation
  *
  * @property int $id The unique identifier for the model.
- * @property string $key The key of the model.
- * @property int $language_id The language identifier for the model.
- * @property string $value The value of the model.
+ * @property string $key The translation key.
+ * @property int $language_id The language identifier.
+ * @property string $value The translated value.
  * @property \DateTime $created_at The date and time when the model was created.
  * @property \DateTime $updated_at The date and time when the model was last updated.
- * @property Language $language The language of the model.
+ * @property-read \SmartCms\Core\Models\Language $language The language of this translation.
  */
 class Translation extends BaseModel
 {
+    use HasFactory;
     protected $guarded = [];
 
     public function language()

@@ -22,7 +22,6 @@ class CreateTemplateSection extends BaseCreateRecord
             }
         }
         $data['schema'] = $schema;
-        $data['template'] = template();
 
         return parent::handleRecordCreation($data);
     }

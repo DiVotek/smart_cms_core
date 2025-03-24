@@ -2,24 +2,26 @@
 
 namespace SmartCms\Core\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use SmartCms\Core\Traits\HasStatus;
 
 /**
  * Class Language
  *
  * @property int $id The unique identifier for the model.
- * @property string $name The name of the model.
- * @property string $slug The slug of the model.
- * @property string $locale The locale of the model.
- * @property bool $status The status of the model.
+ * @property string $name The name of the language.
+ * @property string $slug The slug of the language.
+ * @property string $locale The locale code of the language.
+ * @property bool $status The status of the language.
  * @property \DateTime $created_at The date and time when the model was created.
  * @property \DateTime $updated_at The date and time when the model was last updated.
+ * @property-read \Illuminate\Database\Eloquent\Collection|\SmartCms\Core\Models\Seo[] $seos The SEO entries for this language.
+ * @property-read \Illuminate\Database\Eloquent\Collection|\SmartCms\Core\Models\Translation[] $translations The translations for this language.
  */
 class Language extends BaseModel
 {
+    use HasFactory;
     use HasStatus;
-
     protected $guarded = [];
 
     public const LANGUAGES = [

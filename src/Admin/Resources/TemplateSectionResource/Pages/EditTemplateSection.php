@@ -10,19 +10,18 @@ class EditTemplateSection extends BaseEditRecord
 {
     protected static string $resource = TemplateSectionResource::class;
 
-    // protected function mutateFormDataBeforeSave(array $data): array
-    // {
-    //     $components = SectionService::make()->getAllSections();
-    //     $schema = [];
-    //     foreach ($components as $name => $component) {
-    //         if ($name == $data['design']) {
-    //             $schema = $component['schema'];
-    //             break;
-    //         }
-    //     }
-    //     $data['schema'] = $schema;
-    //     $data['template'] = template();
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $components = SectionService::make()->getAllSections();
+        $schema = [];
+        foreach ($components as $name => $component) {
+            if ($name == $data['design']) {
+                $schema = $component['schema'];
+                break;
+            }
+        }
+        $data['schema'] = $schema;
 
-    //     return $data;
-    // }
+        return $data;
+    }
 }

@@ -2,27 +2,39 @@
 
 namespace SmartCms\Core\Traits;
 
-use Illuminate\Support\Facades\Cache;
 use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Services\StaticCache;
 
+/**
+ * Trait HasSeo
+ *
+ * @package SmartCms\Core\Traits
+ */
 trait HasSeo
 {
-    /**
-     * Static in-memory cache for the current request only
-     */
     protected static $requestCache = [];
 
+    /**
+     * Get the SEO relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
     public function seo()
     {
         return $this->morphOne(Seo::class, 'seoable');
     }
 
+    /**
+     * Get the SEO for the current entity.
+     *
+     * @param int|null $languageId The language ID to get the SEO for.
+     * @return \SmartCms\Core\Models\Seo
+     */
     public function getSeo($languageId = null)
     {
         $languageId = $languageId ?? current_lang_id();
 
-        $namespace = self::class.'.seo';
+        $namespace = self::class . '.seo';
         $key = $this->getKey();
         if (StaticCache::has($namespace, $key)) {
             return StaticCache::get($namespace, $key);
@@ -31,57 +43,5 @@ trait HasSeo
         StaticCache::put($namespace, $key, $seo);
 
         return $seo;
-    }
-
-    public function addSeo(array $attributes)
-    {
-        // Clear any cached SEO data when adding
-        $languageId = $attributes['language_id'] ?? current_lang_id();
-        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
-
-        if (isset(static::$requestCache[$cacheKey])) {
-            unset(static::$requestCache[$cacheKey]);
-        }
-
-        return $this->seo()->create($attributes);
-    }
-
-    public function updateSeo(array $attributes)
-    {
-        // Clear any cached SEO data when updating
-        $languageId = $attributes['language_id'] ?? current_lang_id();
-        $cacheKey = 'seo_'.$this->getTable().'_'.$this->getKey().'_'.$languageId;
-
-        if (isset(static::$requestCache[$cacheKey])) {
-            unset(static::$requestCache[$cacheKey]);
-        }
-
-        return $this->seo()->update($attributes);
-    }
-
-    /**
-     * Get SEO fields for the current entity (title, description, etc.)
-     */
-    public function getSeoFields($languageId = null)
-    {
-        $seo = $this->getSeo($languageId);
-        $name = $this->name ?? $this->title ?? '';
-
-        return [
-            'title' => $seo->title ?? $name,
-            'heading' => $seo->heading ?? $name,
-            'description' => $seo->description ?? '',
-            'summary' => $seo->summary ?? '',
-            'keywords' => $seo->keywords ?? '',
-            'canonical' => $seo->canonical ?? null,
-        ];
-    }
-
-    /**
-     * Clear the entire request cache
-     */
-    public static function clearSeoCache()
-    {
-        static::$requestCache = [];
     }
 }
