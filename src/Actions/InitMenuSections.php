@@ -10,6 +10,7 @@ use SmartCms\Core\Models\Page;
 class InitMenuSections
 {
     use AsAction;
+
     public function handle()
     {
         foreach (config('menu_sections', []) as $section) {
