@@ -17,6 +17,7 @@ use Filament\Pages\Dashboard;
 use Illuminate\Contracts\Support\Htmlable;
 use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
+use SmartCms\Core\Actions\InitMenuSections;
 use SmartCms\Core\Jobs\UpdateJob;
 use SmartCms\Core\Models\Language;
 use SmartCms\Core\Services\Frontend\LayoutService;
@@ -197,8 +198,7 @@ class Settings extends BaseSettings
                 ->action(function () {
                     SectionService::make()->init();
                     LayoutService::make()->init();
-                    // $config = new Config;
-                    // $config->init();
+                    InitMenuSections::run();
                     Notification::make()
                         ->title(_actions('setup_success'))
                         ->success()
@@ -222,13 +222,12 @@ class Settings extends BaseSettings
                     $theme = array_merge($theme, config('theme', []));
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
 
-                    return $form
-                        ->schema($schema);
+                    return $form->schema($schema);
                 })->action(function (array $data): void {
                     if (! isset($data['theme'])) {
                         $data['theme'] = [];

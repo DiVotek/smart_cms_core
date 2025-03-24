@@ -60,6 +60,9 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/translates.php' => config_path('translates.php'),
         ], 'translates');
+        $this->publishes([
+            __DIR__ . '/../config/menu_sections.php' => config_path('menu_sections.php'),
+        ], 'menu_sections');
         // $this->publishes([
         //     __DIR__ . '/../config/settings.php' => config_path('settings.php'),
         // ], 'settings');

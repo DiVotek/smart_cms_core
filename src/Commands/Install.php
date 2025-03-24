@@ -34,6 +34,9 @@ class Install extends Command
         $this->call('vendor:publish', [
             '--tag' => 'translates',
         ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'menu_sections',
+        ]);
         // $this->call('vendor:publish', [
         //     '--tag' => 'settings',
         // ]);
