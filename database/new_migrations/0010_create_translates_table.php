@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('value');
             $table->unsignedBigInteger('language_id');
             $table->foreign('language_id')->references('id')->on(Language::getDb());
-            $table->morphs('translatable');
+            $table->morphs('entity');
             $table->timestamps();
         });
     }
