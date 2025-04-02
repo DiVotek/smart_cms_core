@@ -18,7 +18,7 @@ class SitemapHandler
     public function handle()
     {
         $lang = request('lang', null);
-        if (!$lang) {
+        if (! $lang) {
             return $this->renderSitemap();
         }
         app()->setLocale($lang);
@@ -66,7 +66,7 @@ class SitemapHandler
 
     public function renderSitemap()
     {
-        $content =  <<<'blade'
+        $content = <<<'blade'
             <?php
 
             header('content-type: text/xml');

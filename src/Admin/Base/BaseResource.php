@@ -3,13 +3,14 @@
 namespace SmartCms\Core\Admin\Base;
 
 use Filament\Forms\Form;
+use Filament\Pages\Page;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
-use SmartCms\Core\Traits\HasHooks;
-use Filament\Pages\Page;
-use function Filament\Support\locale_has_pluralization;
 use Illuminate\Support\Str;
+use SmartCms\Core\Traits\HasHooks;
+
+use function Filament\Support\locale_has_pluralization;
 
 abstract class BaseResource extends Resource
 {
@@ -28,7 +29,6 @@ abstract class BaseResource extends Resource
      * Define the resource group in single string
      */
     public static ?string $resourceGroup;
-
 
     abstract protected static function getFormSchema(Form $form): array;
 
@@ -155,6 +155,7 @@ abstract class BaseResource extends Resource
         }
         $label = strtolower($label);
         $label = str_replace(' ', '_', $label);
+
         return _nav($label);
     }
 

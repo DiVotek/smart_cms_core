@@ -31,8 +31,8 @@ class FieldResource extends BaseResource
         $options = [];
         $hidden = [];
         foreach (get_active_languages() as $lang) {
-            $hidden[] = Forms\Components\Hidden::make('data.' . $lang->slug . '.placeholder');
-            $hidden[] = Forms\Components\Hidden::make('data.' . $lang->slug . '.description');
+            $hidden[] = Forms\Components\Hidden::make('data.'.$lang->slug.'.placeholder');
+            $hidden[] = Forms\Components\Hidden::make('data.'.$lang->slug.'.description');
         }
 
         return [
@@ -66,14 +66,14 @@ class FieldResource extends BaseResource
                         'url' => 'Url',
                     ])->required()->native(false)->searchable(true)->live(debounce: 250),
                 Repeater::make('options')->schema($options)
-                    ->nullable()->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                    ->nullable()->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
                 Forms\Components\TextInput::make('data.placeholder')
-                    ->formatStateUsing(fn(?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
+                    ->formatStateUsing(fn (?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
                     ->label(_fields('placeholder'))
                     ->maxLength(255)
                     ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
                         foreach ($data as $key => $value) {
-                            $set('data.' . $key . '.placeholder', $value);
+                            $set('data.'.$key.'.placeholder', $value);
                         }
                     })->fillForm(function ($record) {
                         $data = [];
@@ -85,18 +85,18 @@ class FieldResource extends BaseResource
                     })->form(function ($form) {
                         $schema = [];
                         foreach (get_active_languages() as $lang) {
-                            $schema[] = TextInput::make($lang->slug)->label(_fields('placeholder') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('placeholder').' ('.$lang->name.')')->default('')->maxLength(255);
                         }
 
                         return $form->schema($schema);
                     })),
                 Forms\Components\TextInput::make('data.description')
-                    ->formatStateUsing(fn(?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
+                    ->formatStateUsing(fn (?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
                     ->label(_fields('description'))
                     ->maxLength(255)
                     ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
                         foreach ($data as $key => $value) {
-                            $set('data.' . $key . '.description', $value);
+                            $set('data.'.$key.'.description', $value);
                         }
                     })->fillForm(function ($record) {
                         $data = [];
@@ -108,7 +108,7 @@ class FieldResource extends BaseResource
                     })->form(function ($form) {
                         $schema = [];
                         foreach (get_active_languages() as $lang) {
-                            $schema[] = TextInput::make($lang->slug)->label(_fields('description') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('description').' ('.$lang->name.')')->default('')->maxLength(255);
                         }
 
                         return $form->schema($schema);

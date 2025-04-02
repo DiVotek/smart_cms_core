@@ -36,7 +36,7 @@ class GetLinks
         $menu = Menu::query()->find($id);
         if ($menu) {
             $links = $this->parseLinks($menu->value);
-            Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
+            Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
 
             return $links;
         }
@@ -60,7 +60,7 @@ class GetLinks
                 continue;
             }
             $route = null;
-            $name =  $link[current_lang()]['name'] ?? $link['name'] ?? '';
+            $name = $link[current_lang()]['name'] ?? $link['name'] ?? '';
             switch ($link['type']) {
                 case Page::class:
                     $page = Page::query()->find($link['id']);
@@ -69,7 +69,7 @@ class GetLinks
                     }
                     $isModified = $link['is_modified'] ?? 0;
                     // dd($isModified, $name, $link, $page->name());
-                    if (!$isModified) {
+                    if (! $isModified) {
                         $name = $page->name();
                     }
                     $route = $page->route();
@@ -84,7 +84,7 @@ class GetLinks
                         break;
                     }
                     $isModified = $link['is_modified'] ?? 0;
-                    if (!$isModified) {
+                    if (! $isModified) {
                         $name = $page->name();
                     }
                     $route = $page->route();

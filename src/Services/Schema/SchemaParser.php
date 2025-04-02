@@ -3,7 +3,6 @@
 namespace SmartCms\Core\Services\Schema;
 
 use Exception;
-use Illuminate\Support\Facades\Event;
 use SmartCms\Core\Actions\Template\GetLinks;
 use SmartCms\Core\Models\Form as ModelsForm;
 use SmartCms\Core\Models\Page;
@@ -93,7 +92,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/' . $fieldValue;
+                    $fieldValue = 'storage/'.$fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
