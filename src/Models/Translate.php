@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property \DateTime $created_at The date and time when the model was created.
  * @property \DateTime $updated_at The date and time when the model was last updated.
  * @property-read \SmartCms\Core\Models\Language $language The language of this translation.
- * @property-read mixed $translatable The model this translation belongs to.
+ * @property-read mixed $entity The model this translation belongs to.
  */
 class Translate extends BaseModel
 {

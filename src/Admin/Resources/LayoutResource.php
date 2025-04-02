@@ -17,7 +17,7 @@ class LayoutResource extends BaseResource
 {
     protected static ?string $model = Layout::class;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     public static string $resourceLabel = 'layout';
 

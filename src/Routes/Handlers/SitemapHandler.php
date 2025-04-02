@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Routes\Handlers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Context;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Traits\HasHooks;
@@ -16,8 +17,15 @@ class SitemapHandler
     #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function handle()
     {
+        $lang = request('lang', null);
+        if (!$lang) {
+            return $this->renderSitemap();
+        }
+        app()->setLocale($lang);
+        Context::add('current_lang', $lang);
+        app('_lang')->setCurrentLanguage($lang);
         $links = [];
-        foreach (Page::query()->where('is_index', true)->get() as $page) {
+        foreach (Page::query()->get() as $page) {
             $links[] = [
                 'link' => $page->route(),
                 'priority' => 0.7,
@@ -54,5 +62,25 @@ class SitemapHandler
                     @endforeach
             </urlset>
         blade;
+    }
+
+    public function renderSitemap()
+    {
+        $content =  <<<'blade'
+            <?php
+
+            header('content-type: text/xml');
+            echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
+            <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                @foreach(get_active_languages() as $lang)
+                <sitemap>
+                    <loc>{{ route('sitemap.lang', $lang->slug) }}</loc>
+                    <lastmod>{{ now()->toAtomString() }}</lastmod>
+                </sitemap>
+                @endforeach
+            </sitemapindex>
+        blade;
+
+        return response(Blade::render($content))->header('Content-Type', 'text/xml');
     }
 }

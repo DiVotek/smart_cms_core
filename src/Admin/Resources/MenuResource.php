@@ -28,7 +28,7 @@ class MenuResource extends BaseResource
 
     protected static ?string $model = Menu::class;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function getFormSchema(Form $form): array
     {
@@ -48,6 +48,7 @@ class MenuResource extends BaseResource
                 ->options($types)->default(Page::class)->afterStateUpdated(function (Set $set, $state) {
                     $set('name', '');
                     $set('id', '');
+                    $set('is_modified', 0);
                 }),
             Group::make(function ($get) {
                 $type = $get('type') ?? Page::class;
@@ -62,16 +63,20 @@ class MenuResource extends BaseResource
                     case Page::class:
                         return [
                             Select::make('id')->label(_fields('page'))->options(function () {
-                                return Page::query()->whereNull('parent_id')->pluck('name', 'id')->toArray();
+                                return Page::query()->where(function ($query) {
+                                    $menuSections = MenuSection::query()->where('is_categories', 1)->pluck('parent_id')->toArray();
+                                    $query->whereNull('parent_id')->orWhereIn('parent_id', $menuSections);
+                                })->pluck('name', 'id')->toArray();
                             })->reactive()->afterStateUpdated(function (Set $set, $state) {
                                 $page = Page::query()->where('id', $state)->first();
                                 if ($page) {
                                     $set('name', $page->name);
                                     $translates = Translate::query()->where('entity_id', $state)->where('entity_type', Page::class)->get();
                                     foreach ($translates as $translate) {
-                                        $set($translate->language->slug.'.name', $translate->value ?? '');
+                                        $set($translate->language->slug . '.name', $translate->value ?? '');
                                     }
                                 }
+                                $set('is_modified', 0);
                             }),
                         ];
                     case MenuSection::class:
@@ -89,6 +94,9 @@ class MenuResource extends BaseResource
                 }
             }),
             TextInput::make('name')
+                ->afterStateUpdated(function (Set $set, $state) {
+                    $set('is_modified', 1);
+                })
                 ->label(_fields('name'))->suffixActions([
                     Action::make(_fields('translates'))
                         ->hidden(function () {
@@ -97,7 +105,7 @@ class MenuResource extends BaseResource
                         ->icon(function ($get) {
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
-                                if ($get($language->slug.'.name')) {
+                                if ($get($language->slug . '.name')) {
                                     return 'heroicon-o-check-circle';
                                 }
                             }
@@ -107,7 +115,7 @@ class MenuResource extends BaseResource
                             $fields = [];
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
-                                $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                             }
 
                             return $form->schema($fields);
@@ -116,7 +124,7 @@ class MenuResource extends BaseResource
                             $languages = get_active_languages();
                             foreach ($languages as $language) {
                                 $translates[$language->slug] = [
-                                    'name' => $get($language->slug.'.name') ?? '',
+                                    'name' => $get($language->slug . '.name') ?? '',
                                 ];
                             }
 
@@ -125,9 +133,10 @@ class MenuResource extends BaseResource
                             foreach (get_active_languages() as $lang) {
                                 $name = $data[$lang->slug]['name'] ?? '';
                                 if ($name) {
-                                    $set($lang->slug.'.name', $name);
+                                    $set($lang->slug . '.name', $name);
+                                    $set('is_modified', 1);
                                 } else {
-                                    $set($lang->slug.'.name', '');
+                                    $set($lang->slug . '.name', '');
                                 }
                             }
                         }),
@@ -135,8 +144,9 @@ class MenuResource extends BaseResource
                 ->required(),
         ];
         foreach (get_active_languages() as $lang) {
-            $form[] = Hidden::make($lang->slug.'.name');
+            $form[] = Hidden::make($lang->slug . '.name');
         }
+        $form[] = Hidden::make('is_modified')->default(0);
 
         return [
             Schema::getName(),

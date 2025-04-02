@@ -42,7 +42,7 @@ class TemplateSection extends BaseModel
     public function getFields(): array
     {
         $schema = SectionService::make()->getSectionMetadata($this->design);
-        $schema = $schema['fields'];
+        $schema = $schema['fields'] ?? [];
         $fields = [];
         foreach ($schema as $field) {
             $field = ArrayToField::make($field, 'value.');

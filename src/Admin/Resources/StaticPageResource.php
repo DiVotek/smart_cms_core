@@ -23,9 +23,12 @@ use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
+use SmartCms\Core\Traits\HasHooks;
 
 class StaticPageResource extends BaseResource
 {
+    use HasHooks;
+
     protected static ?string $model = Page::class;
 
     public static ?string $resourceGroup = 'pages';
@@ -43,7 +46,12 @@ class StaticPageResource extends BaseResource
         $parentField = [
             Hidden::make('parent_id')->default($parent ? $parent->id : null),
         ];
-        $layoutField = [Select::make('layout_id')->relationship('layout', 'name')->nullable()->hidden(function ($record) {
+        $layoutField = [Select::make('layout_id')->relationship('layout', 'name', function ($query) use ($form) {
+            $query = $query->withoutGlobalScopes();
+            self::applyHook('page.layout', $query, $form->getRecord());
+
+            return $query;
+        })->nullable()->hidden(function ($record) {
             return $record->parent_id || MenuSection::query()->where('parent_id', $record->id)->exists();
         })];
         $customFields = [];
@@ -74,7 +82,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
         return [
@@ -95,7 +103,7 @@ class StaticPageResource extends BaseResource
                                 $fields = [];
                                 $languages = get_active_languages();
                                 foreach ($languages as $language) {
-                                    $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                                 }
 
                                 return $form->schema($fields);

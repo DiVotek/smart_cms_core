@@ -34,7 +34,7 @@ class PageEntityResource extends BaseResource
         return [
             'id' => $this->id,
             'name' => $name,
-            'breadcrumbs' => array_map(fn ($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
+            'breadcrumbs' => array_map(fn($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
             'heading' => $seo->heading ?? $name,
             'link' => $this->resource->route(),
             'image' => $this->validateImage($this->resource->image),
@@ -51,6 +51,7 @@ class PageEntityResource extends BaseResource
             'title' => $seo->title ?? $name,
             'meta_description' => $seo->description ?? '',
             'items' => $this->items,
+            'views' => $this->resource->views ?? 0,
         ];
     }
 

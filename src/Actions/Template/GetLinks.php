@@ -32,17 +32,17 @@ class GetLinks
         }
         $lang = current_lang_id();
 
-        return Cache::remember('menu_links_'.$lang.'_'.$id, 3600, function () use ($id) {
-            $menu = Menu::query()->find($id);
-            if ($menu) {
-                $links = $this->parseLinks($menu->value);
-                Cache::put('menu_links_'.$id, $links, 60 * 60 * 24);
+        // return Cache::remember('menu_links_' . $lang . '_' . $id, 3600, function () use ($id) {
+        $menu = Menu::query()->find($id);
+        if ($menu) {
+            $links = $this->parseLinks($menu->value);
+            Cache::put('menu_links_' . $id, $links, 60 * 60 * 24);
 
-                return $links;
-            }
+            return $links;
+        }
 
-            return [];
-        });
+        return [];
+        // });
     }
 
     /**
@@ -60,11 +60,17 @@ class GetLinks
                 continue;
             }
             $route = null;
+            $name =  $link[current_lang()]['name'] ?? $link['name'] ?? '';
             switch ($link['type']) {
                 case Page::class:
                     $page = Page::query()->find($link['id']);
                     if (! $page) {
                         break;
+                    }
+                    $isModified = $link['is_modified'] ?? 0;
+                    // dd($isModified, $name, $link, $page->name());
+                    if (!$isModified) {
+                        $name = $page->name();
                     }
                     $route = $page->route();
                     break;
@@ -76,6 +82,10 @@ class GetLinks
                     $page = Page::query()->find($menuSection->parent_id);
                     if (! $page) {
                         break;
+                    }
+                    $isModified = $link['is_modified'] ?? 0;
+                    if (!$isModified) {
+                        $name = $page->name();
                     }
                     $route = $page->route();
                     break;
@@ -92,7 +102,7 @@ class GetLinks
                 continue;
             }
             $links[] = (object) [
-                'name' => $link[current_lang()]['name'] ?? $link['name'] ?? '',
+                'name' => $name,
                 'link' => $route,
                 'active' => $currentUrl === $route,
                 'as_link' => $link['type'] !== 'text',

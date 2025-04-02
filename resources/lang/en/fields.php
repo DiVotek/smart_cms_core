@@ -118,5 +118,6 @@ return [
     'page' => 'Page',
     'url' => 'URL',
     'key' => 'Key',
+    'layout' => 'Layout',
 
 ];

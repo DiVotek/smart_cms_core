@@ -26,14 +26,19 @@ class ContactFormResource extends BaseResource
 
     public static string $resourceLabel = 'contact_form';
 
-    public static ?string $resourceGroup = 'communication';
+    public static ?string $resourceGroup = null;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function getFormSchema(Form $form): array
     {
         return [
             Select::make('status')
                 ->label(_fields('status'))
-                ->options(fn () => ContactForm::getStatuses()),
+                ->options(fn() => ContactForm::getStatuses()),
             KeyValue::make('data')
                 ->label(_fields('user_data'))
                 ->addable(false)->deletable(false)->label(null)->editableKeys(false),
@@ -46,14 +51,14 @@ class ContactFormResource extends BaseResource
         $fields = Field::query()->pluck('name', 'id')->toArray();
         $columns = [];
         foreach ($fields as $field) {
-            $columns[] = Tables\Columns\TextColumn::make('data.'.$field)->label($field)->toggleable()->toggledHiddenByDefault()->sortable()->copyable();
+            $columns[] = Tables\Columns\TextColumn::make('data.' . $field)->label($field)->toggleable()->toggledHiddenByDefault()->sortable()->copyable();
         }
 
         return [
             TextColumn::make('form.name')->label(_columns('form')),
             SelectColumn::make('status')
                 ->label(_columns('status'))
-                ->options(fn () => ContactForm::getStatuses()),
+                ->options(fn() => ContactForm::getStatuses()),
             ...$columns,
             TableSchema::getUpdatedAt(),
             TableSchema::getCreatedAt(),
@@ -65,10 +70,10 @@ class ContactFormResource extends BaseResource
         return [
             SelectFilter::make('status')
                 ->label(_columns('status'))
-                ->options(fn () => ContactForm::getStatuses()),
+                ->options(fn() => ContactForm::getStatuses()),
             SelectFilter::make('form_id')
                 ->label(_columns('form'))
-                ->options(fn () => ModelsForm::query()->pluck('name', 'id')->toArray()),
+                ->options(fn() => ModelsForm::query()->pluck('name', 'id')->toArray()),
         ];
     }
 

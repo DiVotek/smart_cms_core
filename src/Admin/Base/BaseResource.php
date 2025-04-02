@@ -7,12 +7,17 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use SmartCms\Core\Traits\HasHooks;
+use Filament\Pages\Page;
+use function Filament\Support\locale_has_pluralization;
+use Illuminate\Support\Str;
 
 abstract class BaseResource extends Resource
 {
     use HasHooks;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+
+    protected static bool $canBulkDelete = true;
 
     /**
      * Define the resource label in single string
@@ -23,6 +28,7 @@ abstract class BaseResource extends Resource
      * Define the resource group in single string
      */
     public static ?string $resourceGroup;
+
 
     abstract protected static function getFormSchema(Form $form): array;
 
@@ -35,7 +41,7 @@ abstract class BaseResource extends Resource
         return [];
     }
 
-    protected static function getResourceSubNavigation($page): array
+    protected static function getResourceSubNavigation(Page $page): array
     {
         return [];
     }
@@ -117,7 +123,7 @@ abstract class BaseResource extends Resource
 
         return [
             \Filament\Tables\Actions\BulkActionGroup::make([
-                \Filament\Tables\Actions\DeleteBulkAction::make(),
+                ...(static::$canBulkDelete ? [\Filament\Tables\Actions\DeleteBulkAction::make()] : []),
                 ...$bulkActions,
             ]),
         ];
@@ -133,7 +139,7 @@ abstract class BaseResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::query()->withoutGlobalScopes()->count();
     }
 
     public static function getModelLabel(): string
@@ -143,15 +149,21 @@ abstract class BaseResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return _nav(static::$resourceLabel.'s');
+        $label = static::getModelLabel();
+        if (locale_has_pluralization()) {
+            $label = Str::plural(static::getModelLabel());
+        }
+        $label = strtolower($label);
+        $label = str_replace(' ', '_', $label);
+        return _nav($label);
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return _nav(static::$resourceGroup);
+        return static::$resourceGroup ? _nav(static::$resourceGroup) : null;
     }
 
-    public static function getRecordSubNavigation($page): array
+    public static function getRecordSubNavigation(Page $page): array
     {
         $subNavigation = static::getResourceSubNavigation($page);
         $subNavigation = static::applyHook('sub_navigation', $subNavigation);

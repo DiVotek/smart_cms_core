@@ -41,7 +41,6 @@ class LayoutService
         }
 
         $sectionFile = resource_path("views/layouts/{$sectionName}.blade.php");
-
         if (File::exists($sectionFile)) {
             $content = File::get($sectionFile);
 
@@ -61,7 +60,7 @@ class LayoutService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: '.$e->getMessage());
+                Log::error('Failed to parse section metadata: ' . $e->getMessage());
             }
         }
 
@@ -147,7 +146,7 @@ class LayoutService
                 ]);
             } else {
                 Layout::query()->create([
-                    'name' => $section['name'],
+                    'name' => ucfirst($section['name']),
                     'path' => $section['path'],
                     'schema' => $section['schema'] ?? [],
                     'value' => [],

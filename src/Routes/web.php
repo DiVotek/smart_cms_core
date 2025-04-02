@@ -10,6 +10,7 @@ use SmartCms\Core\Routes\NotificationController;
 
 Route::get('robots.txt', RobotsHandler::class)->name('robots');
 Route::get('sitemap.xml', SitemapHandler::class)->name('sitemap');
+Route::get('sitemap/{lang?}.xml', SitemapHandler::class)->name('sitemap.lang');
 Route::get('/{lang?}/{slug?}/{second_slug?}/{third_slug?}', PageHandler::class)
     ->where('slug', '^(?!admin|api|login|register|dashboard|glide|_debugbar|.well-known).*$')
     ->where('lang', '[a-zA-Z]{2}')

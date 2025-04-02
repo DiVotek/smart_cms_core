@@ -20,6 +20,7 @@ class PageResource extends BaseResource
             'updated_at' => $this->transformDate($this->updated_at),
             'custom' => (object) $custom_fields,
             'parent' => $this->resource->parent_id ? PageResource::make($this->resource->getCachedParent())->get() : null,
+            'views' => $this->resource->views ?? 0,
         ];
 
         return $data;

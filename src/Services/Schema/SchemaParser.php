@@ -42,7 +42,6 @@ class SchemaParser
                     $this->parse();
                 } else {
                     $this->applyHook('parse', $this);
-                    Event::dispatch('cms.admin.schema.parse', $this);
                 }
             } catch (Exception $e) {
                 if (config('app.debug')) {
@@ -94,7 +93,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);

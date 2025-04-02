@@ -27,7 +27,7 @@ class Heading extends Component
         if (isset($options['use_page_name']) && $options['use_page_name']) {
             $entity = Context::get('entity');
             if ($entity) {
-                $title = $entity->name();
+                $title = $entity->name;
             }
         }
         $size = $options['heading_size'] ?? 'text-md';

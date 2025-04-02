@@ -43,4 +43,8 @@ return [
     'menu_section_settings' => 'Menu Section Settings',
     'layout_settings' => 'Layout Settings',
     'settings' => 'Settings',
+    'modules' => 'Modules',
+    'sections' => 'Sections',
+    'menus' => 'Menus',
+    'translations' => 'Translations',
 ];

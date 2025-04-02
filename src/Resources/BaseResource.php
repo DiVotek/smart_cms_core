@@ -13,6 +13,19 @@ abstract class BaseResource extends JsonResource
 {
     use HasHooks;
 
+    protected $context = [];
+
+    public function __construct($resource, $context = [])
+    {
+        parent::__construct($resource);
+        $this->context = $context;
+    }
+
+    public function context(string $key, $default = null)
+    {
+        return $this->context[$key] ?? $default;
+    }
+
     /**
      * Applies the data hooks to the data.
      *
