@@ -14,7 +14,8 @@ class Builder extends Component
 
     public function __construct(array $data = [])
     {
-        $this->template = $data;
+        $this->template = self::$methodCache['template'] ?? [];
+        // $this->template = $data;
     }
 
     public function render(): View|Closure|string

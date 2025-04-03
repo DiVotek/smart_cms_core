@@ -219,10 +219,10 @@ class Settings extends BaseSettings
                 })
                 ->form(function ($form) {
                     $theme = _settings('theme', []);
-                    $theme = array_merge($theme, config('theme', []));
+                    $theme = array_merge(config('theme', []), $theme);
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }

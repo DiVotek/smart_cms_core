@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('html_id')->nullable();
             $table->string('class')->nullable();
             // Removed style field which was in old migration
-            $table->json('fields')->default('[]');
+            $table->json('fields')->nullable();
             $table->json('button')->nullable();
             $table->json('notification')->nullable();
             // Removed is_send_email field which was in old migration

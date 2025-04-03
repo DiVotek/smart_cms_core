@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\Component;
 use SmartCms\Core\Actions\Template\BuildTemplate;
+use SmartCms\Core\Components\Layout\Builder;
 use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Resources\PageEntityResource;
 
@@ -39,7 +40,7 @@ class PageComponent extends Component
         $this->resource = $resource;
         Context::add('entity', $this->resource);
         $breadcrumbs = $this->resource->breadcrumbs ?? [];
-        $this->breadcrumbs = array_map(fn ($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
+        $this->breadcrumbs = array_map(fn($breadcrumb) => (array) $breadcrumb, $breadcrumbs);
         $this->title = $this->resource->title ?? $this->resource->name;
         $this->meta_description = $this->resource->meta_description ?? '';
         $this->meta_keywords = $seo->meta_keywords ?? '';
@@ -48,6 +49,7 @@ class PageComponent extends Component
             'value',
         ])->get()->toArray();
         $this->template = BuildTemplate::run($temp);
+        Builder::$methodCache['template'] = $this->template;
         if (method_exists($entity, 'view')) {
             $entity->view();
         }
@@ -87,7 +89,7 @@ class PageComponent extends Component
                 @if($layout)
                 @include('layouts.'.$layout->path, [...$layout->getVariables($resource->layout_settings ?? []),'entity' => $resource])
                 @endif
-                <x-s::layout.builder :data="$template" />
+                <x-s::layout.builder />
                 @endsection
             </x-s::layout.layout>
         blade;
