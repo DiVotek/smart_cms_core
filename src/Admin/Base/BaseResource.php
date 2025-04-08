@@ -103,7 +103,7 @@ abstract class BaseResource extends Resource
         $actions = static::applyHook('table_actions', $actions);
 
         return [
-            \Filament\Tables\Actions\EditAction::make()->modalWidth(MaxWidth::Medium),
+            \Filament\Tables\Actions\EditAction::make()->modalWidth(MaxWidth::Large),
             \Filament\Tables\Actions\DeleteAction::make(),
             ...$actions,
         ];
