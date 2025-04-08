@@ -221,7 +221,7 @@ class Schema
             ->hidden(function () {
                 return ! is_multi_lang();
             })
-            ->modalWidth(MaxWidth::Large)
+            ->modalWidth(MaxWidth::ExtraLarge)
             ->badge(function ($record) {
                 return $record->translatable()->count();
             })

@@ -19,7 +19,7 @@ class ListForms extends BaseListRecords
         return [
             Actions\Action::make('_create')
                 ->create()
-                ->modalWidth(MaxWidth::Large)
+                ->modalWidth(MaxWidth::ExtraLarge)
                 ->form(function (Form $form) {
                     return $form->schema([
                         Schema::getName(true),

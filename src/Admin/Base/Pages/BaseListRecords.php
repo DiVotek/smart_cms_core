@@ -34,7 +34,7 @@ abstract class BaseListRecords extends ListRecords
 
         return [
             Actions\Action::make('help')
-                ->modalWidth(MaxWidth::Large)
+                ->modalWidth(MaxWidth::ExtraLarge)
                 ->help(_hints('help.'.$shortClassName))
                 ->modalFooterActions([]),
             ...$actions,

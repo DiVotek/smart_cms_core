@@ -30,7 +30,7 @@ abstract class BaseManageRecords extends ManageRecords
         return [
             Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
             ...$actions,
-            Actions\CreateAction::make()->modalWidth(MaxWidth::Large),
+            Actions\CreateAction::make()->modalWidth(MaxWidth::ExtraLarge),
         ];
     }
 }

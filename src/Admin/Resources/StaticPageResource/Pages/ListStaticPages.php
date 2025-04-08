@@ -112,7 +112,7 @@ class ListStaticPages extends BaseListRecords
                 ->hidden(function () {
                     return $this->menuSection;
                 })
-                ->modalWidth(MaxWidth::Large)
+                ->modalWidth(MaxWidth::ExtraLarge)
                 ->form(function ($form) {
                     return $form->schema([
                         Schema::getReactiveName()->live(onBlur: true)->afterStateUpdated(function ($state, $set) {
@@ -137,7 +137,7 @@ class ListStaticPages extends BaseListRecords
             Actions\Action::make($this->actionName)
                 ->create()
                 ->label($this->actionName)
-                ->modalWidth(MaxWidth::Large)
+                ->modalWidth(MaxWidth::ExtraLarge)
                 ->form(function ($form) {
                     if ($this->menuSection) {
                         if ($this->isCategories) {
