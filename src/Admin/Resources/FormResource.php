@@ -92,7 +92,7 @@ class FormResource extends BaseResource
                                         $set('data.'.$key.'.button', $value);
                                     }
                                 })
-                                ->modalWidth(MaxWidth::ExtraLarge)
+                                ->modalWidth(MaxWidth::TwoExtraLarge)
                                 ->fillForm(function ($record) {
                                     $data = [];
                                     foreach (get_active_languages() as $lang) {
@@ -130,7 +130,7 @@ class FormResource extends BaseResource
                                         foreach ($data as $key => $value) {
                                             $set('data.'.$key.'.notification', $value);
                                         }
-                                    })->modalWidth(MaxWidth::ExtraLarge)
+                                    })->modalWidth(MaxWidth::TwoExtraLarge)
                                     ->fillForm(function ($record) {
                                         $data = [];
                                         foreach (get_active_languages() as $lang) {

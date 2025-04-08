@@ -13,6 +13,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Table;
 use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
@@ -52,6 +53,7 @@ class TemplateSectionResource extends BaseResource
                                 ->mountUsing(function ($form, $get) {
                                     $form->fill(['design' => $get('design')]);
                                 })
+                                ->modalWidth(MaxWidth::TwoExtraLarge)
                                 ->form(function ($form) use ($components) {
                                     return $form->schema([
                                         Tabs::make()->schema([
@@ -121,17 +123,17 @@ class TemplateSectionResource extends BaseResource
                 ])->columnSpan(['lg' => 2]),
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make()
+                        Forms\Components\Section::make()->hiddenOn('create')
                             ->schema([
                                 Forms\Components\Placeholder::make('created_at')
                                     ->inlineLabel()
                                     ->label('Created at')
-                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->inlineLabel()
                                     ->label('Last modified at')
-                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus(),
                             ])->columns(1),
                     ])->columnSpan(['lg' => 1]),
