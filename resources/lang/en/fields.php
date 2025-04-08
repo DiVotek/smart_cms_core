@@ -119,5 +119,14 @@ return [
     'url' => 'URL',
     'key' => 'Key',
     'layout' => 'Layout',
-
+    'phone_number' => 'Phone number',
+    'email' => 'Email',
+    'emails' => 'Emails',
+    'branch_name' => 'Branch name',
+    'addresses' => 'Addresses',
+    'front_languages' => 'Front languages',
+    'section_is_empty' => 'Section is empty',
+    'section_is_empty_content' => 'Section is empty or not selected.',
+    'fields' => 'Fields',
+    'option' => 'Option',
 ];

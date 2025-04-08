@@ -62,4 +62,17 @@ class Languages
 
         return $this;
     }
+
+    public function getFrontLanguages(): Collection
+    {
+        $ids = _settings('front_languages', []);
+        $ids[] = main_lang_id();
+
+        return $this->languages->whereIn('id', $ids)->values();
+    }
+
+    public function isFrontAvailable(string $slug): bool
+    {
+        return $this->getFrontLanguages()->where('slug', $slug)->count() > 0;
+    }
 }

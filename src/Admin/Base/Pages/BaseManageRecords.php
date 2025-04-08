@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Base\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\MaxWidth;
 use SmartCms\Core\Traits\HasHooks;
 
 abstract class BaseManageRecords extends ManageRecords
@@ -27,9 +28,9 @@ abstract class BaseManageRecords extends ManageRecords
         $actions = $this->applyHook('header_actions', $actions);
 
         return [
-            Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
+            Actions\Action::make('help')->help(_hints('help.' . $shortClassName))->modalFooterActions([]),
             ...$actions,
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->modalWidth(MaxWidth::Medium),
         ];
     }
 }

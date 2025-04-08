@@ -12,6 +12,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use SmartCms\Core\Admin\Resources\SeoResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\MenuSection;
+use SmartCms\Core\Models\Page;
+use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;
 
@@ -24,6 +26,12 @@ class EditSeo extends ManageRelatedRecords
     public static function getNavigationLabel(): string
     {
         return _nav('seo');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $pageId = request()->route('record', 0);
+        return Page::query()->find($pageId)?->seo()->count() ?? 0;
     }
 
     public static function getNavigationIcon(): string|Htmlable|null
@@ -70,6 +78,10 @@ class EditSeo extends ManageRelatedRecords
             ->modifyQueryUsing(function ($query) {
                 if (! is_multi_lang()) {
                     $query->where('language_id', main_lang_id());
+                } else {
+                    $ids = [main_lang_id()];
+                    $ids = array_merge($ids, _settings('additional_languages', []));
+                    $query->whereIn('language_id', $ids)->orderByRaw('FIELD(language_id, ' . implode(',', $ids) . ')');
                 }
             })
             ->columns($columns)
@@ -89,7 +101,7 @@ class EditSeo extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -104,7 +116,7 @@ class EditSeo extends ManageRelatedRecords
                         if ($menuSection) {
                             $name = $menuSection->name;
                             if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name.'Categories';
+                                $name = $menuSection->name . 'Categories';
                             }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,

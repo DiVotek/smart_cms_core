@@ -99,6 +99,11 @@ class Page extends BaseModel
         });
     }
 
+    public function templates()
+    {
+        return $this->morphMany(Template::class, 'entity');
+    }
+
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');

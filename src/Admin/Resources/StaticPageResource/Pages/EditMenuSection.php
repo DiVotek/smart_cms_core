@@ -36,18 +36,19 @@ class EditMenuSection extends BaseEditRecord
             Section::make('')->schema([
                 Schema::getName(),
                 Schema::getSorting(),
-                Select::make('categories_layout_id')
-                    ->label(_fields('categories_layout'))
-                    ->disabled()->options(Layout::query()->pluck('name', 'id')->toArray()),
+            ])->columns(2),
+            Section::make('')->schema([
                 Select::make('items_layout_id')
                     ->label(_fields('items_layout'))
-                    ->disabled()->options(Layout::query()->pluck('name', 'id')->toArray()),
-                Toggle::make('is_categories')->label(_fields('is_categories'))->disabled(),
-                Schema::getTemplateBuilder('categories_template')->label(_fields('categories_template'))->hidden(function ($get) {
-                    return ! $get('is_categories');
-                }),
-                Schema::getTemplateBuilder('items_template')->label(_fields('items_template')),
+                    ->options(Layout::query()->where('path', 'like', '%groups.items.%')->pluck('name', 'id')->toArray()),
+                Schema::getTemplateBuilder('template')->label(_fields('items_template')),
             ]),
+            Section::make('')->schema([
+                Select::make('categories_layout_id')
+                    ->label(_fields('categories_layout'))
+                    ->options(Layout::query()->where('path', 'like', '%groups.categories.%')->pluck('name', 'id')->toArray()),
+                Schema::getTemplateBuilder('categories_template')->label(_fields('categories_template'))
+            ])->hidden(fn($get) => ! $get('is_categories')),
         ])->columns(1);
     }
 
@@ -63,7 +64,7 @@ class EditMenuSection extends BaseEditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit').' '.$section->name;
+            return _actions('edit') . ' ' . $section->name;
         } else {
             return parent::getHeading();
         }
@@ -74,6 +75,23 @@ class EditMenuSection extends BaseEditRecord
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
 
         return [
+            \Filament\Actions\Action::make('delete_menu_section')->label(_actions('delete'))->icon('heroicon-o-trash')
+                ->color('danger')
+                // ->disabled(function ($record) {
+                //     $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
+                //     return Page::query()->where('parent_id', $section->parent_id)->exists();
+                // })
+                ->requiresConfirmation()
+                ->action(function ($record) {
+                    $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
+                    if (Page::query()->where('parent_id', $section->parent_id)->exists()) {
+                        Notification::make()->title(_actions('you_cant_delete_menu_section_with_items'))->danger()->send();
+                    } else {
+                        Page::query()->where('parent_id', $section->parent_id)->delete();
+                        $section->delete();
+                        Notification::make()->title(_actions('success'))->success()->send();
+                    }
+                }),
             \Filament\Actions\Action::make('transfer')->label(_actions('transfer'))->icon('heroicon-o-arrows-right-left')
                 ->color('danger')
                 ->form(function ($form) use ($section) {
@@ -91,7 +109,7 @@ class EditMenuSection extends BaseEditRecord
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

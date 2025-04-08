@@ -2,6 +2,8 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
+use Filament\Actions\Action as FilamentActionsAction;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -9,10 +11,12 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
@@ -24,16 +28,25 @@ use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
 use SmartCms\Core\Traits\HasHooks;
+use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
 
 class StaticPageResource extends BaseResource
 {
     use HasHooks;
 
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
     protected static ?string $model = Page::class;
 
-    public static ?string $resourceGroup = 'pages';
+    public static ?string $resourceGroup = null;
 
     public static string $resourceLabel = 'model_page';
+
+    public static function getNavigationIcon(): string|Htmlable|null
+    {
+        return 'heroicon-m-book-open';
+    }
 
     public static function canCreate(): bool
     {
@@ -43,23 +56,73 @@ class StaticPageResource extends BaseResource
     public static function getFormSchema(Form $form): array
     {
         $parent = $form->getRecord()->parent;
-        $parentField = [
-            Hidden::make('parent_id')->default($parent ? $parent->id : null),
-        ];
-        $layoutField = [Select::make('layout_id')->relationship('layout', 'name', function ($query) use ($form) {
-            $query = $query->withoutGlobalScopes();
-            self::applyHook('page.layout', $query, $form->getRecord());
+        $parentField = [];
+        $layoutField = [
+            Select::make('layout_id')
+                ->suffixActions([
+                    Actions\Action::make('reset_template')->icon('heroicon-o-arrow-path')
+                        ->action(function () use ($form) {
+                            $form->getRecord()->update([
+                                'layout_settings' => null,
+                            ]);
+                        })
+                        ->requiresConfirmation()
+                        ->hidden(function () use ($form) {
+                            return $form->getRecord()->layout_id === null || $form->getRecord()->layout_settings == null;
+                        }),
+                    Actions\Action::make('template')->icon('heroicon-o-cog')
+                        ->fillForm(function () use ($form) {
+                            $record = $form->getRecord();
+                            if ($record->layout_settings) {
+                                return ['layout_settings' => $record->layout_settings];
+                            }
 
-            return $query;
-        })->nullable()->hidden(function ($record) {
-            return $record->parent_id || MenuSection::query()->where('parent_id', $record->id)->exists();
-        })];
+                            return ['layout_settings' => $record->layout?->value ?? []];
+                        })
+                        ->form(function () use ($form) {
+                            $schema = $form->getRecord()->getLayoutSettingsForm();
+                            $schema[] = Placeholder::make('layout_settings_placeholder')
+                                ->hiddenLabel()
+                                ->content(_actions('empty_layout_settings'))
+                                ->visible(count($schema) === 0);
+                            return $schema;
+                        })
+                        ->action(function ($data) use ($form) {
+                            $record = $form->getRecord();
+                            if ($record->layout && $record->layout->value == $data['layout_settings']) {
+                                return $record;
+                            }
+
+                            $record->update([
+                                'layout_settings' => $data['layout_settings'] ?? [],
+                            ]);
+                        })
+                ])
+                ->relationship('layout', 'name', function ($query) use ($form) {
+                    $query = $query->withoutGlobalScopes();
+                    $cloned = $query->clone();
+                    self::applyHook('page.layout', $cloned, $form->getRecord());
+                    if ($cloned != $query) {
+                        return $cloned;
+                    } else {
+                        if (MenuSection::query()->where('parent_id', $form->getRecord()->id)->exists()) {
+                            return $query->where('path', 'like', '%sections.%')
+                                ->whereRaw("path NOT REGEXP '\\\..*\\\.'");
+                        }
+                        if (!$form->getRecord()->parent_id) {
+                            return $query->where('path', 'like', '%pages.%');
+                        }
+                    }
+                    return $query;
+                })->nullable()->disabled(function ($record) {
+                    return $record->parent_id;
+                }),
+        ];
         $customFields = [];
 
         if ($parent) {
             $section = MenuSection::query()->where('parent_id', $parent->parent_id ?? $parent->id)->first();
             if ($section) {
-                $layoutField = [];
                 if ($parent->parent_id && $section->parent_id == $parent->parent_id) {
                     $parentField = [Select::make('parent_id')->options(Page::query()->where('parent_id', $parent->parent_id)->pluck('name', 'id'))->required()];
                 }
@@ -82,71 +145,51 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
         return [
-            Section::make()
-                ->schema([
-                    Schema::getReactiveName()->suffixActions([
-                        ActionsAction::make(_fields('translates'))
-                            ->hidden(function () {
-                                return ! is_multi_lang();
-                            })
-                            ->icon(function ($record) {
-                                if ($record->translatable()->count() > 0) {
-                                    return 'heroicon-o-check-circle';
-                                }
+            Forms\Components\Group::make([
+                Forms\Components\Group::make([
+                    Forms\Components\Section::make()
+                        ->schema([
+                            Schema::getReactiveName()->suffixActions([
+                                Schema::getTranslateAction()
+                            ]),
+                            Schema::getSlug(Page::getDb(), $isRequired)->helperText(''),
+                        ])->columns(2),
+                    Forms\Components\Section::make(_fields('images'))->schema([
+                        Schema::getImage(path: $imagePath),
+                        Schema::getImage(name: 'banner', path: $imagePath),
+                    ])->collapsible(),
+                    Forms\Components\Section::make()->schema([...$layoutField]),
+                ])->columnSpan(['lg' => 2]),
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\Placeholder::make('created_at')
+                                    ->label('Created at')
+                                    ->inlineLabel()
+                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
 
-                                return 'heroicon-o-exclamation-circle';
-                            })->form(function ($form) {
-                                $fields = [];
-                                $languages = get_active_languages();
-                                foreach ($languages as $language) {
-                                    $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
-                                }
-
-                                return $form->schema($fields);
-                            })->fillForm(function ($record) {
-                                $translates = [];
-                                $languages = get_active_languages();
-                                foreach ($languages as $language) {
-                                    $translates[$language->slug] = [
-                                        'name' => $record->translatable()->where('language_id', $language->id)->first()->value ?? '',
-                                    ];
-                                }
-
-                                return $translates;
-                            })->action(function ($record, $data) {
-                                foreach (get_active_languages() as $lang) {
-                                    $name = $data[$lang->slug]['name'] ?? '';
-                                    if ($name == '') {
-                                        Translate::query()->where([
-                                            'language_id' => $lang->id,
-                                            'entity_id' => $record->id,
-                                            'entity_type' => Page::class,
-                                        ])->delete();
-
-                                        continue;
-                                    }
-                                    Translate::query()->updateOrCreate([
-                                        'language_id' => $lang->id,
-                                        'entity_id' => $record->id,
-                                        'entity_type' => Page::class,
-                                    ], ['value' => $name]);
-                                }
-                                Notification::make()->success()->title(_actions('saved'))->send();
-                            }),
-                    ]),
-                    Schema::getSlug(Page::getDb(), $isRequired),
-                    Schema::getStatus(),
-                    Schema::getSorting(),
-                    Schema::getImage(path: $imagePath),
-                    Schema::getImage(name: 'banner', path: $imagePath),
-                    ...$parentField,
-                    ...$layoutField,
-                    ...$customFields,
-                ]),
+                                Forms\Components\Placeholder::make('updated_at')
+                                    ->label('Last modified at')
+                                    ->translateLabel()
+                                    ->inlineLabel()
+                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
+                                Schema::getStatus()->hidden(function ($record) {
+                                    return $record->slug == '';
+                                }),
+                            ])->columns(1),
+                        Forms\Components\Section::make()->schema([
+                            Schema::getSorting()->hidden(),
+                            ...$parentField,
+                        ])->hidden(function () use ($parentField) {
+                            return count($parentField) == 0;
+                        }),
+                    ])->columnSpan(['lg' => 1]),
+            ])->columns(3),
         ];
     }
 
@@ -208,7 +251,6 @@ class StaticPageResource extends BaseResource
             'seo' => Pages\EditSeo::route('/{record}/seo'),
             'template' => Pages\EditTemplate::route('/{record}/template'),
             'menu' => Pages\EditMenuSection::route('/{record}/menu'),
-            'layout-settings' => Pages\EditLayoutSettings::route('/{record}/layout-settings'),
         ];
     }
 
@@ -219,7 +261,7 @@ class StaticPageResource extends BaseResource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return true;
     }
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
@@ -233,7 +275,6 @@ class StaticPageResource extends BaseResource
             Pages\EditStaticPage::class,
             Pages\EditSeo::class,
             Pages\EditTemplate::class,
-            Pages\EditLayoutSettings::class,
         ];
         $section = MenuSection::query()->where('parent_id', $page->record->id)->first();
         if ($section) {

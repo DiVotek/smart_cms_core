@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use SmartCms\Core\Traits\HasHooks;
@@ -16,7 +17,7 @@ abstract class BaseResource extends Resource
 {
     use HasHooks;
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static bool $canBulkDelete = true;
 
@@ -102,7 +103,7 @@ abstract class BaseResource extends Resource
         $actions = static::applyHook('table_actions', $actions);
 
         return [
-            \Filament\Tables\Actions\EditAction::make(),
+            \Filament\Tables\Actions\EditAction::make()->modalWidth(MaxWidth::Medium),
             \Filament\Tables\Actions\DeleteAction::make(),
             ...$actions,
         ];

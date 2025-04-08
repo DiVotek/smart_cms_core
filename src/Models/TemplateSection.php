@@ -52,4 +52,9 @@ class TemplateSection extends BaseModel
 
         return $fields;
     }
+
+    public function templates()
+    {
+        return $this->hasMany(Template::class);
+    }
 }

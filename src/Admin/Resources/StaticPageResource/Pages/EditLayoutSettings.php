@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,11 @@ class EditLayoutSettings extends BaseEditRecord
 
     public function form(Form $form): Form
     {
+        $schema = $this->record->getLayoutSettingsForm();
+        $schema[] =  Placeholder::make('layout_settings_placeholder')
+            ->hiddenLabel()
+            ->content(_actions('empty_layout_settings'))
+            ->visible(count($schema) === 0);
         return $form
             ->schema([
                 Section::make(_fields('layout_settings'))
@@ -35,9 +41,9 @@ class EditLayoutSettings extends BaseEditRecord
                                 $this->form->fill();
                             })->requiresConfirmation(),
                     ])
-                    ->schema($this->record->getLayoutSettingsForm())
+                    ->schema($schema)
                     ->columns(1)
-                    ->visible(fn () => $this->record->layout_id !== null),
+                    ->visible(fn() => $this->record->layout_id !== null),
             ]);
     }
 
@@ -45,7 +51,7 @@ class EditLayoutSettings extends BaseEditRecord
     {
         return [
             Actions\ViewAction::make()
-                ->url(fn () => $this->record->route())
+                ->url(fn() => $this->record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

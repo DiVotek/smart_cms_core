@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\Page;
@@ -28,6 +29,9 @@ class PageHandler
             $this->limit++;
             $lang = $request->lang;
             array_shift($segments);
+        }
+        if (! app('_lang')->isFrontAvailable($lang)) {
+            return redirect()->route(Route::currentRouteName(), array_merge($segments, ['lang' => main_lang()]));
         }
         $this->setLanguage($lang);
         if ($this->limit < count($segments)) {

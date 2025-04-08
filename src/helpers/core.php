@@ -3,45 +3,34 @@
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/'._settings('branding.logo', '');
+        return '/' . _settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
     function phones(): array
     {
-        $setting = _settings('company_info', []);
-        $phones = [];
-        foreach ($setting as $branch) {
-            if (! isset($branch['phones'])) {
-                continue;
-            }
-            foreach ($branch['phones'] as $phone) {
-                if (! isset($phone['value'])) {
-                    continue;
-                }
-                $phones[] = $phone['value'];
-            }
-        }
-
-        return $phones;
+        $setting = _settings('company_info.phones', []);
+        return array_map(function ($item) {
+            return $item['value'];
+        }, $setting);
     }
 }
 if (! function_exists('email')) {
     function email(): string
     {
-        $setting = _settings('company_info', []);
+        $setting = _settings('company_info.emails', []);
         $setting = $setting[0] ?? [];
 
-        return $setting['email'] ?? '';
+        return $setting['value'] ?? '';
     }
 }
 if (! function_exists('emails')) {
     function emails(): array
     {
-        $setting = _settings('company_info', []);
+        $setting = _settings('company_info.emails', []);
 
         return array_map(function ($item) {
-            return $item['email'];
+            return $item['value'];
         }, $setting);
     }
 }
@@ -76,10 +65,10 @@ if (! function_exists('company_name')) {
 if (! function_exists('addresses')) {
     function addresses(): array
     {
-        $setting = _settings('company_info', []);
+        $setting = _settings('company_info.addresses', []);
 
         return array_filter(array_map(function ($item) {
-            return $item['address'] ?? '';
+            return $item['default'] ?? '';
         }, $setting));
     }
 }
@@ -135,9 +124,9 @@ if (! function_exists('validateImage')) {
     {
         if (! str_contains($image, 'storage')) {
             if (! str_starts_with($image, '/')) {
-                $image = '/'.$image;
+                $image = '/' . $image;
             }
-            $image = asset('storage'.$image);
+            $image = asset('storage' . $image);
         }
 
         return $image;

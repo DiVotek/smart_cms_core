@@ -4,8 +4,10 @@ namespace SmartCms\Core\Admin\Pages\Settings;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -20,6 +22,7 @@ use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Actions\InitMenuSections;
 use SmartCms\Core\Jobs\UpdateJob;
 use SmartCms\Core\Models\Language;
+use SmartCms\Core\Models\Seo;
 use SmartCms\Core\Services\Frontend\LayoutService;
 use SmartCms\Core\Services\Frontend\SectionService;
 use SmartCms\Core\Services\Schema;
@@ -56,6 +59,11 @@ class Settings extends BaseSettings
 
     public function schema(): array|Closure
     {
+        $addressSchema = [];
+        foreach (get_active_languages() as $language) {
+            $addressSchema[] = Hidden::make($language->slug)
+                ->label($language->name);
+        }
         return [
             Tabs::make('Settings')
                 ->schema([
@@ -73,6 +81,16 @@ class Settings extends BaseSettings
                         Select::make(sconfig('additional_languages'))
                             ->label(_fields('additional_languages'))
                             ->options(Language::query()->pluck('name', 'id')->toArray())
+                            ->multiple()
+                            ->live()
+                            ->required()->hidden(function ($get) {
+                                return ! $get(sconfig('is_multi_lang'));
+                            }),
+                        Select::make(sconfig('front_languages'))
+                            ->label(_fields('front_languages'))
+                            ->options(function ($get) {
+                                return Language::query()->whereIn('id', $get(sconfig('additional_languages', [])))->pluck('name', 'id')->toArray();
+                            })
                             ->multiple()
                             ->required()->hidden(function ($get) {
                                 return ! $get(sconfig('is_multi_lang'));
@@ -101,24 +119,45 @@ class Settings extends BaseSettings
                         ]),
                     Tabs\Tab::make(strans('admin.company_info'))
                         ->schema([
-                            Repeater::make(sconfig('company_info'))->label(_fields('company_info'))
+                            Repeater::make(sconfig('company_info.phones'))->label(_fields('phones'))
                                 ->schema([
-                                    TextInput::make('name')
+                                    PhoneInput::make('value')
+                                        ->label(strans('admin.phone_number'))
+                                        ->validateFor(type: PhoneNumberType::MOBILE)
+                                        ->required(),
+                                ]),
+                            Repeater::make(sconfig('company_info.emails'))->label(_fields('emails'))
+                                ->schema([
+                                    TextInput::make('value')
+                                        ->email()
+                                        ->label(_fields('email'))
+                                        ->required(),
+                                ]),
+                            Repeater::make(sconfig('company_info.addresses'))->label(_fields('addresses'))
+                                ->schema([
+                                    ...$addressSchema,
+                                    TextInput::make('default')
                                         ->label(_fields('branch_name'))
-                                        ->required(),
-                                    TextInput::make('address')
-                                        ->required(),
-                                    TextInput::make('coordinates'),
-                                    TextInput::make('city'),
-                                    TextInput::make('country'),
-                                    TextInput::make('schedule'),
-                                    TextInput::make('email')->required(),
-                                    Schema::getRepeater('phones')->schema([
-                                        PhoneInput::make('value')
-                                            ->label(strans('admin.phone_number'))
-                                            ->validateFor(type: PhoneNumberType::MOBILE)
-                                            ->required(),
-                                    ]),
+                                        ->required()->suffixAction(ActionsAction::make('translate')->icon('heroicon-o-language')
+                                            ->fillForm(function ($get) {
+                                                $values = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $values[$language->slug] = $get($language->slug);
+                                                }
+                                                return $values;
+                                            })
+                                            ->form(function ($form) {
+                                                $schema = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $schema[] = TextInput::make($language->slug)
+                                                        ->label($language->name);
+                                                }
+                                                return $form->schema($schema);
+                                            })->action(function ($data, $set) {
+                                                foreach ($data as $key => $value) {
+                                                    $set($key, $value);
+                                                }
+                                            })),
                                 ]),
                         ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
@@ -222,7 +261,7 @@ class Settings extends BaseSettings
                     $theme = array_merge(config('theme', []), $theme);
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -240,6 +279,9 @@ class Settings extends BaseSettings
                 ->icon('heroicon-m-arrow-up-on-square')
                 ->tooltip(_actions('update'))
                 ->label(_actions('update'))
+                ->disabled(function () {
+                    return (float) \Composer\InstalledVersions::getPrettyVersion('smart-cms/core') <= (float) _settings('version', 0);
+                })
                 ->iconic()
                 ->requiresConfirmation()->action(function () {
                     UpdateJob::dispatch();
@@ -254,6 +296,21 @@ class Settings extends BaseSettings
                 ->action(function () {
                     $this->save();
                 }),
+            Action::make('cancel')
+                ->color('gray')
+                ->label(_actions('cancel'))
+                ->url(fn() => self::getUrl()),
         ];
+    }
+
+    public function beforeSave()
+    {
+        $state = $this->form->getState();
+        $mainLang = $state[sconfig('main_language')];
+        if ($mainLang != main_lang_id() && !is_multi_lang()) {
+            Seo::query()->where('language_id', main_lang_id())->update([
+                'language_id' => $mainLang,
+            ]);
+        }
     }
 }

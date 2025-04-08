@@ -6,6 +6,7 @@ use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Support\Enums\MaxWidth;
 use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\FieldResource;
 use SmartCms\Core\Models\Field;
@@ -20,6 +21,7 @@ class ListFields extends BaseListRecords
         return [
             Actions\Action::make('_create')
                 ->create()
+                ->modalWidth(MaxWidth::Medium)
                 ->form(function (Form $form) {
                     return $form->schema([
                         Schema::getName(true),
@@ -47,7 +49,7 @@ class ListFields extends BaseListRecords
                         'name' => $data['name'],
                         'type' => $data['type'] ?? 'text',
                         'required' => $data['is_required'] ?? false,
-                        'html_id' => \Illuminate\Support\Str::slug($data['name']).'_'.\Illuminate\Support\Str::random(5),
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
                     ]);
                 }),
         ];

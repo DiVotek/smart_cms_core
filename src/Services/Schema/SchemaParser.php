@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Services\Schema;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use SmartCms\Core\Actions\Template\GetLinks;
 use SmartCms\Core\Models\Form as ModelsForm;
 use SmartCms\Core\Models\Page;
@@ -43,10 +44,7 @@ class SchemaParser
                     $this->applyHook('parse', $this);
                 }
             } catch (Exception $e) {
-                if (config('app.debug')) {
-                    // Log::error($e->getMessage(), $this->field, $this->values, $e->getTrace());
-                    dd($e->getMessage(), $this->field, $this->values, $e->getTrace(), get_defined_vars(), $this->fields, $this->values);
-                }
+                Log::emergency($e->getMessage(), $this->field, $this->values, $e->getTrace());
             }
         }
 
@@ -92,7 +90,7 @@ class SchemaParser
                     break;
                 }
                 if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
+                    $fieldValue = 'storage/' . $fieldValue;
                 }
                 $value = asset($fieldValue);
                 $value = preg_replace('#(?<!:)//+#', '/', $value);
@@ -199,11 +197,12 @@ class SchemaParser
                     $value = '';
                     break;
                 }
-                if (! isset(addresses()[$fieldValue])) {
+                $addresses = _settings('company_info.addresses', []);
+                if (! isset($addresses[$fieldValue])) {
                     $value = '';
-                } else {
-                    $value = addresses()[$fieldValue];
+                    break;
                 }
+                $value = $addresses[$fieldValue][current_lang()] ?? $addresses[$fieldValue]['default'] ?? '';
                 break;
             case 'addresses':
                 if (! is_array($fieldValue)) {
@@ -218,31 +217,6 @@ class SchemaParser
                     $value = $addresses;
                 }
                 break;
-            case 'schedule':
-                if (! is_string($fieldValue)) {
-                    $value = '';
-                    break;
-                }
-                if (! isset(schedules()[$fieldValue])) {
-                    $value = '';
-                } else {
-                    $value = schedules()[$fieldValue];
-                }
-                break;
-            case 'schedules':
-                if (! is_array($fieldValue)) {
-                    $value = [];
-                    break;
-                }
-                $value = [];
-                foreach ($fieldValue as $schedule) {
-                    if (! isset(schedules()[$schedule])) {
-                        continue;
-                    }
-                    $value[] = schedules()[$schedule];
-                }
-                break;
-
             case 'menu':
                 if (! is_string($fieldValue)) {
                     $value = [];

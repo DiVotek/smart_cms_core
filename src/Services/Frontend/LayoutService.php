@@ -34,6 +34,7 @@ class LayoutService
 
     public function getSectionMetadata(string $sectionName): ?array
     {
+        $sectionName = str_replace('.', '/', $sectionName);
         $metaFile = resource_path("views/layouts/meta/{$sectionName}.php");
 
         if (File::exists($metaFile)) {
@@ -60,7 +61,7 @@ class LayoutService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: '.$e->getMessage());
+                Log::error('Failed to parse section metadata: ' . $e->getMessage());
             }
         }
 

@@ -7,17 +7,26 @@ fi-sidebar-item-button {
     padding-bottom: 5px;
 }
 
-.fi-page.fi-resource-list-records-page.fi-resource-static-pages
-    nav[role="tablist"] {
+.fi-page.fi-resource-list-records-page.fi-resource-static-pages nav[role="tablist"] {
     display: none;
 }
 
 .fi-page-sub-navigation-sidebar-ctn {
     width: 13rem !important;
 }
+
 .fi-sidebar-nav {
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
+
 .-m-4-i {
     margin-left: .5rem !important;
-  }
+}
+
+.fi-sidebar-nav-groups {
+    row-gap: 0.3rem !important;
+}
+
+.fi-tabs[role="tablist"] {
+    margin: 0;
+}

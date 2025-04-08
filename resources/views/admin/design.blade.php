@@ -5,7 +5,7 @@
         $statePath = $getStatePath();
     @endphp
 
-    <ul role="list" class="grid gap-8 xl:grid-cols-4 lg:grid-cols-3">
+    <ul role="list" class="grid gap-8 grid-cols-1 md:grid-cols-3">
         @foreach ($options as $value)
             <li class="overflow-hidden">
                 <label class="relative">

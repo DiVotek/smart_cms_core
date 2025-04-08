@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Base\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 use SmartCms\Core\Traits\HasHooks;
 
 abstract class BaseListRecords extends ListRecords
@@ -32,7 +33,10 @@ abstract class BaseListRecords extends ListRecords
         $actions = $this->applyHook('header_actions', $actions);
 
         return [
-            Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
+            Actions\Action::make('help')
+                ->modalWidth(MaxWidth::Medium)
+                ->help(_hints('help.' . $shortClassName))
+                ->modalFooterActions([]),
             ...$actions,
             Actions\CreateAction::make()->visible(static::$showCreate),
         ];

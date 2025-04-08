@@ -28,97 +28,178 @@ class FieldResource extends BaseResource
 
     public static function getFormSchema(Form $form): array
     {
-        $options = [];
+        $options = [
+            Forms\Components\TextInput::make('default')
+                ->label(_fields('option'))
+                ->maxLength(255)
+                ->suffixAction(Action::make('translate')
+                    ->badge(function ($get) {
+                        $counter = 0;
+                        foreach (get_active_languages() as $lang) {
+                            $placeholder = $get($lang->slug) ?? null;
+                            if ($placeholder && strlen($placeholder) > 0) {
+                                $counter++;
+                            }
+                        }
+                        return $counter;
+                    })
+                    ->icon('heroicon-m-language')->action(function ($data, $set) {
+                        foreach ($data as $key => $value) {
+                            $set($key, $value);
+                        }
+                    })->fillForm(function ($get) {
+                        $data = [];
+                        foreach (get_active_languages() as $lang) {
+                            $data[$lang->slug] = $get($lang->slug) ?? '';
+                        }
+
+                        return $data;
+                    })->form(function ($form) {
+                        $schema = [];
+                        foreach (get_active_languages() as $lang) {
+                            $schema[] = TextInput::make($lang->slug)->label(_fields('option') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                        }
+
+                        return $form->schema($schema);
+                    })),
+        ];
         $hidden = [];
         foreach (get_active_languages() as $lang) {
-            $hidden[] = Forms\Components\Hidden::make('data.'.$lang->slug.'.placeholder');
-            $hidden[] = Forms\Components\Hidden::make('data.'.$lang->slug.'.description');
+            $hidden[] = Forms\Components\Hidden::make('data.' . $lang->slug . '.placeholder');
+            $hidden[] = Forms\Components\Hidden::make('data.' . $lang->slug . '.description');
+            $options[] = Forms\Components\Hidden::make($lang->slug);
         }
-
         return [
-            ...$hidden,
-            Section::make('')->schema([
-                Schema::getReactiveName()->suffixActions([
-                    Schema::getTranslateAction(),
-                ])->live(debounce: 1500)->afterStateUpdated(function ($state, $set, $get) {
-                    $placeholder = $get('data.placeholder');
-                    $description = $get('data.description');
-                    if (str_contains($state, $placeholder)) {
-                        $set('data.placeholder', $state);
-                    }
-                    if (str_contains($state, $description)) {
-                        $set('data.description', $state);
-                    }
-                }),
-                Forms\Components\Select::make('type')
-                    ->label(_fields('field_type'))
-                    ->options([
-                        'text' => 'Text',
-                        'textarea' => 'Textarea',
-                        'select' => 'Select',
-                        'radio' => 'Radio',
-                        'checkbox' => 'Checkbox',
-                        'file' => 'File',
-                        'date' => 'Date',
-                        'email' => 'Email',
-                        'number' => 'Number',
-                        'tel' => 'Tel',
-                        'url' => 'Url',
-                    ])->required()->native(false)->searchable(true)->live(debounce: 250),
-                Repeater::make('options')->schema($options)
-                    ->nullable()->hidden(fn ($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
-                Forms\Components\TextInput::make('data.placeholder')
-                    ->formatStateUsing(fn (?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
-                    ->label(_fields('placeholder'))
-                    ->maxLength(255)
-                    ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
-                        foreach ($data as $key => $value) {
-                            $set('data.'.$key.'.placeholder', $value);
-                        }
-                    })->fillForm(function ($record) {
-                        $data = [];
-                        foreach (get_active_languages() as $lang) {
-                            $data[$lang->slug] = $record->data[$lang->slug]['placeholder'] ?? '';
-                        }
+            Forms\Components\Group::make([
+                ...$hidden,
+                Forms\Components\Group::make([
+                    Forms\Components\Section::make()
+                        ->schema([
+                            Schema::getReactiveName()->suffixActions([
+                                Schema::getTranslateAction(),
+                            ])->live(onBlur: true)->afterStateUpdated(function ($state, $set, $get) {
+                                $placeholder = $get('data.placeholder');
+                                $description = $get('data.description');
+                                if (str_contains($state, $placeholder)) {
+                                    $set('data.placeholder', $state);
+                                }
+                                if (str_contains($state, $description)) {
+                                    $set('data.description', $state);
+                                }
+                            }),
+                            Forms\Components\Select::make('type')
+                                ->label(_fields('field_type'))
+                                ->options([
+                                    'text' => 'Text',
+                                    'textarea' => 'Textarea',
+                                    'select' => 'Select',
+                                    'radio' => 'Radio',
+                                    'checkbox' => 'Checkbox',
+                                    'file' => 'File',
+                                    'date' => 'Date',
+                                    'email' => 'Email',
+                                    'number' => 'Number',
+                                    'tel' => 'Tel',
+                                    'url' => 'Url',
+                                ])->required()->native(false)->searchable(true)->live(debounce: 250),
+                        ])->columns(2),
+                    Forms\Components\Section::make(_fields('options'))->schema([
+                        Repeater::make('data.options')->schema($options)
+                            ->nullable()
+                    ])->hidden(fn($get) => ! in_array($get('type'), ['select', 'radio', 'checkbox'])),
+                    Forms\Components\Section::make()->schema([
+                        Forms\Components\TextInput::make('data.placeholder')
+                            ->formatStateUsing(fn(?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
+                            ->label(_fields('placeholder'))
+                            ->maxLength(255)
+                            ->suffixAction(Action::make('translate')
+                                ->badge(function ($get) {
+                                    $counter = 0;
+                                    foreach (get_active_languages() as $lang) {
+                                        $placeholder = $get('data.' . $lang->slug . '.placeholder') ?? null;
+                                        if ($placeholder && strlen($placeholder) > 0) {
+                                            $counter++;
+                                        }
+                                    }
+                                    return $counter;
+                                })
+                                ->icon('heroicon-m-language')->action(function ($data, $set) {
+                                    foreach ($data as $key => $value) {
+                                        $set('data.' . $key . '.placeholder', $value);
+                                    }
+                                })->fillForm(function ($get) {
+                                    $data = [];
+                                    foreach (get_active_languages() as $lang) {
+                                        $data[$lang->slug] = $get('data.' . $lang->slug . '.placeholder') ?? '';
+                                    }
 
-                        return $data;
-                    })->form(function ($form) {
-                        $schema = [];
-                        foreach (get_active_languages() as $lang) {
-                            $schema[] = TextInput::make($lang->slug)->label(_fields('placeholder').' ('.$lang->name.')')->default('')->maxLength(255);
-                        }
+                                    return $data;
+                                })->form(function ($form) {
+                                    $schema = [];
+                                    foreach (get_active_languages() as $lang) {
+                                        $schema[] = TextInput::make($lang->slug)->label(_fields('placeholder') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                                    }
 
-                        return $form->schema($schema);
-                    })),
-                Forms\Components\TextInput::make('data.description')
-                    ->formatStateUsing(fn (?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
-                    ->label(_fields('description'))
-                    ->maxLength(255)
-                    ->suffixAction(Action::make('translate')->icon('heroicon-m-language')->action(function ($data, $set) {
-                        foreach ($data as $key => $value) {
-                            $set('data.'.$key.'.description', $value);
-                        }
-                    })->fillForm(function ($record) {
-                        $data = [];
-                        foreach (get_active_languages() as $lang) {
-                            $data[$lang->slug] = $record->data[$lang->slug]['description'] ?? '';
-                        }
+                                    return $form->schema($schema);
+                                })),
+                        Forms\Components\TextInput::make('data.description')
+                            ->formatStateUsing(fn(?string $state, $record): string => blank($state) ? $record->name ?? '' : $state)
+                            ->label(_fields('description'))
+                            ->maxLength(255)
+                            ->suffixAction(
+                                Action::make('translate')
+                                    ->badge(function ($get) {
+                                        $counter = 0;
+                                        foreach (get_active_languages() as $lang) {
+                                            $desc = $get('data.' . $lang->slug . '.description') ?? null;
+                                            if ($desc && strlen($desc) > 0) {
+                                                $counter++;
+                                            }
+                                        }
+                                        return $counter;
+                                    })
+                                    ->icon('heroicon-m-language')->action(function ($data, $set) {
+                                        foreach ($data as $key => $value) {
+                                            $set('data.' . $key . '.description', $value);
+                                        }
+                                    })->fillForm(function ($get) {
+                                        $data = [];
+                                        foreach (get_active_languages() as $lang) {
+                                            $data[$lang->slug] = $get('data.' . $lang->slug . '.description') ?? '';
+                                        }
 
-                        return $data;
-                    })->form(function ($form) {
-                        $schema = [];
-                        foreach (get_active_languages() as $lang) {
-                            $schema[] = TextInput::make($lang->slug)->label(_fields('description').' ('.$lang->name.')')->default('')->maxLength(255);
-                        }
+                                        return $data;
+                                    })->form(function ($form) {
+                                        $schema = [];
+                                        foreach (get_active_languages() as $lang) {
+                                            $schema[] = TextInput::make($lang->slug)->label(_fields('description') . ' (' . $lang->name . ')')->default('')->maxLength(255);
+                                        }
 
-                        return $form->schema($schema);
-                    })),
-                Forms\Components\TextInput::make('data.mask')
-                    ->label(_fields('mask'))
-                    ->maxLength(255),
-                // Forms\Components\TextInput::make('validation')
-                //     ->label(_fields('validation')),
-            ]),
+                                        return $form->schema($schema);
+                                    })
+                            ),
+                        Forms\Components\TextInput::make('data.mask')
+                            ->label(_fields('mask'))
+                            ->maxLength(255),
+                    ]),
+                ])->columnSpan(['lg' => 2]),
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\Placeholder::make('created_at')
+                                    ->label('Created at')
+                                    ->inlineLabel()
+                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
+
+                                Forms\Components\Placeholder::make('updated_at')
+                                    ->label('Last modified at')
+                                    ->translateLabel()
+                                    ->inlineLabel()
+                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
+                            ])->columns(1),
+                    ])->columnSpan(['lg' => 1]),
+            ])->columns(3),
         ];
     }
 

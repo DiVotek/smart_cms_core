@@ -59,6 +59,7 @@ use SmartCms\Core\Admin\Resources\TranslationResource;
 use SmartCms\Core\Admin\Widgets\TopContactForms;
 use SmartCms\Core\Admin\Widgets\TopStaticPages;
 use SmartCms\Core\Middlewares\NoIndex;
+use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Singletone\Languages;
@@ -154,16 +155,16 @@ class SmartCmsPanelManager extends PanelProvider
         Filament::serving(function () {
             $menuSections = MenuSection::query()->get();
             $items = [
-                NavigationItem::make(_nav('pages'))->sort(1)
-                    ->url(StaticPageResource::getUrl('index'))
-                    ->group(_nav('pages'))
-                    ->isActiveWhen(function () {
-                        return request()->route()->getName() === ListStaticPages::getRouteName() &&
-                            (! request('activeTab') || request('activeTab') == 'all');
-                    })->badge(function () use ($menuSections) {
-                        return Page::query()->whereNull('parent_id')->whereNotIn('id', $menuSections->pluck('id')->toArray())
-                            ->count();
-                    }),
+                // NavigationItem::make(_nav('pages'))->sort(1)
+                //     ->url(StaticPageResource::getUrl('index'))
+                //     ->group(_nav('pages'))
+                //     ->isActiveWhen(function () {
+                //         return request()->route()->getName() === ListStaticPages::getRouteName() &&
+                //             (! request('activeTab') || request('activeTab') == 'all');
+                //     })->badge(function () use ($menuSections) {
+                //         return Page::query()->whereNull('parent_id')->whereNotIn('id', $menuSections->pluck('id')->toArray())
+                //             ->count();
+                //     }),
             ];
             foreach ($menuSections as $section) {
                 $items[] = NavigationItem::make(_nav('items'))
@@ -175,14 +176,14 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
-                $items[] = NavigationItem::make($section->name.' '._nav('settings'))->sort($section->sorting + 3)
+                $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)
                     ->url(StaticPageResource::getUrl('edit', ['record' => $section->parent_id]))
                     ->isActiveWhen(function () use ($section) {
                         $route = request()->route()->getName();
@@ -234,10 +235,10 @@ class SmartCmsPanelManager extends PanelProvider
                 'name' => 'communication',
                 'icon' => 'heroicon-m-megaphone',
             ],
-            [
-                'name' => 'pages',
-                'icon' => 'heroicon-m-book-open',
-            ],
+            // [
+            //     'name' => 'pages',
+            //     'icon' => 'heroicon-m-book-open',
+            // ],
             [
                 'name' => 'menu_sections',
                 'icon' => 'heroicon-m-book-open',
@@ -280,22 +281,25 @@ class SmartCmsPanelManager extends PanelProvider
         Filament::registerRenderHook(
             PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER,
             function (): string {
-                return <<<'HTML'
+                $version = \Composer\InstalledVersions::getPrettyVersion('smart-cms/core');
+                return <<<HTML
                 <div class="text-xs text-center text-gray-500">
-                    <p>Powered by <a href="https://s-cms.dev" target="_blank" class="hover:text-gray-700">SmartCms</a></p>
+                    <p>Powered by <a href="https://s-cms.dev" target="_blank" class="hover:text-gray-700">SmartCms</a> v.{$version}</p>
                 </div>
                 HTML;
             }
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
         );
         Filament::registerRenderHook(
             PanelsRenderHook::GLOBAL_SEARCH_AFTER,
             function (): string {
                 return Action::make('contact_form')
-                    ->label(_nav('contact_forms'))
+                    ->label(_nav('inbox'))
+                    ->badge(ContactForm::query()->where('status', 'New')->count())
+                    ->badgeColor('gray')
                     ->icon('heroicon-o-envelope')
                     ->outlined()
                     ->size('sm')

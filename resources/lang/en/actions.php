@@ -27,7 +27,7 @@ return [
     'saved' => 'Saved!',
     'create_from_tpl' => 'Create from template',
     'setup' => 'Setup',
-    'translate' => null,
+    'translate' => 'Translate',
     'setup_success' => 'Setup was successful!',
     'reset' => 'Reset',
     'success' => 'Success',
@@ -47,4 +47,8 @@ return [
     'update_schema' => 'Update schema',
     'update_translates' => 'Update translates',
     'updated_translates' => 'Translates was updated!',
+    'cancel' => 'Cancel',
+    'empty_layout_settings' => 'Settings are empty for this layout.',
+    'menu_section_created' => 'Menu section created successfully!',
+    'you_cant_delete_menu_section_with_items' => 'You can\'t delete menu section with items!',
 ];

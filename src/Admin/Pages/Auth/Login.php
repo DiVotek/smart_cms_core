@@ -84,8 +84,11 @@ class Login extends AuthLogin
     protected function checkVersion()
     {
         $url = 'https://api.github.com/repos/DiVotek/smart_cms_core/releases/latest';
-        $response = Http::get($url);
-
+        try {
+            $response = Http::timeout(5)->get($url);
+        } catch (\Exception $e) {
+            return;
+        }
         if ($response->successful()) {
             $release = $response->json();
             $version = $release['tag_name'];

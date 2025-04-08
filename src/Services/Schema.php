@@ -13,6 +13,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Schmeits\FilamentCharacterCounter\Forms\Components\RichEditor;
@@ -220,17 +221,24 @@ class Schema
             ->hidden(function () {
                 return ! is_multi_lang();
             })
-            ->icon(function ($record) {
+            ->modalWidth(MaxWidth::Medium)
+            ->badge(function ($record) {
+                return $record->translatable()->count();
+            })
+            ->color(function ($record) {
                 if ($record->translatable()->count() > 0) {
-                    return 'heroicon-o-check-circle';
+                    return 'info';
                 }
 
-                return 'heroicon-o-exclamation-circle';
+                return 'danger';
+            })
+            ->icon(function ($record) {
+                return 'heroicon-o-language';
             })->form(function ($form) {
                 $fields = [];
                 $languages = get_active_languages();
                 foreach ($languages as $language) {
-                    $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                 }
 
                 return $form->schema($fields);

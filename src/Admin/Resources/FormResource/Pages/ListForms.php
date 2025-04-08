@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Resources\FormResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Support\Enums\MaxWidth;
 use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\FormResource;
 use SmartCms\Core\Models\Form as ModelsForm;
@@ -18,6 +19,7 @@ class ListForms extends BaseListRecords
         return [
             Actions\Action::make('_create')
                 ->create()
+                ->modalWidth(MaxWidth::Medium)
                 ->form(function (Form $form) {
                     return $form->schema([
                         Schema::getName(true),
