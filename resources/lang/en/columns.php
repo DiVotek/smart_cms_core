@@ -23,4 +23,5 @@ return [
     'form_name' => 'Form Name',
     'required' => 'Required',
     'image' => 'Image',
+    'type' => 'Type',
 ];

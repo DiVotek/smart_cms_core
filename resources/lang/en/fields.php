@@ -129,4 +129,5 @@ return [
     'section_is_empty_content' => 'Section is empty or not selected.',
     'fields' => 'Fields',
     'option' => 'Option',
+    'images' => 'Images',
 ];
