@@ -35,6 +35,11 @@ class Settings extends BaseSettings
         return _nav('system');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return _nav('settings');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return 8;
@@ -140,27 +145,27 @@ class Settings extends BaseSettings
                                     TextInput::make('default')
                                         ->label(_fields('branch_name'))
                                         ->required()->suffixAction(ActionsAction::make('translate')->icon('heroicon-o-language')
-                                        ->fillForm(function ($get) {
-                                            $values = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $values[$language->slug] = $get($language->slug);
-                                            }
+                                            ->fillForm(function ($get) {
+                                                $values = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $values[$language->slug] = $get($language->slug);
+                                                }
 
-                                            return $values;
-                                        })
-                                        ->form(function ($form) {
-                                            $schema = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $schema[] = TextInput::make($language->slug)
-                                                    ->label($language->name);
-                                            }
+                                                return $values;
+                                            })
+                                            ->form(function ($form) {
+                                                $schema = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $schema[] = TextInput::make($language->slug)
+                                                        ->label($language->name);
+                                                }
 
-                                            return $form->schema($schema);
-                                        })->action(function ($data, $set) {
-                                            foreach ($data as $key => $value) {
-                                                $set($key, $value);
-                                            }
-                                        })),
+                                                return $form->schema($schema);
+                                            })->action(function ($data, $set) {
+                                                foreach ($data as $key => $value) {
+                                                    $set($key, $value);
+                                                }
+                                            })),
                                 ]),
                         ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
@@ -264,7 +269,7 @@ class Settings extends BaseSettings
                     $theme = array_merge(config('theme', []), $theme);
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -302,7 +307,7 @@ class Settings extends BaseSettings
             Action::make('cancel')
                 ->color('gray')
                 ->label(_actions('cancel'))
-                ->url(fn () => self::getUrl()),
+                ->url(fn() => self::getUrl()),
         ];
     }
 

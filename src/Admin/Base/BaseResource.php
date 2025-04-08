@@ -150,9 +150,9 @@ abstract class BaseResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        $label = static::getModelLabel();
+        $label = static::$resourceLabel;
         if (locale_has_pluralization()) {
-            $label = Str::plural(static::getModelLabel());
+            $label = Str::plural(static::$resourceLabel);
         }
         $label = strtolower($label);
         $label = str_replace(' ', '_', $label);

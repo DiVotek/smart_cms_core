@@ -63,13 +63,13 @@ class AdminResource extends BaseResource
     {
         return [
             Tables\Columns\TextColumn::make('username')
-                ->label(_columns('username'))
+                ->label(_fields('username'))
                 ->searchable(),
             Tables\Columns\TextColumn::make('email')
-                ->label(_columns('email'))
+                ->label(_fields('email'))
                 ->searchable(),
             Tables\Columns\TextColumn::make('created_at')
-                ->label(_columns('created_at'))
+                ->label(_fields('created_at'))
                 ->dateTime()
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),

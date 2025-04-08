@@ -12,7 +12,7 @@ class TableSchema
     public static function getCreatedAt(): TextColumn
     {
         return TextColumn::make('created_at')
-            ->label(_columns('created_at'))
+            ->label(_fields('created_at'))
             ->since()
             ->toggleable()
             ->sortable();
@@ -21,7 +21,7 @@ class TableSchema
     public static function getUpdatedAt(): TextColumn
     {
         return TextColumn::make('updated_at')
-            ->label(_columns('updated_at'))
+            ->label(_fields('updated_at'))
             ->since()
             ->toggleable()
             ->sortable();

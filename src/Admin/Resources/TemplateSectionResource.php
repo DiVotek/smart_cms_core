@@ -127,12 +127,12 @@ class TemplateSectionResource extends BaseResource
                             ->schema([
                                 Forms\Components\Placeholder::make('created_at')
                                     ->inlineLabel()
-                                    ->label('Created at')
+                                    ->label(_fields('created_at'))
                                     ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->inlineLabel()
-                                    ->label('Last modified at')
+                                    ->label(_fields('updated_at'))
                                     ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus(),
                             ])->columns(1),
