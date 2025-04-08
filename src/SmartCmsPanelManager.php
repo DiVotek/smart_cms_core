@@ -176,11 +176,11 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
                 $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)
@@ -282,6 +282,7 @@ class SmartCmsPanelManager extends PanelProvider
             PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER,
             function (): string {
                 $version = \Composer\InstalledVersions::getPrettyVersion('smart-cms/core');
+
                 return <<<HTML
                 <div class="text-xs text-center text-gray-500">
                     <p>Powered by <a href="https://s-cms.dev" target="_blank" class="hover:text-gray-700">SmartCms</a> v.{$version}</p>
@@ -291,7 +292,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
         );
         Filament::registerRenderHook(
             PanelsRenderHook::GLOBAL_SEARCH_AFTER,

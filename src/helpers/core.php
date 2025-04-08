@@ -3,13 +3,14 @@
 if (! function_exists('logo')) {
     function logo(): string
     {
-        return '/' . _settings('branding.logo', '');
+        return '/'._settings('branding.logo', '');
     }
 }
 if (! function_exists('phones')) {
     function phones(): array
     {
         $setting = _settings('company_info.phones', []);
+
         return array_map(function ($item) {
             return $item['value'];
         }, $setting);
@@ -124,9 +125,9 @@ if (! function_exists('validateImage')) {
     {
         if (! str_contains($image, 'storage')) {
             if (! str_starts_with($image, '/')) {
-                $image = '/' . $image;
+                $image = '/'.$image;
             }
-            $image = asset('storage' . $image);
+            $image = asset('storage'.$image);
         }
 
         return $image;

@@ -23,10 +23,11 @@ class EditLayoutSettings extends BaseEditRecord
     public function form(Form $form): Form
     {
         $schema = $this->record->getLayoutSettingsForm();
-        $schema[] =  Placeholder::make('layout_settings_placeholder')
+        $schema[] = Placeholder::make('layout_settings_placeholder')
             ->hiddenLabel()
             ->content(_actions('empty_layout_settings'))
             ->visible(count($schema) === 0);
+
         return $form
             ->schema([
                 Section::make(_fields('layout_settings'))
@@ -43,7 +44,7 @@ class EditLayoutSettings extends BaseEditRecord
                     ])
                     ->schema($schema)
                     ->columns(1)
-                    ->visible(fn() => $this->record->layout_id !== null),
+                    ->visible(fn () => $this->record->layout_id !== null),
             ]);
     }
 
@@ -51,7 +52,7 @@ class EditLayoutSettings extends BaseEditRecord
     {
         return [
             Actions\ViewAction::make()
-                ->url(fn() => $this->record->route())
+                ->url(fn () => $this->record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

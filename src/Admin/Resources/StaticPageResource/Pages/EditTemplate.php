@@ -36,9 +36,11 @@ class EditTemplate extends ManageRelatedRecords
     {
         return 'heroicon-m-light-bulb';
     }
+
     public static function getNavigationBadge(): ?string
     {
         $pageId = request()->route('record', 0);
+
         return Page::query()->find($pageId)?->template()->count() ?? 0;
     }
 
@@ -147,7 +149,7 @@ class EditTemplate extends ManageRelatedRecords
                     } else {
                         $newSection = $section->replicate();
                         $newSection->value = $data['value'];
-                        $newSection->name .= ' - ' . $this->record->name;
+                        $newSection->name .= ' - '.$this->record->name;
                         $newSection->save();
                         $record->template_section_id = $newSection->id;
                         $record->save();
@@ -208,7 +210,7 @@ class EditTemplate extends ManageRelatedRecords
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -223,7 +225,7 @@ class EditTemplate extends ManageRelatedRecords
                         if ($menuSection) {
                             $name = $menuSection->name;
                             if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name . 'Categories';
+                                $name = $menuSection->name.'Categories';
                             }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,

@@ -2,15 +2,11 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
-use Filament\Actions\Action as FilamentActionsAction;
+use Filament\Forms;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as ActionsAction;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
@@ -22,14 +18,11 @@ use SmartCms\Core\Admin\Base\BaseResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\Translate;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder as SchemaBuilder;
 use SmartCms\Core\Services\TableSchema;
 use SmartCms\Core\Traits\HasHooks;
-use Filament\Forms;
-use Filament\Forms\Components\Placeholder;
 
 class StaticPageResource extends BaseResource
 {
@@ -85,6 +78,7 @@ class StaticPageResource extends BaseResource
                                 ->hiddenLabel()
                                 ->content(_actions('empty_layout_settings'))
                                 ->visible(count($schema) === 0);
+
                             return $schema;
                         })
                         ->action(function ($data) use ($form) {
@@ -96,7 +90,7 @@ class StaticPageResource extends BaseResource
                             $record->update([
                                 'layout_settings' => $data['layout_settings'] ?? [],
                             ]);
-                        })
+                        }),
                 ])
                 ->relationship('layout', 'name', function ($query) use ($form) {
                     $query = $query->withoutGlobalScopes();
@@ -109,10 +103,11 @@ class StaticPageResource extends BaseResource
                             return $query->where('path', 'like', '%sections.%')
                                 ->whereRaw("path NOT REGEXP '\\\..*\\\.'");
                         }
-                        if (!$form->getRecord()->parent_id) {
+                        if (! $form->getRecord()->parent_id) {
                             return $query->where('path', 'like', '%pages.%');
                         }
                     }
+
                     return $query;
                 })->nullable()->disabled(function ($record) {
                     return $record->parent_id;
@@ -145,7 +140,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/' . $form->getRecord()->slug;
+            $imagePath = 'pages/'.$form->getRecord()->slug;
         }
 
         return [
@@ -154,7 +149,7 @@ class StaticPageResource extends BaseResource
                     Forms\Components\Section::make()
                         ->schema([
                             Schema::getReactiveName()->suffixActions([
-                                Schema::getTranslateAction()
+                                Schema::getTranslateAction(),
                             ]),
                             Schema::getSlug(Page::getDb(), $isRequired)->helperText(''),
                         ])->columns(2),
@@ -171,13 +166,13 @@ class StaticPageResource extends BaseResource
                                 Forms\Components\Placeholder::make('created_at')
                                     ->label('Created at')
                                     ->inlineLabel()
-                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->label('Last modified at')
                                     ->translateLabel()
                                     ->inlineLabel()
-                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus()->hidden(function ($record) {
                                     return $record->slug == '';
                                 }),

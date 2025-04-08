@@ -15,7 +15,7 @@ class MakeLayout extends Command
     /**
      * Get the layouts directory and create it if it doesn't exist
      *
-     * @param string $subDir Optional subdirectory path
+     * @param  string  $subDir  Optional subdirectory path
      * @return string The full path to the directory
      */
     protected function getLayoutDirectory(string $subDir = ''): string
@@ -23,11 +23,11 @@ class MakeLayout extends Command
         $basePath = resource_path('views/layouts');
         $fullPath = $basePath;
 
-        if (!empty($subDir)) {
-            $fullPath = $basePath . '/' . trim($subDir, '/');
+        if (! empty($subDir)) {
+            $fullPath = $basePath.'/'.trim($subDir, '/');
         }
 
-        if (!File::exists($fullPath)) {
+        if (! File::exists($fullPath)) {
             File::makeDirectory($fullPath, 0755, true);
             $this->info("Created directory: {$fullPath}");
         }
@@ -53,10 +53,11 @@ class MakeLayout extends Command
 
         // Get or create the directory
         $directory = $this->getLayoutDirectory($dirPart);
-        $path = $directory . '/' . $layoutName . '.blade.php';
+        $path = $directory.'/'.$layoutName.'.blade.php';
 
         if (File::exists($path)) {
             $this->info('Layout already exists');
+
             return;
         }
 

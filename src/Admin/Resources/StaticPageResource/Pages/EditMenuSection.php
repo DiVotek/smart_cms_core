@@ -4,7 +4,6 @@ namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Support\Htmlable;
@@ -47,8 +46,8 @@ class EditMenuSection extends BaseEditRecord
                 Select::make('categories_layout_id')
                     ->label(_fields('categories_layout'))
                     ->options(Layout::query()->where('path', 'like', '%groups.categories.%')->pluck('name', 'id')->toArray()),
-                Schema::getTemplateBuilder('categories_template')->label(_fields('categories_template'))
-            ])->hidden(fn($get) => ! $get('is_categories')),
+                Schema::getTemplateBuilder('categories_template')->label(_fields('categories_template')),
+            ])->hidden(fn ($get) => ! $get('is_categories')),
         ])->columns(1);
     }
 
@@ -64,7 +63,7 @@ class EditMenuSection extends BaseEditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit') . ' ' . $section->name;
+            return _actions('edit').' '.$section->name;
         } else {
             return parent::getHeading();
         }
@@ -109,7 +108,7 @@ class EditMenuSection extends BaseEditRecord
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
             \Filament\Actions\ViewAction::make()
-                ->url(fn($record) => $record->route())
+                ->url(fn ($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];

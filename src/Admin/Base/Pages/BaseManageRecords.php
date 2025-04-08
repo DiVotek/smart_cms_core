@@ -28,7 +28,7 @@ abstract class BaseManageRecords extends ManageRecords
         $actions = $this->applyHook('header_actions', $actions);
 
         return [
-            Actions\Action::make('help')->help(_hints('help.' . $shortClassName))->modalFooterActions([]),
+            Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
             ...$actions,
             Actions\CreateAction::make()->modalWidth(MaxWidth::Medium),
         ];

@@ -2,7 +2,9 @@
 
 namespace SmartCms\Core\Admin\Resources;
 
+use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -20,10 +22,6 @@ use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\Schema\ArrayToField;
 use SmartCms\Core\Services\Schema\Builder;
 use SmartCms\Core\Services\TableSchema;
-use Filament\Forms;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Select;
-use SmartCms\Core\Models\Template;
 
 class TemplateSectionResource extends BaseResource
 {
@@ -94,7 +92,7 @@ class TemplateSectionResource extends BaseResource
                                 ->content(_fields('section_is_empty_content'));
                             if (! $path) {
                                 return [
-                                    $placeholder
+                                    $placeholder,
                                 ];
                             }
                             $currentComponent = null;
@@ -107,7 +105,7 @@ class TemplateSectionResource extends BaseResource
                             $fields = [];
                             if (! isset($currentComponent['schema']) || empty($currentComponent['schema'])) {
                                 return [
-                                    $placeholder
+                                    $placeholder,
                                 ];
                             }
                             foreach ($currentComponent['schema'] as $field) {
@@ -118,7 +116,7 @@ class TemplateSectionResource extends BaseResource
 
                             return $fields;
                         })->live()
-                        ->columnSpanFull()->key('dynamicTypeFields')
+                        ->columnSpanFull()->key('dynamicTypeFields'),
 
                 ])->columnSpan(['lg' => 2]),
                 Forms\Components\Group::make()
@@ -128,12 +126,12 @@ class TemplateSectionResource extends BaseResource
                                 Forms\Components\Placeholder::make('created_at')
                                     ->inlineLabel()
                                     ->label('Created at')
-                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->inlineLabel()
                                     ->label('Last modified at')
-                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus(),
                             ])->columns(1),
                     ])->columnSpan(['lg' => 1]),

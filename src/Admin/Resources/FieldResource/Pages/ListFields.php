@@ -49,7 +49,7 @@ class ListFields extends BaseListRecords
                         'name' => $data['name'],
                         'type' => $data['type'] ?? 'text',
                         'required' => $data['is_required'] ?? false,
-                        'html_id' => \Illuminate\Support\Str::slug($data['name']) . '_' . \Illuminate\Support\Str::random(5),
+                        'html_id' => \Illuminate\Support\Str::slug($data['name']).'_'.\Illuminate\Support\Str::random(5),
                     ]);
                 }),
         ];
