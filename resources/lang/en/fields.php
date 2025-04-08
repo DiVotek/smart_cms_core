@@ -130,4 +130,6 @@ return [
     'fields' => 'Fields',
     'option' => 'Option',
     'images' => 'Images',
+    'order_by' => 'Order by',
+    'by_hand' => 'By hand',
 ];
