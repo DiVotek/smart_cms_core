@@ -6,6 +6,21 @@ class PageResource extends BaseResource
 {
     public function prepareData($request): array
     {
+        if (!$this->resource) {
+            return [
+                'id' => 0,
+                'name' => '',
+                'heading' => '',
+                'link' => '',
+                'image' => '',
+                'summary' => '',
+                'created_at' => '',
+                'updated_at' => '',
+                'custom' => (object) [],
+                'parent' => null,
+                'views' => 0,
+            ];
+        }
         $seo = $this->resource->getSeo();
         $name = $this->resource->name();
         $custom_fields = $this->resource->custom_fields ?? [];
