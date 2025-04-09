@@ -6,7 +6,7 @@ class PageResource extends BaseResource
 {
     public function prepareData($request): array
     {
-        if (!$this->resource) {
+        if (! $this->resource) {
             return [
                 'id' => 0,
                 'name' => '',
