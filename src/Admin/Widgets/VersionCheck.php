@@ -30,10 +30,9 @@ class VersionCheck extends StatsOverviewWidget
     protected function getNodeVersion(): array
     {
         $node = trim(shell_exec('node -v'));
-        $npm = trim(shell_exec('npm -v'));
 
         return [
-            Stat::make(_actions('node_version'), $node)
+            Stat::make(_actions('node_version'), $node ?? 'Not installed')
                 ->description(_actions('node_version_description')),
         ];
     }
@@ -59,7 +58,7 @@ class VersionCheck extends StatsOverviewWidget
 
         return [
             Stat::make(_actions('database_version'), $databaseVersion)
-                ->description(_actions('current').' '.$databaseName.' '._actions('version')),
+                ->description(_actions('current') . ' ' . $databaseName . ' ' . _actions('version')),
         ];
     }
 }
