@@ -14,8 +14,6 @@ return new class extends Migration
             $table->string('username');
             $table->string('email')->unique()->index();
             $table->string('password');
-            $table->string('telegram_id')->nullable();
-            $table->json('notifications')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
