@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Services;
 
 use Filament\Notifications\Notification;
+use Illuminate\Notifications\Notification as NotificationsNotification;
 use SmartCms\Core\Models\Admin;
 
 class AdminNotification
@@ -65,7 +66,7 @@ class AdminNotification
         return $this;
     }
 
-    public function send(Admin $admin): void
+    public function send(Admin $admin, ?NotificationsNotification $specificNotification = null): void
     {
         $notification = Notification::make()
             ->title($this->title);
@@ -79,12 +80,15 @@ class AdminNotification
             $notification->success();
         }
         $admin->notifyNow($notification->toDatabase());
+        if ($specificNotification) {
+            $admin->notifyNow($specificNotification);
+        }
     }
 
-    public function sendToAll(): void
+    public function sendToAll(?NotificationsNotification $notification = null): void
     {
         foreach (Admin::all() as $admin) {
-            $this->send($admin);
+            $this->send($admin, $notification);
         }
     }
 }

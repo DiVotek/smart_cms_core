@@ -26,16 +26,21 @@ class Admin extends User implements FilamentUser
     use HasTable;
     use Notifiable;
 
-    protected $fillable = [
-        'username',
-        'email',
-        'password',
-    ];
+    // protected $fillable = [
+    //     'username',
+    //     'email',
+    //     'password',
+    //     'telegram_id',
+    //     'notifications',
+    // ];
 
     protected $hidden = ['password', 'remember_token'];
 
+    protected $guarded = [];
+
     protected $casts = [
         'password' => 'hashed',
+        'notifications' => 'array',
     ];
 
     protected $table = 'smart_cms_admins';

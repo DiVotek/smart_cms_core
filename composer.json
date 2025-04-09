@@ -26,6 +26,7 @@
         "illuminate/contracts": "^10.0|^11.0|^12.0",
         "intervention/image": "^2.7",
         "joshembling/image-optimizer": "^1.4",
+        "laravel-notification-channels/telegram": "^6.0",
         "laravel/framework": "^11.0|^12.0",
         "livewire/livewire": "^3.4",
         "lorisleiva/laravel-actions": "^2.8",

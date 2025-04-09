@@ -9,11 +9,13 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create(sconfig('database_table_prefix').Admin::getDb(), function (Blueprint $table) {
+        Schema::create(sconfig('database_table_prefix') . Admin::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('username');
             $table->string('email')->unique()->index();
             $table->string('password');
+            $table->string('telegram_id')->nullable();
+            $table->json('notifications')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -28,6 +30,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists(sconfig('database_table_prefix').Admin::getDb());
+        Schema::dropIfExists(sconfig('database_table_prefix') . Admin::getDb());
     }
 };

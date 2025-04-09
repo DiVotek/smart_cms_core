@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as AuthLogin;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use SmartCms\Core\Notifications\UpdateNotification;
 use SmartCms\Core\Services\AdminNotification;
 
 class Login extends AuthLogin

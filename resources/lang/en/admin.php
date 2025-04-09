@@ -29,4 +29,6 @@ return [
     'layout_settings' => 'Layout Settings',
     'select_layout_first' => 'Please select a layout first',
     'no_config_found' => 'No configuration file found for this layout',
+    'telegram' => 'Telegram',
+    'notifications' => 'Notifications',
 ];

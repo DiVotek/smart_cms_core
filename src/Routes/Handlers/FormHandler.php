@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form;
+use SmartCms\Core\Notifications\NewContactFormNotification;
 use SmartCms\Core\Services\AdminNotification;
 use SmartCms\Core\Services\ScmsResponse;
 use SmartCms\Core\Services\UserNotification;
@@ -50,7 +51,7 @@ class FormHandler
         if ($referer) {
             $data['From page'] = $referer;
         }
-        ContactForm::query()->create([
+        $contactForm = ContactForm::query()->create([
             'form_id' => $form->id,
             'data' => $data,
         ]);
@@ -61,7 +62,7 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll();
+        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
 
         return new ScmsResponse(true);
     }

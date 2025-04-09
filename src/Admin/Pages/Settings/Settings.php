@@ -4,6 +4,7 @@ namespace SmartCms\Core\Admin\Pages\Settings;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Fieldset;
@@ -21,8 +22,11 @@ use libphonenumber\PhoneNumberType;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 use SmartCms\Core\Actions\InitMenuSections;
 use SmartCms\Core\Jobs\UpdateJob;
+use SmartCms\Core\Models\Admin;
 use SmartCms\Core\Models\Language;
 use SmartCms\Core\Models\Seo;
+use SmartCms\Core\Notifications\TestNotification;
+use SmartCms\Core\Services\AdminNotification;
 use SmartCms\Core\Services\Frontend\LayoutService;
 use SmartCms\Core\Services\Frontend\SectionService;
 use SmartCms\Core\Services\Schema;
@@ -72,6 +76,8 @@ class Settings extends BaseSettings
 
         return [
             Tabs::make('Settings')
+                ->persistTabInQueryString()
+                ->id('settings-tabs')
                 ->schema([
                     Tabs\Tab::make(strans('admin.general'))->schema([
                         TextInput::make(sconfig('company_name'))
@@ -145,27 +151,27 @@ class Settings extends BaseSettings
                                     TextInput::make('default')
                                         ->label(_fields('branch_name'))
                                         ->required()->suffixAction(ActionsAction::make('translate')->icon('heroicon-o-language')
-                                        ->fillForm(function ($get) {
-                                            $values = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $values[$language->slug] = $get($language->slug);
-                                            }
+                                            ->fillForm(function ($get) {
+                                                $values = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $values[$language->slug] = $get($language->slug);
+                                                }
 
-                                            return $values;
-                                        })
-                                        ->form(function ($form) {
-                                            $schema = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $schema[] = TextInput::make($language->slug)
-                                                    ->label($language->name);
-                                            }
+                                                return $values;
+                                            })
+                                            ->form(function ($form) {
+                                                $schema = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $schema[] = TextInput::make($language->slug)
+                                                        ->label($language->name);
+                                                }
 
-                                            return $form->schema($schema);
-                                        })->action(function ($data, $set) {
-                                            foreach ($data as $key => $value) {
-                                                $set($key, $value);
-                                            }
-                                        })),
+                                                return $form->schema($schema);
+                                            })->action(function ($data, $set) {
+                                                foreach ($data as $key => $value) {
+                                                    $set($key, $value);
+                                                }
+                                            })),
                                 ]),
                         ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
@@ -230,6 +236,110 @@ class Settings extends BaseSettings
                         Schema::getImage('og_image')
                             ->label(_fields('og_image')),
                     ]),
+                    Tabs\Tab::make(strans('admin.images'))->schema([
+                        \Filament\Forms\Components\Section::make(_fields('resize'))->schema([
+                            Toggle::make(sconfig('resize.enabled'))->formatStateUsing(function ($state) {
+                                return $state ?? false;
+                            })->live(),
+                            Toggle::make(sconfig('resize.width_enabled'))->formatStateUsing(function ($state) {
+                                return $state ?? false;
+                            })->live(),
+                            Toggle::make(sconfig('resize.height_enabled'))->formatStateUsing(function ($state) {
+                                return $state ?? false;
+                            }),
+                            Toggle::make(sconfig('resize.autoscale'))->formatStateUsing(function ($state) {
+                                return $state ?? false;
+                            }),
+                        ]),
+                    ]),
+                    Tabs\Tab::make(strans('admin.notifications'))->schema([
+                        \Filament\Forms\Components\Section::make(_fields('email'))
+                            ->headerActions([
+                                Actions\Action::make('test_notification')
+                                    ->label(_fields('test_notification'))
+                                    ->icon('heroicon-o-envelope')
+                                    ->action(function () {
+                                        Admin::query()->find(auth()->user()->id)->notifyNow(new TestNotification('mail'));
+                                        Notification::make()
+                                            ->title(_fields('test_notification_sent'))
+                                            ->success()
+                                            ->send();
+                                    }),
+                            ])
+                            ->schema([
+                                TextInput::make(sconfig('mail.from'))
+                                    ->label(_fields('mail_from_email')),
+                                TextInput::make(sconfig('mail.name'))
+                                    ->label(_fields('mail_from_name')),
+                                Select::make(sconfig('mail.provider'))
+                                    ->label(_fields('mail_provider'))
+                                    ->options([
+                                        'smtp' => 'SMTP',
+                                        'sendmail' => 'Sendmail',
+                                    ])
+                                    ->formatStateUsing(function ($state) {
+                                        return $state ?? 'sendmail';
+                                    })
+                                    ->live()
+                                    ->default('sendmail'),
+                                TextInput::make(sconfig('mail.host'))
+                                    ->label(_fields('host'))
+                                    ->hidden(function ($get) {
+                                        return $get(sconfig('mail.provider')) != 'smtp';
+                                    })->required(),
+                                TextInput::make(sconfig('mail.port'))
+                                    ->label(_fields('port'))
+                                    ->hidden(function ($get) {
+                                        return $get(sconfig('mail.provider')) != 'smtp';
+                                    })->required(),
+                                TextInput::make(sconfig('mail.username'))
+                                    ->label(_fields('username'))
+                                    ->hidden(function ($get) {
+                                        return $get(sconfig('mail.provider')) != 'smtp';
+                                    })->required(),
+                                TextInput::make(sconfig('mail.password'))
+                                    ->label(_fields('password'))
+                                    ->hidden(function ($get) {
+                                        return $get(sconfig('mail.provider')) != 'smtp';
+                                    })->required(),
+                                Select::make(sconfig('mail.encryption'))
+                                    ->label(_fields('encryption'))
+                                    ->options([
+                                        'ssl' => 'SSL',
+                                        'tls' => 'TLS',
+                                    ])
+                                    ->hidden(function ($get) {
+                                        return $get(sconfig('mail.provider')) != 'smtp';
+                                    })->required(),
+                            ])->collapsible(),
+                        \Filament\Forms\Components\Section::make(_fields('telegram'))->schema([
+                            TextInput::make(sconfig('telegram.token'))
+                                ->label(_fields('bot_token')),
+                            TextInput::make(sconfig('telegram.bot_username'))
+                                ->label(_fields('bot_username'))
+                        ])->collapsible()->headerActions([
+                            Actions\Action::make('test_notification')
+                                ->label(_fields('test_notification'))
+                                ->icon('heroicon-o-envelope')
+                                ->action(function () {
+                                    $user = auth()->user();
+                                    if (!$user->telegram_id) {
+                                        Notification::make()
+                                            ->title(_fields('you_dont_have_telegram_id'))
+                                            ->danger()
+                                            ->send();
+                                        return;
+                                    }
+                                    AdminNotification::make()->title(_fields('test_notification'))->success()->send($user, new TestNotification('telegram'));
+                                    Notification::make()
+                                        ->title(_fields('test_notification_sent'))
+                                        ->success()
+                                        ->send();
+                                })->disabled(function ($get) {
+                                    return !$get(sconfig('telegram.token')) || !$get(sconfig('telegram.bot_username'));
+                                }),
+                        ]),
+                    ])
                 ]),
         ];
     }
@@ -269,7 +379,7 @@ class Settings extends BaseSettings
                     $theme = array_merge(config('theme', []), $theme);
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -307,7 +417,7 @@ class Settings extends BaseSettings
             Action::make('cancel')
                 ->color('gray')
                 ->label(_actions('cancel'))
-                ->url(fn () => self::getUrl()),
+                ->url(fn() => self::getUrl()),
         ];
     }
 

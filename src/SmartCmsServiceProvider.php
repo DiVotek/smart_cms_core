@@ -5,6 +5,7 @@ namespace SmartCms\Core;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
@@ -43,33 +44,33 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->mergeAuthConfig();
         $this->mergePanelConfig();
         $this->mergeConfigFrom(
-            __DIR__.'/../config/settings.php',
+            __DIR__ . '/../config/settings.php',
             'settings'
         );
         $this->mergeConfigFrom(
-            __DIR__.'/../config/shared.php',
+            __DIR__ . '/../config/shared.php',
             'shared'
         );
-        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
         $this->publishes([
-            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
         ], 'public');
         $this->publishes([
-            __DIR__.'/../config/theme.php' => config_path('theme.php'),
+            __DIR__ . '/../config/theme.php' => config_path('theme.php'),
         ], 'theme');
         $this->publishes([
-            __DIR__.'/../config/translates.php' => config_path('translates.php'),
+            __DIR__ . '/../config/translates.php' => config_path('translates.php'),
         ], 'translates');
         $this->publishes([
-            __DIR__.'/../config/menu_sections.php' => config_path('menu_sections.php'),
+            __DIR__ . '/../config/menu_sections.php' => config_path('menu_sections.php'),
         ], 'menu_sections');
         // $this->publishes([
         //     __DIR__ . '/../config/settings.php' => config_path('settings.php'),
         // ], 'settings');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__.'/../database/new_migrations');
-        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
-        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/new_migrations');
+        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'smart_cms');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }
@@ -80,7 +81,7 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     protected function mergeAuthConfig()
     {
-        $packageAuth = require __DIR__.'/../config/auth.php';
+        $packageAuth = require __DIR__ . '/../config/auth.php';
         $appAuth = config('auth', []);
         if (isset($packageAuth['guards'])) {
             $appAuth['guards'] = array_merge(
@@ -142,6 +143,12 @@ class SmartCmsServiceProvider extends ServiceProvider
                 }
             });
         }
+        if (Schema::hasTable('settings')) {
+            $this->bindMailer();
+            $this->bindTelegram();
+            $this->bindName();
+            // dd(Config::get('app'), request()->getHost());
+        }
         $router->aliasMiddleware('lang', Lang::class);
         $router->aliasMiddleware('html.minifier', HtmlMinifier::class);
         Layout::registerHook('before_update', [LayoutHooks::class, 'beforeUpdate']);
@@ -163,5 +170,41 @@ class SmartCmsServiceProvider extends ServiceProvider
                 return new ExceptionHandler($app, $handler);
             }
         );
+    }
+
+    public function bindMailer()
+    {
+        $mailConfig = [
+            'transport' => 'smtp',
+            'scheme' => 'smtp',
+            'host' => _settings('mail.host'),
+            'port' => _settings('mail.port'),
+            'username' => _settings('mail.username'),
+            'password' => _settings('mail.password'),
+            'timeout' => 15,
+            'encryption' => _settings('mail.encryption'),
+        ];
+        $mailFrom = [
+            'address' => _settings('mail.from'),
+            'name' => _settings('mail.name'),
+        ];
+        $provider = _settings('mail.provider', 'sendmail');
+        Config::set('mail.mailers.admin_scms', $mailConfig);
+        Config::set('mail.from', $mailFrom);
+        if ($provider == 'smtp') {
+            Config::set('mail.default', 'admin_scms');
+        } else {
+            Config::set('mail.default', 'sendmail');
+        }
+    }
+
+    public function bindTelegram()
+    {
+        Config::set('services.telegram-bot-api.token', _settings('telegram.token'));
+    }
+
+    public function bindName()
+    {
+        Config::set('app.name', company_name());
     }
 }
