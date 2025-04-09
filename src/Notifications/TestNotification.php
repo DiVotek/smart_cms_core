@@ -27,6 +27,7 @@ class TestNotification extends Notification
         if ($this->type == 'mail') {
             $via[] = 'mail';
         }
+
         return $via;
     }
 
@@ -36,7 +37,7 @@ class TestNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line("Hello, this is a test notification")
+            ->line('Hello, this is a test notification')
             ->line('Thank you for using our application!');
     }
 
@@ -44,7 +45,7 @@ class TestNotification extends Notification
     {
         return TelegramMessage::create()
             ->to($notifiable->telegram_id)
-            ->content("Hello, this is a test notification");
+            ->content('Hello, this is a test notification');
     }
 
     /**

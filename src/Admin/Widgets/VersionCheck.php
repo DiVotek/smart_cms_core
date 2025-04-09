@@ -2,8 +2,8 @@
 
 namespace SmartCms\Core\Admin\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\DB;
 use PDO;
 
@@ -42,6 +42,7 @@ class VersionCheck extends StatsOverviewWidget
     {
         $errors = config('app.debug', false);
         $errorsText = $errors ? 'Enabled' : 'Disabled';
+
         return [
             Stat::make(_actions('errors_check'), $errorsText)->color($errors ? 'danger' : 'success')->description(_actions('is_errors_enabled')),
         ];
@@ -55,9 +56,10 @@ class VersionCheck extends StatsOverviewWidget
         $versionParts = explode('-', $serverVersion);
         $databaseName = isset($versionParts[1]) ? $versionParts[1] : ucfirst($driver);
         $databaseVersion = $versionParts[0];
+
         return [
             Stat::make(_actions('database_version'), $databaseVersion)
-                ->description(_actions('current') . ' ' . $databaseName . ' ' . _actions('version')),
+                ->description(_actions('current').' '.$databaseName.' '._actions('version')),
         ];
     }
 }

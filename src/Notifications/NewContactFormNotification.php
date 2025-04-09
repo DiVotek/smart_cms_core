@@ -7,7 +7,6 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramMessage;
 use SmartCms\Core\Admin\Resources\ContactFormResource;
 use SmartCms\Core\Models\ContactForm;
-use SmartCms\Core\Models\Form;
 
 class NewContactFormNotification extends Notification
 {
@@ -31,6 +30,7 @@ class NewContactFormNotification extends Notification
         if (isset($notificationSettings['telegram']) && isset($notificationSettings['telegram']['new_contact_form']) && $notificationSettings['telegram']['new_contact_form'] && $notifiable->telegram_id) {
             $via[] = 'telegram';
         }
+
         return $via;
     }
 
@@ -41,7 +41,7 @@ class NewContactFormNotification extends Notification
     {
         $formName = $this->form->form?->name ?? 'Unknown';
         $message = (new MailMessage)
-            ->line("🔔 New contact form submission!")
+            ->line('🔔 New contact form submission!')
             ->line("Form: {$formName}");
 
         if ($this->form->data && is_array($this->form->data)) {
@@ -51,12 +51,14 @@ class NewContactFormNotification extends Notification
                 $message->line("{$key}: {$value}");
             }
         }
+
         return $message->action('View in admin panel', ContactFormResource::getUrl())->line('Thank you for using our application!');
     }
 
     public function toTelegram(object $notifiable): TelegramMessage
     {
         $formName = $this->form->form?->name ?? 'Unknown';
+
         return TelegramMessage::create()
             ->to($notifiable->telegram_id)
             ->content("🔔 New contact form submission!\n\nForm: {$formName}")

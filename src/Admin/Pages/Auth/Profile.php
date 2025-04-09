@@ -2,18 +2,19 @@
 
 namespace SmartCms\Core\Admin\Pages\Auth;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Pages\Auth\EditProfile;
-use SmartCms\Core\Traits\HasHooks;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\Auth\EditProfile;
 use NotificationChannels\Telegram\TelegramUpdates;
+use SmartCms\Core\Traits\HasHooks;
 
 class Profile extends EditProfile
 {
     use HasHooks;
+
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -39,6 +40,7 @@ class Profile extends EditProfile
                                 $token = $get('telegram_token');
                                 $botUsername = _settings('telegram.bot_username');
                                 $url = "https://t.me/{$botUsername}?start={$token}";
+
                                 return $url;
                             })
                             ->openUrlInNewTab(),
@@ -56,11 +58,11 @@ class Profile extends EditProfile
                                 if ($updates['ok']) {
                                     $messages = $updates['result'];
                                     foreach ($messages as $message) {
-                                        if (!isset($message['message']['text'])) {
+                                        if (! isset($message['message']['text'])) {
                                             continue;
                                         }
                                         $text = $message['message']['text'];
-                                        if ($text == '/start ' . $token) {
+                                        if ($text == '/start '.$token) {
                                             $chatId = $message['message']['chat']['id'];
                                             $set('telegram_id', $chatId);
                                             break;
@@ -70,7 +72,7 @@ class Profile extends EditProfile
                             })
                             ->openUrlInNewTab()
                             ->icon('heroicon-o-arrow-path')
-                            ->color('success')
+                            ->color('success'),
                     ]
                 )->readOnly(),
             Forms\Components\Section::make(_fields('mail_notifications'))->schema([

@@ -36,6 +36,7 @@ class UpdateNotification extends Notification
         if (isset($notificationSettings['telegram']) && isset($notificationSettings['telegram']['update']) && $notificationSettings['telegram']['update'] && $notifiable->telegram_id) {
             $via[] = 'telegram';
         }
+
         return $via;
     }
 
@@ -45,7 +46,7 @@ class UpdateNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line("🔔 New CMS update available!")
+            ->line('🔔 New CMS update available!')
             ->line(" Version: {$this->version}")
             ->action('Check admin panel for details.', $this->url)
             ->line('Thank you for using our application!');
