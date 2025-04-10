@@ -31,4 +31,5 @@ return [
     'no_config_found' => 'No configuration file found for this layout',
     'telegram' => 'Telegram',
     'notifications' => 'Notifications',
+    'images' => 'Images',
 ];

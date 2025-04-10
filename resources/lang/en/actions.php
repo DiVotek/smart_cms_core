@@ -62,7 +62,7 @@ return [
     'database_version_description' => 'Current database version',
     'current' => 'Current',
     'version' => 'Version',
-    'cpu_load' => 'CPU Load, %',
+    'cpu_load' => 'CPU Load',
     '15_minute_average' => '15 minute average',
     'disk_usage' => 'Disk Usage',
     'used_space' => 'Used space',

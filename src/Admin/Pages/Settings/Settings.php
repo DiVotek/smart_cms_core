@@ -151,27 +151,27 @@ class Settings extends BaseSettings
                                     TextInput::make('default')
                                         ->label(_fields('branch_name'))
                                         ->required()->suffixAction(ActionsAction::make('translate')->icon('heroicon-o-language')
-                                        ->fillForm(function ($get) {
-                                            $values = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $values[$language->slug] = $get($language->slug);
-                                            }
+                                            ->fillForm(function ($get) {
+                                                $values = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $values[$language->slug] = $get($language->slug);
+                                                }
 
-                                            return $values;
-                                        })
-                                        ->form(function ($form) {
-                                            $schema = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $schema[] = TextInput::make($language->slug)
-                                                    ->label($language->name);
-                                            }
+                                                return $values;
+                                            })
+                                            ->form(function ($form) {
+                                                $schema = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $schema[] = TextInput::make($language->slug)
+                                                        ->label($language->name);
+                                                }
 
-                                            return $form->schema($schema);
-                                        })->action(function ($data, $set) {
-                                            foreach ($data as $key => $value) {
-                                                $set($key, $value);
-                                            }
-                                        })),
+                                                return $form->schema($schema);
+                                            })->action(function ($data, $set) {
+                                                foreach ($data as $key => $value) {
+                                                    $set($key, $value);
+                                                }
+                                            })),
                                 ]),
                         ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
@@ -237,19 +237,28 @@ class Settings extends BaseSettings
                             ->label(_fields('og_image')),
                     ]),
                     Tabs\Tab::make(strans('admin.images'))->schema([
+                        Schema::getImage(sconfig('no_image'))
+                            ->label(_fields('no_image')),
                         \Filament\Forms\Components\Section::make(_fields('resize'))->schema([
-                            Toggle::make(sconfig('resize.enabled'))->formatStateUsing(function ($state) {
-                                return $state ?? false;
-                            })->live(),
-                            Toggle::make(sconfig('resize.width_enabled'))->formatStateUsing(function ($state) {
-                                return $state ?? false;
-                            })->live(),
-                            Toggle::make(sconfig('resize.height_enabled'))->formatStateUsing(function ($state) {
-                                return $state ?? false;
-                            }),
-                            Toggle::make(sconfig('resize.autoscale'))->formatStateUsing(function ($state) {
-                                return $state ?? false;
-                            }),
+                            Toggle::make(sconfig('resize.enabled'))
+                                ->label(_fields('resize_enabled'))
+                                ->formatStateUsing(function ($state) {
+                                    return $state ?? true;
+                                })->live(),
+                            Toggle::make(sconfig('resize.two_sides'))
+                                ->label(_fields('resize_two_sides'))
+                                ->formatStateUsing(function ($state) {
+                                    return $state ?? true;
+                                })->hidden(function ($get) {
+                                    return ! $get(sconfig('resize.enabled'));
+                                }),
+                            Toggle::make(sconfig('resize.autoscale'))
+                                ->label(_fields('resize_autoscale'))
+                                ->formatStateUsing(function ($state) {
+                                    return $state ?? false;
+                                })->hidden(function ($get) {
+                                    return ! $get(sconfig('resize.enabled'));
+                                }),
                         ]),
                     ]),
                     Tabs\Tab::make(strans('admin.notifications'))->schema([
@@ -380,7 +389,7 @@ class Settings extends BaseSettings
                     $theme = array_merge(config('theme', []), $theme);
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -418,7 +427,7 @@ class Settings extends BaseSettings
             Action::make('cancel')
                 ->color('gray')
                 ->label(_actions('cancel'))
-                ->url(fn () => self::getUrl()),
+                ->url(fn() => self::getUrl()),
         ];
     }
 

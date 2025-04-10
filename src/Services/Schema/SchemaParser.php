@@ -89,11 +89,7 @@ class SchemaParser
                     $value = no_image();
                     break;
                 }
-                if (! str_contains($fieldValue, 'http')) {
-                    $fieldValue = 'storage/'.$fieldValue;
-                }
-                $value = asset($fieldValue);
-                $value = preg_replace('#(?<!:)//+#', '/', $value);
+                $value = validateImage($fieldValue);
                 break;
             case 'heading':
                 $fieldValue = $this->values[$this->field->name] ?? [];

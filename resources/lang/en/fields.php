@@ -151,4 +151,9 @@ return [
     'test_notification' => 'Test notification',
     'test_notification_sent' => 'Test notification sent',
     'bot_username' => 'Bot username',
+    'no_image' => 'No image',
+    'resize' => 'Resize',
+    'resize_enabled' => 'Resize enabled',
+    'resize_two_sides' => 'Resize two sides',
+    'resize_autoscale' => 'Resize autoscale',
 ];
