@@ -3,20 +3,21 @@
 namespace SmartCms\Core\Components;
 
 use Closure;
+use Gregwar\Image\Image as ImageService;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use Gregwar\Image\Image as ImageService;
 
 class Image extends Component
 {
     public int $maxHeight;
+
     public string $placeholder;
 
     protected array $breakpoints = [
         'mobile' => 480,
         'tablet' => 768,
         'desktop' => 1200,
-        '2k' => 1920
+        '2k' => 1920,
     ];
 
     public function __construct(int $maxHeight = 600)
@@ -30,6 +31,7 @@ class Image extends Component
         return function (array $data) {
             if ($this->shouldUseImagePlaceholder($data)) {
                 $this->setPlaceholderAttributes();
+
                 return $this->renderTemplate();
             }
 
@@ -54,7 +56,7 @@ class Image extends Component
      */
     private function shouldUseImagePlaceholder(array $data): bool
     {
-        return !isset($data['attributes']['src']) || strlen($data['attributes']['src']) === 0;
+        return ! isset($data['attributes']['src']) || strlen($data['attributes']['src']) === 0;
     }
 
     /**
@@ -79,7 +81,7 @@ class Image extends Component
      */
     private function processLocalImage(string $src): void
     {
-        if (!_settings('resize.enabled')) {
+        if (! _settings('resize.enabled')) {
             return;
         }
         $localPath = $this->getLocalPathFromUrl($src);
@@ -87,7 +89,7 @@ class Image extends Component
         $width = $this->attributes->get('width', $this->maxHeight);
 
         $srcset = $this->generateSrcset($localPath, $width, $this->maxHeight);
-        if (!empty($srcset)) {
+        if (! empty($srcset)) {
             $attributes = array_merge($this->attributes->getAttributes(), [
                 'srcset' => $srcset,
                 'sizes' => $this->generateSizes($width),
@@ -102,7 +104,7 @@ class Image extends Component
     private function isLocalUrl(string $src): bool
     {
         // Absolute path or relative path without protocol is local
-        if (str_starts_with($src, '/') || (!str_contains($src, '://') && !str_starts_with($src, '//'))) {
+        if (str_starts_with($src, '/') || (! str_contains($src, '://') && ! str_starts_with($src, '//'))) {
             return true;
         }
 
@@ -137,8 +139,8 @@ class Image extends Component
             $src = substr($src, 1);
         }
 
-        if (!str_contains($src, 'storage') && !str_contains($src, 'http')) {
-            $src = 'storage/' . $src;
+        if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
+            $src = 'storage/'.$src;
         }
 
         // Normalize all double slashes
@@ -178,7 +180,7 @@ class Image extends Component
         $aspectRatio = $originalHeight / $originalWidth;
         $useHeight = _settings('resize.two_sides', true);
         $isAutoscale = _settings('resize.autoscale', true);
-        foreach ($widths as  $width) {
+        foreach ($widths as $width) {
             try {
                 if ($useHeight) {
                     $height = round($width * $aspectRatio);
@@ -189,7 +191,7 @@ class Image extends Component
                     ->resize(height: $height, width: $width, rescale: $isAutoscale)
                     ->webp();
 
-                $srcset[] = asset($optimizedImage) . " {$width}w";
+                $srcset[] = asset($optimizedImage)." {$width}w";
             } catch (\Exception $e) {
                 continue;
             }
@@ -223,7 +225,7 @@ class Image extends Component
             }
         }
 
-        if (!in_array($requestedWidth, $widths)) {
+        if (! in_array($requestedWidth, $widths)) {
             $widths['requested'] = $requestedWidth;
         }
 
