@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create(sconfig('database_table_prefix').Admin::getDb(), function (Blueprint $table) {
+        Schema::create(sconfig('database_table_prefix') . Admin::getDb(), function (Blueprint $table) {
             $table->id();
             $table->string('username');
             $table->string('email')->unique()->index();
@@ -17,17 +17,10 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-
-        // Create default admin user
-        Admin::query()->create([
-            'username' => 'superadmin',
-            'email' => 'admin@admin.com',
-            'password' => env('ADMIN_PASSWORD', 'password'),
-        ]);
     }
 
     public function down()
     {
-        Schema::dropIfExists(sconfig('database_table_prefix').Admin::getDb());
+        Schema::dropIfExists(sconfig('database_table_prefix') . Admin::getDb());
     }
 };
