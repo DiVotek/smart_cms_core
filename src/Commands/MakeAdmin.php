@@ -16,11 +16,13 @@ class MakeAdmin extends Command
         $name = $this->ask('Enter admin username');
         if (Admin::query()->where('username', $name)->exists()) {
             $this->error('Admin already exists');
+
             return;
         }
         $email = $this->ask('Enter admin email');
         if (Admin::query()->where('email', $email)->exists()) {
             $this->error('Admin already exists');
+
             return;
         }
         $password = $this->secret('Enter admin password');
