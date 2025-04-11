@@ -16,16 +16,22 @@ class LayoutService
     public function getAll(): array
     {
         $sections = [];
-        $sectionFiles = File::glob(resource_path('views/layouts/*.blade.php'));
-
-        foreach ($sectionFiles as $file) {
-            $name = basename($file, '.blade.php');
-            $metadata = $this->getSectionMetadata($name);
+        $bladeViews = collect(File::allFiles(resource_path('views/layouts')))
+            ->filter(fn($file) => \Illuminate\Support\Str::endsWith($file->getFilename(), '.blade.php'))
+            ->map(function ($file) {
+                $relativePath = \Illuminate\Support\Str::after($file->getRealPath(), resource_path('views/layouts' . DIRECTORY_SEPARATOR));
+                $bladePath = str_replace(['/', '\\'], '.', $relativePath);
+                return \Illuminate\Support\Str::replaceLast('.blade.php', '', $bladePath);
+            })
+            ->values()
+            ->toArray();
+        foreach ($bladeViews as $file) {
+            $metadata = $this->getSectionMetadata($file);
 
             if ($metadata) {
-                $metadata['path'] = $name;
+                $metadata['path'] = $file;
 
-                $sections[$name] = $metadata;
+                $sections[$file] = $metadata;
             }
         }
 
@@ -61,7 +67,7 @@ class LayoutService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: '.$e->getMessage());
+                Log::error('Failed to parse section metadata: ' . $e->getMessage());
             }
         }
 
@@ -139,6 +145,7 @@ class LayoutService
     public function init(): void
     {
         $sections = $this->getAll();
+        dd($sections);
         foreach ($sections as $section) {
             $sectionModel = Layout::query()->withoutGlobalScopes()->where('path', $section['path'])->first();
             if ($sectionModel) {
