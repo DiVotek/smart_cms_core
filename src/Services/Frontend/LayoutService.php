@@ -146,7 +146,6 @@ class LayoutService
     public function init(): void
     {
         $sections = $this->getAll();
-        dd($sections);
         foreach ($sections as $section) {
             $sectionModel = Layout::query()->withoutGlobalScopes()->where('path', $section['path'])->first();
             if ($sectionModel) {
