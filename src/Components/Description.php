@@ -27,7 +27,7 @@ class Description extends Component
             $this->description = '';
         } else {
             if (isset($options['is_description']) && $options['is_description']) {
-                $this->description = $entity->description ?? '';
+                $this->description = $entity->content ?? '';
             } else {
                 $this->description = $entity->summary ?? '';
             }
