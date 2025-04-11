@@ -46,33 +46,33 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->mergeAuthConfig();
         $this->mergePanelConfig();
         $this->mergeConfigFrom(
-            __DIR__.'/../config/settings.php',
+            __DIR__ . '/../config/settings.php',
             'settings'
         );
         $this->mergeConfigFrom(
-            __DIR__.'/../config/shared.php',
+            __DIR__ . '/../config/shared.php',
             'shared'
         );
-        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
         $this->publishes([
-            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
         ], 'public');
         $this->publishes([
-            __DIR__.'/../config/theme.php' => config_path('theme.php'),
+            __DIR__ . '/../config/theme.php' => config_path('theme.php'),
         ], 'theme');
         $this->publishes([
-            __DIR__.'/../config/translates.php' => config_path('translates.php'),
+            __DIR__ . '/../config/translates.php' => config_path('translates.php'),
         ], 'translates');
         $this->publishes([
-            __DIR__.'/../config/menu_sections.php' => config_path('menu_sections.php'),
+            __DIR__ . '/../config/menu_sections.php' => config_path('menu_sections.php'),
         ], 'menu_sections');
         $this->publishes([
-            __DIR__.'/../resources/images/' => storage_path('app/public'),
+            __DIR__ . '/../resources/images/' => storage_path('app/public'),
         ], 'images');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__.'/../database/new_migrations');
-        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
-        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/new_migrations');
+        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'smart_cms');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }
@@ -83,7 +83,7 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     protected function mergeAuthConfig()
     {
-        $packageAuth = require __DIR__.'/../config/auth.php';
+        $packageAuth = require __DIR__ . '/../config/auth.php';
         $appAuth = config('auth', []);
         if (isset($packageAuth['guards'])) {
             $appAuth['guards'] = array_merge(
@@ -109,6 +109,11 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     public function boot(Router $router)
     {
+        if (defined('INSTALLER')) {
+            $router->aliasMiddleware('lang', Lang::class);
+            $router->aliasMiddleware('html.minifier', HtmlMinifier::class);
+            return;
+        }
         Blade::componentNamespace('SmartCms\\Core\\Components', 's');
         if (Schema::hasTable(Translation::getDb())) {
             $this->app->bind('translations', function () {
