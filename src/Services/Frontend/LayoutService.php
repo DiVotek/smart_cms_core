@@ -17,10 +17,11 @@ class LayoutService
     {
         $sections = [];
         $bladeViews = collect(File::allFiles(resource_path('views/layouts')))
-            ->filter(fn($file) => \Illuminate\Support\Str::endsWith($file->getFilename(), '.blade.php'))
+            ->filter(fn ($file) => \Illuminate\Support\Str::endsWith($file->getFilename(), '.blade.php'))
             ->map(function ($file) {
-                $relativePath = \Illuminate\Support\Str::after($file->getRealPath(), resource_path('views/layouts' . DIRECTORY_SEPARATOR));
+                $relativePath = \Illuminate\Support\Str::after($file->getRealPath(), resource_path('views/layouts'.DIRECTORY_SEPARATOR));
                 $bladePath = str_replace(['/', '\\'], '.', $relativePath);
+
                 return \Illuminate\Support\Str::replaceLast('.blade.php', '', $bladePath);
             })
             ->values()
@@ -67,7 +68,7 @@ class LayoutService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: ' . $e->getMessage());
+                Log::error('Failed to parse section metadata: '.$e->getMessage());
             }
         }
 
