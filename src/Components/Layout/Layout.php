@@ -43,7 +43,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = [
             'prefix' => _settings('title.prefix', ''),
@@ -97,7 +97,9 @@ class Layout extends Component
                     </head>
                     <body class="antialiased">
                         <x-s::layout.header />
-                                @yield('content')
+                        <main>
+                            @yield('content')
+                        </main>
                         <x-s::layout.footer />
                         @foreach($scripts as $script)
                             {!! $script['scripts'] !!}
