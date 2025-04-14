@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table(sconfig('database_table_prefix') . Admin::getDb(), function (Blueprint $table) {
+        Schema::table(sconfig('database_table_prefix').Admin::getDb(), function (Blueprint $table) {
             $table->string('telegram_id')->nullable();
             $table->json('notifications')->nullable();
         });
@@ -17,7 +17,7 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::table(sconfig('database_table_prefix') . Admin::getDb(), function (Blueprint $table) {
+        Schema::table(sconfig('database_table_prefix').Admin::getDb(), function (Blueprint $table) {
             $table->dropColumn('telegram_id');
             $table->dropColumn('notifications');
         });
