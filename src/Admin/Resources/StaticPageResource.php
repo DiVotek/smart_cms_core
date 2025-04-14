@@ -140,7 +140,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/' . $form->getRecord()->slug;
+            $imagePath = 'pages/'.$form->getRecord()->slug;
         }
 
         return [
@@ -166,13 +166,13 @@ class StaticPageResource extends BaseResource
                                 Forms\Components\Placeholder::make('created_at')
                                     ->label(_fields('created_at'))
                                     ->inlineLabel()
-                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->label(_fields('updated_at'))
                                     ->translateLabel()
                                     ->inlineLabel()
-                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus()->hidden(function ($record) {
                                     return $record->slug == '' || MenuSection::query()->where('parent_id', $record->id)->exists();
                                 }),
