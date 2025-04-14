@@ -22,8 +22,14 @@ class Layout extends Component
 
     public $descriptionMod;
 
+    public string $stylePath;
+
     public function __construct()
     {
+
+        $stylePath = file_exists(resource_path('scss/app.scss')) ? 'resources/scss/app.scss' : 'resources/css/app.css';
+        $this->stylePath = $stylePath;
+
         $scripts = _settings('custom_scripts', []);
         if (! is_array($scripts)) {
             $scripts = [];
@@ -43,7 +49,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = [
             'prefix' => _settings('title.prefix', ''),
@@ -92,7 +98,7 @@ class Layout extends Component
                         <style>
                             :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
                         </style>
-                        @vite(['resources/css/app.css', 'resources/js/app.js'])
+                        @vite([$stylePath, 'resources/js/app.js'])
                         @stack('styles')
                     </head>
                     <body class="antialiased">
