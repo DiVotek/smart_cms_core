@@ -17,7 +17,7 @@ return [
     'component_settings' => 'Component settings',
     'status' => 'Status',
     'language' => 'Language',
-    'slug' => 'Slug',
+    'slug' => 'Seo url',
     'sorting' => 'Sorting',
     'repeater_add' => 'Add',
     'type' => 'Type',
@@ -156,4 +156,5 @@ return [
     'resize_enabled' => 'Resize enabled',
     'resize_two_sides' => 'Resize two sides',
     'resize_autoscale' => 'Resize autoscale',
+    'is_categories' => 'Enable categories',
 ];

@@ -67,4 +67,5 @@ return [
     'disk_usage' => 'Disk Usage',
     'used_space' => 'Used space',
     'memory_usage' => 'Memory Usage',
+    'create_menu_section' => 'Create Menu Section',
 ];

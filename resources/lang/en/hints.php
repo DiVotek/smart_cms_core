@@ -17,4 +17,5 @@ return [
     'is_random' => 'Order by random',
     'pages' => 'Select pages which will be displayed',
     'help.layout' => 'Layouts define the structure and appearance of your pages. Each layout can be customized with specific settings.',
+    'slug_hint' => 'The SEO URL will be generated automatically from the "Name" field',
 ];

@@ -41,7 +41,7 @@ class Schema
             ->string()
             ->readOnly()
             ->required($isRequired)
-            ->helperText(__('Slug will be generated automatically from title of any language'))
+            ->helperText(_hints('slug_hint'))
             ->default('')->hintActions([
                 Action::make('clear_slug')
                     ->label(_actions('clear_slug'))
@@ -238,7 +238,7 @@ class Schema
                 $fields = [];
                 $languages = get_active_languages();
                 foreach ($languages as $language) {
-                    $fields[] = TextInput::make($language->slug.'.name')->label(_fields('name').' ('.$language->name.')');
+                    $fields[] = TextInput::make($language->slug . '.name')->label(_fields('name') . ' (' . $language->name . ')');
                 }
 
                 return $form->schema($fields);

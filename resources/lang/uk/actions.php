@@ -49,4 +49,5 @@ return [
     'empty_layout_settings' => 'Налаштування для цього макету відсутні.',
     'menu_section_created' => 'Секцію меню успішно створено!',
     'you_cant_delete_menu_section_with_items' => 'Неможливо видалити секцію меню з елементами!',
+    'create_menu_section' => 'Створити секцію меню',
 ];

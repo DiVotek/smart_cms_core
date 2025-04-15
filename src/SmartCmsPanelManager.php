@@ -183,11 +183,11 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
                 $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)
@@ -272,11 +272,11 @@ class SmartCmsPanelManager extends PanelProvider
                 $menuSections = MenuSection::query()->get();
                 foreach ($menuSections as $section) {
                     $icon = $section->icon ?? $group['icon'] ?? 'heroicon-m-book-open';
-                    $reference[] = \Filament\Navigation\NavigationGroup::make($section->name)->icon($icon);
+                    $reference[] = \Filament\Navigation\NavigationGroup::make($section->name)->icon($icon)->collapsed();
                 }
             } else {
                 $icon = $group['icon'] ?? 'heroicon-m-book-open';
-                $reference[] = NavigationGroup::make(_nav($group['name']))->icon($icon);
+                $reference[] = NavigationGroup::make(_nav($group['name']))->icon($icon)->collapsed();
             }
         }
 
@@ -299,7 +299,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
         );
         Filament::registerRenderHook(
             PanelsRenderHook::GLOBAL_SEARCH_AFTER,
@@ -393,6 +393,7 @@ class SmartCmsPanelManager extends PanelProvider
         });
         Action::macro('create', function () {
             return $this->label(_actions('create'))
+                ->modalSubmitActionLabel(_actions('create'))
                 ->icon('heroicon-m-plus');
         });
         Action::macro('settings', function () {

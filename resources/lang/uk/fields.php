@@ -17,7 +17,7 @@ return [
     'component_settings' => 'Налаштування компонента',
     'status' => 'Статус',
     'language' => 'Мова',
-    'slug' => 'Слаг',
+    'slug' => 'Seo url',
     'sorting' => 'Сортування',
     'repeater_add' => 'Додати',
     'type' => 'Тип',
@@ -131,4 +131,5 @@ return [
     'images' => 'Зображення',
     'order_by' => 'Сортувати за',
     'by_hand' => 'Вручну',
+    'is_categories' => 'Увімкнути категорії',
 ];
