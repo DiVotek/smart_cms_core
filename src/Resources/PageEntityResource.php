@@ -30,11 +30,10 @@ class PageEntityResource extends BaseResource
 
         $this->fetchCategoriesAndItems($this->resource);
         $this->getSiblings();
-
         return [
             'id' => $this->id,
             'name' => $name,
-            'breadcrumbs' => array_map(fn ($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
+            'breadcrumbs' => array_map(fn($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
             'heading' => $seo->heading ?? $name,
             'link' => $this->resource->route(),
             'image' => $this->validateImage($this->resource->image),
@@ -73,24 +72,33 @@ class PageEntityResource extends BaseResource
 
     protected function fetchCategoriesAndItems(Page $entity, $itemsPerPage = 15)
     {
-        $categories = Page::where('parent_id', $entity->id)
-            ->get();
+        $menuSection = MenuSection::query()->where('parent_id', $entity->id)->first();
+        if ($menuSection && $menuSection->is_categories) {
+            $categories = Page::where('parent_id', $entity->id)
+                ->get();
 
-        $this->categories = $categories->map(function (Page $category) {
-            return PageResource::make($category)->get();
-        });
-
-        $categoryIds = $categories->pluck('id')->toArray();
-
-        if (! empty($categoryIds)) {
-            $allItems = Page::whereIn('parent_id', $categoryIds)
-                ->paginate($itemsPerPage);
-
-            $this->items = $allItems->through(function (Page $page) {
-                return PageResource::make($page)->get();
+            $this->categories = $categories->map(function (Page $category) {
+                return PageResource::make($category)->get();
             });
-        } else {
-            $this->items = collect([]);
+
+            $categoryIds = $categories->pluck('id')->toArray();
+
+            if (! empty($categoryIds)) {
+                $allItems = Page::whereIn('parent_id', $categoryIds)
+                    ->paginate($itemsPerPage);
+
+                $this->items = $allItems->through(function (Page $page) {
+                    return PageResource::make($page)->get();
+                });
+            } else {
+                $this->items = collect([]);
+            }
+            return;
         }
+        $items = Page::where('parent_id', $entity->id)->paginate($itemsPerPage);
+        $this->items = $items->through(function (Page $page) {
+            return PageResource::make($page)->get();
+        });
+        $this->categories = collect([]);
     }
 }
