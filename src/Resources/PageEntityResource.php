@@ -30,10 +30,11 @@ class PageEntityResource extends BaseResource
 
         $this->fetchCategoriesAndItems($this->resource);
         $this->getSiblings();
+
         return [
             'id' => $this->id,
             'name' => $name,
-            'breadcrumbs' => array_map(fn($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
+            'breadcrumbs' => array_map(fn ($breadcrumb) => (object) $breadcrumb, $this->resource->getBreadcrumbs()),
             'heading' => $seo->heading ?? $name,
             'link' => $this->resource->route(),
             'image' => $this->validateImage($this->resource->image),
@@ -93,6 +94,7 @@ class PageEntityResource extends BaseResource
             } else {
                 $this->items = collect([]);
             }
+
             return;
         }
         $items = Page::where('parent_id', $entity->id)->paginate($itemsPerPage);
