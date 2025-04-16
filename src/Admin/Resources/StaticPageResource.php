@@ -15,6 +15,10 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use SmartCms\Core\Admin\Base\BaseResource;
+use SmartCms\Core\Admin\Components\CreatedAt;
+use SmartCms\Core\Admin\Components\Sidebar;
+use SmartCms\Core\Admin\Components\Status;
+use SmartCms\Core\Admin\Components\UpdatedAt;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
@@ -140,51 +144,39 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
         return [
-            Forms\Components\Group::make([
-                Forms\Components\Group::make([
-                    Forms\Components\Section::make()
-                        ->schema([
-                            Schema::getReactiveName()->suffixActions([
-                                Schema::getTranslateAction(),
-                            ]),
-                            Schema::getSlug(Page::getDb(), $isRequired)->helperText(''),
-                        ])->columns(2),
-                    Forms\Components\Section::make(_fields('images'))->schema([
-                        Schema::getImage(path: $imagePath),
-                        Schema::getImage(name: 'banner', path: $imagePath),
-                    ])->collapsible(),
-                    Forms\Components\Section::make()->schema([...$layoutField]),
-                ])->columnSpan(['lg' => 2]),
-                Forms\Components\Group::make()
+            Sidebar::make([
+                Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Section::make()
-                            ->schema([
-                                Forms\Components\Placeholder::make('created_at')
-                                    ->label(_fields('created_at'))
-                                    ->inlineLabel()
-                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
-
-                                Forms\Components\Placeholder::make('updated_at')
-                                    ->label(_fields('updated_at'))
-                                    ->translateLabel()
-                                    ->inlineLabel()
-                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
-                                Schema::getStatus()->hidden(function ($record) {
-                                    return $record->slug == '' || MenuSection::query()->where('parent_id', $record->id)->exists();
-                                }),
-                            ])->columns(1),
-                        Forms\Components\Section::make()->schema([
-                            Schema::getSorting()->hidden(),
-                            ...$parentField,
-                        ])->hidden(function () use ($parentField) {
-                            return count($parentField) == 0;
+                        Schema::getReactiveName()->suffixActions([
+                            Schema::getTranslateAction(),
+                        ]),
+                        Schema::getSlug(Page::getDb(), $isRequired)->helperText(''),
+                    ])->columns(2),
+                Forms\Components\Section::make(_fields('images'))->schema([
+                    Schema::getImage(path: $imagePath),
+                    Schema::getImage(name: 'banner', path: $imagePath),
+                ])->collapsible(),
+                Forms\Components\Section::make()->schema([...$layoutField]),
+            ], [
+                Forms\Components\Section::make()
+                    ->schema([
+                        CreatedAt::make(),
+                        UpdatedAt::make(),
+                        Status::make()->hidden(function ($record) {
+                            return $record->slug == '' || MenuSection::query()->where('parent_id', $record->id)->exists();
                         }),
-                    ])->columnSpan(['lg' => 1]),
-            ])->columns(3),
+                    ])->columns(1),
+                Forms\Components\Section::make()->schema([
+                    Schema::getSorting()->hidden(),
+                    ...$parentField,
+                ])->hidden(function () use ($parentField) {
+                    return count($parentField) == 0;
+                }),
+            ]),
         ];
     }
 
