@@ -22,6 +22,8 @@ class TranslationResource extends BaseResource
 
     protected static ?int $navigationSort = 4;
 
+    protected static bool $canBulkDelete = false;
+
     public static string $resourceLabel = 'model_translation';
 
     public static ?string $resourceGroup = 'system';

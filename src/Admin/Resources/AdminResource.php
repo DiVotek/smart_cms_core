@@ -17,6 +17,8 @@ class AdminResource extends BaseResource
 {
     protected static ?string $model = Admin::class;
 
+    protected static bool $canBulkDelete = false;
+
     protected static ?int $navigationSort = 1;
 
     public static string $resourceLabel = 'admin';
