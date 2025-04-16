@@ -6,7 +6,7 @@ use Filament\Forms\Components\Section;
 
 class Aside
 {
-    public static function make($isStatus = true): Section
+    public static function make($isStatus = true, array $additional = []): Section
     {
         $fields = [
             CreatedAt::make(),
@@ -15,7 +15,7 @@ class Aside
         if ($isStatus) {
             $fields[] = Status::make();
         }
-
+        $fields = array_merge($fields, $additional);
         return Section::make()->schema($fields);
     }
 }
