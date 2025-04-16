@@ -16,6 +16,7 @@ class Aside
             $fields[] = Status::make();
         }
         $fields = array_merge($fields, $additional);
+
         return Section::make()->schema($fields);
     }
 }
