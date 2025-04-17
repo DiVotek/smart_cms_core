@@ -174,20 +174,29 @@ class SmartCmsPanelManager extends PanelProvider
                 //     }),
             ];
             foreach ($menuSections as $section) {
+                $badgeQuery = Page::query()->withoutGlobalScopes();
+                if ($section->is_categories) {
+                    $categories = Page::query()->where('parent_id', $section->parent_id)->pluck('id')->toArray();
+                    $badgeQuery = $badgeQuery->whereIn('parent_id', $categories);
+                } else {
+                    $badgeQuery = $badgeQuery->where('parent_id', $section->parent_id);
+                }
                 $items[] = NavigationItem::make(_nav('items'))
                     ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name]))
                     ->sort($section->sorting + 2)
                     ->group($section->name)
+                    ->badge($badgeQuery->count())
                     ->isActiveWhen(function () use ($section) {
                         return request()->route()->getName() === ListStaticPages::getRouteName() && (request('activeTab') == $section->name);
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
+                        ->badge(Page::query()->where('parent_id', $section->parent_id)->count())
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
                         });
                 }
                 $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)
@@ -299,7 +308,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
         );
         Filament::registerRenderHook(
             PanelsRenderHook::GLOBAL_SEARCH_AFTER,

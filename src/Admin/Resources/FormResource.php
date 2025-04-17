@@ -40,8 +40,8 @@ class FormResource extends BaseResource
         $notification = [];
         $emailText = [];
         foreach (get_active_languages() as $lang) {
-            $buttons[] = Hidden::make('data.'.$lang->slug.'.button');
-            $notification[] = Hidden::make('data.'.$lang->slug.'.notification');
+            $buttons[] = Hidden::make('data.' . $lang->slug . '.button');
+            $notification[] = Hidden::make('data.' . $lang->slug . '.notification');
         }
 
         return [
@@ -71,7 +71,7 @@ class FormResource extends BaseResource
                         ...$buttons,
                         ...$notification,
                         Forms\Components\TextInput::make('data.button')
-                            ->formatStateUsing(fn (?string $state): string => blank($state) ? 'Submit' : $state)
+                            ->formatStateUsing(fn(?string $state): string => blank($state) ? 'Submit' : $state)
                             ->label(_fields('button'))
                             ->default('Submit')
                             ->maxLength(255)
@@ -79,7 +79,7 @@ class FormResource extends BaseResource
                                 ->badge(function ($get) {
                                     $counter = 0;
                                     foreach (get_active_languages() as $lang) {
-                                        $button = $get('data.'.$lang->slug.'.button') ?? null;
+                                        $button = $get('data.' . $lang->slug . '.button') ?? null;
                                         if ($button && strlen($button) > 0) {
                                             $counter++;
                                         }
@@ -89,7 +89,7 @@ class FormResource extends BaseResource
                                 })
                                 ->icon('heroicon-m-language')->action(function ($data, $set) {
                                     foreach ($data as $key => $value) {
-                                        $set('data.'.$key.'.button', $value);
+                                        $set('data.' . $key . '.button', $value);
                                     }
                                 })
                                 ->modalWidth(MaxWidth::TwoExtraLarge)
@@ -103,13 +103,13 @@ class FormResource extends BaseResource
                                 })->form(function ($form) {
                                     $schema = [];
                                     foreach (get_active_languages() as $lang) {
-                                        $schema[] = TextInput::make($lang->slug)->label(_fields('button').' ('.$lang->name.')')->default('')->maxLength(255);
+                                        $schema[] = TextInput::make($lang->slug)->label(_fields('button') . ' (' . $lang->name . ')')->default('')->maxLength(255);
                                     }
 
                                     return $form->schema($schema);
                                 })),
                         Forms\Components\TextInput::make('data.notification')
-                            ->formatStateUsing(fn (?string $state): string => blank($state) ? 'Form submitted successfully' : $state)
+                            ->formatStateUsing(fn(?string $state): string => blank($state) ? 'Form submitted successfully' : $state)
                             ->label(_fields('notification'))
                             ->default('Form submitted successfully')
                             ->maxLength(255)
@@ -118,7 +118,7 @@ class FormResource extends BaseResource
                                     ->badge(function ($get) {
                                         $counter = 0;
                                         foreach (get_active_languages() as $lang) {
-                                            $notification = $get('data.'.$lang->slug.'.notification') ?? null;
+                                            $notification = $get('data.' . $lang->slug . '.notification') ?? null;
                                             if ($notification && strlen($notification) > 0) {
                                                 $counter++;
                                             }
@@ -128,7 +128,7 @@ class FormResource extends BaseResource
                                     })
                                     ->action(function ($data, $set) {
                                         foreach ($data as $key => $value) {
-                                            $set('data.'.$key.'.notification', $value);
+                                            $set('data.' . $key . '.notification', $value);
                                         }
                                     })->modalWidth(MaxWidth::TwoExtraLarge)
                                     ->fillForm(function ($record) {
@@ -141,7 +141,7 @@ class FormResource extends BaseResource
                                     })->form(function ($form) {
                                         $schema = [];
                                         foreach (get_active_languages() as $lang) {
-                                            $schema[] = TextInput::make($lang->slug)->label(_fields('notification').' ('.$lang->name.')')->default('')->maxLength(255);
+                                            $schema[] = TextInput::make($lang->slug)->label(_fields('notification') . ' (' . $lang->name . ')')->default('')->maxLength(255);
                                         }
 
                                         return $form->schema($schema);
@@ -156,13 +156,13 @@ class FormResource extends BaseResource
                                 Forms\Components\Placeholder::make('created_at')
                                     ->label(_fields('created_at'))
                                     ->inlineLabel()
-                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
-                                    ->label(_fields('updated_at'))
+                                    ->label(_fields('_updated_at'))
                                     ->translateLabel()
                                     ->inlineLabel()
-                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
                             ])->columns(1),
                         Section::make(_fields('additional'))->schema([
                             Forms\Components\TextInput::make('html_id')

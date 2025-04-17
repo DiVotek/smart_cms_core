@@ -157,4 +157,7 @@ return [
     'resize_two_sides' => 'Resize two sides',
     'resize_autoscale' => 'Resize autoscale',
     'is_categories' => 'Enable categories',
+    '_updated_at' => 'Updated at',
+    'maintenance' => 'Maintenance',
+    'debug' => 'Debug',
 ];

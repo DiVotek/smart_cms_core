@@ -17,11 +17,11 @@ class Timestamp
 
                 return match ($column) {
                     'created_at' => _fields('created_at'),
-                    'updated_at' => _fields('updated_at'),
+                    'updated_at' => _fields('_updated_at'),
                     'deleted_at' => _fields('deleted_at'),
                     default => null,
                 };
             })
-            ->content(fn ($record): string => $record?->$column ? $record->$column->diffForHumans() : '-');
+            ->content(fn($record): string => $record?->$column ? $record->$column->diffForHumans() : '-');
     }
 }

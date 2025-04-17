@@ -2,20 +2,25 @@
 
 namespace SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
 
+use Closure;
 use Filament\Actions;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
 use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
+use SmartCms\Core\Resources\PageResource;
 use SmartCms\Core\Services\Schema;
 
 class ListStaticPages extends BaseListRecords
@@ -44,7 +49,7 @@ class ListStaticPages extends BaseListRecords
         $activeTab = request('activeTab');
         foreach (MenuSection::all() as $section) {
             if ($section->is_categories) {
-                if ($section->name._nav('categories') == $activeTab) {
+                if ($section->name . _nav('categories') == $activeTab) {
                     $this->menuSection = $section;
                     break;
                 } else {
@@ -62,12 +67,12 @@ class ListStaticPages extends BaseListRecords
         }
         $actionName = request('activeTab') ?? '';
         $buttonName = _actions('create');
-        $actionName = _actions('create').' '.$actionName;
+        $actionName = _actions('create') . ' ' . $actionName;
         if ($this->menuSection) {
             if (! str_contains($actionName, _nav('categories'))) {
-                $buttonName .= ' '._nav('item');
+                $buttonName .= ' ' . _nav('item');
             } else {
-                $buttonName .= ' '._nav('category');
+                $buttonName .= ' ' . _nav('category');
             }
         }
         $this->actionName = $buttonName;
@@ -114,15 +119,21 @@ class ListStaticPages extends BaseListRecords
                 })
                 ->modalWidth(MaxWidth::TwoExtraLarge)
                 ->modalSubmitActionLabel(_actions('create'))
-                ->form(function ($form) {
+                ->form(function (Form $form) {
                     return $form->schema([
-                        Schema::getReactiveName()->live(onBlur: true)->afterStateUpdated(function ($state, $set) {
-                            $set('slug', \Illuminate\Support\Str::slug($state));
+                        Schema::getReactiveName(),
+                        Schema::getSlug(Page::getDb(), isRequired: false)->unique(Page::getDb(), 'slug', modifyRuleUsing: function ($rule, $get, $set) {
+                            if (blank($get('slug'))) {
+                                $set('slug', \Illuminate\Support\Str::slug($get('name')));
+                            }
+                            return $rule;
                         }),
-                        Schema::getSlug(Page::getDb(), true),
                         Toggle::make('is_categories')->label(_fields('is_categories'))->default(false),
                     ]);
-                })->action(function ($data) {
+                })->action(function ($data,) {
+                    if (!isset($data['slug'])) {
+                        $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+                    }
                     $page = Page::query()->create([
                         'name' => $data['name'],
                         'slug' => $data['slug'],
@@ -134,6 +145,7 @@ class ListStaticPages extends BaseListRecords
                         'is_categories' => $data['is_categories'],
                     ]);
                     Notification::make(_actions('menu_section_created'))->success();
+                    return redirect(ListStaticPages::getUrl());
                 }),
             Actions\Action::make($this->actionName)
                 ->create()
@@ -154,7 +166,12 @@ class ListStaticPages extends BaseListRecords
 
                     return $form->schema([
                         Schema::getReactiveName(),
-                        Schema::getSlug(Page::getDb(), false),
+                        Schema::getSlug(Page::getDb(), false)->unique(Page::getDb(), 'slug', modifyRuleUsing: function ($rule, $get, $set) {
+                            if (blank($get('slug'))) {
+                                $set('slug', \Illuminate\Support\Str::slug($get('name')));
+                            }
+                            return $rule;
+                        }),
                         Schema::getStatus(),
                         $parent_id,
                     ]);
@@ -165,7 +182,7 @@ class ListStaticPages extends BaseListRecords
                         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
                     }
                     if (Page::query()->where('slug', $data['slug'])->exists()) {
-                        $data['slug'] = $data['slug'].'-'.\Illuminate\Support\Str::random(5);
+                        $data['slug'] = $data['slug'] . '-' . \Illuminate\Support\Str::random(5);
                     }
                     if ($this->menuSection) {
                         $parent_id = $data['parent_id'] ?? null;
@@ -192,15 +209,15 @@ class ListStaticPages extends BaseListRecords
         ];
         foreach ($menuSections as $section) {
             if ($section->is_categories) {
-                $name = $section->name._nav('categories');
+                $name = $section->name . _nav('categories');
                 $tabs[$name] = Tab::make($name)
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
                 $categories = Page::query()->where('parent_id', $section->parent_id)->pluck('id')->toArray();
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('parent_id', $categories));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('parent_id', $categories));
             } else {
-                $tabs[$section->name] = Tab::make($section->name.' '._nav('item'))
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', $section->parent_id));
+                $tabs[$section->name] = Tab::make($section->name . ' ' . _nav('item'))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', $section->parent_id));
             }
         }
 

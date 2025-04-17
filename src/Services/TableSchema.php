@@ -21,7 +21,7 @@ class TableSchema
     public static function getUpdatedAt(): TextColumn
     {
         return TextColumn::make('updated_at')
-            ->label(_fields('updated_at'))
+            ->label(_fields('_updated_at'))
             ->since()
             ->toggleable()
             ->sortable();

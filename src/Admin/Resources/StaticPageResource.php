@@ -40,6 +40,12 @@ class StaticPageResource extends BaseResource
 
     public static string $resourceLabel = 'model_page';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $menuSections = MenuSection::query()->pluck('parent_id')->toArray();
+        return Page::query()->withoutGlobalScopes()->whereNull('parent_id')->whereNotIn('id', $menuSections)->count();
+    }
+
     public static function getNavigationIcon(): string|Htmlable|null
     {
         return 'heroicon-m-book-open';
@@ -144,7 +150,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
         return [
