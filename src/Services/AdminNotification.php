@@ -4,6 +4,7 @@ namespace SmartCms\Core\Services;
 
 use Filament\Notifications\Notification;
 use Illuminate\Notifications\Notification as NotificationsNotification;
+use Illuminate\Support\Facades\Log;
 use SmartCms\Core\Models\Admin;
 
 class AdminNotification
@@ -81,7 +82,11 @@ class AdminNotification
         }
         $admin->notifyNow($notification->toDatabase());
         if ($specificNotification) {
-            $admin->notifyNow($specificNotification);
+            try {
+                $admin->notifyNow($specificNotification);
+            } catch (\Exception $e) {
+                Log::error('Error sending notification to admin: ' . $e->getMessage());
+            }
         }
     }
 

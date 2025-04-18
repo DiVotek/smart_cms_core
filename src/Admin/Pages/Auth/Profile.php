@@ -16,6 +16,24 @@ class Profile extends EditProfile
 
     public function form(Form $form): Form
     {
+        $tgNotifications = [
+            Forms\Components\Toggle::make('notifications.telegram.update')
+                ->label(_fields('update'))
+                ->default(true),
+            Forms\Components\Toggle::make('notifications.telegram.new_contact_form')
+                ->label(_fields('new_contact_form'))
+                ->default(true),
+        ];
+        static::applyHook('telegram.notifications', $tgNotifications, 'telegram');
+        $mailNotifications = [
+            Forms\Components\Toggle::make('notifications.mail.update')
+                ->label(_fields('update'))
+                ->default(true),
+            Forms\Components\Toggle::make('notifications.mail.new_contact_form')
+                ->label(_fields('new_contact_form'))
+                ->default(true),
+        ];
+        static::applyHook('mail.notifications', $mailNotifications, 'mail');
         return $form->schema([
             TextInput::make('username')
                 ->label(_fields('username'))
@@ -61,7 +79,7 @@ class Profile extends EditProfile
                                             continue;
                                         }
                                         $text = $message['message']['text'];
-                                        if ($text == '/start '.$token) {
+                                        if ($text == '/start ' . $token) {
                                             $chatId = $message['message']['chat']['id'];
                                             $set('telegram_id', $chatId);
                                             break;
@@ -74,22 +92,8 @@ class Profile extends EditProfile
                             ->color('success'),
                     ]
                 )->readOnly(),
-            Forms\Components\Section::make(_fields('mail_notifications'))->schema([
-                Forms\Components\Toggle::make('notifications.mail.update')
-                    ->label(_fields('update'))
-                    ->default(true),
-                Forms\Components\Toggle::make('notifications.mail.new_contact_form')
-                    ->label(_fields('new_contact_form'))
-                    ->default(true),
-            ])->columns(2),
-            Forms\Components\Section::make(_fields('telegram_notifications'))->schema([
-                Forms\Components\Toggle::make('notifications.telegram.update')
-                    ->label(_fields('update'))
-                    ->default(true),
-                Forms\Components\Toggle::make('notifications.telegram.new_contact_form')
-                    ->label(_fields('new_contact_form'))
-                    ->default(true),
-            ])->columns(2),
+            Forms\Components\Section::make(_fields('mail_notifications'))->schema($mailNotifications)->columns(2),
+            Forms\Components\Section::make(_fields('telegram_notifications'))->schema($tgNotifications)->columns(2),
         ]);
     }
 }
