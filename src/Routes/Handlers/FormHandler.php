@@ -24,16 +24,14 @@ class FormHandler
         $validation = [];
         $customAttributes = [];
         foreach ($form->fields as $field) {
-            foreach ($field['fields'] as $f) {
-                $f = Field::query()->find($f['field']);
-                if ($f->required) {
-                    $validation[strtolower($f->html_id)] = 'required';
-                }
-                if ($f->validation) {
-                    $validation[strtolower($f->html_id)] = $f->validation;
-                }
-                $customAttributes[strtolower($f->html_id)] = $f->label[current_lang()] ?? $f->label[main_lang()] ?? '';
+            $f = Field::query()->find($field['field']);
+            if ($field['is_required'] ?? false) {
+                $validation[$f->html_id] = 'required';
             }
+            if ($f->validation) {
+                $validation[$f->html_id] = $f->validation;
+            }
+            $customAttributes[$f->html_id] = $f->name();
         }
         $validator = Validator::make($request->all(), $validation);
         $validator->setAttributeNames($customAttributes);
@@ -49,7 +47,7 @@ class FormHandler
         }
         $referer = $request->header('referer') ?? $request->server('HTTP_REFERER') ?? $request->headers->get('referer');
         if ($referer) {
-            $data['From page'] = $referer;
+            $data['From'] = $referer;
         }
         $contactForm = ContactForm::query()->create([
             'form_id' => $form->id,
@@ -62,7 +60,7 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
+        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
 
         return new ScmsResponse(true);
     }

@@ -13,6 +13,7 @@ class FieldResource extends BaseResource
 
         return [
             'name' => $this->resource->name(),
+            'html_name' => $this->resource->html_id,
             'type' => $this->resource->type,
             'html_id' => Uuid::uuid4(),
             'mask' => $this->resource->data['mask'] ?? '',

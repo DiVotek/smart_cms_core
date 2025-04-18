@@ -26,7 +26,7 @@ class Profile extends EditProfile
             $this->getEmailFormComponent(),
             $this->getPasswordFormComponent(),
             $this->getPasswordConfirmationFormComponent(),
-            Hidden::make('telegram_token')->formatStateUsing(function ($get) {
+            TextInput::make('telegram_token')->disabled()->hidden()->formatStateUsing(function ($get) {
                 return \Illuminate\Support\Str::random(32);
             }),
             TextInput::make('telegram_id')
@@ -62,7 +62,7 @@ class Profile extends EditProfile
                                             continue;
                                         }
                                         $text = $message['message']['text'];
-                                        if ($text == '/start '.$token) {
+                                        if ($text == '/start ' . $token) {
                                             $chatId = $message['message']['chat']['id'];
                                             $set('telegram_id', $chatId);
                                             break;
