@@ -4,7 +4,6 @@ namespace SmartCms\Core\Admin\Pages\Auth;
 
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\EditProfile;
@@ -62,7 +61,7 @@ class Profile extends EditProfile
                                             continue;
                                         }
                                         $text = $message['message']['text'];
-                                        if ($text == '/start ' . $token) {
+                                        if ($text == '/start '.$token) {
                                             $chatId = $message['message']['chat']['id'];
                                             $set('telegram_id', $chatId);
                                             break;
