@@ -85,7 +85,7 @@ class AdminNotification
             try {
                 $admin->notifyNow($specificNotification);
             } catch (\Exception $e) {
-                Log::error('Error sending notification to admin: ' . $e->getMessage());
+                Log::error('Error sending notification to admin: '.$e->getMessage());
             }
         }
     }

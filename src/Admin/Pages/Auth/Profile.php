@@ -34,6 +34,7 @@ class Profile extends EditProfile
                 ->default(true),
         ];
         static::applyHook('mail.notifications', $mailNotifications, 'mail');
+
         return $form->schema([
             TextInput::make('username')
                 ->label(_fields('username'))
@@ -79,7 +80,7 @@ class Profile extends EditProfile
                                             continue;
                                         }
                                         $text = $message['message']['text'];
-                                        if ($text == '/start ' . $token) {
+                                        if ($text == '/start '.$token) {
                                             $chatId = $message['message']['chat']['id'];
                                             $set('telegram_id', $chatId);
                                             break;
