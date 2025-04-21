@@ -9,7 +9,7 @@ class Maintenance
 {
     public function handle(Request $request, Closure $next)
     {
-        if (_settings('system.maintenance')) {
+        if (_settings('system.maintenance') && !request()->cookie('maintenance_bypass')) {
             if (view()->exists('errors.maintenance')) {
                 return response()->view('errors.maintenance');
             }

@@ -56,6 +56,9 @@ class Login extends AuthLogin
         }
 
         session()->regenerate();
+        cookie()->queue(
+            cookie('maintenance_bypass', 'true', 60*24*7)
+        );
 
         return app(LoginResponse::class);
     }

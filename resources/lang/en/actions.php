@@ -68,4 +68,7 @@ return [
     'used_space' => 'Used space',
     'memory_usage' => 'Memory Usage',
     'create_menu_section' => 'Create Menu Section',
+    'cleared_logs' => 'Logs have been cleared.',
+    'download_logs' => 'Download Logs',
+    'clear_logs' => 'Clear Logs',
 ];
