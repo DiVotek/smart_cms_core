@@ -38,7 +38,7 @@ class Image extends Component
             $src = $data['attributes']['src'];
             if (! str_contains($src, 'http')) {
                 $src = validateImage($src);
-                $this->attributes->setAttributes(['src' => $src]);
+                $this->attributes->setAttributes(array_merge($this->attributes->getAttributes(), ['src' => $src]));
             }
 
             if ($this->isSvgImage($src)) {
@@ -144,7 +144,7 @@ class Image extends Component
         }
 
         if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-            $src = 'storage/'.$src;
+            $src = 'storage/' . $src;
         }
 
         // Normalize all double slashes
@@ -195,7 +195,7 @@ class Image extends Component
                     ->resize(height: $height, width: $width, rescale: $isAutoscale)
                     ->webp();
 
-                $srcset[] = asset($optimizedImage)." {$width}w";
+                $srcset[] = asset($optimizedImage) . " {$width}w";
             } catch (\Exception $e) {
                 continue;
             }
