@@ -48,6 +48,12 @@ class Description extends Component
                     {!! $description !!}
                 </span>
             blade;
+        } elseif ($this->tag == 'article') {
+            return <<<'blade'
+            <article {{ $attributes}} >
+                {!! $description !!}
+            </article>
+            blade;
         } else {
             return <<<'blade'
             <div {{ $attributes}} >
