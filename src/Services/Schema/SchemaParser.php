@@ -44,7 +44,7 @@ class SchemaParser
                     $this->applyHook('parse', $this);
                 }
             } catch (Exception $e) {
-                Log::emergency($e->getMessage(), $this->field, $this->values, $e->getTrace());
+                Log::emergency($e->getMessage(), ['field' => $this->field, 'values' => $this->values]);
             }
         }
 
