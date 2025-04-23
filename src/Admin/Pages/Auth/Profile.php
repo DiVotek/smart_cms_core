@@ -82,7 +82,7 @@ class Profile extends EditProfile
                                                     continue;
                                                 }
                                                 $text = $message['message']['text'];
-                                                if ($text == '/start ' . $token) {
+                                                if ($text == '/start '.$token) {
                                                     $chatId = $message['message']['chat']['id'];
                                                     $set('telegram_id', $chatId);
                                                     break;
@@ -100,7 +100,7 @@ class Profile extends EditProfile
                     TextInput::make('old_password')
                         ->label('Current Password')
                         ->password()
-                        ->required(fn($get) => filled($get('password')))
+                        ->required(fn ($get) => filled($get('password')))
                         ->dehydrated(false) // Do not save to DB
                         ->rule(function () {
                             return function ($attribute, $value, $fail) {
@@ -116,7 +116,7 @@ class Profile extends EditProfile
                     Forms\Components\Section::make(_fields('mail_notifications'))->schema($mailNotifications)->columns(2),
                     Forms\Components\Section::make(_fields('telegram_notifications'))->schema($tgNotifications)->columns(2),
                 ])->columns(1),
-            ])
+            ]),
         ]);
     }
 }

@@ -4,12 +4,10 @@ namespace SmartCms\Core\Admin\Resources\TemplateSectionResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use SmartCms\Core\Admin\Base\Pages\BaseListRecords;
 use SmartCms\Core\Admin\Resources\TemplateSectionResource;
 use SmartCms\Core\Models\TemplateSection;
-use SmartCms\Core\Services\TableSchema;
 
 class ListTemplateSection extends BaseListRecords
 {
@@ -28,7 +26,7 @@ class ListTemplateSection extends BaseListRecords
 
     public function updatedTableFilters(): void
     {
-        $this->isFiltered = !blank($this->getTableFilterState('status'));
+        $this->isFiltered = ! blank($this->getTableFilterState('status'));
     }
 
     public function getTabs(): array
