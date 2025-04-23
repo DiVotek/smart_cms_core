@@ -47,7 +47,7 @@ class EditMenuSection extends BaseEditRecord
                     ->label(_fields('categories_layout'))
                     ->options(Layout::query()->where('path', 'like', '%groups.categories.%')->pluck('name', 'id')->toArray()),
                 Schema::getTemplateBuilder('categories_template')->label(_fields('categories_template')),
-            ])->hidden(fn ($get) => ! $get('is_categories')),
+            ])->hidden(fn($get) => ! $get('is_categories')),
         ])->columns(1);
     }
 
@@ -63,7 +63,7 @@ class EditMenuSection extends BaseEditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit').' '.$section->name;
+            return _actions('edit') . ' ' . $section->name;
         } else {
             return parent::getHeading();
         }
@@ -111,7 +111,7 @@ class EditMenuSection extends BaseEditRecord
                     Notification::make()->title(_actions('success'))->success()->send();
                 }),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->openUrlInNewTab(true),
         ];
@@ -121,7 +121,19 @@ class EditMenuSection extends BaseEditRecord
     {
         $section = MenuSection::query()->where('parent_id', $record->id)->first();
         $section->update($data);
-
+        if ($record->is_categories) {
+            Page::query()->where('parent_id', $record->id)->update([
+                'layout_id' => $data['categories_layout_id'] ?? null,
+            ]);
+            $categories = Page::query()->where('parent_id', $record->id)->pluck('id')->toArray();
+            Page::query()->whereIn('id', $categories)->update([
+                'layout_id' => $data['categories_layout_id'] ?? null,
+            ]);
+        } else {
+            Page::query()->where('parent_id', $record->id)->update([
+                'layout_id' => $data['items_layout_id'] ?? null,
+            ]);
+        }
         return $record;
     }
 }

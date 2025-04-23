@@ -4,9 +4,11 @@ namespace SmartCms\Core\Admin\Pages\Auth;
 
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\EditProfile;
+use Illuminate\Support\Facades\Hash;
 use NotificationChannels\Telegram\TelegramUpdates;
 use SmartCms\Core\Traits\HasHooks;
 
@@ -36,65 +38,85 @@ class Profile extends EditProfile
         static::applyHook('mail.notifications', $mailNotifications, 'mail');
 
         return $form->schema([
-            TextInput::make('username')
-                ->label(_fields('username'))
-                ->required()
-                ->maxLength(255)
-                ->unique(ignoreRecord: true),
-            $this->getEmailFormComponent(),
-            $this->getPasswordFormComponent(),
-            $this->getPasswordConfirmationFormComponent(),
-            TextInput::make('telegram_token')->disabled()->hidden()->formatStateUsing(function ($get) {
-                return \Illuminate\Support\Str::random(32);
-            }),
-            TextInput::make('telegram_id')
-                ->label(_fields('telegram_chat_id'))
-                ->suffixActions(
-                    [
-                        Action::make('copy_telegram_link')
-                            ->label(_fields('copy_telegram_link'))
-                            ->icon('heroicon-o-link')
-                            ->url(function ($get) {
-                                $token = $get('telegram_token');
-                                $botUsername = _settings('telegram.bot_username');
-                                $url = "https://t.me/{$botUsername}?start={$token}";
+            Tabs::make('tabs')->schema([
+                Tabs\Tab::make(_fields('general'))->schema([
+                    TextInput::make('username')
+                        ->label(_fields('username'))
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(ignoreRecord: true),
+                    $this->getEmailFormComponent(),
+                    TextInput::make('telegram_token')->disabled()->hidden()->formatStateUsing(function ($get) {
+                        return \Illuminate\Support\Str::random(32);
+                    }),
+                    TextInput::make('telegram_id')
+                        ->label(_fields('telegram_chat_id'))
+                        ->suffixActions(
+                            [
+                                Action::make('copy_telegram_link')
+                                    ->label(_fields('copy_telegram_link'))
+                                    ->icon('heroicon-o-link')
+                                    ->url(function ($get) {
+                                        $token = $get('telegram_token');
+                                        $botUsername = _settings('telegram.bot_username');
+                                        $url = "https://t.me/{$botUsername}?start={$token}";
 
-                                return $url;
-                            })
-                            ->openUrlInNewTab(),
-                        Action::make('get_telegram_id')
-                            ->label(_fields('get_telegram_id'))
-                            ->action(function ($set, $get) {
-                                $token = $get('telegram_token');
-                                $updates = TelegramUpdates::create()
-                                    ->latest()
-                                    ->limit(5)
-                                    ->options([
-                                        'timeout' => 0,
-                                    ])
-                                    ->get();
-                                if ($updates['ok']) {
-                                    $messages = $updates['result'];
-                                    foreach ($messages as $message) {
-                                        if (! isset($message['message']['text'])) {
-                                            continue;
+                                        return $url;
+                                    })
+                                    ->openUrlInNewTab(),
+                                Action::make('get_telegram_id')
+                                    ->label(_fields('get_telegram_id'))
+                                    ->action(function ($set, $get) {
+                                        $token = $get('telegram_token');
+                                        $updates = TelegramUpdates::create()
+                                            ->latest()
+                                            ->limit(5)
+                                            ->options([
+                                                'timeout' => 0,
+                                            ])
+                                            ->get();
+                                        if ($updates['ok']) {
+                                            $messages = $updates['result'];
+                                            foreach ($messages as $message) {
+                                                if (! isset($message['message']['text'])) {
+                                                    continue;
+                                                }
+                                                $text = $message['message']['text'];
+                                                if ($text == '/start ' . $token) {
+                                                    $chatId = $message['message']['chat']['id'];
+                                                    $set('telegram_id', $chatId);
+                                                    break;
+                                                }
+                                            }
                                         }
-                                        $text = $message['message']['text'];
-                                        if ($text == '/start '.$token) {
-                                            $chatId = $message['message']['chat']['id'];
-                                            $set('telegram_id', $chatId);
-                                            break;
-                                        }
-                                    }
+                                    })
+                                    ->openUrlInNewTab()
+                                    ->icon('heroicon-o-arrow-path')
+                                    ->color('success'),
+                            ]
+                        )->readOnly(),
+                ])->columns(1),
+                Tabs\Tab::make(_fields('password'))->schema([
+                    TextInput::make('old_password')
+                        ->label('Current Password')
+                        ->password()
+                        ->required(fn($get) => filled($get('password')))
+                        ->dehydrated(false) // Do not save to DB
+                        ->rule(function () {
+                            return function ($attribute, $value, $fail) {
+                                if (! Hash::check($value, auth()->user()->password)) {
+                                    $fail('The current password is incorrect.');
                                 }
-                            })
-                            ->openUrlInNewTab()
-                            ->icon('heroicon-o-arrow-path')
-                            ->color('success'),
-                    ]
-                )->readOnly(),
-            Forms\Components\Section::make(_fields('mail_notifications'))->schema($mailNotifications)->columns(2),
-            Forms\Components\Section::make(_fields('telegram_notifications'))->schema($tgNotifications)->columns(2),
+                            };
+                        }),
+                    $this->getPasswordFormComponent(),
+                    $this->getPasswordConfirmationFormComponent(),
+                ])->columns(1),
+                Tabs\Tab::make(_fields('notifications'))->schema([
+                    Forms\Components\Section::make(_fields('mail_notifications'))->schema($mailNotifications)->columns(2),
+                    Forms\Components\Section::make(_fields('telegram_notifications'))->schema($tgNotifications)->columns(2),
+                ])->columns(1),
+            ])
         ]);
     }
 }

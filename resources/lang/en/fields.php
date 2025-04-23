@@ -160,4 +160,7 @@ return [
     '_updated_at' => 'Updated at',
     'maintenance' => 'Maintenance',
     'debug' => 'Debug',
+    'general' => 'General',
+    'password' => 'Password',
+    'notifications' => 'Notifications',
 ];

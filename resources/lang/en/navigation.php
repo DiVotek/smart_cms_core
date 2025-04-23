@@ -54,4 +54,6 @@ return [
     'coming_soon' => 'Coming Soon',
     'under_development' => 'This section is under development.',
     'inbox' => 'Inbox',
+    'used' => 'Used',
+    'not_used' => 'Not Used',
 ];

@@ -71,4 +71,6 @@ return [
     'cleared_logs' => 'Logs have been cleared.',
     'download_logs' => 'Download Logs',
     'clear_logs' => 'Clear Logs',
+    'test_notification_sent' => 'Test notification sent successfully!',
+    'test_notification_error' => 'Error while sending test notification!',
 ];
