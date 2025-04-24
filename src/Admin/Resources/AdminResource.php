@@ -31,17 +31,17 @@ class AdminResource extends BaseResource
             return false;
         }
 
-        return Auth::user()->username == 'superadmin';
+        return Auth::user()->id == 1;
     }
 
     public static function canEdit(Model $record): bool
     {
-        return Auth::user()->username == 'superadmin' && $record->username !== 'superadmin';
+        return Auth::user()->id == 1 && $record->id !== 1;
     }
 
     public static function canDelete(Model $record): bool
     {
-        return $record->username !== 'superadmin';
+        return $record->id !== 1;
     }
 
     public static function getFormSchema(Form $form): array
