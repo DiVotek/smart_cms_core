@@ -34,7 +34,7 @@ class Lang
                         if ($lang) {
                             app()->setLocale($lang->slug);
                             Context::add('current_lang', $lang->slug);
-                            app('_lang')->setCurrentLanguage($lang);
+                            app('_lang')->setCurrentLanguage($lang->slug);
                         }
                     }
                 }
