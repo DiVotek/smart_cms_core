@@ -8,11 +8,12 @@ class ActionRegistry
 {
     public static array $actions = [];
 
-    public static function resolve(string $name, array $params = [], Component $instance): ?Action
+    public static function resolve(string $name, array $params, Component $instance): ?Action
     {
         if (isset(self::$actions[$name])) {
             return new self::$actions[$name]($name, $params, $instance);
         }
+
         return null;
     }
 

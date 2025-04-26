@@ -26,6 +26,7 @@ class Breadcrumbs extends Microdata
                 'item' => $item['link'] ?? '',
             ];
         }
+
         return $data;
     }
 }

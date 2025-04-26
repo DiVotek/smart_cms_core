@@ -15,7 +15,7 @@ class FaqPage extends Microdata
     {
         $entity = $this->properties['entity'] ?? null;
 
-        if (!$entity) {
+        if (! $entity) {
             return [];
         }
 
@@ -28,17 +28,17 @@ class FaqPage extends Microdata
         foreach ($values as $value) {
             $data['mainEntity'][] = [
                 '@type' => 'Question',
-                'name' => $value[current_lang() . '_question'],
+                'name' => $value[current_lang().'_question'],
                 'acceptedAnswer' => [
                     '@type' => 'Answer',
-                    'text' => $value[current_lang() . '_answer'],
+                    'text' => $value[current_lang().'_answer'],
                 ],
             ];
         }
 
         return [
             '@type' => 'FAQPage',
-            ...$data
+            ...$data,
         ];
     }
 }

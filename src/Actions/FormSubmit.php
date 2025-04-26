@@ -14,12 +14,13 @@ class FormSubmit extends Action
     public function handle(): mixed
     {
         $form = Form::query()->where('code', $this->params['code'])->first();
-        if (!$form) {
+        if (! $form) {
             return null;
         }
         $this->instance->validate($this->getValidationRules(), [], $this->getAttributeBindings(), $this->instance->formData);
         $this->submitForm($form);
         $this->instance->formData[$form->code] = [];
+
         return null;
     }
 
@@ -38,7 +39,7 @@ class FormSubmit extends Action
         if ($notification) {
             $this->instance->notify($notification, 'success');
         }
-        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
+        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
     }
 
     public function getValidationRules(): array
@@ -52,7 +53,7 @@ class FormSubmit extends Action
             $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
             if ($fieldModel) {
                 if ($field['is_required']) {
-                    $rules['formData.' . $form->code . '.' . $fieldModel->html_id] = 'required';
+                    $rules['formData.'.$form->code.'.'.$fieldModel->html_id] = 'required';
                 }
             }
         }
@@ -69,7 +70,7 @@ class FormSubmit extends Action
         $attributes = [];
         foreach ($form->fields as $field) {
             $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
-            $attributes['formData.' . $form->code . '.' . $fieldModel->html_id] = $fieldModel->name();
+            $attributes['formData.'.$form->code.'.'.$fieldModel->html_id] = $fieldModel->name();
         }
 
         return $attributes;

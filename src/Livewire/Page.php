@@ -15,7 +15,9 @@ use SmartCms\Core\Support\Livewire\App;
 class Page extends App
 {
     public ModelsPage $page;
+
     public ?Layout $pageLayout;
+
     public function mount(ModelsPage $page)
     {
         $this->page = $page;
@@ -38,12 +40,13 @@ class Page extends App
         ])->get()->toArray();
         app('seo')->title($resource->title)->description($resource->meta_description);
         app('template')->template(BuildTemplate::run($temp));
-        if (!$this->pageLayout) {
+        if (! $this->pageLayout) {
             return '<div></div>';
         }
-        return view('layouts.' . $this->pageLayout->path, [
+
+        return view('layouts.'.$this->pageLayout->path, [
             ...$this->pageLayout->getVariables($this->page->layout_settings ?? []),
-            'entity' => $resource
+            'entity' => $resource,
         ]);
     }
 
@@ -60,5 +63,6 @@ class Page extends App
     }
 
     private function setSeo() {}
+
     private function setTemplate() {}
 }

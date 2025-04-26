@@ -24,7 +24,7 @@ class Noty extends Component
 
     public function dismiss(string $id)
     {
-        $this->notifications = array_filter($this->notifications, fn($n) => $n['id'] !== $id);
+        $this->notifications = array_filter($this->notifications, fn ($n) => $n['id'] !== $id);
     }
 
     public function render()
@@ -32,6 +32,7 @@ class Noty extends Component
         if (view()->exists('livewire.noty')) {
             return view('livewire.noty');
         }
+
         return view('smart_cms::livewire.noty');
     }
 }

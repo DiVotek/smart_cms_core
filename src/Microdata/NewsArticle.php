@@ -14,9 +14,9 @@ class NewsArticle extends Microdata
 
     public function build(): array
     {
-        $entity = (object)$this->properties;
+        $entity = (object) $this->properties;
 
-        if (!$entity) {
+        if (! $entity) {
             return [];
         }
 

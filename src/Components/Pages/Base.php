@@ -6,7 +6,6 @@ use Illuminate\View\Component;
 
 class Base extends Component
 {
-
     public function __construct(public string $dynamicComponent, public array $dynamicComponentData = []) {}
 
     public function render()

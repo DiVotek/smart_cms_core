@@ -2,14 +2,10 @@
 
 namespace SmartCms\Core\Components\Form;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Component;
-use SmartCms\Core\Models\Field as ModelsField;
-use SmartCms\Core\Resources\FieldResource;
 
 class Field extends Component
 {
-
     public function __construct(public object $field, public string $code) {}
 
     public function render()

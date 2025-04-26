@@ -8,7 +8,7 @@ class Header extends LivewireApp
 {
     public function render()
     {
-        return <<<blade
+        return <<<'blade'
         <header>
             <x-s::layout.header />
         </header>

@@ -39,6 +39,7 @@ class FormHandler
             if ($request->ajax() || $request->wantsJson()) {
                 return new ScmsResponse(false, [], $validator->errors()->toArray());
             }
+
             return redirect()->back()->withErrors($validator)->withInput();
         }
         $data = [];
@@ -63,10 +64,11 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
+        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
         if ($request->ajax() || $request->wantsJson()) {
             return new ScmsResponse(true);
         }
+
         return redirect()->back()->with('success', _actions('was_sent'));
     }
 }

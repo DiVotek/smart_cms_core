@@ -10,8 +10,11 @@ class Template
 
     public function template(?array $value = null): array|static
     {
-        if ($value === null) return $this->template ?? [];
+        if ($value === null) {
+            return $this->template ?? [];
+        }
         $this->template = $value;
+
         return $this;
     }
 }

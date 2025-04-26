@@ -26,6 +26,7 @@ class NoIndex
         $response->headers->set('Pragma', 'no-cache');
         $response->headers->set('Expires', '0');
         Config::set('livewire.inject_assets', true);
+
         return $response;
     }
 }
