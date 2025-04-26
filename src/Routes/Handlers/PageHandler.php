@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Livewire\Livewire;
+use SmartCms\Core\Components\Pages\Base;
 use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Traits\HasHooks;
@@ -39,6 +41,8 @@ class PageHandler
         }
         $page = $this->findPage($segments);
         if ($page) {
+            return $this->render('page', ['page' => $page]);
+            // return Livewire::mount('page', ['page' => $page]);
             return Blade::renderComponent(new StaticPage($page));
         }
         $res = null;
@@ -79,5 +83,10 @@ class PageHandler
         if (! Cookie::get('uuid')) {
             Cookie::queue('uuid', $uuid, 60 * 24 * 365);
         }
+    }
+
+    private function render(string $component, array $data = [])
+    {
+        return Blade::renderComponent(new Base($component, $data));
     }
 }

@@ -5,6 +5,8 @@ namespace SmartCms\Core\Components\Layout;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use SmartCms\Core\Microdata\Organization;
+use SmartCms\Core\Microdata\Website;
 
 class Layout extends Component
 {
@@ -26,7 +28,6 @@ class Layout extends Component
 
     public function __construct()
     {
-
         $stylePath = file_exists(resource_path('scss/app.scss')) ? 'resources/scss/app.scss' : 'resources/css/app.css';
         $this->stylePath = $stylePath;
 
@@ -49,7 +50,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = [
             'prefix' => _settings('title.prefix', ''),
@@ -59,7 +60,10 @@ class Layout extends Component
             'prefix' => _settings('description.prefix', ''),
             'suffix' => _settings('description.suffix', ''),
         ];
+        Organization::make();
+        Website::make();
     }
+
 
     public function render(): View|Closure|string
     {
@@ -72,8 +76,8 @@ class Layout extends Component
                         <link rel="canonical" href="{{ url()->current() }}" />
                         <link rel="icon" type="image/x-icon" href="{{$favicon}}">
                         <link rel="preload" href="{{validateImage(logo())}}" as="image" type="image/webp">
-                        <title>{{$titleMod['prefix'] ?? ''}}@yield('title'){{$titleMod['suffix'] ?? ''}}</title>
-                        <meta name="description" content="{{$descriptionMod['prefix'] ?? ''}}@yield('description'){{$descriptionMod['suffix'] ?? ''}}" />
+                        <title>{{$titleMod['prefix'] ?? ''}}{{app('seo')->title()}}{{$titleMod['suffix'] ?? ''}}</title>
+                        <meta name="description" content="{{$descriptionMod['prefix'] ?? ''}}{{app('seo')->description()}}{{$descriptionMod['suffix'] ?? ''}}" />
                         <meta name="csrf-token" content="{{ csrf_token() }}">
                         <meta name="robots" content="index, follow">
                         <link rel="robots" href="{{route('robots')}}">
@@ -82,35 +86,43 @@ class Layout extends Component
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
                         <meta property="og:type" content="{{$og_type}}" />
-                        <meta property="og:title" content="{{$titleMod['prefix'] ?? ''}}@yield('title'){{$titleMod['suffix'] ?? ''}}" />
-                        <meta property="og:description" content="{{$descriptionMod['prefix'] ?? ''}}@yield('description'){{$descriptionMod['suffix'] ?? ''}}" />
+                        <meta property="og:title" content="{{$titleMod['prefix'] ?? ''}}{{app('seo')->title()}}{{$titleMod['suffix'] ?? ''}}" />
+                        <meta property="og:description" content="{{$descriptionMod['prefix'] ?? ''}}{{app('seo')->description()}}{{$descriptionMod['suffix'] ?? ''}}" />
                         <meta property="og:url" content="{{ url()->current() }}" />
-                        <meta property="og:image" content="@yield('meta-image')" />
+                        <meta property="og:image" content="{{app('seo')->image()}}" />
                         <meta property="og:site_name" content="{{ company_name() }}">
                         <meta name="twitter:card" content="summary">
                         <meta name="twitter:site" content="{{ '@' . company_name() }}">
-                        <meta name="twitter:description" content="{{$descriptionMod['prefix'] ?? ''}}@yield('description'){{$descriptionMod['suffix'] ?? ''}}">
-                        <meta name="twitter:title" content="{{$titleMod['prefix'] ?? ''}}@yield('title'){{$titleMod['suffix'] ?? ''}}">
-                        <meta name="twitter:image" content="@yield('meta-image')">
-                        <x-s::microdata.organization />
-                        <x-s::microdata.website />
+                        <meta name="twitter:description" content="{{$descriptionMod['prefix'] ?? ''}}{{app('seo')->description()}}{{$descriptionMod['suffix'] ?? ''}}">
+                        <meta name="twitter:title" content="{{$titleMod['prefix'] ?? ''}}{{app('seo')->title()}}{{$titleMod['suffix'] ?? ''}}">
+                        <meta name="twitter:image" content="{{app('seo')->image()}}">
+                        @foreach(app('seo')->getMicrodata() as $key => $microdata)
+                        <x-s::microdata.microdata :type="$key" :properties="$microdata" />
+                        @endforeach
                         @yield('microdata')
                         <style>
                             :root {@foreach($theme as $key => $value)--{{$key}}: {{$value ?? '#000'}};@endforeach}
                         </style>
                         @vite([$stylePath, 'resources/js/app.js'])
+                        @if(!config('livewire.inject_assets')  && config('livewire.enabled',true))
+                            @livewireStyles
+                        @endif
                         @stack('styles')
                     </head>
                     <body class="antialiased">
-                        <x-s::layout.header />
+                        @livewire('header')
                         <main>
                             @yield('content')
                         </main>
-                        <x-s::layout.footer />
+                        @livewire('footer')
                         @foreach($scripts as $script)
                             {!! $script['scripts'] !!}
                         @endforeach
                         <x-s::misc.gtm />
+                        <livewire:noty/>
+                        @if(!config('livewire.inject_assets') && config('livewire.enabled',true))
+                        @livewireScriptConfig
+                        @endif
                     </body>
                     </html>
         blade;

@@ -20,4 +20,5 @@ return [
     'slug_hint' => 'The SEO URL will be generated automatically from the "Name" field',
     'maintenance' => 'Enable maintenance mode',
     'debug' => 'Enable debug mode',
+    'spa_mode' => 'Enable SPA mode for admin panel(disable page reload, works more smoothly)',
 ];

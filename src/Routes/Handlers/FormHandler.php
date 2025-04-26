@@ -36,7 +36,10 @@ class FormHandler
         $validator = Validator::make($request->all(), $validation);
         $validator->setAttributeNames($customAttributes);
         if ($validator->fails()) {
-            return new ScmsResponse(false, [], $validator->errors()->toArray());
+            if ($request->ajax() || $request->wantsJson()) {
+                return new ScmsResponse(false, [], $validator->errors()->toArray());
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
         }
         $data = [];
         foreach ($request->except(['_token', 'form', 'form_attributes']) as $key => $value) {
@@ -60,8 +63,10 @@ class FormHandler
                 ->success()
                 ->send();
         }
-        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
-
-        return new ScmsResponse(true);
+        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
+        if ($request->ajax() || $request->wantsJson()) {
+            return new ScmsResponse(true);
+        }
+        return redirect()->back()->with('success', _actions('was_sent'));
     }
 }

@@ -153,27 +153,27 @@ class Settings extends BaseSettings
                                     TextInput::make('default')
                                         ->label(_fields('branch_name'))
                                         ->required()->suffixAction(ActionsAction::make('translate')->icon('heroicon-o-language')
-                                        ->fillForm(function ($get) {
-                                            $values = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $values[$language->slug] = $get($language->slug);
-                                            }
+                                            ->fillForm(function ($get) {
+                                                $values = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $values[$language->slug] = $get($language->slug);
+                                                }
 
-                                            return $values;
-                                        })
-                                        ->form(function ($form) {
-                                            $schema = [];
-                                            foreach (get_active_languages() as $language) {
-                                                $schema[] = TextInput::make($language->slug)
-                                                    ->label($language->name);
-                                            }
+                                                return $values;
+                                            })
+                                            ->form(function ($form) {
+                                                $schema = [];
+                                                foreach (get_active_languages() as $language) {
+                                                    $schema[] = TextInput::make($language->slug)
+                                                        ->label($language->name);
+                                                }
 
-                                            return $form->schema($schema);
-                                        })->action(function ($data, $set) {
-                                            foreach ($data as $key => $value) {
-                                                $set($key, $value);
-                                            }
-                                        })),
+                                                return $form->schema($schema);
+                                            })->action(function ($data, $set) {
+                                                foreach ($data as $key => $value) {
+                                                    $set($key, $value);
+                                                }
+                                            })),
                                 ]),
                         ]),
                     Tabs\Tab::make(strans('admin.seo'))->schema([
@@ -337,7 +337,7 @@ class Settings extends BaseSettings
                             TextInput::make(sconfig('telegram.token'))
                                 ->label(_fields('bot_token'))
                                 ->password()
-                                ->revealable(false)->readOnly(fn ($get, $state) => ! $get('is_token_deleted') || $state)->suffixAction(ActionsAction::make('delete_token')->icon('heroicon-o-trash')->action(function ($set) {
+                                ->revealable(false)->readOnly(fn($get, $state) => ! $get('is_token_deleted') || $state)->suffixAction(ActionsAction::make('delete_token')->icon('heroicon-o-trash')->action(function ($set) {
                                     $set('is_token_deleted', true);
                                     $set(sconfig('telegram.token'), null);
                                 })),
@@ -377,6 +377,13 @@ class Settings extends BaseSettings
                         ]),
                     ]),
                     Tabs\Tab::make(strans('admin.system'))->schema([
+                        Toggle::make(sconfig('system.maintenance'))
+                            ->label(_fields('maintenance'))
+                            ->helperText(_hints('maintenance'))
+                            ->formatStateUsing(function ($state) {
+                                return $state ?? false;
+                            })
+                            ->required(),
                         Toggle::make(sconfig('system.debug'))
                             ->label(_fields('debug'))
                             ->helperText(_hints('debug'))
@@ -384,11 +391,11 @@ class Settings extends BaseSettings
                                 return $state ?? true;
                             })
                             ->required(),
-                        Toggle::make(sconfig('system.maintenance'))
-                            ->label(_fields('maintenance'))
-                            ->helperText(_hints('maintenance'))
+                        Toggle::make(sconfig('system.spa_mode'))
+                            ->label(_fields('spa_mode'))
+                            ->helperText(_hints('spa_mode'))
                             ->formatStateUsing(function ($state) {
-                                return $state ?? false;
+                                return $state ?? true;
                             })
                             ->required(),
                     ]),
@@ -452,7 +459,7 @@ class Settings extends BaseSettings
                     $theme = array_merge(config('theme', []), $theme);
                     $schema = [];
                     foreach ($theme as $key => $value) {
-                        $schema[] = ColorPicker::make('theme.'.$key)
+                        $schema[] = ColorPicker::make('theme.' . $key)
                             ->label(ucfirst($key))
                             ->default($value);
                     }
@@ -490,7 +497,7 @@ class Settings extends BaseSettings
             Action::make('cancel')
                 ->color('gray')
                 ->label(_actions('cancel'))
-                ->url(fn () => self::getUrl()),
+                ->url(fn() => self::getUrl()),
         ];
     }
 

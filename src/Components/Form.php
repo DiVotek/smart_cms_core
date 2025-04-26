@@ -5,6 +5,7 @@ namespace SmartCms\Core\Components;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Field;
 use SmartCms\Core\Models\Form as ModelsForm;
+use SmartCms\Core\Resources\FieldResource;
 
 class Form extends Component
 {
@@ -14,28 +15,23 @@ class Form extends Component
 
     public string $button;
 
-    public function __construct($form, array $values = [], array $errors = [])
+    public function __construct(public string $code, public string $class = '')
     {
-        $form = ModelsForm::find($form) ?? new ModelsForm;
-        $fields = $form->fields ?? [];
-        $newFields = [];
-        foreach ($fields as &$group) {
-            $newGroup = ['class' => $group['class'] ?? '', 'fields' => []];
-            foreach ($group['fields'] as &$field) {
-                $field = Field::find($field['field']);
-                if (! $field) {
-                    continue;
-                }
-                $name = strtolower($field->html_id);
-                $field->value = $values[$name] ?? null;
-                $field->error = $errors[$name] ?? null;
-                $newGroup['fields'][] = $field;
-            }
-            $newFields[] = $newGroup;
+        $this->form = ModelsForm::query()->where('code', $code)->first();
+        if (! $this->form) {
+            $this->fields = [];
+            $this->button = 'Submit';
         }
-        $this->form = $form;
-        $this->fields = $newFields;
-        $this->button = $form->button[current_lang()] ?? 'Submit';
+        $fields = [];
+        foreach ($this->form->fields as $field) {
+            $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
+            if ($fieldModel) {
+                $fieldModel->required = $field['is_required'] ?? false;
+                $fields[] = FieldResource::make($fieldModel)->get();
+            }
+        }
+        $this->fields = $fields;
+        $this->button = $this->form->data[current_lang()]['button'] ?? $this->form->data['button'] ?? '';
     }
 
     public function render()
@@ -43,22 +39,19 @@ class Form extends Component
         return <<<'blade'
             <form id="{{$form->html_id ?? $form->code}}"
                 name="{{$form->code}}"
-                hx-get="{{route('smartcms.form.submit')}}"
-                hx-target="#{{$form->html_id ?? $form->code}}"
-                hx-swap="outerHTML"
-                hx-trigger="submit"
-                {{$attributes->merge(['class' => $form->class ?? ''])}}>
-                <input type="hidden" name="form" value="{{$form->code}}" />
-                <input type="hidden" name="form_attributes" value="{{ json_encode($attributes) }}">
+                wire:submit.prevent="callAction('form_submit',{{ json_encode(['code' => $form->code]) }})"
+                action="{{route('smartcms.form.submit')}}"
+                {{$attributes->merge(['class' => $class])}} method="POST">
                 @csrf
-                @foreach($fields as $group)
-                    <x-s::form.group class="form-section {{$group['class'] ?? ''}}">
-                        @foreach($group['fields'] as $field)
-                            <x-s::form.field :field="$field" :name="strtolower($field->html_id)" value="{{$field->value ?? ''}}"  />
-                        @endforeach
-                    </x-s::form.group>
+                <input type="hidden" name="form" value="{{$form->code}}">
+                @foreach($fields as $field)
+                <x-s::form.field :field="$field" :code="$form->code" />
                 @endforeach
-                <button type="submit" class="btn btn-primary">{{$button}}</button>
+                @if(view()->exists('forms.button'))
+                    @include('forms.button')
+                @else
+                    @include('smart_cms::forms.button')
+                @endif
             </form>
          blade;
     }

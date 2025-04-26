@@ -5,103 +5,76 @@ namespace SmartCms\Core\Components\Form;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Component;
 use SmartCms\Core\Models\Field as ModelsField;
+use SmartCms\Core\Resources\FieldResource;
 
 class Field extends Component
 {
-    public $field;
 
-    public string $id;
-
-    public ?string $placeholder;
-
-    public string $label;
-
-    public ?string $description;
-
-    public array $options = [];
-
-    public bool $required;
-
-    public $fieldAttributes = [];
-
-    public function __construct(ModelsField $field)
-    {
-        $this->field = $field;
-        $this->id = $field->html_id ?? $field->id;
-        $this->placeholder = $field->placeholder[current_lang()] ?? null;
-        $this->label = $field->label[current_lang()] ?? '';
-        $this->description = $field->description[current_lang()] ?? null;
-        $this->options = $field->options[current_lang()] ?? [];
-        if (! empty($field->options)) {
-            $this->options = array_map(function ($option) {
-                return $option[current_lang()] ?? $option[main_lang()] ?? '';
-            }, $field->options);
-        }
-        $this->required = $field->required;
-        $type = $field->type;
-        $attributes = ['class' => 'field', 'required' => (bool) $field->required, 'value' => $field->value ?? '', 'name' => $field->html_id, 'placeholder' => $this->placeholder, 'id' => $this->id];
-        if ($type == 'checkbox' || $type == 'radio') {
-            // dd($field);
-            $attributes['checked'] = (bool) $field->value;
-        }
-        if ($type == 'checkbox') {
-            $attributes['value'] = 1;
-        }
-        if ($type != 'select' && $type != 'textarea') {
-            $attributes['type'] = $type;
-        }
-        if ($type == 'textarea') {
-            unset($attributes['type'], $attributes['value']);
-        }
-        if ($field->mask && in_array($type, ['text', 'email', 'tel', 'number', 'url'])) {
-            $mask = $field->mask[current_lang()] ?? null;
-            if ($mask) {
-                $attributes['x-mask'] = $mask;
-                $attributes['x-data'] = '';
-            }
-        }
-        $this->fieldAttributes = $attributes;
-        // $this->attributes = $this->attributes->merge($attributes);
-    }
+    public function __construct(public object $field, public string $code) {}
 
     public function render()
     {
-        // return Cache::rememberForever('scms_form_field_component', function () {
-        if (view()->exists('templates::'.template().'.form.field')) {
-            return view('templates::'.template().'.form.field');
-        }
-
         return <<<'blade'
-            <div class="form-group">
-                @if(isset($slot) && !$slot->isEmpty())
-                {{ $slot }}
+            @php
+                $type = $field->type ?? 'text';
+                $name = $field->name ?? '';
+                $label = $field->label ?? ucfirst($name);
+                $options = $field->options ?? [];
+                $model = 'formData.' . $code . '.' . $field->html_name;
+            @endphp
+            @switch($type)
+            @case('input')
+            @case('email')
+            @case('phone')
+            @case('text')
+            @case('number')
+                @if(view()->exists('forms.input'))
+                    @include('forms.input')
                 @else
-                <div class="form-top">
-                    <label for="{{ $id }}">{{ $label }}</label>
-                    <div class="form-input">
-                    @if ($field->type == 'textarea')
-                        <textarea {{ $attributes->merge($fieldAttributes) }} >@if($field->value){{ trim($field->value) }}@endif</textarea>
-                    @elseif($field->type == 'select')
-                        <select {{ $attributes->merge($fieldAttributes) }}>
-                            @foreach ($options as $option)
-                            <option value="{{ $option }}">{{ $option }}</option>
-                            @endforeach
-                        </select>
-                    @else
-                        <input {{ $attributes->merge($fieldAttributes) }} >
-                    @endif
-                    @if($field->image)
-                        <img src="{{ $field->image }}" alt="{{ $label }}" />
-                    @endif
-                    </div>
-                </div>
-                @isset($field->error)
-                  <span id="{{ $id }}-error" class="form-error">{{ $field->error[0] ?? '' }}</span>
-                @endisset
-                <p class="form-description"></p>
+                    @include('smart_cms::forms.input')
                 @endif
-            </div>
+            @break
+            @case('select')
+                @if(view()->exists('forms.select'))
+                    @include('forms.select')
+                @else
+                    @include('smart_cms::forms.select')
+                @endif
+            @break
+            @case('checkbox')
+                @if(view()->exists('forms.checkbox'))
+                    @include('forms.checkbox')
+                @else
+                    @include('smart_cms::forms.checkbox')
+                @endif
+            @break
+            @case('radio')
+                @if(view()->exists('forms.radio'))
+                    @include('forms.radio')
+                @else
+                    @include('smart_cms::forms.radio')
+                @endif
+            @break
+            @case('textarea')
+                @if(view()->exists('forms.textarea'))
+                    @include('forms.textarea')
+                @else
+                    @include('smart_cms::forms.textarea')
+                @endif
+            @break
+            @default
+                @if(view()->exists('forms.input'))
+                    @include('forms.input')
+                @else
+                    @include('smart_cms::forms.input')
+                @endif
+            @endswitch
+            @if(view()->exists('forms.error'))
+                @include('forms.error')
+            @else
+                @include('smart_cms::forms.error')
+            @endif
+
          blade;
-        // });
     }
 }

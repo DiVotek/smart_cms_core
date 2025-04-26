@@ -32,7 +32,8 @@ class HtmlMinifier
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
-        $response->setContent($this->minify($response->getContent()));
+        // wire:ignore dont work with that, so temporary disabled
+        // $response->setContent($this->minify($response->getContent()));
 
         return $response;
     }

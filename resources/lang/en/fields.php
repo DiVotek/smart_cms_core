@@ -163,4 +163,5 @@ return [
     'general' => 'General',
     'password' => 'Password',
     'notifications' => 'Notifications',
+    'spa_mode' => 'SPA mode',
 ];
