@@ -2,6 +2,7 @@
 
 namespace SmartCms\Core\Livewire;
 
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Event;
 use SmartCms\Core\Actions\Template\BuildTemplate;
 use SmartCms\Core\Microdata\BlogArticle;
@@ -34,6 +35,7 @@ class Page extends App
             $resource = PageEntityResource::make($this->page)->get();
         }
         $this->setMicrodata($resource);
+        Context::add('entity', $resource);
         $temp = $this->page->template()->select([
             'template_section_id',
             'value',
@@ -44,7 +46,7 @@ class Page extends App
             return '<div></div>';
         }
 
-        return view('layouts.'.$this->pageLayout->path, [
+        return view('layouts.' . $this->pageLayout->path, [
             ...$this->pageLayout->getVariables($this->page->layout_settings ?? []),
             'entity' => $resource,
         ]);
