@@ -57,28 +57,28 @@ class SmartCmsServiceProvider extends ServiceProvider
         $this->mergeAuthConfig();
         $this->mergePanelConfig();
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/settings.php',
+            __DIR__.'/../config/settings.php',
             'settings'
         );
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/shared.php',
+            __DIR__.'/../config/shared.php',
             'shared'
         );
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
         $this->publishes([
-            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
-            __DIR__ . '/../config/theme.php' => config_path('theme.php'),
-            __DIR__ . '/../config/translates.php' => config_path('translates.php'),
-            __DIR__ . '/../resources/images/' => storage_path('app/public'),
+            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__.'/../config/theme.php' => config_path('theme.php'),
+            __DIR__.'/../config/translates.php' => config_path('translates.php'),
+            __DIR__.'/../resources/images/' => storage_path('app/public'),
         ], 'smart_cms.resources');
         $this->publishes([
-            __DIR__ . '/../resources/views/livewire' => resource_path('views/livewire'),
-            __DIR__ . '/../resources/views/forms' => resource_path('views/forms'),
+            __DIR__.'/../resources/views/livewire' => resource_path('views/livewire'),
+            __DIR__.'/../resources/views/forms' => resource_path('views/forms'),
         ], 'smart_cms.views');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/new_migrations');
-        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'smart_cms');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__.'/../database/new_migrations');
+        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
         if (File::exists(public_path('robots.txt'))) {
             File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
         }
@@ -89,7 +89,7 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     protected function mergeAuthConfig()
     {
-        $packageAuth = require __DIR__ . '/../config/auth.php';
+        $packageAuth = require __DIR__.'/../config/auth.php';
         $appAuth = config('auth', []);
         if (isset($packageAuth['guards'])) {
             $appAuth['guards'] = array_merge(
@@ -171,8 +171,8 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     private function bootBladeComponents(): void
     {
-        $this->app->singleton(Seo::class, fn() => new Seo);
-        $this->app->singleton(Template::class, fn() => new Template);
+        $this->app->singleton(Seo::class, fn () => new Seo);
+        $this->app->singleton(Template::class, fn () => new Template);
         $this->app->alias(Seo::class, 'seo');
         $this->app->alias(Template::class, 'template');
         ActionRegistry::register('form_submit', new FormSubmit);
