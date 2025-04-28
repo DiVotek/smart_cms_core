@@ -46,7 +46,7 @@ class Page extends App
             return '<div><x-s::layout.builder /></div>';
         }
 
-        return view('layouts.' . $this->pageLayout->path, [
+        return view('layouts.'.$this->pageLayout->path, [
             ...$this->pageLayout->getVariables($this->page->layout_settings ?? []),
             'entity' => $resource,
         ]);
