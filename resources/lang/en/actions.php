@@ -73,4 +73,5 @@ return [
     'clear_logs' => 'Clear Logs',
     'test_notification_sent' => 'Test notification sent successfully!',
     'test_notification_error' => 'Error while sending test notification!',
+    '_view' => 'To website',
 ];
