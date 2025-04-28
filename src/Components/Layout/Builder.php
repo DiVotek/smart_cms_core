@@ -18,7 +18,7 @@ class Builder extends Component
         self::$isRendered = true;
 
         return <<<'blade'
-            <div class="builder" wire:ignore >
+            <div class="builder" >
                 @foreach (app('template')->template() as $key => $field)
                     @include($field['component'], $field['options'])
                 @endforeach

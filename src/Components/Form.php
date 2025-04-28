@@ -45,7 +45,9 @@ class Form extends Component
                 @csrf
                 <input type="hidden" name="form" value="{{$form->code}}">
                 @foreach($fields as $field)
-                <x-s::form.field :field="$field" :code="$form->code" />
+                <div class="form__field">
+                    <x-s::form.field :field="$field" :code="$form->code" />
+                </div>
                 @endforeach
                 @if(view()->exists('forms.button'))
                     @include('forms.button')

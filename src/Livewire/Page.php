@@ -43,10 +43,10 @@ class Page extends App
         app('seo')->title($resource->title)->description($resource->meta_description);
         app('template')->template(BuildTemplate::run($temp));
         if (! $this->pageLayout) {
-            return '<div></div>';
+            return '<div><x-s::layout.builder /></div>';
         }
 
-        return view('layouts.'.$this->pageLayout->path, [
+        return view('layouts.' . $this->pageLayout->path, [
             ...$this->pageLayout->getVariables($this->page->layout_settings ?? []),
             'entity' => $resource,
         ]);

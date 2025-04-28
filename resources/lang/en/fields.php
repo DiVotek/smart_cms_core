@@ -164,4 +164,9 @@ return [
     'password' => 'Password',
     'notifications' => 'Notifications',
     'spa_mode' => 'SPA mode',
+    'without_section' => 'Without section',
+    'pages' => 'Pages',
+    'page_type' => 'Page type',
+    'page_part' => 'Page/Section',
+    'page_parts' => 'Pages/Sections',
 ];
