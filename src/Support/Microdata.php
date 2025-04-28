@@ -17,7 +17,7 @@ abstract class Microdata
 
     public static function make(array $properties = []): void
     {
-        $data = new static($properties)->build();
+        $data = (new static($properties))->build();
         app('seo')->addMicrodata(static::type(), $data);
     }
 }
