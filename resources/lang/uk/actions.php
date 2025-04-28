@@ -50,5 +50,5 @@ return [
     'menu_section_created' => 'Секцію меню успішно створено!',
     'you_cant_delete_menu_section_with_items' => 'Неможливо видалити секцію меню з елементами!',
     'create_menu_section' => 'Створити секцію меню',
-    "_view" => "До сайту"
+    '_view' => 'До сайту',
 ];
