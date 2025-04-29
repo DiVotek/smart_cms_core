@@ -29,7 +29,7 @@ class HealthCheck extends StatsOverviewWidget
         }
 
         return [
-            Stat::make(_actions('disk_usage'), round($used / 1_073_741_824, 2) . ' / ' . round($total / 1_073_741_824, 2) . ' GB')
+            Stat::make(_actions('disk_usage'), round($used / 1_073_741_824, 2).' / '.round($total / 1_073_741_824, 2).' GB')
                 ->chart([$used, $used, $used])
                 ->color($free > 1_000_000 ? 'success' : 'danger')
                 ->description(_actions('used_space')),
@@ -46,7 +46,7 @@ class HealthCheck extends StatsOverviewWidget
         $icon = $load[0] > 80 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down';
 
         return [
-            Stat::make(_actions('cpu_load'), round($load[0], 2) . ' %')
+            Stat::make(_actions('cpu_load'), round($load[0], 2).' %')
                 ->descriptionIcon($icon)
                 ->chart([$load[0], $load[1], $load[2]])
                 ->color($load[0] > 80 ? 'danger' : 'success')

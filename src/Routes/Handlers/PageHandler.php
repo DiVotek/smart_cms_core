@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-use Livewire\Livewire;
 use SmartCms\Core\Components\Pages\Base;
-use SmartCms\Core\Components\Pages\StaticPage;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Traits\HasHooks;
 use Symfony\Component\HttpKernel\Attribute\Cache;
@@ -42,6 +40,7 @@ class PageHandler
         $page = $this->findPage($segments);
         if ($page) {
             $page->view();
+
             return $this->render('page', ['page' => $page]);
         }
         $res = null;
