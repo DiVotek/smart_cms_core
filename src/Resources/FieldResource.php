@@ -10,7 +10,12 @@ class FieldResource extends BaseResource
     {
         $description = $this->resource->data[current_lang()]['description'] ?? $this->resource->data['description'] ?? '';
         $placeholder = $this->resource->data[current_lang()]['placeholder'] ?? $this->resource->data['placeholder'] ?? '';
-
+        $dataOptions = $this->resource->data['options'] ?? [];
+        $options = [];
+        foreach ($dataOptions as $option) {
+            $options[] = $option[current_lang()] ?? $option['default'] ?? '';
+        }
+        $options = array_filter($options);
         return [
             'name' => $this->resource->name(),
             'html_name' => $this->resource->html_id,
@@ -22,7 +27,7 @@ class FieldResource extends BaseResource
             'label' => $this->resource->name(),
             'description' => $description,
             'placeholder' => $placeholder,
-            'options' => $this->resource->options ?? [],
+            'options' => $options,
             'required' => $this->resource->required ?? false,
         ];
     }
