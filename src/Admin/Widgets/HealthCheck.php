@@ -19,9 +19,15 @@ class HealthCheck extends StatsOverviewWidget
     protected function getDiskSpaceUsage(): array
     {
         try {
-            $total = disk_total_space('/');
-            $free = disk_free_space('/');
-            $used = $total - $free;
+            if (function_exists('disk_total_space') && function_exists('disk_free_space')) {
+                $total = disk_total_space('/');
+                $free = disk_free_space('/');
+                $used = $total - $free;
+            } else {
+                $total = 0;
+                $free = 0;
+                $used = 0;
+            }
         } catch (\Exception $e) {
             $total = 0;
             $free = 0;
@@ -29,7 +35,7 @@ class HealthCheck extends StatsOverviewWidget
         }
 
         return [
-            Stat::make(_actions('disk_usage'), round($used / 1_073_741_824, 2).' / '.round($total / 1_073_741_824, 2).' GB')
+            Stat::make(_actions('disk_usage'), round($used / 1_073_741_824, 2) . ' / ' . round($total / 1_073_741_824, 2) . ' GB')
                 ->chart([$used, $used, $used])
                 ->color($free > 1_000_000 ? 'success' : 'danger')
                 ->description(_actions('used_space')),
@@ -39,14 +45,18 @@ class HealthCheck extends StatsOverviewWidget
     protected function getCpuLoad(): array
     {
         try {
-            $load = sys_getloadavg();
+            if (function_exists('sys_getloadavg')) {
+                $load = sys_getloadavg();
+            } else {
+                $load = [0, 0, 0];
+            }
         } catch (\Exception $e) {
             $load = [0, 0, 0];
         }
         $icon = $load[0] > 80 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down';
 
         return [
-            Stat::make(_actions('cpu_load'), round($load[0], 2).' %')
+            Stat::make(_actions('cpu_load'), round($load[0], 2) . ' %')
                 ->descriptionIcon($icon)
                 ->chart([$load[0], $load[1], $load[2]])
                 ->color($load[0] > 80 ? 'danger' : 'success')
@@ -57,8 +67,12 @@ class HealthCheck extends StatsOverviewWidget
     protected function getMemoryUsage(): array
     {
         try {
-            $mem = shell_exec('free -m');
-            preg_match('/Mem:\s+(\d+)\s+(\d+)/', $mem, $matches);
+            if (function_exists('shell_exec')) {
+                $mem = shell_exec('free -m');
+                preg_match('/Mem:\s+(\d+)\s+(\d+)/', $mem, $matches);
+            } else {
+                $matches = [0, 0];
+            }
         } catch (\Exception $e) {
             $matches = [0, 0];
         }
