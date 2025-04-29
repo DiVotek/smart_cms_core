@@ -18,12 +18,18 @@ class HealthCheck extends StatsOverviewWidget
 
     protected function getDiskSpaceUsage(): array
     {
-        $total = disk_total_space('/');
-        $free = disk_free_space('/');
-        $used = $total - $free;
+        try {
+            $total = disk_total_space('/');
+            $free = disk_free_space('/');
+            $used = $total - $free;
+        } catch (\Exception $e) {
+            $total = 0;
+            $free = 0;
+            $used = 0;
+        }
 
         return [
-            Stat::make(_actions('disk_usage'), round($used / 1_073_741_824, 2).' / '.round($total / 1_073_741_824, 2).' GB')
+            Stat::make(_actions('disk_usage'), round($used / 1_073_741_824, 2) . ' / ' . round($total / 1_073_741_824, 2) . ' GB')
                 ->chart([$used, $used, $used])
                 ->color($free > 1_000_000 ? 'success' : 'danger')
                 ->description(_actions('used_space')),
@@ -32,11 +38,15 @@ class HealthCheck extends StatsOverviewWidget
 
     protected function getCpuLoad(): array
     {
-        $load = sys_getloadavg();
+        try {
+            $load = sys_getloadavg();
+        } catch (\Exception $e) {
+            $load = [0, 0, 0];
+        }
         $icon = $load[0] > 80 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down';
 
         return [
-            Stat::make(_actions('cpu_load'), round($load[0], 2).' %')
+            Stat::make(_actions('cpu_load'), round($load[0], 2) . ' %')
                 ->descriptionIcon($icon)
                 ->chart([$load[0], $load[1], $load[2]])
                 ->color($load[0] > 80 ? 'danger' : 'success')
@@ -46,8 +56,12 @@ class HealthCheck extends StatsOverviewWidget
 
     protected function getMemoryUsage(): array
     {
-        $mem = shell_exec('free -m');
-        preg_match('/Mem:\s+(\d+)\s+(\d+)/', $mem, $matches);
+        try {
+            $mem = shell_exec('free -m');
+            preg_match('/Mem:\s+(\d+)\s+(\d+)/', $mem, $matches);
+        } catch (\Exception $e) {
+            $matches = [0, 0];
+        }
 
         $total = $matches[1] ?? 0;
         $used = $matches[2] ?? 0;

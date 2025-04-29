@@ -41,13 +41,11 @@ class PageHandler
         }
         $page = $this->findPage($segments);
         if ($page) {
+            $page->view();
             return $this->render('page', ['page' => $page]);
-
-            // return Livewire::mount('page', ['page' => $page]);
-            return Blade::renderComponent(new StaticPage($page));
         }
         $res = null;
-        $this->applyHook('page.get', $res, $segments);
+        $this->applyHook('page.get', $res, $segments, $this);
         if ($res) {
             return $res;
         }
