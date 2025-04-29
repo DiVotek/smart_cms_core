@@ -144,7 +144,7 @@ class Image extends Component
         }
 
         if (! str_contains($src, 'storage') && ! str_contains($src, 'http')) {
-            $src = 'storage/' . $src;
+            $src = 'storage/'.$src;
         }
 
         // Normalize all double slashes
@@ -185,7 +185,7 @@ class Image extends Component
         $useHeight = _settings('resize.two_sides', true);
         $isAutoscale = _settings('resize.autoscale', true);
         if (! file_exists(public_path($localPath))) {
-            $localPath = '/storage' . _settings('no_image', '/no-image.webp');
+            $localPath = '/storage'._settings('no_image', '/no-image.webp');
         }
         foreach ($widths as $width) {
             try {
@@ -194,8 +194,8 @@ class Image extends Component
                 } else {
                     $height = null;
                 }
-                $optimizedImage = (new ImageService(public_path($localPath)))->resize(height: $height, width: $width, rescale: $isAutoscale)->setFallback(public_path('/storage' . _settings('no_image', '/no-image.webp')))->webp();
-                $srcset[] = asset($optimizedImage) . " {$width}w";
+                $optimizedImage = (new ImageService(public_path($localPath)))->resize(height: $height, width: $width, rescale: $isAutoscale)->setFallback(public_path('/storage'._settings('no_image', '/no-image.webp')))->webp();
+                $srcset[] = asset($optimizedImage)." {$width}w";
             } catch (\Exception $e) {
                 continue;
             }

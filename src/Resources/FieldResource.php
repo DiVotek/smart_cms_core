@@ -16,6 +16,7 @@ class FieldResource extends BaseResource
             $options[] = $option[current_lang()] ?? $option['default'] ?? '';
         }
         $options = array_filter($options);
+
         return [
             'name' => $this->resource->name(),
             'html_name' => $this->resource->html_id,
