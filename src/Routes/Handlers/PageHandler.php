@@ -83,7 +83,7 @@ class PageHandler
         }
     }
 
-    private function render(string $component, array $data = [])
+    public function render(string $component, array $data = [])
     {
         return Blade::renderComponent(new Base($component, $data));
     }
