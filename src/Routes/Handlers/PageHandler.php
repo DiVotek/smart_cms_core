@@ -40,8 +40,12 @@ class PageHandler
         $page = $this->findPage($segments);
         if ($page) {
             $page->view();
-
-            return $this->render('page', ['page' => $page]);
+            $res = null;
+            $this->applyHook('page.customize', $res, $page, $this);
+            if ($res) {
+                return $res;
+            }
+            return $this->render('page', ['page' => $page, 'model' => $page]);
         }
         $res = null;
         $this->applyHook('page.get', $res, $segments, $this);
