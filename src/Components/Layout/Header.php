@@ -23,6 +23,6 @@ class Header extends Component
 
     public function render(): View|Closure|string
     {
-        return view('layouts.' . $this->layout->path, $this->layout->getVariables());
+        return view('layouts.'.$this->layout->path, $this->layout->getVariables());
     }
 }

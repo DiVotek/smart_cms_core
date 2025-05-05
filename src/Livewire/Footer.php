@@ -7,7 +7,7 @@ use SmartCms\Core\Support\Livewire\App as LivewireApp;
 
 class Footer extends LivewireApp
 {
-    public ?Layout $layout =  null;
+    public ?Layout $layout = null;
 
     public function mount()
     {
@@ -19,14 +19,16 @@ class Footer extends LivewireApp
         if ($this->layout) {
             return $this->layout->getVariables();
         }
+
         return [];
     }
 
     protected function getView(): string
     {
         if ($this->layout) {
-            return 'layouts.' . $this->layout->path;
+            return 'layouts.'.$this->layout->path;
         }
+
         return 'smart_cms::layouts.footer';
     }
 }

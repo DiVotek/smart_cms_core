@@ -45,6 +45,7 @@ class PageHandler
             if ($res) {
                 return $res;
             }
+
             return $this->render('page', ['page' => $page, 'model' => $page]);
         }
         $res = null;

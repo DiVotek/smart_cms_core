@@ -13,6 +13,7 @@ use SmartCms\Core\Models\Layout;
 abstract class Page extends App
 {
     public Model $model;
+
     protected ?Layout $pageLayout;
 
     public static ?object $entity = null;
@@ -31,14 +32,14 @@ abstract class Page extends App
         $this->pageLayout = null;
     }
 
-
     protected function getSeo(): array
     {
         $seo = $this->model->getSeo();
         $entity = $this->entity();
+
         return [
             'title' => blank($seo->title) ? $entity->name : $seo->title,
-            'description' => $seo->description ?? "",
+            'description' => $seo->description ?? '',
             'image' => blank($seo->image) ? $this->model->image ?? $entity->image ?? logo() : $seo->image,
         ];
     }
@@ -47,14 +48,16 @@ abstract class Page extends App
     protected function entity()
     {
         $entity = self::$entity;
-        if (!$entity) {
+        if (! $entity) {
             $entity = $this->getEntity();
             $this->applyHook('entity', $entity);
             Context::add('entity', $entity);
             self::$entity = $entity;
         }
+
         return $entity;
     }
+
     protected function getTemplate(): array
     {
         return $this->model->template()->select([
@@ -84,6 +87,7 @@ abstract class Page extends App
         if (view()->exists($viewName)) {
             return view($viewName, $viewData);
         }
+
         return view('smart_cms::layouts.default-page', $viewData);
     }
 }

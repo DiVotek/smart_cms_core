@@ -12,9 +12,10 @@ class Page extends LivewirePage
     {
         $this->pageLayout = Layout::find($this->model->layout_id);
     }
+
     public function getView(): string
     {
-        return 'layouts.' . $this->pageLayout?->path;
+        return 'layouts.'.$this->pageLayout?->path;
     }
 
     public function getEntity(): object
