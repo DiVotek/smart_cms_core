@@ -255,11 +255,11 @@ class SchemaParser
                     'by_hand' => $query->whereIn('id', $ids),
                 };
                 if ($type == 'items') {
-                    if (!$parent_id) {
+                    if (! $parent_id) {
                         $categories = [];
                     } else {
                         $menuSection = MenuSection::query()->where('parent_id', $parent_id)->first();
-                        if (!$menuSection) {
+                        if (! $menuSection) {
                             $categories = [];
                         } else {
                             if ($menuSection->is_categories) {
@@ -310,7 +310,7 @@ class SchemaParser
                     'is_indexable' => $settings['is_indexable'] ?? false,
                     'link' => $settings['url'] ?? '',
                 ];
-                if (!$link['is_internal']) {
+                if (! $link['is_internal']) {
                     $link['link'] = parse_url($link['link'], PHP_URL_PATH);
                 }
                 $value = (object) $link;

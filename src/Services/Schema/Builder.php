@@ -153,9 +153,9 @@ class Builder
         if (is_multi_lang() && $this->field->type != 'array') {
             foreach ($this->languages as $lang) {
                 if (str_contains($this->field->name, '.')) {
-                    $langName = str_replace('.', '.' . $lang->slug . '.', $this->field->name);
+                    $langName = str_replace('.', '.'.$lang->slug.'.', $this->field->name);
                 } else {
-                    $langName = $lang->slug . '.' . $this->field->name;
+                    $langName = $lang->slug.'.'.$this->field->name;
                 }
                 $fields[] = Hidden::make($langName);
             }
@@ -171,13 +171,14 @@ class Builder
             $fields[] = TextInput::make($lang->slug)->label($lang->name)
                 ->numeric($isNumeric);
         }
+
         return Section::make($this->field->label)->compact()->schema([
             TextInput::make($this->field->name)->hiddenLabel()
                 ->numeric($isNumeric)
                 ->required($this->field->required)
                 ->suffixAction(
                     $this->getTranslateAction($fields)
-                )
+                ),
         ]);
     }
 
@@ -187,9 +188,11 @@ class Builder
         foreach ($this->languages as $lang) {
             $fields[] = Schema::getImage($lang->slug)->label($lang->name);
         }
+
         return Section::make($this->field->label)->compact()->schema([
-            Schema::getImage($this->field->name)->hiddenLabel()->required($var['required'] ?? true)->hintAction(self::getTranslateAction($fields, $this->field->name))
+            Schema::getImage($this->field->name)->hiddenLabel()->required($var['required'] ?? true)->hintAction(self::getTranslateAction($fields, $this->field->name)),
         ]);
+
         return Schema::getImage($this->field->name)->label($this->field->label)->required($var['required'] ?? true)->hintAction(self::getTranslateAction($fields, $this->field->name));
     }
 
@@ -203,10 +206,10 @@ class Builder
         return Section::make($this->field->label)->compact()
             ->schema([
                 Grid::make(2)->schema([
-                    Hidden::make($this->field->name . '.use_custom')->default(false),
-                    Hidden::make($this->field->name . '.use_page_name')->default(false),
-                    Hidden::make($this->field->name . '.use_page_heading')->default(true),
-                    Select::make($this->field->name . '.heading_type')
+                    Hidden::make($this->field->name.'.use_custom')->default(false),
+                    Hidden::make($this->field->name.'.use_page_name')->default(false),
+                    Hidden::make($this->field->name.'.use_page_heading')->default(true),
+                    Select::make($this->field->name.'.heading_type')
                         ->label(_fields('heading_type'))
                         ->options([
                             'h1' => 'H1',
@@ -218,33 +221,35 @@ class Builder
                         ->default('h2')->formatStateUsing(function ($state) {
                             return $state ?? 'h2';
                         }),
-                    Select::make($this->field->name . '.scope')->options([
+                    Select::make($this->field->name.'.scope')->options([
                         'heading' => 'Heading',
                         'name' => 'Name',
                         'custom' => 'Custom',
                     ])->live()->afterStateUpdated(function ($state, callable $set) {
                         if ($state == 'custom') {
-                            $set($this->field->name . '.use_custom', true);
-                            $set($this->field->name . '.use_page_name', false);
-                            $set($this->field->name . '.use_page_heading', false);
+                            $set($this->field->name.'.use_custom', true);
+                            $set($this->field->name.'.use_page_name', false);
+                            $set($this->field->name.'.use_page_heading', false);
+
                             return;
                         }
                         if ($state == 'heading') {
-                            $set($this->field->name . '.use_custom', false);
-                            $set($this->field->name . '.use_page_name', false);
-                            $set($this->field->name . '.use_page_heading', true);
+                            $set($this->field->name.'.use_custom', false);
+                            $set($this->field->name.'.use_page_name', false);
+                            $set($this->field->name.'.use_page_heading', true);
+
                             return;
                         }
-                        $set($this->field->name . '.use_custom', false);
-                        $set($this->field->name . '.use_page_heading', false);
-                        $set($this->field->name . '.use_page_name', true);
+                        $set($this->field->name.'.use_custom', false);
+                        $set($this->field->name.'.use_page_heading', false);
+                        $set($this->field->name.'.use_page_name', true);
                     })
                         ->required()->default('heading')->formatStateUsing(function ($state) {
                             return $state ?? 'heading';
                         })->live(),
                 ]),
-                TextInput::make($this->field->name . '.heading')->label(_fields('heading'))->required()->hidden(function ($get) {
-                    return $get($this->field->name . '.scope') != 'custom';
+                TextInput::make($this->field->name.'.heading')->label(_fields('heading'))->required()->hidden(function ($get) {
+                    return $get($this->field->name.'.scope') != 'custom';
                 })->columnSpanFull()->suffixAction(self::getTranslateAction($fields, $this->field->name)),
             ]);
 
@@ -257,11 +262,12 @@ class Builder
         foreach ($this->languages as $lang) {
             $fields[] = Textarea::make($lang->slug)->label($lang->name);
         }
+
         return Section::make($this->field->label)->compact()->schema([
-            Hidden::make($this->field->name . '.is_custom')->default(false),
-            Hidden::make($this->field->name . '.is_description')->default(true),
-            Hidden::make($this->field->name . '.is_summary')->default(false),
-            Select::make($this->field->name . '.scope')->label(_fields('scope'))->live()->options([
+            Hidden::make($this->field->name.'.is_custom')->default(false),
+            Hidden::make($this->field->name.'.is_description')->default(true),
+            Hidden::make($this->field->name.'.is_summary')->default(false),
+            Select::make($this->field->name.'.scope')->label(_fields('scope'))->live()->options([
                 'description' => _fields('description'),
                 'summary' => _fields('summary'),
                 'custom' => 'Custom',
@@ -269,60 +275,63 @@ class Builder
                 return $state ?? 'description';
             })->afterStateUpdated(function ($state, callable $set) {
                 if ($state == 'custom') {
-                    $set($this->field->name . '.is_custom', true);
-                    $set($this->field->name . '.is_description', false);
-                    $set($this->field->name . '.is_summary', false);
+                    $set($this->field->name.'.is_custom', true);
+                    $set($this->field->name.'.is_description', false);
+                    $set($this->field->name.'.is_summary', false);
+
                     return;
                 }
                 if ($state == 'summary') {
-                    $set($this->field->name . '.is_custom', false);
-                    $set($this->field->name . '.is_description', false);
-                    $set($this->field->name . '.is_summary', true);
+                    $set($this->field->name.'.is_custom', false);
+                    $set($this->field->name.'.is_description', false);
+                    $set($this->field->name.'.is_summary', true);
+
                     return;
                 }
-                $set($this->field->name . '.is_custom', false);
-                $set($this->field->name . '.is_summary', false);
-                $set($this->field->name . '.is_description', true);
+                $set($this->field->name.'.is_custom', false);
+                $set($this->field->name.'.is_summary', false);
+                $set($this->field->name.'.is_description', true);
             }),
-            Textarea::make($this->field->name . '.description')
+            Textarea::make($this->field->name.'.description')
                 ->label(_fields('description'))->required()
                 ->hidden(function ($get) {
-                    return $get($this->field->name . '.scope') != 'custom';
-                })->columnSpanFull()->rows(3)->hintAction(self::getTranslateAction($fields, $this->field->name)),
-        ]);
-        return Grid::make()->columns(3)->schema([
-            Toggle::make($this->field->name . '.is_description')
-                ->label(_fields('use_page_description'))->reactive()
-                ->afterStateUpdated(function ($state, callable $set) {
-                    if ($state) {
-                        $set($this->field->name . '.is_custom', false);
-                        $set($this->field->name . '.is_summary', false);
-                    }
-                }),
-            Toggle::make($this->field->name . '.is_summary')
-                ->label(_fields('use_page_summary'))->reactive()
-                ->afterStateUpdated(function ($state, callable $set) {
-                    if ($state) {
-                        $set($this->field->name . '.is_custom', false);
-                        $set($this->field->name . '.is_description', false);
-                    }
-                }),
-            Toggle::make($this->field->name . '.is_custom')
-                ->label(_fields('use_custom'))->reactive()
-                ->afterStateUpdated(function ($state, callable $set) {
-                    if ($state) {
-                        $set($this->field->name . '.is_summary', false);
-                        $set($this->field->name . '.is_description', false);
-                    }
-                }),
-            Textarea::make($this->field->name . '.description')
-                ->label(_fields('description'))->required()
-                ->hidden(function ($get) {
-                    return ! $get($this->field->name . '.is_custom');
+                    return $get($this->field->name.'.scope') != 'custom';
                 })->columnSpanFull()->rows(3)->hintAction(self::getTranslateAction($fields, $this->field->name)),
         ]);
 
-        return Textarea::make($this->field->name)->label($this->field->label)->required($this->field->required)->hintAction(self::getTranslateAction($fields, $this->field->name . '.description'));
+        return Grid::make()->columns(3)->schema([
+            Toggle::make($this->field->name.'.is_description')
+                ->label(_fields('use_page_description'))->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $set($this->field->name.'.is_custom', false);
+                        $set($this->field->name.'.is_summary', false);
+                    }
+                }),
+            Toggle::make($this->field->name.'.is_summary')
+                ->label(_fields('use_page_summary'))->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $set($this->field->name.'.is_custom', false);
+                        $set($this->field->name.'.is_description', false);
+                    }
+                }),
+            Toggle::make($this->field->name.'.is_custom')
+                ->label(_fields('use_custom'))->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $set($this->field->name.'.is_summary', false);
+                        $set($this->field->name.'.is_description', false);
+                    }
+                }),
+            Textarea::make($this->field->name.'.description')
+                ->label(_fields('description'))->required()
+                ->hidden(function ($get) {
+                    return ! $get($this->field->name.'.is_custom');
+                })->columnSpanFull()->rows(3)->hintAction(self::getTranslateAction($fields, $this->field->name)),
+        ]);
+
+        return Textarea::make($this->field->name)->label($this->field->label)->required($this->field->required)->hintAction(self::getTranslateAction($fields, $this->field->name.'.description'));
     }
 
     public function getForm(): Component
@@ -333,8 +342,9 @@ class Builder
                 ->options(Form::query()->pluck('name', 'id')->toArray())
                 ->required($this->field->required);
         }
+
         return Section::make($this->field->label)->compact()->schema([
-            Select::make($this->field->name)->hiddenLabel()->options(Form::query()->pluck('name', 'id')->toArray())->required($this->field->required)
+            Select::make($this->field->name)->hiddenLabel()->options(Form::query()->pluck('name', 'id')->toArray())->required($this->field->required),
         ]);
     }
 
@@ -390,12 +400,12 @@ class Builder
 
         return Action::make(_actions('translate'))
             ->icon('heroicon-m-language')
-            ->modalHeading(_actions('translate') . ' ' . $this->field->label)
+            ->modalHeading(_actions('translate').' '.$this->field->label)
             ->form($schema)
             ->badge(function ($get) use ($name, $languages) {
                 $counter = 0;
                 foreach ($languages as $lang) {
-                    $langName = str_contains($name, '.') ? str_replace('.', '.' . $lang->slug . '.', $name) : $lang->slug . '.' . $name;
+                    $langName = str_contains($name, '.') ? str_replace('.', '.'.$lang->slug.'.', $name) : $lang->slug.'.'.$name;
                     $placeholder = $get($langName) ?? null;
                     if ($placeholder && strlen($placeholder) > 0) {
                         $counter++;
@@ -407,14 +417,14 @@ class Builder
             ->mountUsing(function ($form, $get) use ($name, $languages) {
                 $langData = [];
                 foreach ($languages as $lang) {
-                    $langName = str_contains($name, '.') ? str_replace('.', '.' . $lang->slug . '.', $name) : $lang->slug . '.' . $name;
+                    $langName = str_contains($name, '.') ? str_replace('.', '.'.$lang->slug.'.', $name) : $lang->slug.'.'.$name;
                     $langData[$lang->slug] = $get($langName);
                 }
                 $form->fill($langData);
             })
             ->action(function ($data, $set, $get) use ($name) {
                 foreach ($data as $key => $value) {
-                    $langName = str_contains($name, '.') ? str_replace('.', '.' . $key . '.', $name) : $key . '.' . $name;
+                    $langName = str_contains($name, '.') ? str_replace('.', '.'.$key.'.', $name) : $key.'.'.$name;
                     $set($langName, $value);
                 }
             });
@@ -426,18 +436,18 @@ class Builder
         $menuSections['null'] = _fields('without_section');
 
         return Section::make($this->field->label)->compact()->schema([
-            Select::make($this->field->name . '.parent_id')->label(_fields('page_type'))->options($menuSections)->required($this->field->required)->live()->afterStateUpdated(function ($state, callable $set) {
-                $set($this->field->name . '.id', null);
+            Select::make($this->field->name.'.parent_id')->label(_fields('page_type'))->options($menuSections)->required($this->field->required)->live()->afterStateUpdated(function ($state, callable $set) {
+                $set($this->field->name.'.id', null);
             })->formatStateUsing(function ($state) {
                 return $state ?? 'null';
             }),
-            Select::make($this->field->name . '.id')->label(_fields('page_part'))->options(function ($get) {
-                $parent = $get($this->field->name . '.parent_id') ?? null;
+            Select::make($this->field->name.'.id')->label(_fields('page_part'))->options(function ($get) {
+                $parent = $get($this->field->name.'.parent_id') ?? null;
                 if ($parent === 'null') {
                     return Page::query()->whereNull('parent_id')->pluck('name', 'id')->toArray();
                 }
 
-                return Page::query()->where('parent_id', $get($this->field->name . '.parent_id') ?? null)->pluck('name', 'id')->toArray();
+                return Page::query()->where('parent_id', $get($this->field->name.'.parent_id') ?? null)->pluck('name', 'id')->toArray();
             })->required($this->field->required)->live(),
         ])->columns(2);
     }
@@ -449,24 +459,25 @@ class Builder
 
         return Section::make($this->field->label)->compact()->schema([
             Grid::make()->columns(2)->schema([
-                Select::make($this->field->name . '.type')->label(_fields('page_type'))->options([
+                Select::make($this->field->name.'.type')->label(_fields('page_type'))->options([
                     'items' => _fields('items'),
                     'categories' => _fields('categories'),
                 ])->required()->live()->formatStateUsing(function ($state) {
                     return $state ?? 'items';
                 })->afterStateUpdated(function ($state, callable $set) {
-                    $set($this->field->name . '.parent_id', null);
+                    $set($this->field->name.'.parent_id', null);
                 }),
-                Select::make($this->field->name . '.parent_id')->label(_fields('menu_section'))->options(function ($get) {
-                    $type = $get($this->field->name . '.type');
+                Select::make($this->field->name.'.parent_id')->label(_fields('menu_section'))->options(function ($get) {
+                    $type = $get($this->field->name.'.type');
                     $isCategories = false;
                     if ($type == 'categories') {
                         $isCategories = true;
                     }
+
                     return MenuSection::query()->where('is_categories', $isCategories)->pluck('name', 'parent_id')->toArray();
                 })->required()->live(),
-                TextInput::make($this->field->name . '.limit')->numeric()->label(_fields('limit'))->required()->live()->default(5),
-                Select::make($this->field->name . '.scope')->label(_fields('scope'))->options([
+                TextInput::make($this->field->name.'.limit')->numeric()->label(_fields('limit'))->required()->live()->default(5),
+                Select::make($this->field->name.'.scope')->label(_fields('scope'))->options([
                     'last' => 'Last',
                     'popular' => 'Popular',
                     'random' => 'Random',
@@ -475,8 +486,8 @@ class Builder
                     return $state ?? 'last';
                 }),
             ]),
-            Select::make($this->field->name . '.ids')->label(_fields('page_parts'))->options(function ($get) {
-                $parentId = (int) $get($this->field->name . '.parent_id');
+            Select::make($this->field->name.'.ids')->label(_fields('page_parts'))->options(function ($get) {
+                $parentId = (int) $get($this->field->name.'.parent_id');
                 if (! $parentId) {
                     return [];
                 }
@@ -485,11 +496,11 @@ class Builder
             })
                 ->multiple()
                 ->required(function ($get) {
-                    return $get($this->field->name . '.scope') == 'by_hand';
+                    return $get($this->field->name.'.scope') == 'by_hand';
                 })
                 ->live()
                 ->hidden(function ($get) {
-                    return $get($this->field->name . '.scope') != 'by_hand';
+                    return $get($this->field->name.'.scope') != 'by_hand';
                 })->columnSpanFull(),
         ])->columnSpanFull();
     }
@@ -534,13 +545,14 @@ class Builder
         foreach ($this->languages as $lang) {
             $urlFields[] = TextInput::make($lang->slug)->label($lang->name)->url();
         }
+
         return Section::make($this->field->label)->compact()->schema([
-            TextInput::make($this->field->name . '.url')->label(_fields('url'))->required()->suffixAction(self::getTranslateAction($urlFields, $this->field->name))->url(),
+            TextInput::make($this->field->name.'.url')->label(_fields('url'))->required()->suffixAction(self::getTranslateAction($urlFields, $this->field->name))->url(),
             Grid::make()->columns(3)->schema([
-                Toggle::make($this->field->name . '.is_internal')->label(_fields('is_internal'))->default(false)->inline(false),
-                Toggle::make($this->field->name . '.new_tab')->label(_fields('new_tab'))->default(false)->inline(false),
-                Toggle::make($this->field->name . '.is_indexable')->label(_fields('is_indexable'))->default(false)->inline(false),
-            ])
+                Toggle::make($this->field->name.'.is_internal')->label(_fields('is_internal'))->default(false)->inline(false),
+                Toggle::make($this->field->name.'.new_tab')->label(_fields('new_tab'))->default(false)->inline(false),
+                Toggle::make($this->field->name.'.is_indexable')->label(_fields('is_indexable'))->default(false)->inline(false),
+            ]),
         ])->columns(1);
     }
 }

@@ -38,9 +38,9 @@ class FormSubmit extends Action
         $notification = $form->data[current_lang()]['notification'] ?? $form->data['notification'] ?? '';
         if ($notification) {
             $this->instance->notify($notification, 'success');
-            $this->instance->dispatch($form->code . '-submitted');
+            $this->instance->dispatch($form->code.'-submitted');
         }
-        AdminNotification::make()->title(_nav('form') . ' ' . $form->name . ' ' . _actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
+        AdminNotification::make()->title(_nav('form').' '.$form->name.' '._actions('was_sent'))->success()->sendToAll(new NewContactFormNotification($contactForm));
     }
 
     public function getValidationRules(): array
@@ -54,7 +54,7 @@ class FormSubmit extends Action
             $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
             if ($fieldModel) {
                 if ($field['is_required']) {
-                    $rules['formData.' . $form->code . '.' . $fieldModel->html_id] = 'required';
+                    $rules['formData.'.$form->code.'.'.$fieldModel->html_id] = 'required';
                 }
             }
         }
@@ -71,7 +71,7 @@ class FormSubmit extends Action
         $attributes = [];
         foreach ($form->fields as $field) {
             $fieldModel = Field::query()->where('id', $field['field'] ?? 0)->first();
-            $attributes['formData.' . $form->code . '.' . $fieldModel->html_id] = $fieldModel->name();
+            $attributes['formData.'.$form->code.'.'.$fieldModel->html_id] = $fieldModel->name();
         }
 
         return $attributes;
