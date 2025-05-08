@@ -40,7 +40,7 @@ abstract class App extends Component
     {
         $view = $this->getView();
         $data = $this->prepareData();
-        $this->applyHook('render', $data);
+        $this->applyHook('render', $data, $this);
 
         return view($view, $data);
     }

@@ -6,8 +6,10 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use SmartCms\Core\Actions\Template\GetLinks;
 use SmartCms\Core\Models\Form as ModelsForm;
+use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Repositories\Page\PageRepository;
+use SmartCms\Core\Resources\PageResource;
 use SmartCms\Core\Traits\HasHooks;
 
 class SchemaParser
@@ -235,8 +237,44 @@ class SchemaParser
                     $fieldValue = [
                         'parent_id' => null,
                         'ids' => [],
+                        'scope' => 'last',
+                        'limit' => 6,
+                        'type' => 'items',
                     ];
                 }
+                $limit = $fieldValue['limit'] ?? 10;
+                $scope = $fieldValue['scope'] ?? 'last';
+                $type = $fieldValue['type'] ?? 'items';
+                $ids = $fieldValue['ids'] ?? [];
+                $parent_id = $fieldValue['parent_id'] ?? null;
+                $query = Page::query()->limit($limit);
+                $query = match ($scope) {
+                    'last' => $query->withoutGlobalScope('sorted')->orderBy('updated_at', 'desc'),
+                    'popular' => $query->withoutGlobalScope('sorted')->orderBy('views', 'desc'),
+                    'random' => $query->withoutGlobalScope('sorted')->inRandomOrder(),
+                    'by_hand' => $query->whereIn('id', $ids),
+                };
+                if ($type == 'items') {
+                    if (!$parent_id) {
+                        $categories = [];
+                    } else {
+                        $menuSection = MenuSection::query()->where('parent_id', $parent_id)->first();
+                        if (!$menuSection) {
+                            $categories = [];
+                        } else {
+                            if ($menuSection->is_categories) {
+                                $categories = Page::query()->where('parent_id', $parent_id)->limit(50)->pluck('id')->toArray();
+                                $query = $query->whereIn('parent_id', $categories);
+                            }
+                        }
+                    }
+                } else {
+                    $query = $query->where('parent_id', $parent_id);
+                }
+                $value = $query->get()->map(function (Page $item) {
+                    return PageResource::make($item)->get();
+                });
+                break;
                 // if (! is_array($fieldValue)) {
                 //     throw new Exception('Pages field must be an array');
                 // }
@@ -262,6 +300,20 @@ class SchemaParser
                 foreach ($fieldValue as $v) {
                     $value[] = (object) self::make($this->field->options, $v);
                 }
+                break;
+            case 'link':
+                $settings = $this->values[$this->field->name] ?? [];
+                $settings['url'] = $this->values[current_lang()][$this->field->name] ?? $settings['url'] ?? '';
+                $link = [
+                    'is_internal' => $settings['is_internal'] ?? false,
+                    'new_tab' => $settings['new_tab'] ?? false,
+                    'is_indexable' => $settings['is_indexable'] ?? false,
+                    'link' => $settings['url'] ?? '',
+                ];
+                if (!$link['is_internal']) {
+                    $link['link'] = parse_url($link['link'], PHP_URL_PATH);
+                }
+                $value = (object) $link;
                 break;
             default:
                 $value = $fieldValue ?? '';

@@ -169,4 +169,11 @@ return [
     'page_type' => 'Page type',
     'page_part' => 'Page/Section',
     'page_parts' => 'Pages/Sections',
+    'new_tab' => 'New tab',
+    'is_internal' => 'Is internal',
+    'is_indexable' => 'Noindex/Follow',
+    'items' => 'Items',
+    'scope' => 'Scope',
+    'heading_type' => 'Heading type',
+    'summary' => 'Summary',
 ];

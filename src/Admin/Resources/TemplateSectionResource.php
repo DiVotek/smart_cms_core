@@ -5,6 +5,7 @@ namespace SmartCms\Core\Admin\Resources;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -86,7 +87,7 @@ class TemplateSectionResource extends BaseResource
                                 })),
                             Hidden::make('design'),
                         ])->columns(1),
-                    Section::make(_fields('component_settings'))
+                    Grid::make(_fields('component_settings'))
                         ->schema(function (Get $get, $set, $record) use ($components): array {
                             $path = $get('design');
                             $placeholder = Placeholder::make('section_is_empty')
@@ -128,12 +129,12 @@ class TemplateSectionResource extends BaseResource
                                 Forms\Components\Placeholder::make('created_at')
                                     ->inlineLabel()
                                     ->label(_fields('created_at'))
-                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->inlineLabel()
                                     ->label(_fields('_updated_at'))
-                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus(),
                             ])->columns(1),
                     ])->columnSpan(['lg' => 1]),
