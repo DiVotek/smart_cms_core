@@ -18,9 +18,17 @@ abstract class Page extends App
 
     public static ?object $entity = null;
 
+    public string $originalUrl;
+
     use WithPagination;
 
     abstract protected function getEntity(): object;
+
+    public function mount(): void
+    {
+        $this->originalUrl = explode('?', request()->getRequestUri())[0] ?? '';
+        $this->applyHook('before_mount', $this);
+    }
 
     protected function setMicrodata(): void
     {
@@ -83,6 +91,7 @@ abstract class Page extends App
         $this->setMicrodata();
         app('template')->template(BuildTemplate::run($template));
         $seo = $this->getSeo();
+        $this->applyHook('seo', $this);
         app('seo')->title($seo['title'] ?? '')->description($seo['description'] ?? '')->keywords($seo['keywords'] ?? '');
         if (view()->exists($viewName)) {
             return view($viewName, $viewData);

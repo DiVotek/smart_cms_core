@@ -37,6 +37,7 @@ class PageHandler
         if ($this->limit < count($segments)) {
             return abort(404);
         }
+        $this->applyHook('page.before', $segments, $this);
         $page = $this->findPage($segments);
         if ($page) {
             $page->view();

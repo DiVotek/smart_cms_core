@@ -31,18 +31,19 @@ trait HasTranslate
             return $this->attributes['name'] ?? '';
         }
         if (Context::has($this->get_translate_key())) {
-            return Context::get($this->get_translate_key());
+            $translate = Context::get($this->get_translate_key());
+            if (!blank($translate)) {
+                return $translate;
+            }
         }
+        $value = $this->attributes['name'] ?? '';
         $translation = $this->translatable()->where('language_id', current_lang_id())->first();
-        if ($translation) {
-            Context::add($this->get_translate_key(), $translation->value);
-        } else {
-            Context::add($this->get_translate_key(), $this->attributes['name'] ?? '');
+        if ($translation && !blank($translation->value)) {
+            $value = $translation->value;
         }
+        Context::add($this->get_translate_key(), $value);
 
-        return Context::get($this->get_translate_key());
-
-        // return $translation ? $translation->value : $this->attributes['name'];
+        return $value;
     }
 
     /**
@@ -52,7 +53,7 @@ trait HasTranslate
      */
     public function get_translate_key()
     {
-        return $this->getTable().'_'.$this->id;
+        return $this->getTable() . '_' . $this->id;
     }
 
     /**

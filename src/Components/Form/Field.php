@@ -6,7 +6,7 @@ use Illuminate\View\Component;
 
 class Field extends Component
 {
-    public function __construct(public object $field, public string $code) {}
+    public function __construct(public object $field, public string $code, public ?string $model = null) {}
 
     public function render()
     {
@@ -16,7 +16,12 @@ class Field extends Component
                 $name = $field->name ?? '';
                 $label = $field->label ?? ucfirst($name);
                 $options = $field->options ?? [];
+                if($model) {
+                    $model = $model . '.' . $field->html_name;
+                } else {
                 $model = 'formData.' . $code . '.' . $field->html_name;
+                }
+
             @endphp
             @switch($type)
             @case('input')
