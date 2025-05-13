@@ -247,7 +247,7 @@ class SchemaParser
                 $type = $fieldValue['type'] ?? 'items';
                 $ids = $fieldValue['ids'] ?? [];
                 $parent_id = $fieldValue['parent_id'] ?? null;
-                if (! is_integer($parent_id)) {
+                if (! is_int($parent_id)) {
                     $parent_id = 0;
                 }
                 $query = Page::query()->limit($limit);
