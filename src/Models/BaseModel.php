@@ -21,14 +21,13 @@ class BaseModel extends Model
         static::$externalCasts[static::class][$attribute] = $castType;
     }
 
-
     public function getTable()
     {
 
         $table = parent::getTable();
 
         if (! str_starts_with($table, $this->tablePrefix)) {
-            return $this->tablePrefix . $table;
+            return $this->tablePrefix.$table;
         }
 
         return $table;
