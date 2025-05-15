@@ -11,16 +11,36 @@ class BaseModel extends Model
 
     protected $tablePrefix = 'smart_cms_';
 
+    protected static array $externalCasts = [];
+
+    /**
+     * Register dynamic cast from outside (modules, services, etc.)
+     */
+    public static function addExternalCast(string $attribute, string $castType): void
+    {
+        static::$externalCasts[static::class][$attribute] = $castType;
+    }
+
+
     public function getTable()
     {
 
         $table = parent::getTable();
 
         if (! str_starts_with($table, $this->tablePrefix)) {
-            return $this->tablePrefix.$table;
+            return $this->tablePrefix . $table;
         }
 
         return $table;
+    }
+
+    public function getCasts(): array
+    {
+        $baseCasts = parent::getCasts();
+
+        $externalCasts = static::$externalCasts[static::class] ?? [];
+
+        return array_merge($baseCasts, $externalCasts);
     }
 
     public static function getDb(): string

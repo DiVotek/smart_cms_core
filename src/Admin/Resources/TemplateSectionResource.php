@@ -11,6 +11,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -49,7 +50,8 @@ class TemplateSectionResource extends BaseResource
                 Forms\Components\Group::make([
                     Forms\Components\Section::make()
                         ->schema([
-                            Schema::getName()->suffixAction(Action::make('design')
+                            Schema::getName(),
+                            TextInput::make('design')->readOnly()->required()->suffixAction(Action::make('design')
                                 ->label(_fields('design'))->icon('heroicon-o-cog')
                                 ->mountUsing(function ($form, $get) {
                                     $form->fill(['design' => $get('design')]);
@@ -85,8 +87,7 @@ class TemplateSectionResource extends BaseResource
                                     $set('design', $data['design']);
                                     $component->getContainer()->getParentComponent()->getContainer()->getComponent('dynamicTypeFields')->getChildComponentContainer()->fill();
                                 })),
-                            Hidden::make('design'),
-                        ])->columns(1),
+                        ])->columns(2),
                     Grid::make(_fields('component_settings'))
                         ->schema(function (Get $get, $set, $record) use ($components): array {
                             $path = $get('design');
@@ -129,12 +130,12 @@ class TemplateSectionResource extends BaseResource
                                 Forms\Components\Placeholder::make('created_at')
                                     ->inlineLabel()
                                     ->label(_fields('created_at'))
-                                    ->content(fn ($record): ?string => $record->created_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->created_at?->diffForHumans()),
 
                                 Forms\Components\Placeholder::make('updated_at')
                                     ->inlineLabel()
                                     ->label(_fields('_updated_at'))
-                                    ->content(fn ($record): ?string => $record->updated_at?->diffForHumans()),
+                                    ->content(fn($record): ?string => $record->updated_at?->diffForHumans()),
                                 Schema::getStatus(),
                             ])->columns(1),
                     ])->columnSpan(['lg' => 1]),

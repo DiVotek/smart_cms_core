@@ -151,7 +151,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
         return [
@@ -161,7 +161,7 @@ class StaticPageResource extends BaseResource
                         Schema::getReactiveName()->suffixActions([
                             Schema::getTranslateAction(),
                         ]),
-                        Schema::getSlug(Page::getDb(), $isRequired)->helperText(''),
+                        Schema::getSlug(Page::getDb(), $isRequired)->helperText('')->hidden($form->getRecord()->slug == ''),
                     ])->columns(2),
                 Forms\Components\Section::make(_fields('images'))->schema([
                     Schema::getImage(path: $imagePath),
