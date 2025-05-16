@@ -4,10 +4,8 @@ namespace SmartCms\Core;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
@@ -33,7 +31,6 @@ use SmartCms\Core\Middlewares\Maintenance;
 use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
-use SmartCms\Core\Models\Translation;
 use SmartCms\Core\Services\ExceptionHandler;
 use SmartCms\Core\Services\Singletone\Languages;
 use SmartCms\Core\Services\Singletone\Settings;
@@ -60,31 +57,31 @@ class SmartCmsServiceProvider extends ServiceProvider
             MakeAdmin::class,
             TranslationService::class,
         ]);
-        $this->mergeAuthConfigFrom(__DIR__ . '/../config/auth.php');
+        $this->mergeAuthConfigFrom(__DIR__.'/../config/auth.php');
         $this->mergePanelConfig();
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/settings.php',
+            __DIR__.'/../config/settings.php',
             'settings'
         );
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/shared.php',
+            __DIR__.'/../config/shared.php',
             'shared'
         );
-        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
         $this->publishes([
-            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
-            __DIR__ . '/../config/theme.php' => config_path('theme.php'),
-            __DIR__ . '/../config/translates.php' => config_path('translates.php'),
-            __DIR__ . '/../resources/images/' => storage_path('app/public'),
+            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__.'/../config/theme.php' => config_path('theme.php'),
+            __DIR__.'/../config/translates.php' => config_path('translates.php'),
+            __DIR__.'/../resources/images/' => storage_path('app/public'),
         ], 'smart_cms.resources');
         $this->publishes([
-            __DIR__ . '/../resources/views/livewire' => resource_path('views/livewire'),
-            __DIR__ . '/../resources/views/forms' => resource_path('views/forms'),
+            __DIR__.'/../resources/views/livewire' => resource_path('views/livewire'),
+            __DIR__.'/../resources/views/forms' => resource_path('views/forms'),
         ], 'smart_cms.views');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/new_migrations');
-        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'smart_cms');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__.'/../database/new_migrations');
+        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
         $this->app->singleton('_settings', function () {
             return new Settings;
         });
@@ -97,9 +94,8 @@ class SmartCmsServiceProvider extends ServiceProvider
             return new Translates;
         });
 
-
         $this->app->singleton(PanelExtender::class, function ($app) {
-            return new PanelExtender();
+            return new PanelExtender;
         });
 
         $this->app->alias(PanelExtender::class, 'panel');
@@ -169,8 +165,8 @@ class SmartCmsServiceProvider extends ServiceProvider
 
     private function bootBladeComponents(): void
     {
-        $this->app->singleton(Seo::class, fn() => new Seo);
-        $this->app->singleton(Template::class, fn() => new Template);
+        $this->app->singleton(Seo::class, fn () => new Seo);
+        $this->app->singleton(Template::class, fn () => new Template);
         $this->app->alias(Seo::class, 'seo');
         $this->app->alias(Template::class, 'template');
         ActionRegistry::register('form_submit', new FormSubmit);

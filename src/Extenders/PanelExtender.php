@@ -44,42 +44,49 @@ class PanelExtender
     public function addResource(string $resourceClass): self
     {
         $this->resources[] = $resourceClass;
+
         return $this;
     }
 
     public function addMenu(string $label, string $url, string $icon = ''): self
     {
         $this->menus[] = compact('label', 'url', 'icon');
+
         return $this;
     }
 
     public function addPage(string $slug, string $pageClass): self
     {
         $this->pages[$slug] = $pageClass;
+
         return $this;
     }
 
     public function addSettingsPage(string $key, string $settingsPageClass): self
     {
         $this->settingsPages[$key] = $settingsPageClass;
+
         return $this;
     }
 
     public function addWidget(string $widgetClass): self
     {
         $this->widgets[] = $widgetClass;
+
         return $this;
     }
 
     public function addPlugin(string $pluginClass): self
     {
         $this->plugins[] = $pluginClass;
+
         return $this;
     }
 
     public function addProfileNotification(string $notificationClass): self
     {
         $this->profileNotifications[] = $notificationClass;
+
         return $this;
     }
 

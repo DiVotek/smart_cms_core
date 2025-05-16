@@ -17,7 +17,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Resources\Resource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
@@ -61,7 +60,6 @@ use SmartCms\Core\Admin\Widgets\HealthCheck;
 use SmartCms\Core\Admin\Widgets\TopContactForms;
 use SmartCms\Core\Admin\Widgets\TopStaticPages;
 use SmartCms\Core\Admin\Widgets\VersionCheck;
-use SmartCms\Core\Extenders\PanelExtender;
 use SmartCms\Core\Middlewares\NoIndex;
 use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\MenuSection;
@@ -172,12 +170,12 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->badge(Page::query()->where('parent_id', $section->parent_id)->count())
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
                 $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)
@@ -290,7 +288,7 @@ class SmartCmsPanelManager extends PanelProvider
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
         );
         Filament::registerRenderHook(
             PanelsRenderHook::GLOBAL_SEARCH_AFTER,
