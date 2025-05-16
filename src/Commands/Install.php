@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class Install extends Command
 {
@@ -32,19 +33,22 @@ class Install extends Command
             '--tag' => 'theme',
         ]);
         $this->call('vendor:publish', [
-            '--tag' => 'translates',
+            '--tag' => 'smart_cms.resources',
         ]);
         $this->call('vendor:publish', [
             '--tag' => 'menu_sections',
         ]);
-        // $this->call('vendor:publish', [
-        //     '--tag' => 'settings',
-        // ]);
         $this->info('Migrating database...');
         $this->call('migrate');
         $this->info('Install storage...');
         $this->call('storage:link');
         $this->info('Installed Smart CMS');
+        if (File::exists(public_path('robots.txt'))) {
+            File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
+        }
+        if (File::exists(public_path('sitemap.xml'))) {
+            File::move(public_path('sitemap.xml'), public_path('sitemap.xml.backup'));
+        }
         if ($this->confirm('Do you wish to install node?')) {
             exec('npm install');
         }

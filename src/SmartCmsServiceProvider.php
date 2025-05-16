@@ -20,6 +20,7 @@ use SmartCms\Core\Commands\MakeAdmin;
 use SmartCms\Core\Commands\MakeLayout;
 use SmartCms\Core\Commands\MakeSection;
 use SmartCms\Core\Commands\Update;
+use SmartCms\Core\Extenders\PanelExtender;
 use SmartCms\Core\Hooks\LayoutHooks;
 use SmartCms\Core\Hooks\MenuHooks;
 use SmartCms\Core\Livewire\Footer;
@@ -34,6 +35,10 @@ use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Models\Translation;
 use SmartCms\Core\Services\ExceptionHandler;
+use SmartCms\Core\Services\Singletone\Languages;
+use SmartCms\Core\Services\Singletone\Settings;
+use SmartCms\Core\Services\Singletone\Translates;
+use SmartCms\Core\Services\TranslationService;
 use SmartCms\Core\Support\Actions\ActionRegistry;
 use SmartCms\Core\Support\Seo;
 use SmartCms\Core\Support\Template;
@@ -53,64 +58,66 @@ class SmartCmsServiceProvider extends ServiceProvider
             MakeSection::class,
             MakeLayout::class,
             MakeAdmin::class,
+            TranslationService::class,
         ]);
-        $this->mergeAuthConfig();
+        $this->mergeAuthConfigFrom(__DIR__ . '/../config/auth.php');
         $this->mergePanelConfig();
         $this->mergeConfigFrom(
-            __DIR__.'/../config/settings.php',
+            __DIR__ . '/../config/settings.php',
             'settings'
         );
         $this->mergeConfigFrom(
-            __DIR__.'/../config/shared.php',
+            __DIR__ . '/../config/shared.php',
             'shared'
         );
-        $this->mergeConfigFrom(__DIR__.'/../config/core.php', 'smart_cms');
+        $this->mergeConfigFrom(__DIR__ . '/../config/core.php', 'smart_cms');
         $this->publishes([
-            __DIR__.'/../resources/admin' => public_path('smart_cms_core'),
-            __DIR__.'/../config/theme.php' => config_path('theme.php'),
-            __DIR__.'/../config/translates.php' => config_path('translates.php'),
-            __DIR__.'/../resources/images/' => storage_path('app/public'),
+            __DIR__ . '/../resources/admin' => public_path('smart_cms_core'),
+            __DIR__ . '/../config/theme.php' => config_path('theme.php'),
+            __DIR__ . '/../config/translates.php' => config_path('translates.php'),
+            __DIR__ . '/../resources/images/' => storage_path('app/public'),
         ], 'smart_cms.resources');
         $this->publishes([
-            __DIR__.'/../resources/views/livewire' => resource_path('views/livewire'),
-            __DIR__.'/../resources/views/forms' => resource_path('views/forms'),
+            __DIR__ . '/../resources/views/livewire' => resource_path('views/livewire'),
+            __DIR__ . '/../resources/views/forms' => resource_path('views/forms'),
         ], 'smart_cms.views');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'smart_cms');
-        $this->loadMigrationsFrom(__DIR__.'/../database/new_migrations');
-        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
-        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'smart_cms');
-        if (File::exists(public_path('robots.txt'))) {
-            File::move(public_path('robots.txt'), public_path('robots.txt.backup'));
-        }
-        if (File::exists(public_path('sitemap.xml'))) {
-            File::move(public_path('sitemap.xml'), public_path('sitemap.xml.backup'));
-        }
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'smart_cms');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/new_migrations');
+        $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'smart_cms');
+        $this->app->singleton('_settings', function () {
+            return new Settings;
+        });
+
+        $this->app->singleton('_lang', function () {
+            return new Languages;
+        });
+
+        $this->app->singleton('_trans', function () {
+            return new Translates;
+        });
+
+
+        $this->app->singleton(PanelExtender::class, function ($app) {
+            return new PanelExtender();
+        });
+
+        $this->app->alias(PanelExtender::class, 'panel');
     }
 
-    protected function mergeAuthConfig()
+    protected function mergeAuthConfigFrom(string $path)
     {
-        $packageAuth = require __DIR__.'/../config/auth.php';
-        $appAuth = config('auth', []);
-        if (isset($packageAuth['guards'])) {
-            $appAuth['guards'] = array_merge(
-                $appAuth['guards'] ?? [],
-                $packageAuth['guards']
-            );
+        $custom = require $path;
+
+        foreach ($custom as $key => $values) {
+            $existing = config("auth.$key", []);
+            config(["auth.$key" => array_merge($existing, $values)]);
         }
-        if (isset($packageAuth['providers'])) {
-            $appAuth['providers'] = array_merge(
-                $appAuth['providers'] ?? [],
-                $packageAuth['providers']
-            );
-        }
-        config(['auth' => $appAuth]);
     }
 
     public function mergePanelConfig()
     {
-        $appConfig = config('app', []);
-        $appConfig['spa'] = env('SPA_MODE', false);
-        config(['app' => $appConfig]);
+        Config::set('app.spa', env('SPA_MODE', false));
     }
 
     public function boot(Router $router)
@@ -122,13 +129,6 @@ class SmartCmsServiceProvider extends ServiceProvider
             return;
         }
         Blade::componentNamespace('SmartCms\\Core\\Components', 's');
-        if (Schema::hasTable(Translation::getDb())) {
-            $this->app->bind('translations', function () {
-                return Cache::rememberForever('translations', function () {
-                    return Translation::query()->get();
-                });
-            });
-        }
         if (config('app.env') == 'production') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
@@ -163,16 +163,14 @@ class SmartCmsServiceProvider extends ServiceProvider
             $this->bindTelegram();
             $this->bindName();
         }
-        $router->aliasMiddleware('lang', Lang::class);
-        $router->aliasMiddleware('html.minifier', HtmlMinifier::class);
         Layout::registerHook('before_update', [LayoutHooks::class, 'beforeUpdate']);
         Menu::registerHook('before_update', [MenuHooks::class, 'beforeUpdate']);
     }
 
     private function bootBladeComponents(): void
     {
-        $this->app->singleton(Seo::class, fn () => new Seo);
-        $this->app->singleton(Template::class, fn () => new Template);
+        $this->app->singleton(Seo::class, fn() => new Seo);
+        $this->app->singleton(Template::class, fn() => new Template);
         $this->app->alias(Seo::class, 'seo');
         $this->app->alias(Template::class, 'template');
         ActionRegistry::register('form_submit', new FormSubmit);
@@ -194,6 +192,7 @@ class SmartCmsServiceProvider extends ServiceProvider
             }
         });
         Blade::component('layout', \SmartCms\Core\Components\Layout\Layout::class);
+
         $this->app->extend(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
             function ($handler, $app) {
