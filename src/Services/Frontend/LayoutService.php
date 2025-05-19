@@ -5,7 +5,6 @@ namespace SmartCms\Core\Services\Frontend;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use SmartCms\Core\Actions\ExtractSchemaDirective;
-use SmartCms\Core\Actions\ParseSchemaDirective;
 use SmartCms\Core\Models\Layout;
 
 class LayoutService
@@ -19,9 +18,9 @@ class LayoutService
     {
         $sections = [];
         $bladeViews = collect(File::allFiles(resource_path('views/layouts')))
-            ->filter(fn($file) => \Illuminate\Support\Str::endsWith($file->getFilename(), '.blade.php'))
+            ->filter(fn ($file) => \Illuminate\Support\Str::endsWith($file->getFilename(), '.blade.php'))
             ->map(function ($file) {
-                $relativePath = \Illuminate\Support\Str::after($file->getRealPath(), resource_path('views/layouts' . DIRECTORY_SEPARATOR));
+                $relativePath = \Illuminate\Support\Str::after($file->getRealPath(), resource_path('views/layouts'.DIRECTORY_SEPARATOR));
                 $bladePath = str_replace(['/', '\\'], '.', $relativePath);
 
                 return \Illuminate\Support\Str::replaceLast('.blade.php', '', $bladePath);
@@ -59,9 +58,10 @@ class LayoutService
                     'schema' => [],
                 ];
             }
-            if (!isset($section['schema']) || blank($section['schema'])) {
+            if (! isset($section['schema']) || blank($section['schema'])) {
                 $section['schema'] = ExtractSchemaDirective::run($sectionFile);
             }
+
             return $section;
             // return $this->parseMetadataFromBladeComments($content);
         }
@@ -76,9 +76,10 @@ class LayoutService
 
             try {
                 $metadata = json_decode($jsonData, true, 512, JSON_THROW_ON_ERROR);
+
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: ' . $e->getMessage());
+                Log::error('Failed to parse section metadata: '.$e->getMessage());
             }
         }
 

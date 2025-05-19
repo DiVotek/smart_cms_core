@@ -52,9 +52,10 @@ class SectionService
                     'schema' => [],
                 ];
             }
-            if (!isset($section['schema']) || blank($section['schema'])) {
+            if (! isset($section['schema']) || blank($section['schema'])) {
                 $section['schema'] = ExtractSchemaDirective::run($sectionFile);
             }
+
             return $section;
         }
 
@@ -71,7 +72,7 @@ class SectionService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: ' . $e->getMessage());
+                Log::error('Failed to parse section metadata: '.$e->getMessage());
             }
         }
 

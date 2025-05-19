@@ -7,6 +7,7 @@ use Lorisleiva\Actions\Concerns\AsAction;
 class ExtractSchemaDirective
 {
     use AsAction;
+
     /**
      * @param  string  $viewPath  path/to/view.blade.php
      * @return array<array{name:string,type:string,schema?:array}>
@@ -14,8 +15,8 @@ class ExtractSchemaDirective
     public function handle(string $viewPath): array
     {
         $flat = ParseSchemaDirective::run($viewPath);
-        $roots   = [];
-        $nested  = [];
+        $roots = [];
+        $nested = [];
 
         foreach ($flat as $full => $type) {
             if (strpos($full, '.') === false) {
@@ -24,9 +25,9 @@ class ExtractSchemaDirective
                     'type' => $type,
                 ];
             } else {
-                $parts  = explode('.', $full);
+                $parts = explode('.', $full);
                 $parent = array_shift($parts);
-                $child  = end($parts);
+                $child = end($parts);
                 $nested[$parent][$child] = $type;
             }
         }
