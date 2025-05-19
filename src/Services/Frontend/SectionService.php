@@ -4,6 +4,7 @@ namespace SmartCms\Core\Services\Frontend;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use SmartCms\Core\Actions\ExtractSchemaDirective;
 use SmartCms\Core\Models\TemplateSection;
 
 class SectionService
@@ -44,8 +45,17 @@ class SectionService
 
         if (File::exists($sectionFile)) {
             $content = File::get($sectionFile);
-
-            return $this->parseMetadataFromBladeComments($content);
+            $section = $this->parseMetadataFromBladeComments($content);
+            if ($section == null) {
+                $section = [
+                    'name' => $sectionName,
+                    'schema' => [],
+                ];
+            }
+            if (!isset($section['schema']) || blank($section['schema'])) {
+                $section['schema'] = ExtractSchemaDirective::run($sectionFile);
+            }
+            return $section;
         }
 
         return null;
@@ -61,7 +71,7 @@ class SectionService
 
                 return $metadata;
             } catch (\JsonException $e) {
-                Log::error('Failed to parse section metadata: '.$e->getMessage());
+                Log::error('Failed to parse section metadata: ' . $e->getMessage());
             }
         }
 

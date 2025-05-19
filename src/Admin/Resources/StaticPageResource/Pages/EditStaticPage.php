@@ -25,7 +25,7 @@ class EditStaticPage extends BaseEditRecord
     {
         $section = MenuSection::query()->where('parent_id', $this->record->id)->first();
         if ($section) {
-            return _actions('edit').' '.$section->name;
+            return _actions('edit') . ' ' . $section->name;
         } else {
             return parent::getHeading();
         }
@@ -36,7 +36,7 @@ class EditStaticPage extends BaseEditRecord
         return [
             \Filament\Actions\DeleteAction::make()->icon('heroicon-o-x-circle'),
             \Filament\Actions\ViewAction::make()
-                ->url(fn ($record) => $record->route())
+                ->url(fn($record) => $record->route())
                 ->icon('heroicon-o-eye')
                 ->openUrlInNewTab(true),
             \Filament\Actions\Action::make(_actions('save_close'))
@@ -51,7 +51,7 @@ class EditStaticPage extends BaseEditRecord
                         if ($menuSection) {
                             $name = $menuSection->name;
                             if ($parent->parent_id == null && $menuSection->is_categories) {
-                                $name = $menuSection->name.'Categories';
+                                $name = $menuSection->name . 'Categories';
                             }
                             $url = ListStaticPages::getUrl([
                                 'activeTab' => $name,
@@ -95,12 +95,12 @@ class EditStaticPage extends BaseEditRecord
         return $data;
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if ($data['slug'] == null) {
-            $data['slug'] = '';
-        }
+    // protected function mutateFormDataBeforeSave(array $data): array
+    // {
+    //     if ($data['slug'] == null) {
+    //         $data['slug'] = '';
+    //     }
 
-        return $data;
-    }
+    //     return $data;
+    // }
 }
