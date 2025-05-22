@@ -31,30 +31,35 @@ abstract class ResourceExtender
     public function addField(Closure|Field $fieldCallback): self
     {
         self::$formFields[] = $fieldCallback;
+
         return $this;
     }
 
     public function addColumn(Closure|Column $columnCallback): self
     {
         self::$tableColumns[] = $columnCallback;
+
         return $this;
     }
 
     public function addFilter(Closure|BaseFilter $filterCallback): self
     {
         self::$filters[] = $filterCallback;
+
         return $this;
     }
 
     public function addPage(string $slug, string $pageClass): self
     {
         self::$pages[$slug] = $pageClass;
+
         return $this;
     }
 
     public function addAction(Closure|Action $actionCallback): self
     {
         self::$actions[] = $actionCallback;
+
         return $this;
     }
 
@@ -68,6 +73,7 @@ abstract class ResourceExtender
                 $schema[] = $callback;
             }
         }
+
         return $schema;
     }
 
@@ -81,6 +87,7 @@ abstract class ResourceExtender
                 $columns[] = $callback;
             }
         }
+
         return $columns;
     }
 
@@ -94,6 +101,7 @@ abstract class ResourceExtender
                 $filters[] = $callback;
             }
         }
+
         return $filters;
     }
 
@@ -101,8 +109,9 @@ abstract class ResourceExtender
     {
         $pages = [];
         foreach (self::$pages as $slug => $class) {
-            $pages[$slug] = $class::route('/{record}/' . $slug);
+            $pages[$slug] = $class::route('/{record}/'.$slug);
         }
+
         return $pages;
     }
 
@@ -127,6 +136,7 @@ abstract class ResourceExtender
                 $actions[] = $callback;
             }
         }
+
         return $actions;
     }
 }

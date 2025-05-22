@@ -83,7 +83,6 @@ abstract class BaseResource extends Resource
         $filters = static::configureTableFilters($table);
         $filters = static::applyHook('table_filters', $filters);
 
-
         $bulkActions = static::configureTableBulkActions($table);
         $bulkActions = static::applyHook('table_bulk_actions', $bulkActions);
 
@@ -107,6 +106,7 @@ abstract class BaseResource extends Resource
             $extender = app(static::$extender);
             $pages = array_merge($pages, $extender->getPages());
         }
+
         return $pages;
     }
 

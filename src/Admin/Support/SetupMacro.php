@@ -20,7 +20,6 @@ use Filament\Tables\Table;
 
 class SetupMacro extends BaseSetup
 {
-
     public function handle(): void
     {
         Table::configureUsing(function (Table $table): void {

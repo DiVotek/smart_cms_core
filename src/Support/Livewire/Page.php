@@ -109,6 +109,6 @@ abstract class Page extends App
 
     public function getView(): string
     {
-        return 'layouts.' . $this->pageLayout?->path;
+        return 'layouts.'.$this->pageLayout?->path;
     }
 }

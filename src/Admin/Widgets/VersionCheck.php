@@ -60,7 +60,7 @@ class VersionCheck extends StatsOverviewWidget
 
         return [
             Stat::make(_actions('database_version'), $databaseVersion)
-                ->description(_actions('current') . ' ' . $databaseName . ' ' . _actions('version')),
+                ->description(_actions('current').' '.$databaseName.' '._actions('version')),
         ];
     }
 }

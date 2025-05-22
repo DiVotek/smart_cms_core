@@ -18,7 +18,7 @@ class Page extends LivewirePage
 
     public function getView(): string
     {
-        return 'layouts.' . $this->pageLayout?->path;
+        return 'layouts.'.$this->pageLayout?->path;
     }
 
     public function getEntity(): object

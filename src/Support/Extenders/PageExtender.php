@@ -11,6 +11,7 @@ class PageExtender
     public function addProperty(string $name, $value): self
     {
         self::$properties[$name] = $value;
+
         return $this;
     }
 

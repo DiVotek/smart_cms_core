@@ -2,14 +2,7 @@
 
 namespace SmartCms\Core;
 
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
-use Filament\Actions\Action;
-use Filament\Actions\CreateAction as ActionsCreateAction;
-use Filament\Actions\DeleteAction as ActionsDeleteAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,20 +10,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
-use Filament\Support\Colors\Color;
-use Filament\Support\Enums\ActionSize;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentView;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Table;
-use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -42,33 +21,19 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 use SmartCms\Core\Admin\Pages\Auth\Login;
 use SmartCms\Core\Admin\Pages\Auth\Profile;
-use SmartCms\Core\Admin\Resources\AdminResource;
-use SmartCms\Core\Admin\Resources\ContactFormResource;
-use SmartCms\Core\Admin\Resources\FieldResource;
-use SmartCms\Core\Admin\Resources\FormResource;
-use SmartCms\Core\Admin\Resources\LayoutResource;
-use SmartCms\Core\Admin\Resources\MenuResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditMenuSection;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditSeo;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditStaticPage;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\EditTemplate;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages\ListStaticPages;
-use SmartCms\Core\Admin\Resources\TemplateSectionResource;
-use SmartCms\Core\Admin\Resources\TranslationResource;
 use SmartCms\Core\Admin\Support\SetupBranding;
 use SmartCms\Core\Admin\Support\SetupMacro;
 use SmartCms\Core\Admin\Support\SetupPages;
 use SmartCms\Core\Admin\Support\SetupResources;
 use SmartCms\Core\Admin\Support\SetupSettingsPages;
 use SmartCms\Core\Admin\Support\SetupWidgets;
-use SmartCms\Core\Admin\Widgets\HealthCheck;
-use SmartCms\Core\Admin\Widgets\TopContactForms;
-use SmartCms\Core\Admin\Widgets\TopStaticPages;
-use SmartCms\Core\Admin\Widgets\VersionCheck;
-use SmartCms\Core\Extenders\PanelExtender;
 use SmartCms\Core\Middlewares\NoIndex;
-use SmartCms\Core\Models\ContactForm;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Traits\HasHooks;
@@ -157,12 +122,12 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->badge(Page::query()->where('parent_id', $section->parent_id)->count())
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
                 $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)

@@ -16,6 +16,7 @@ use SmartCms\Core\Models\ContactForm;
 class SetupBranding extends BaseSetup
 {
     private const LANGUAGES = ['en', 'uk'];
+
     public function handle(): string
     {
         $brandName = company_name();
@@ -25,6 +26,7 @@ class SetupBranding extends BaseSetup
         $this->registerBranding();
         $this->registerLanguageSwitch();
         $this->registerAssets();
+
         return $brandName;
     }
 
@@ -44,7 +46,7 @@ class SetupBranding extends BaseSetup
         );
         FilamentView::registerRenderHook(
             'panels::head.start',
-            fn(): string => '<meta name="robots" content="noindex, nofollow" />',
+            fn (): string => '<meta name="robots" content="noindex, nofollow" />',
         );
         Filament::registerRenderHook(
             PanelsRenderHook::GLOBAL_SEARCH_AFTER,

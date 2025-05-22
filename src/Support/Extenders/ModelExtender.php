@@ -25,24 +25,28 @@ class ModelExtender
     public function addCast(string $attribute, string $castType): self
     {
         static::$casts[$attribute] = $castType;
+
         return $this;
     }
 
     public function addRelation(string $name, Closure $resolver): self
     {
         static::$relations[$name] = $resolver;
+
         return $this;
     }
 
     public function addAccessor(string $name, Closure $accessor): self
     {
         static::$accessors[$name] = $accessor;
+
         return $this;
     }
 
     public function addScope(string $name, Closure $scope): self
     {
         static::$scopes[$name] = $scope;
+
         return $this;
     }
 
@@ -55,7 +59,7 @@ class ModelExtender
         }
 
         foreach (static::$accessors as $name => $accessor) {
-            $model::macro('get' . ucfirst($name) . 'Attribute', $accessor);
+            $model::macro('get'.ucfirst($name).'Attribute', $accessor);
         }
 
         foreach (static::$scopes as $id => $scope) {
@@ -67,14 +71,17 @@ class ModelExtender
     {
         return static::$casts;
     }
+
     public function getRelations(): array
     {
         return static::$relations;
     }
+
     public function getAccessors(): array
     {
         return static::$accessors;
     }
+
     public function getScopes(): array
     {
         return static::$scopes;

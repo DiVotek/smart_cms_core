@@ -154,7 +154,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/' . $form->getRecord()->slug;
+            $imagePath = 'pages/'.$form->getRecord()->slug;
         }
 
         return [
