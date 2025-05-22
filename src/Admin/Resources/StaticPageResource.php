@@ -20,6 +20,7 @@ use SmartCms\Core\Admin\Components\Sidebar;
 use SmartCms\Core\Admin\Components\Status;
 use SmartCms\Core\Admin\Components\UpdatedAt;
 use SmartCms\Core\Admin\Resources\StaticPageResource\Pages;
+use SmartCms\Core\Extenders\Resources\StaticPageExtender;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
@@ -33,6 +34,8 @@ class StaticPageResource extends BaseResource
     use HasHooks;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    public static ?string $extender = StaticPageExtender::class;
 
     protected static ?string $model = Page::class;
 
@@ -151,7 +154,7 @@ class StaticPageResource extends BaseResource
         }
         $imagePath = '';
         if ($form->getRecord()->slug) {
-            $imagePath = 'pages/'.$form->getRecord()->slug;
+            $imagePath = 'pages/' . $form->getRecord()->slug;
         }
 
         return [

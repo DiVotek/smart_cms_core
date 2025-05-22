@@ -12,6 +12,8 @@ use SmartCms\Core\Models\Layout;
 
 abstract class Page extends App
 {
+    public static ?string $extender = null;
+
     public Model $model;
 
     protected ?Layout $pageLayout;
@@ -81,6 +83,11 @@ abstract class Page extends App
         if ($this->pageLayout) {
             $data = array_merge($data, $this->pageLayout->getVariables($this->model?->layout_settings ?? []));
         }
+        if (static::$extender) {
+            $extender = app(static::$extender);
+            $data = array_merge($data, $extender->getProperties());
+            $extender->getMicrodata();
+        }
         $this->applyHook('render', $data);
         $viewName = $this->getView();
         $viewData = [
@@ -98,5 +105,10 @@ abstract class Page extends App
         }
 
         return view('smart_cms::layouts.default-page', $viewData);
+    }
+
+    public function getView(): string
+    {
+        return 'layouts.' . $this->pageLayout?->path;
     }
 }

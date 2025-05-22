@@ -26,9 +26,13 @@ abstract class BaseManageRecords extends ManageRecords
         $shortClassName = (new \ReflectionClass($this))->getShortName();
         $actions = $this->getResourceHeaderActions();
         $actions = $this->applyHook('header_actions', $actions);
+        if (app(static::$resource)::$extender) {
+            $extender = app(app(static::$resource)::$extender);
+            $actions = array_merge($actions, $extender->getActions());
+        }
 
         return [
-            Actions\Action::make('help')->help(_hints('help.'.$shortClassName))->modalFooterActions([]),
+            Actions\Action::make('help')->help(_hints('help.' . $shortClassName))->modalFooterActions([]),
             ...$actions,
             Actions\CreateAction::make()->modalWidth(MaxWidth::TwoExtraLarge),
         ];

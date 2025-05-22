@@ -2,12 +2,15 @@
 
 namespace SmartCms\Core\Livewire;
 
+use SmartCms\Core\Extenders\Pages\PageExtender;
 use SmartCms\Core\Models\Layout;
 use SmartCms\Core\Resources\PageEntityResource;
 use SmartCms\Core\Support\Livewire\Page as LivewirePage;
 
 class Page extends LivewirePage
 {
+    public static ?string $extender = PageExtender::class;
+
     public function setLayout(): void
     {
         $this->pageLayout = Layout::find($this->model->layout_id);
@@ -15,7 +18,7 @@ class Page extends LivewirePage
 
     public function getView(): string
     {
-        return 'layouts.'.$this->pageLayout?->path;
+        return 'layouts.' . $this->pageLayout?->path;
     }
 
     public function getEntity(): object

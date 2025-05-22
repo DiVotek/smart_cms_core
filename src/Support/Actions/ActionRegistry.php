@@ -31,4 +31,11 @@ class ActionRegistry
     {
         return self::$actions;
     }
+
+    public function add(string $name, string $class): self
+    {
+        self::$actions[$name] = $class;
+
+        return $this;
+    }
 }

@@ -3,6 +3,7 @@
 namespace SmartCms\Core\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use SmartCms\Core\Extenders\Models\PageExtender;
 use SmartCms\Core\Traits\HasBreadcrumbs;
 use SmartCms\Core\Traits\HasLayoutSettings;
 use SmartCms\Core\Traits\HasParent;
@@ -58,6 +59,8 @@ class Page extends BaseModel
         'custom' => 'array',
         'layout_settings' => 'array',
     ];
+
+    protected static ?string $extender = PageExtender::class;
 
     public function layout()
     {

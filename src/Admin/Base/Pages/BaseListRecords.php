@@ -31,11 +31,14 @@ abstract class BaseListRecords extends ListRecords
         $shortClassName = (new \ReflectionClass($this))->getShortName();
         $actions = $this->getResourceHeaderActions();
         $actions = $this->applyHook('header_actions', $actions);
-
+        if (app(static::$resource)::$extender) {
+            $extender = app(app(static::$resource)::$extender);
+            $actions = array_merge($actions, $extender->getActions());
+        }
         return [
             Actions\Action::make('help')
                 ->modalWidth(MaxWidth::TwoExtraLarge)
-                ->help(_hints('help.'.$shortClassName))
+                ->help(_hints('help.' . $shortClassName))
                 ->modalFooterActions([]),
             ...$actions,
             Actions\CreateAction::make()->visible(static::$showCreate),

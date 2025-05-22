@@ -19,6 +19,8 @@ abstract class BaseResource extends Resource
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    public static ?string $extender = null;
+
     protected static bool $canBulkDelete = true;
 
     /**
@@ -81,8 +83,15 @@ abstract class BaseResource extends Resource
         $filters = static::configureTableFilters($table);
         $filters = static::applyHook('table_filters', $filters);
 
+
         $bulkActions = static::configureTableBulkActions($table);
         $bulkActions = static::applyHook('table_bulk_actions', $bulkActions);
+
+        if (static::$extender) {
+            $extender = app(static::$extender);
+            $columns = array_merge($columns, $extender->getTableColumns());
+            $filters = array_merge($filters, $extender->getTableFilters());
+        }
 
         $table = $table->columns($columns)->actions($actions)->filters($filters)->bulkActions($bulkActions);
 
@@ -94,6 +103,10 @@ abstract class BaseResource extends Resource
         $pages = static::getResourcePages();
         $pages = static::applyHook('pages', $pages);
 
+        if (static::$extender) {
+            $extender = app(static::$extender);
+            $pages = array_merge($pages, $extender->getPages());
+        }
         return $pages;
     }
 
@@ -169,6 +182,11 @@ abstract class BaseResource extends Resource
     {
         $subNavigation = static::getResourceSubNavigation($page);
         $subNavigation = static::applyHook('sub_navigation', $subNavigation);
+
+        if (static::$extender) {
+            $extender = app(static::$extender);
+            $subNavigation = array_merge($subNavigation, $extender->getSubNavigation());
+        }
 
         return $page->generateNavigationItems($subNavigation);
     }
