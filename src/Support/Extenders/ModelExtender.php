@@ -53,13 +53,16 @@ class ModelExtender
     public function apply(Model $model): void
     {
         $model->mergeCasts(static::$casts);
+        // if (! empty(static::$casts)) {
+        //     dd(static::$casts, new static, $model);
+        // }
 
         foreach (static::$relations as $name => $resolver) {
             $model::resolveRelationUsing($name, $resolver);
         }
 
         foreach (static::$accessors as $name => $accessor) {
-            $model::macro('get'.ucfirst($name).'Attribute', $accessor);
+            $model::macro('get' . ucfirst($name) . 'Attribute', $accessor);
         }
 
         foreach (static::$scopes as $id => $scope) {

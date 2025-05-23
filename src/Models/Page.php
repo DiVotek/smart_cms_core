@@ -5,6 +5,7 @@ namespace SmartCms\Core\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use SmartCms\Core\Extenders\Models\PageExtender;
 use SmartCms\Core\Traits\HasBreadcrumbs;
+use SmartCms\Core\Traits\HasExtender;
 use SmartCms\Core\Traits\HasLayoutSettings;
 use SmartCms\Core\Traits\HasParent;
 use SmartCms\Core\Traits\HasRoute;
@@ -39,6 +40,7 @@ use SmartCms\Core\Traits\HasViews;
  */
 class Page extends BaseModel
 {
+    use HasExtender;
     use HasBreadcrumbs;
     use HasFactory;
     use HasLayoutSettings;
@@ -60,7 +62,10 @@ class Page extends BaseModel
         'layout_settings' => 'array',
     ];
 
-    protected static ?string $extender = PageExtender::class;
+    public static function getExtender(): ?string
+    {
+        return PageExtender::class;
+    }
 
     public function layout()
     {

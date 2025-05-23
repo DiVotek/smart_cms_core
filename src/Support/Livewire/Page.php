@@ -85,7 +85,7 @@ abstract class Page extends App
         }
         if (static::$extender) {
             $extender = app(static::$extender);
-            $data = array_merge($data, $extender->getProperties());
+            $data = array_merge($data, $extender->getProperties($this->model));
             $extender->getMicrodata();
         }
         $this->applyHook('render', $data);
@@ -109,6 +109,6 @@ abstract class Page extends App
 
     public function getView(): string
     {
-        return 'layouts.'.$this->pageLayout?->path;
+        return 'layouts.' . $this->pageLayout?->path;
     }
 }

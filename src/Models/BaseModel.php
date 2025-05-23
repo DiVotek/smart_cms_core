@@ -11,8 +11,6 @@ abstract class BaseModel extends Model
 
     protected $tablePrefix = 'smart_cms_';
 
-    protected static ?string $extender = null;
-
     protected static array $externalCasts = [];
 
     /**
@@ -29,7 +27,7 @@ abstract class BaseModel extends Model
         $table = parent::getTable();
 
         if (! str_starts_with($table, $this->tablePrefix)) {
-            return $this->tablePrefix.$table;
+            return $this->tablePrefix . $table;
         }
 
         return $table;
@@ -52,10 +50,6 @@ abstract class BaseModel extends Model
     protected static function booted()
     {
         parent::booted();
-
-        if (static::$extender) {
-            app(static::$extender)->apply(new static);
-        }
 
         static::saving(function (BaseModel $model) {
             $model->applyHook('before_save', $model);

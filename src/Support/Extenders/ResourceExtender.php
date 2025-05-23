@@ -14,51 +14,49 @@ use Filament\Tables\Filters\BaseFilter;
 abstract class ResourceExtender
 {
     /** @var Closure[] */
-    private static array $formFields = [];
+    public static array $formFields = [];
 
     /** @var Closure[] */
-    private static array $tableColumns = [];
+    public static array $tableColumns = [];
 
     /** @var Closure[] */
-    private static array $filters = [];
+    public static array $filters = [];
 
     /** @var array<string, string> */
-    private static array $pages = [];
+    public static array $pages = [];
 
     /** @var Closure[] */
-    private static array $actions = [];
+    public static array $actions = [];
 
     public function addField(Closure|Field $fieldCallback): self
     {
-        self::$formFields[] = $fieldCallback;
-
+        static::$formFields[] = $fieldCallback;
         return $this;
     }
 
     public function addColumn(Closure|Column $columnCallback): self
     {
-        self::$tableColumns[] = $columnCallback;
+        static::$tableColumns[] = $columnCallback;
 
         return $this;
     }
 
     public function addFilter(Closure|BaseFilter $filterCallback): self
     {
-        self::$filters[] = $filterCallback;
+        static::$filters[] = $filterCallback;
 
         return $this;
     }
 
     public function addPage(string $slug, string $pageClass): self
     {
-        self::$pages[$slug] = $pageClass;
-
+        static::$pages[$slug] = $pageClass;
         return $this;
     }
 
     public function addAction(Closure|Action $actionCallback): self
     {
-        self::$actions[] = $actionCallback;
+        static::$actions[] = $actionCallback;
 
         return $this;
     }
@@ -66,7 +64,7 @@ abstract class ResourceExtender
     final public function getFormSchema(): array
     {
         $schema = [];
-        foreach (self::$formFields as $callback) {
+        foreach (static::$formFields as $callback) {
             if ($callback instanceof Closure) {
                 $schema = array_merge($schema, $callback());
             } else {
@@ -80,7 +78,7 @@ abstract class ResourceExtender
     final public function getTableColumns(): array
     {
         $columns = [];
-        foreach (self::$tableColumns as $callback) {
+        foreach (static::$tableColumns as $callback) {
             if ($callback instanceof Closure) {
                 $columns = array_merge($columns, $callback());
             } else {
@@ -94,7 +92,7 @@ abstract class ResourceExtender
     final public function getTableFilters(): array
     {
         $filters = [];
-        foreach (self::$filters as $callback) {
+        foreach (static::$filters as $callback) {
             if ($callback instanceof Closure) {
                 $filters = array_merge($filters, $callback());
             } else {
@@ -108,8 +106,8 @@ abstract class ResourceExtender
     final public function getPages(): array
     {
         $pages = [];
-        foreach (self::$pages as $slug => $class) {
-            $pages[$slug] = $class::route('/{record}/'.$slug);
+        foreach (static::$pages as $slug => $class) {
+            $pages[$slug] = $class::route('/{record}/' . $slug);
         }
 
         return $pages;
@@ -117,13 +115,13 @@ abstract class ResourceExtender
 
     final public function getSubNavigation(): array
     {
-        return array_values(self::$pages);
+        return array_values(static::$pages);
     }
 
     final public function getActions(): array
     {
         $actions = [];
-        foreach (self::$actions as $callback) {
+        foreach (static::$actions as $callback) {
             if ($callback instanceof Closure) {
                 $action = $callback();
                 if ($action instanceof Action || $action instanceof ActionGroup) {

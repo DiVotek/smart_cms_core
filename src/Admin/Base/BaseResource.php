@@ -69,6 +69,11 @@ abstract class BaseResource extends Resource
         $schema = static::getFormSchema($form);
         $schema = static::applyHook('form_schema', $schema);
 
+        if (static::$extender) {
+            $extender = app(static::$extender);
+            $schema = array_merge($schema, $extender->getFormSchema());
+        }
+
         return $form->schema($schema)->columns(1);
     }
 
