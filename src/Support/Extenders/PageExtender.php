@@ -36,6 +36,7 @@ class PageExtender
         foreach (static::$arrayProperties as $name => $value) {
             $properties = array_merge($properties, $value($model));
         }
+
         return $properties;
     }
 

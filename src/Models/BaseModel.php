@@ -27,7 +27,7 @@ abstract class BaseModel extends Model
         $table = parent::getTable();
 
         if (! str_starts_with($table, $this->tablePrefix)) {
-            return $this->tablePrefix . $table;
+            return $this->tablePrefix.$table;
         }
 
         return $table;

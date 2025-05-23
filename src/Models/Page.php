@@ -40,8 +40,8 @@ use SmartCms\Core\Traits\HasViews;
  */
 class Page extends BaseModel
 {
-    use HasExtender;
     use HasBreadcrumbs;
+    use HasExtender;
     use HasFactory;
     use HasLayoutSettings;
     use HasParent;

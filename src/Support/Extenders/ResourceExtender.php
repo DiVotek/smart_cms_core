@@ -31,6 +31,7 @@ abstract class ResourceExtender
     public function addField(Closure|Field $fieldCallback): self
     {
         static::$formFields[] = $fieldCallback;
+
         return $this;
     }
 
@@ -51,6 +52,7 @@ abstract class ResourceExtender
     public function addPage(string $slug, string $pageClass): self
     {
         static::$pages[$slug] = $pageClass;
+
         return $this;
     }
 
@@ -107,7 +109,7 @@ abstract class ResourceExtender
     {
         $pages = [];
         foreach (static::$pages as $slug => $class) {
-            $pages[$slug] = $class::route('/{record}/' . $slug);
+            $pages[$slug] = $class::route('/{record}/'.$slug);
         }
 
         return $pages;

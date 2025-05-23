@@ -62,7 +62,7 @@ class ModelExtender
         }
 
         foreach (static::$accessors as $name => $accessor) {
-            $model::macro('get' . ucfirst($name) . 'Attribute', $accessor);
+            $model::macro('get'.ucfirst($name).'Attribute', $accessor);
         }
 
         foreach (static::$scopes as $id => $scope) {
