@@ -190,14 +190,14 @@ class SmartCmsServiceProvider extends ServiceProvider
         Blade::component('layout', \SmartCms\Core\Components\Layout\Layout::class);
         Blade::directive('schema', function (string $expression) {
             return "<?php\n"
-                . "    \$__schema = {$expression};\n"
-                . "    \$__defaults = \\SmartCms\\Core\\Actions\\ProvideDefaultVariables::run(\$__schema);\n"
-                . "    foreach (\$__defaults as \$__name => \$__value) {\n"
-                . "        if (! isset(\${\$__name})) {\n"
-                . "            \${\$__name} = \$__value;\n"
-                . "        }\n"
-                . "    }\n"
-                . "?>";
+                ."    \$__schema = {$expression};\n"
+                ."    \$__defaults = \\SmartCms\\Core\\Actions\\ProvideDefaultVariables::run(\$__schema);\n"
+                ."    foreach (\$__defaults as \$__name => \$__value) {\n"
+                ."        if (! isset(\${\$__name})) {\n"
+                ."            \${\$__name} = \$__value;\n"
+                ."        }\n"
+                ."    }\n"
+                .'?>';
         });
         $this->app->extend(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
