@@ -7,7 +7,11 @@ use Illuminate\View\Component;
 
 class Drawer extends Component
 {
-    public function __construct(public bool $open = false, public string $position = 'right', public string $width = '20rem', public ?string $title = null) {}
+    public function __construct(
+        public bool $open = false,
+        public string $maxWidth = 'max-w-md',
+        public ?string $title = null
+    ) {}
 
     public function render(): View|string
     {

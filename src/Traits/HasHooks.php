@@ -17,6 +17,13 @@ trait HasHooks
             static::$hooks[$className][$hookName] = [];
         }
 
+        // Check if this exact callback already exists
+        foreach (static::$hooks[$className][$hookName] as $existingHook) {
+            if ($existingHook['callback'] === $callback && $existingHook['priority'] === $priority) {
+                return; // Hook already exists, don't add duplicate
+            }
+        }
+
         static::$hooks[$className][$hookName][] = [
             'callback' => $callback,
             'priority' => $priority,
