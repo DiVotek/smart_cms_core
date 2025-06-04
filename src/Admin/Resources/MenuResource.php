@@ -7,7 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use SmartCms\Core\Admin\Resources\MenuResource\Pages as Pages;
+use SmartCms\Core\Admin\Resources\MenuResource\Pages;
 use SmartCms\Core\Models\Menu;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;

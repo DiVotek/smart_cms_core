@@ -9,7 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use SmartCms\Core\Admin\Resources\EmailResource\Pages as Pages;
+use SmartCms\Core\Admin\Resources\EmailResource\Pages;
 use SmartCms\Core\Models\Email;
 use SmartCms\Core\Services\Schema;
 use SmartCms\Core\Services\TableSchema;

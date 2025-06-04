@@ -65,8 +65,8 @@ class BuildTemplate
 
         return [
             'logo' => asset('/storage'.logo()),
-            'host' => $host->route() ?? '',
-            'hostname' => $host->name() ?? '',
+            'host' => $host?->route() ?? '',
+            'hostname' => $host?->name() ?? '',
             'company_name' => company_name(),
             'language' => current_lang(),
             'entity' => $entity,

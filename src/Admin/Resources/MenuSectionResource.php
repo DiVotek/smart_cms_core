@@ -9,7 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
-use SmartCms\Core\Admin\Resources\MenuSectionResource\Pages as Pages;
+use SmartCms\Core\Admin\Resources\MenuSectionResource\Pages;
 use SmartCms\Core\Models\MenuSection;
 use SmartCms\Core\Models\Page;
 use SmartCms\Core\Services\Schema;
