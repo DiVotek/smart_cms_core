@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Slideover extends Component
 {
-    public function __construct(public bool $open = false, public string $side = 'right', public string $width = '20rem', public ?string $title = null)
-    {
-    }
+    public function __construct(public bool $open = false, public string $side = 'right', public string $width = '20rem', public ?string $title = null) {}
 
     public function render(): View|string
     {

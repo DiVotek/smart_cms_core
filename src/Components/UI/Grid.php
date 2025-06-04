@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Grid extends Component
 {
-    public function __construct(public int $cols = 1, public int $gap = 4)
-    {
-    }
+    public function __construct(public int $cols = 1, public int $gap = 4) {}
 
     public function render(): View|string
     {
