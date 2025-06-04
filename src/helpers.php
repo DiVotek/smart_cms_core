@@ -81,7 +81,9 @@ if (! function_exists('home')) {
     function home(): string
     {
         return Cache::remember('home', 3600, function () {
-            return Page::query()->first()->route() ?? '/';
+            $page = Page::query()->first();
+
+            return $page?->route() ?? '/';
         });
     }
 }
@@ -89,7 +91,9 @@ if (! function_exists('home_name')) {
     function home_name(): string
     {
         return Cache::remember('home_name', 3600, function () {
-            return Page::query()->first()->name() ?? '/';
+            $page = Page::query()->first();
+
+            return $page?->name() ?? '/';
         });
     }
 }
