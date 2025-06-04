@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Dropdown extends Component
 {
-    public function __construct(public string $label = 'Menu', public array $items = [])
-    {
-    }
+    public function __construct(public string $label = 'Menu', public array $items = []) {}
 
     public function render(): View|string
     {

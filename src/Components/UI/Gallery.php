@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Gallery extends Component
 {
-    public function __construct(public array $images = [])
-    {
-    }
+    public function __construct(public array $images = []) {}
 
     public function render(): View|string
     {

@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Breadcrumbs extends Component
 {
-    public function __construct(public array $items = [])
-    {
-    }
+    public function __construct(public array $items = []) {}
 
     public function render(): View|string
     {

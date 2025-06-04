@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Container extends Component
 {
-    public function __construct(public string $maxWidth = '7xl')
-    {
-    }
+    public function __construct(public string $maxWidth = '7xl') {}
 
     public function render(): View|string
     {

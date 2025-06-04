@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Tabs extends Component
 {
-    public function __construct(public array $tabs = [])
-    {
-    }
+    public function __construct(public array $tabs = []) {}
 
     public function render(): View|string
     {

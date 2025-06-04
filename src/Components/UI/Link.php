@@ -7,9 +7,7 @@ use Illuminate\View\Component;
 
 class Link extends Component
 {
-    public function __construct(public string $href = '#', public ?string $target = null)
-    {
-    }
+    public function __construct(public string $href = '#', public ?string $target = null) {}
 
     public function render(): View|string
     {

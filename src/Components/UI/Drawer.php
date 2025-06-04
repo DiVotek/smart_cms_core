@@ -11,8 +11,7 @@ class Drawer extends Component
         public bool $open = false,
         public string $maxWidth = 'max-w-md',
         public ?string $title = null
-    ) {
-    }
+    ) {}
 
     public function render(): View|string
     {
