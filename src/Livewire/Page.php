@@ -19,7 +19,7 @@ class Page extends LivewirePage
 
     public function getView(): string
     {
-        return 'layouts.' . $this->pageLayout?->path;
+        return 'layouts.'.$this->pageLayout?->path;
     }
 
     public function getEntity(): object
@@ -35,7 +35,7 @@ class Page extends LivewirePage
         ])->get()->toArray();
         if (empty($template)) {
             $parent = $this->model->parent;
-            if (!$parent) {
+            if (! $parent) {
                 return [];
             }
             $parent_id = $parent->parent_id ?? $parent->id;
@@ -47,8 +47,10 @@ class Page extends LivewirePage
                     return $menuSection->categories_template ?? [];
                 }
             }
+
             return [];
         }
+
         return $template;
     }
 }
