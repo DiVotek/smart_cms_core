@@ -19,7 +19,7 @@ class Page extends LivewirePage
 
     public function getView(): string
     {
-        return 'layouts.' . $this->pageLayout?->path;
+        return 'layouts.'.$this->pageLayout?->path;
     }
 
     public function getEntity(): object
@@ -47,6 +47,7 @@ class Page extends LivewirePage
                     if ($menuSection->is_categories) {
                         return $menuSection->categories_template ?? [];
                     }
+
                     return $menuSection->template ?? [];
                 }
             }
