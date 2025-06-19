@@ -50,7 +50,7 @@ class Layout extends Component
         if (str_starts_with($fav, '/')) {
             $fav = substr($fav, 1);
         }
-        $this->favicon = asset('/storage/'.$fav);
+        $this->favicon = asset('/storage/' . $fav);
         $this->og_type = _settings('og_type', 'website');
         $this->titleMod = [
             'prefix' => _settings('title.prefix', ''),
@@ -82,6 +82,7 @@ class Layout extends Component
                         <link rel="robots" href="{{route('robots')}}">
                         <link rel="sitemap" type="application/xml" title="Sitemap" href="{{route('sitemap')}}">
                         @foreach($meta_tags as $tag)
+                        @stack('fonts')
                         <meta name="{{$tag['name']}}" content="{{$tag['meta_tags']}}">
                         @endforeach
                         <meta property="og:type" content="{{$og_type}}" />
