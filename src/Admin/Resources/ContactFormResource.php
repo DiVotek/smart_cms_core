@@ -55,7 +55,6 @@ class ContactFormResource extends BaseResource
         }
 
         return [
-            TextColumn::make('id')->label(_columns('number'))->sortable(),
             TextColumn::make('form.name')->label(_columns('form')),
             SelectColumn::make('status')
                 ->label(_columns('status'))
