@@ -12,6 +12,13 @@ class Page extends LivewirePage
 {
     public static ?string $extender = PageExtender::class;
 
+    protected function getListeners()
+    {
+        return [
+            'refresh',
+        ];
+    }
+
     public function setLayout(): void
     {
         $this->pageLayout = Layout::find($this->model->layout_id);
@@ -19,7 +26,7 @@ class Page extends LivewirePage
 
     public function getView(): string
     {
-        return 'layouts.'.$this->pageLayout?->path;
+        return 'layouts.' . $this->pageLayout?->path;
     }
 
     public function getEntity(): object
