@@ -20,9 +20,9 @@ class Settings
         }
     }
 
-    public function get(string $key): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        return $this->settings->where('key', $key)->first()?->value ?? null;
+        return $this->settings->where('key', $key)->first()?->value ?? $default;
     }
 
     public function refresh()
