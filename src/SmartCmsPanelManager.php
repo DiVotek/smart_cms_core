@@ -123,12 +123,12 @@ class SmartCmsPanelManager extends PanelProvider
                     });
                 if ($section->is_categories) {
                     $items[] = NavigationItem::make(_nav('categories'))
-                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name . _nav('categories')]))
+                        ->url(StaticPageResource::getUrl('index', ['activeTab' => $section->name._nav('categories')]))
                         ->sort($section->sorting + 1)
                         ->group($section->name)
                         ->badge(Page::query()->where('parent_id', $section->parent_id)->count())
                         ->isActiveWhen(function () use ($section) {
-                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name . _nav('categories');
+                            return request()->route()->getName() === ListStaticPages::getRouteName() && request('activeTab') == $section->name._nav('categories');
                         });
                 }
                 $items[] = NavigationItem::make(_nav('settings'))->sort($section->sorting + 3)
