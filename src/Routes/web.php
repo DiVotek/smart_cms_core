@@ -23,8 +23,8 @@ Route::group(['middleware' => 'maintenance'], function () {
         ->middleware(['web', 'html.minifier'])
         ->name('cms.page');
     Route::group(['middleware' => ['web', 'lang'], 'prefix' => 'api'], function () {
-        Route::post('/form', FormHandler::class)->name('smartcms.form.submit');
-        Route::get('/form/fields', FormFieldsHandler::class)->name('smartcms.form.fields');
+        // Route::post('/form', FormHandler::class)->name('smartcms.form.submit');
+        // Route::get('/form/fields', FormFieldsHandler::class)->name('smartcms.form.fields');
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.list');
         Route::get('/notifications/delete/{id}', [NotificationController::class, 'delete'])->name('notifications.delete');
     });
