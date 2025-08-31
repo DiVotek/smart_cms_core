@@ -40,7 +40,6 @@ class Form extends Component
             <form id="{{$form->html_id ?? $form->code}}"
                 name="{{$form->code}}"
                 wire:submit.prevent="callAction('form_submit',{{ json_encode(['code' => $form->code]) }})"
-                action="{{route('smartcms.form.submit')}}"
                 {{$attributes->merge(['class' => $class])}} method="POST">
                 @csrf
                 <input type="hidden" name="form" value="{{$form->code}}">
